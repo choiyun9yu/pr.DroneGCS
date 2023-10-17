@@ -1,0 +1,9 @@
+# Sensor Anomaly Detection rquirements
+# python-3.10.12
+
+scikit-learn==1.2.2
+matplotlib==3.7.1
+seborn==0.12.2
+pandas==1.5.3
+numpy==1.25.0
+tqdm==4.65.0
