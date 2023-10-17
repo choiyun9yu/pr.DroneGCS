@@ -1722,11 +1722,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/choiyungyu/mygit/KISA/kisa-gcs-service/kisa-gcs-service.csproj",
+      "projectUniqueName": "/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/kisa-gcs-service.csproj",
       "projectName": "kisa-gcs-service",
-      "projectPath": "/home/choiyungyu/mygit/KISA/kisa-gcs-service/kisa-gcs-service.csproj",
+      "projectPath": "/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/kisa-gcs-service.csproj",
       "packagesPath": "/home/choiyungyu/.nuget/packages/",
-      "outputPath": "/home/choiyungyu/mygit/KISA/kisa-gcs-service/obj/",
+      "outputPath": "/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/choiyungyu/.nuget/NuGet/NuGet.Config"

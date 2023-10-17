@@ -17,6 +17,7 @@
     └── Program.cs              
 
 ## 2. Dependency management
+kisa-gcs-service.csproj 파일만으로 실행되지 않는 경우
 
     % dotnet add package MongoDB.Driver
     % dotnet add package MongoDB.Bson
