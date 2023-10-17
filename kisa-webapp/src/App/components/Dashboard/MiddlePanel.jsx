@@ -1,6 +1,8 @@
-import React from "react";
-import {ColorThema} from "../ProejctThema";
+import React, { useState } from "react";
+import Calendar from "react-calendar";
 import {Cell, Legend, Pie, PieChart, ResponsiveContainer} from "recharts";
+
+import {ColorThema} from "../ProejctThema";
 
 export const MiddlePanel = () => {
     return (
@@ -10,7 +12,11 @@ export const MiddlePanel = () => {
                 <div className={`flex w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
                     <div className="w-full mt-1 ml-4 items-center">
                         <div className={`pt-3 pl-2`}>• 비행 일지</div>
+                        <div className={`w-full h-full `}>
+                            <FlightCalendar/>
+                        </div>
                     </div>
+
                 </div>
             </div>
 
@@ -25,6 +31,15 @@ export const MiddlePanel = () => {
         </div>
     );
 };
+
+const FlightCalendar = () => {
+    const [value, onChange] = useState(new Date());
+    return(
+        <div>
+            <Calendar onChange={onChange} value={value} />
+        </div>
+    );
+}
 
 const FlightPieChart = () => {
     const data = [
