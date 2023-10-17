@@ -1,6 +1,6 @@
 import React from "react";
 import {ColorThema} from "../ProejctThema";
-import {Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 
 export const LeftPanel = () => {
 
@@ -52,9 +52,16 @@ export const LeftPanel = () => {
             <div className={`w-full h-[38%] pt-5`}>
                 <div className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
                     <div className="w-full h-full ml-4">
-                        <div className={`items-center pt-3 pl-2`}>• 장애진단 현황</div>
+                        <div className={`flex flex-row items-center pt-3 pl-2`}>
+                            <span>• 장애진단 현황</span>
+                            <div className={`flex flex-row pl-56`}>
+                                <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#6359e9]`}></div><span>Drone01</span></div>
+                                <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#64cff6]`}></div><span>Drone02</span></div>
+                                <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#8fe388]`}></div><span>Drone03</span></div>
+                            </div>
+                        </div>
                         <div className={`h-full pt-5`}>
-                            <PredictionChart/>
+                            <PredictionChart/>단
                         </div>
                     </div>
                 </div>
@@ -195,7 +202,6 @@ const FlightTime = (props) => {
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
-                    <Legend />
                     <Bar dataKey="FlightTime" fill="#6359e9" />
                 </BarChart>
             </ResponsiveContainer>
@@ -369,7 +375,6 @@ const PredictionChart = (props) => {
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
-                    <Legend />
                     <Bar dataKey="Drone01" fill="#6359e9" />
                     <Bar dataKey="Drone02" fill="#8fe388" />
                     <Bar dataKey="Drone03" fill="#64cff6" />
