@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {Cell, Pie, PieChart, ResponsiveContainer} from "recharts";
 import Calendar from "react-calendar";
 import moment from "moment";
-// import {useQuery} from "react-query";
 
 import {ColorThema} from "../ProejctThema";
 import 'react-calendar/dist/Calendar.css';
@@ -32,8 +31,8 @@ export const MiddlePanel = () => {
                         <FlightPieChart/>
                     </div>
                 </div>
-
             </div>
+
         </div>
     );
 };
@@ -54,7 +53,10 @@ const FlightCalendar = () => {
     //         }
     //     }
     // )
-    const mark = ["2023-1-02", "2023-10-02", "2023-10-10"];
+
+    const markDrone1 = ["2023-10-01", "2023-10-04", "2023-10-10"];
+    const markDrone2 = ["2023-10-03", "2023-10-04", "2023-10-15"];
+    const markDrone3 = ["2023-10-05", "2023-10-04", "2023-10-20"];
 
     return(
         <div id={`calendar-container`} className={`font-normal text-sm`}>
@@ -63,17 +65,37 @@ const FlightCalendar = () => {
                 formatDay={(locale, date) => moment(date).format("DD")}
                 value={value}
                 showNeighboringMonth={false}
-                tileContent={({ date, view }) => {
-                if (mark.find((x) => x === moment(date).format("YYYY-MM-DD"))) {
+                tileContent={({ date }) => {
+                    const markerPositions = [];
+
+                    markDrone1.forEach((dateStr) => {
+                        if (dateStr === moment(date).format("YYYY-MM-DD")) {
+                            markerPositions.push({ color: "#6359E9" });
+                        }
+                    });
+                    markDrone2.forEach((dateStr) => {
+                        if (dateStr === moment(date).format("YYYY-MM-DD")) {
+                            markerPositions.push({ color: "#8fe388" });
+                        }
+                    });
+                    markDrone3.forEach((dateStr) => {
+                        if (dateStr === moment(date).format("YYYY-MM-DD")) {
+                            markerPositions.push({ color: "#64cff6" });
+                        }
+                    });
+
                     return (
-                        <>
-                            <div className="flex justify-center items-center absoluteDiv">
-                                <div className="dot"></div>
-                            </div>
-                        </>
+                        <div className="flex justify-center items-center absoluteDiv tile">
+                            {markerPositions.map((marker, index) => (
+                                <div
+                                    key={index}
+                                    className="w-[6px] h-[6px] m-0.5 rounded-full"
+                                    style={{ backgroundColor: marker.color }}
+                                ></div>
+                            ))}
+                        </div>
                     );
-                }
-            }}
+                }}
             />
             <div className={`pr-3`}><ChartLegend/></div>
         </div>

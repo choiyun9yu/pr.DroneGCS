@@ -54,14 +54,14 @@ export const LeftPanel = () => {
                     <div className="w-full h-full ml-4">
                         <div className={`flex flex-row items-center pt-3 pl-2`}>
                             <span>• 장애진단 현황</span>
-                            <div className={`flex flex-row pl-56`}>
+                            <div className={`flex flex-row pl-40`}>
                                 <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#6359e9]`}></div><span>Drone01</span></div>
                                 <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#64cff6]`}></div><span>Drone02</span></div>
                                 <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#8fe388]`}></div><span>Drone03</span></div>
                             </div>
                         </div>
                         <div className={`h-full pt-5`}>
-                            <PredictionChart/>단
+                            <PredictionChart/>
                         </div>
                     </div>
                 </div>
@@ -197,7 +197,7 @@ const FlightTime = (props) => {
     ]
     return (
         <>
-            <ResponsiveContainer width="95%" height="85%">
+            <ResponsiveContainer width="90%" height="80%">
                 <BarChart data={data}>
                     <XAxis dataKey="name" />
                     <YAxis />
@@ -370,7 +370,7 @@ const PredictionChart = (props) => {
 
     return (
         <>
-            <ResponsiveContainer width="95%" height="85%">
+            <ResponsiveContainer width="90%" height="80%">
                 <BarChart data={data}>
                     <XAxis dataKey="name" />
                     <YAxis />
