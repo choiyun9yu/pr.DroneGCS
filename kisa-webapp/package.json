@@ -8,6 +8,7 @@
         "@babel/plugin-proposal-private-property-in-object": "7.21.11",
         "@babel/preset-env": "7.22.5",
         "@googlemaps/react-wrapper": "^1.1.35",
+        "@microsoft/signalr": "^7.0.12",
         "@react-google-maps/api": "^2.19.2",
         "@testing-library/jest-dom": "^5.17.0",
         "@testing-library/react": "^13.4.0",
@@ -48,5 +49,8 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "@aspnet/signalr": "^1.0.27"
     }
 }

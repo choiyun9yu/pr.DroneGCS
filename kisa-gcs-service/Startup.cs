@@ -1,3 +1,4 @@
+using kisa_gcs_service.Hubs;
 using kisa_gcs_service.Service;
 
 namespace kisa_gcs_service
@@ -27,6 +28,7 @@ namespace kisa_gcs_service
                         .AllowCredentials(); // 모든 인증 정보 허용 
                 });
             });
+            services.AddSignalR();  // SignalR 추
         }
 
         // Configure 메소드는 요청 처리 파이프라인 구성하는 역할
@@ -52,6 +54,7 @@ namespace kisa_gcs_service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<DroneHub>("/droneHub");
             });
         }
     }   

@@ -11,6 +11,9 @@ import { AppAnomalyDetection } from './route/AppAnomalyDetection';
 import { Prediction } from './components/AnomalyDetection/Prediction';
 import { AppDeIdentification } from './route/AppDeIdentification';
 import { VideoProcessing } from './components/DeIdentification/VideoProcessing';
+import {Chat} from "./components/Others/Chat";
+import {ProjectDocuments} from "./components/Others/ProjectDocuments";
+import {SignalRProvider} from "./components/GCS/SignalRContainder";
 
 export const Main = () => {
     return (
@@ -23,7 +26,9 @@ export const Main = () => {
                 <Route path="/auth/register" element={<RegisterPage />} />
                 <Route element={<AppWrapper />}>
                     <Route path="dashboard" element={<AppDashboard />} />
-                    <Route element={<AppGCS />}>
+                    <Route element={ <SignalRProvider>
+                                         <AppGCS />
+                                     </SignalRProvider> }>
                         <Route path="gcs" element={<DroneMonitor />} />
                     </Route>
                     <Route element={<AppAnomalyDetection />}>
@@ -32,6 +37,8 @@ export const Main = () => {
                     <Route element={<AppDeIdentification />}>
                         <Route path="img" element={<VideoProcessing />} />
                     </Route>
+                    <Route path={"chat"} element={<Chat />} />
+                    <Route path={"docs"} element={<ProjectDocuments />} />
                 </Route>
             </Routes>
         </BrowserRouter>

@@ -50,4 +50,4 @@
 
 ### 1-4. others install dependencies
 
-    % yarn install
+    % yarn add @microsoft/signalr

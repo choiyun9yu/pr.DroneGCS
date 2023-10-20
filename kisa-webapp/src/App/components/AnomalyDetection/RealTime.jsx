@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {DataMap} from "../DataMap";
 import {RealTimeForm} from './RealTimeForm';
 import {RealTimeBoardLeft} from "./RealTimeBoardLeft";
-import {RealTimeBoardRight} from "./RealtimeBoardRight";
+import {RealTimeBoardRight} from "./RealTimeBoardRight";
 import {RealTimeTable} from "./RealTimeTable";
 import {RealTimeGraph} from "./RealTimeGraph";
 
