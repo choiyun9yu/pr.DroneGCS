@@ -1,22 +1,18 @@
-using System;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using kisa_gcs_service.Model;
 using kisa_gcs_service.Service;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 
 namespace kisa_gcs_service.Controllers;
 
-[ApiController]
-[EnableCors("CorsPolicy")]    // CORS 정책을 컨트롤러에 적용
-[Route("/api")]
-public class DroneController : ControllerBase
+[ApiController]                         // 이 특성을 사용하면 컨트롤러 클래스를 간소하게 정이할 수 있음, 별도의 설정없이도 컨트롤러가 API 엔드포인트 동작을 하게 됨
+[EnableCors("CorsPolicy")]     // CORS 정책을 컨트롤러에 적용
+[Route("/api")]                 // 기본 라우트
+public class DroneController : ControllerBase    // C#에서 콜른(:)은 다른 클래스의 상속이나 인터페이스의 구현을 의미, 여기에서는 ControllerBase 클래스의 상속을 받고 있음을 의미 
 {
     private readonly DroneService _droneService; // DroneService를 사용하기 위한 멤버 변수
 
-    public DroneController(ILogger<DroneController> logger, IConfiguration configuration, DroneService droneService)
+    public DroneController(DroneService droneService)   // 생성자
     {
         _droneService = droneService; // DroneService 주입
     }

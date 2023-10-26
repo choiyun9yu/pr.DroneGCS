@@ -5,16 +5,15 @@ namespace kisa_gcs_service
 {
     public class Startup    // 애플리케이션의 초기 설정 및 구성을 담당 
     {
-        public Startup(IConfiguration configuration)    // Startup 클래스의 생서자, IConfiguration 인터페이스의 객체를 매개변수로 받음
+        public Startup(IConfiguration configuration)    // Startup 클래스의 생성자, IConfiguration 인터페이스의 객체를 매개변수로 받음
         {                                               // IConfiguration 인터페이스는 애플리케이션의 구성 정보를 로드하고 읽는데 사용됨
             Configuration = configuration;              // 이렇게 하면 Configuration을 통해 appsettings.json의 설정 값을 읽을 수 있음 
         }
 
-        public IConfiguration Configuration { get;  }
-
-        // ConfigureServices 메소드, 서비스 컨테이너에 서비스를 추가하는 역할
-        public void ConfigureServices(IServiceCollection services)
-        {
+        public IConfiguration Configuration { get; }
+        
+        public void ConfigureServices(IServiceCollection services)  // ConfigureServices 메소드, 서비스 컨테이너에 서비스를 추가하는 역할
+        {                                                           // IServiceCollection 인터페이스는 의존성 주입 컨테이너의 일부로, 애플리케이션에서 필요한 서비스 및 의존성을 등록하고 관리하는데 사용
             services.AddControllers();          // 컨트롤러 서비스 등록, 컨트롤러는 API의 엔드포인트 구성하는데 사용
             services.AddScoped<DroneService>(); // 드론 서비스 등록,
             services.AddCors(options =>         // CORS 정책을 추가
@@ -28,12 +27,14 @@ namespace kisa_gcs_service
                         .AllowCredentials(); // 모든 인증 정보 허용 
                 });
             });
-            services.AddSignalR();  // SignalR 추
+            services.AddSignalR();  // SignalR 추가
+            services.AddGrpc();     // Grpc 추가 (컨테이너에 추가)
         }
 
-        // Configure 메소드는 요청 처리 파이프라인 구성하는 역할
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) // Configure 메소드는 요청 처리 파이프라인 구성하는 역할
+        {   // IApplicationBuilder는 ASP.NET Core 미들웨어 파이프라인을 구성하고 구축하는데 사용, 미들웨어 파이프라인은 HTTP 요청을 처리하고 응답을 생성하는데 사용
+            // IWebHostEnvironment는 현재 호스팅 환경 정보를 제공하는 인터페이스, 이를 통해 실행중인 환경을 판별하고 해당 환경에 맞는 동작을 설정
             if (env.IsDevelopment())    // 개발환경인지 확인
             {   // 개밸환경이면 개발자 예외 페이지 사용
                 app.UseDeveloperExceptionPage();
@@ -54,6 +55,9 @@ namespace kisa_gcs_service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGet("/greet",
+                    () =>
+                        "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
                 endpoints.MapHub<DroneHub>("/droneHub");
             });
         }

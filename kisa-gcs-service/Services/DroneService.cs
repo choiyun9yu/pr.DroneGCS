@@ -1,21 +1,45 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Grpc.Core;
+using GrpcService;
+
 using kisa_gcs_service.Model;
 
 namespace kisa_gcs_service.Service
 {
+    public class GreeterService : Greeter.GreeterBase
+    {
+        private readonly ILogger<GreeterService> _logger;
+
+        public GreeterService(ILogger<GreeterService> logger)
+        {
+            _logger = logger;
+        }
+
+        public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
+        {
+            return Task.FromResult(new HelloReply
+            {
+                Message = "Hello " + request.Name
+            });
+        }
+    }
+    
     public class DroneService
     {
         private readonly ILogger<DroneService> _logger;
         private readonly IMongoCollection<Drone> _droneCollection;
-
         public DroneService(ILogger<DroneService> logger, IConfiguration configuration)
         {
+            // Looger
             _logger = logger;
+            
+            // MongoDB 연결
             var connectionString = configuration.GetConnectionString("MongoDB");
             var mongoClient = new MongoClient(connectionString);
             var database = mongoClient.GetDatabase("gcs_drone");
             _droneCollection = database.GetCollection<Drone>("Drone");
+            
         }
         
         public List<Drone> Get()

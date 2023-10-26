@@ -22,7 +22,7 @@ kisa-gcs-service.csproj 파일만으로 실행되지 않는 경우
     % dotnet add package MongoDB.Driver
     % dotnet add package MongoDB.Bson
     % dotnet add package Newtonsoft.Json
-    % dotnet add package Microsoft.AspNetCore.Cors  // CORS 정책을 위해 설치
+    % dotnet add package Microsoft.AspNetCore.Cors      // CORS 정책을 위해 설치
     % dotnet add package Microsoft.AspNetCore.SignalR   // SignalR 설치
 
 ## 3. Database
