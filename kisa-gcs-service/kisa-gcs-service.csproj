@@ -6,10 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>kisa_gcs_service</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Protobuf Include="Protos\greet.proto" GrpcServices="Server"/>
-  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="MongoDB.Bson" Version="2.22.0" />

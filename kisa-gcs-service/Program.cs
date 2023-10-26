@@ -1,5 +1,3 @@
-using kisa_gcs_service.Service;
-
 namespace kisa_gcs_service
 {
 
