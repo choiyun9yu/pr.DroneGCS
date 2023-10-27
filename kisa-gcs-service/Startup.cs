@@ -1,3 +1,4 @@
+
 using kisa_gcs_service.Hubs;
 using kisa_gcs_service.Service;
 
@@ -28,6 +29,7 @@ namespace kisa_gcs_service
                 });
             });
             services.AddSignalR();  // SignalR 추가
+            services.AddGrpc();     // gRPC 추가
         }
 
 
@@ -54,7 +56,9 @@ namespace kisa_gcs_service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<DroneHub>("/droneHub");
+                endpoints.MapHub<DroneHub>("/droneHub");    // SignalR
+                // app.MapGrpcService<GreeterService>();              // gRPC
+                // app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
             });
         }
     }   

@@ -51,3 +51,4 @@
 ### 1-4. others install dependencies
 
     % yarn add @microsoft/signalr
+    % yarn add grpc-web

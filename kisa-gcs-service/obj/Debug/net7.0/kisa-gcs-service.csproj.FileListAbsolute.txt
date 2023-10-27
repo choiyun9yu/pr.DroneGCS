@@ -98,3 +98,4 @@
 /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/bin/Debug/net7.0/Grpc.Net.Client.dll
 /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/bin/Debug/net7.0/Grpc.Net.ClientFactory.dll
 /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/bin/Debug/net7.0/Grpc.Net.Common.dll
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/bin/Debug/net7.0/data/gcs_drone.Drone.json
