@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-import {DataMap} from "../DataMap";
+import {DataMap} from "../../DataMap";
 import {RealTimeForm} from './RealTimeForm';
 import {RealTimeBoardLeft} from "./RealTimeBoardLeft";
 import {RealTimeBoardRight} from "./RealTimeBoardRight";

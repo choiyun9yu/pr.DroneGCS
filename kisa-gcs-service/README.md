@@ -13,6 +13,7 @@
     │   ├── DroneModel.cs              
     ├── Services/               
     │   ├── DroneService.cs
+    ├── Configuration.cs            // configuration helper
     ├── Startup.cs
     └── Program.cs              
 

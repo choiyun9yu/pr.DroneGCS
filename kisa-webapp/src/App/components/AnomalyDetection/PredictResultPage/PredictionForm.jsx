@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { DataMap } from '../DataMap';
-import { ColorThema } from '../ProejctThema';
+import { DataMap } from '../../DataMap';
+import { ColorThema } from '../../ProejctThema';
 
 export const PredictionForm = (props) => {
     const [drones, setDrones] = useState([]);

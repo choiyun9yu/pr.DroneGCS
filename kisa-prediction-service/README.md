@@ -22,6 +22,56 @@
 
 ## 4. URLs
 
+### 4-0. 드론 Requset : hostip:5050/raw-data
+#### POST
+> request : url
+
+    {
+        roll_ATTITUDE,
+        pitch_ATTITUDE,
+        yaw_ATTITUDE,
+        xacc_RAW_IMU,
+        xgyro_RAW_IMU,
+        xmag_RAW_IMU,
+        yacc_RAW_IMU,
+        ygyro_RAW_IMU,
+        ymag_RAW_IMU,
+        zacc_RAW_IMU,
+        zgyro_RAW_IMU,
+        zmag_RAW_IMU, 
+        vibration_x_VIBRATION,
+        vibration_y_VIBRATION,
+        vibration_z_VIBRATION,
+        Vservo_POWER_STATUS,
+        accel_cal_x_SENSOR_OFFSETS,
+        accel_cal_y_SENSOR_OFFSETS,
+        accel_cal_z_SENSOR_OFFSETS,
+        airspeed_VFR_HUD,
+        chan12_raw_RC_CHANNELS,
+        chan13_raw_RC_CHANNELS,
+        chan14_raw_RC_CHANNELS,
+        chan15_raw_RC_CHANNELS,
+        chan16_raw_RC_CHANNELS,
+        chancount_RC_CHANNELS,
+        groundspeed_VFR_HUD,
+        mag_ofs_x_SENSOR_OFFSETS,
+        mag_ofs_y_SENSOR_OFFSETS,
+        nav_bearing_NAV_CONTROLLER_OUTPUT,
+        nav_pitch_NAV_CONTROLLER_OUTPUT,
+        press_abs_SCALED_PRESSURE,
+        servo3_raw_SERVO_OUTPUT_RAW,
+        servo8_raw_SERVO_OUTPUT_RAW,
+        vibration_x_VIBRATION,
+        vibration_y_VIBRATION,
+        vibration_z_VIBRATION,
+        voltages1_BATTERY_STATUS,
+        vx_GLOBAL_POSITION_INT,
+        vx_LOCAL_POSITION_NED,
+        vy_GLOBAL_POSITION_INT,
+        vy_LOCAL_POSITION_NED,
+        x_LOCAL_POSITION_NED,
+    }
+
 ### 4-1. 실시간 장애진단 : hostip:5050/api/realtime
 #### GET
 > request : url

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
-import { PredictionServiceHeader } from './PredictionServiceHeader';
-import { LogDataSelect } from './LogDataSelect';
-import { PredictionResultSelect } from './PredictionResultSelect';
-import { RealTime } from './RealTime';
+import { PredictionServiceHeader } from './PredictResultPage/PredictionServiceHeader';
+import { LogDataSelect } from './LogDataPage/LogDataSelect';
+import { PredictionResultSelect } from './PredictResultPage/PredictionResultSelect';
+import { RealTime } from './RealTimePage/RealTime';
 
 export const Prediction = () => {
     const [predMode, setPredMode] = useState('realTime');

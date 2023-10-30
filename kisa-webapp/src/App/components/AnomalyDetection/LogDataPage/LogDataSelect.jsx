@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { LogTable } from './LogTable';
 import { LogForm } from './LogForm';
-import { ColorThema } from '../ProejctThema';
+import { ColorThema } from '../../ProejctThema';
 
 export const LogDataSelect = () => {
     const [tableData, setTableData] = useState([]);

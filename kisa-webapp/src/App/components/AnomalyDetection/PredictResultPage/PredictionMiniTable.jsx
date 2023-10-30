@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { DataMap } from '../DataMap';
-import './TableStyles.css';
+import { DataMap } from '../../DataMap';
+import '../TableStyles.css';
 
 export const PredictionMiniTable = (props) => {
     const minitableObj = {

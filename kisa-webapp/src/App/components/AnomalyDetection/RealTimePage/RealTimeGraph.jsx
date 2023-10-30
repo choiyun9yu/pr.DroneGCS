@@ -1,6 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import {ColorThema} from "../ProejctThema";
+import {ColorThema} from "../../ProejctThema";
 
 export const RealTimeGraph = (props) => {
     // console.log(props.graphData)

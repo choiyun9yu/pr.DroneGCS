@@ -29,7 +29,7 @@ namespace kisa_gcs_service
                 });
             });
             services.AddSignalR();  // SignalR 추가
-            services.AddGrpc();     // gRPC 추가
+            // services.AddGrpc();     // gRPC 추가
         }
 
 
