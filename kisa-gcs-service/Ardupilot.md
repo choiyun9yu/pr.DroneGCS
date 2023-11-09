@@ -40,9 +40,6 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
     % cd Tools/autotest
     % ./sim_vehicle.py --console --map -v ArduCopter
 
-    // Sent simulation drone data to GCS server(Thang)
-    python sim_vehicle.py -v ArduCopter -f hexa --out 127.0.0.1:14556
-
 ## 3. STL 사용
 
     % ./sim_vehicle.py {파라미터 입력}
@@ -75,6 +72,20 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
 
     > param set RC1_MIN 1100
     > param set RC1_MAX 1900
+
+## 4. Drone with Server
+
+    % python sim_vehicle.py -v ArduCopter -f hexa --out 127.0.0.1:14556   // -f hexa는 6개의 모터를 가진 드론 의미, --out 127.0.0.1:14556은 시뮬레이션 데이터를 출력하는 주소
+
+--out 플래그는 시뮬레이션에서 생성된 데이터를 외부로 보내는 역할을 한다. 이 경우 MAVLink 메시지를 사용해 데이터를 보낸다. MAVLink는 마이크로 에어 차일드 시스템 간에 통신하기 위한 경량 프로토콜이다.
+
+내보낸 데이터를 받기 위해서는 MAVLink를 지원하는 프로그램이나 라이브러리를 사용해야한다. 대표적으로는 MAVProxy, MAVLink 라이브러리를 사용한 자체 프로그램 또는 MAVLink 클라이언트가 있다.
+
+    % mavproxy.py --master=udp:127.0.0.1:14556 --out=myoutput:udp:127.0.0.1:your_port
+
+MAVproxy의 --out 플래그는 MAVLink로 데이터를 받아서 UDP 프로토콜로 내보낸다.
+
+    서버에서 UDP를 받아들이면 될듯?
 
 <br>
 <br>
