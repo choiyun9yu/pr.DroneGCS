@@ -36,23 +36,19 @@ namespace kisa_gcs_service
             await host.RunAsync();    
         }
 
-        private static IHostBuilder CreateHostBuilder(string[] args)
+        private static IHostBuilder CreateHostBuilder(string[] args)    // IHostBuilder vs IWebHostBuilder > IWebHostBuilder는 .NET Core 2.x 이하 버전에서 웹 앱 개발에 사용, IHostBuilder .NET Core 3.x 이상 버전에서 웹 앱 이외 작업도 수행가능한 범용적인 호스트 빌더로 사용 
         {
             // 웹 호스팅 설정 및 루트 디렉토리 출력
             Console.WriteLine(Path.Combine(Directory.GetCurrentDirectory(), "./WebApp/build"));
             var port = DroneConfiguration.Environment.GetValue("PORT", 5000);   // 동적으로 DroneConfiguration 설정
             return Host.CreateDefaultBuilder(args)
-                .UseUrls($"http://*:{port}")
-                .UseWebRoot(Path.Combine(Directory.GetCurrentDirectory(), "./WebApp/build"))
-                .UseStartup<Startup>();
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder
+                        .UseUrls($"http://*:{port}")
+                        .UseWebRoot(Path.Combine(Directory.GetCurrentDirectory(), "./WebApp/build"))
+                        .UseStartup<Startup>();
+                });
         }
-        
-        // HTTP API 사용할 당시의 Builder
-        // public static IHostBuilder CreateHostBuilder(string[] args) =>  // CreateHostBuilder 메소드 정의, 웹 애플리케이션을 구성하고 실행하기 위한 'IHostBuilder'를 생성하는 역할. 
-        //     Host.CreateDefaultBuilder(args)             // IHostBuilder 인터페이스는 기본 호스팅 설정하고 실행할 수 있음, (로깅, 구성, 서비스 공급자 및 환경설정 포함)
-        //         .ConfigureWebHostDefaults(webBuilder => // 웹 호스팅을 구성하는 메소드, webBuilder.UseStartup<Startup>()을 호출해서
-        //         {
-        //             webBuilder.UseStartup<Startup>();   // Startup 클래스를 사용해서 웹 애플리케이션을 설정
-        //         });
     };    
 }
