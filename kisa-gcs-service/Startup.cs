@@ -1,19 +1,12 @@
 #nullable enable
 
-using System;
-using System.IO;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
-using Grpc.Net.Client;
+using Microsoft.AspNetCore.SignalR;
 
 using kisa_gcs_service.Hubs;
-using kisa_gcs_service.Service;
-using Microsoft.Extensions.Options;
+
 
 namespace kisa_gcs_service
 {
@@ -80,31 +73,19 @@ namespace kisa_gcs_service
             });
          }
         
-        IServiceProvider IStartup.ConfigureServices(IServiceCollection services)    // IStartup 인터페이스에서 파생된 메서드인 ConfiguireService는 서비스 컨테이너를 설정하고 구성하기 위해 사용, 서비스 컨테이너는 의존성 주입을 지원하며 웹 애플리케이션서에 사용되는 서비스 및 종속성을 등록하고 구성하는데 사용 
+        public IServiceProvider ConfigureServices(IServiceCollection services)  // IStartup 인터페이스에서 파생된 메서드인 ConfiguireService는 서비스 컨테이너를 설정하고 구성하기 위해 사용, 서비스 컨테이너는 의존성 주입을 지원하며 웹 애플리케이션서에 사용되는 서비스 및 종속성을 등록하고 구성하는데 사용 
         {
-            // gRPC 클라이언트 설정
-            var grpcClient = GrpcChannel.ForAddress("");   // GrpcChannel.ForAdress를 사용하여 gRPC 클라이언트를 생성
-            services.AddSingleton<GrpcChannel>(grpcClient);         // 
             services.AddConnections();
             services.AddCors();
-            
+    
             // SignalR 설정 및 JSON 직렬화 옵션 지정
             services.AddSignalR().AddNewtonsoftJsonProtocol(options =>
             {
-                options.PayloadSerializerSettings.ContracResolver = new DefaultContractResolver();
-                options.PayloadSerializerSettings.Converters
-                    .Add(new StringEnumConverter());
+                options.PayloadSerializerSettings.ContractResolver = new DefaultContractResolver();
+                options.PayloadSerializerSettings.Converters.Add(new StringEnumConverter());
             });
-            
-            // 데이터베이스 컨텍스 트및 서비스 등록
-            // services.AddDbContext<DroneDBContext>();
-            // services.AddSingleton<DroneMonitorManager>();
-            // services.AddSingleton<GCSJoystickServiceNetty>();
-            // services.AddSingleton<DroneMonitorServiceMavNetty>();
-            // services.AddSingleton<DroneMonitorServiceMavUdpNetty>();
-            // services.AddSingleton<DroneMonitorServiceMavPipelineSerial>();
-            
-            return services?.BuildServiceProvider();
+    
+            return services.BuildServiceProvider();
         }
     }   
 }

@@ -99,3 +99,5 @@
 /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/bin/Debug/net7.0/Grpc.Net.ClientFactory.dll
 /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/bin/Debug/net7.0/Grpc.Net.Common.dll
 /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/bin/Debug/net7.0/data/gcs_drone.Drone.json
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/obj/Debug/net7.0/kisa_gcs_service.ardupilot.modules.waf.playground.stpl_c_py_cs_satellite_wix.src.gui.Resources.resources
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/obj/Debug/net7.0/kisa-gcs-service.csproj.GenerateResource.cache

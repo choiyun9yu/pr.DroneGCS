@@ -17,16 +17,13 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
     % sudo apt-get install gitk git-gui
 
     // 필수 패키지 설치
-    % sudo apt-get install python3-pip python3-dev python-matplotlib python3-opencv python3-pygame python-serial python3-wxgtk4.0 python-wxtools python-lxml
-    % sudo apt-get install ccache gawk gcc-arm-none-eabi
+    % sudo apt-get install python3-pip python3-dev python3-opencv python3-pygame python3-wxgtk4.0 python-wxtools ccache gawk gcc-arm-none-eabi
     % sudo pip3 install MAVProxy pymavlink empy pexpect future PyYAML mavproxy --user
 
     % echo "export PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc
 
-    // 설치
-    % (코드 fork) https://github.com/ArduPilot/ardupilot 
+    // 설치 (코드 fork) https://github.com/ArduPilot/ardupilot 
     % git clone --recurse-submodules https://github.com/choiyun9yu/ardupilot.git
-      (intelliJ Run yarn install)
     % cd ardupilot
     % Tools/environment_install/install-prereqs-ubuntu.sh -y
     % . ~/.profile
@@ -73,7 +70,7 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
     > param set RC1_MIN 1100
     > param set RC1_MAX 1900
 
-## 4. Drone with Server
+### Drone with Server
 
     % python sim_vehicle.py -v ArduCopter -f hexa --out 127.0.0.1:14556   // -f hexa는 6개의 모터를 가진 드론 의미, --out 127.0.0.1:14556은 시뮬레이션 데이터를 출력하는 주소
 
@@ -81,11 +78,22 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
 
 내보낸 데이터를 받기 위해서는 MAVLink를 지원하는 프로그램이나 라이브러리를 사용해야한다. 대표적으로는 MAVProxy, MAVLink 라이브러리를 사용한 자체 프로그램 또는 MAVLink 클라이언트가 있다.
 
-    % mavproxy.py --master=udp:127.0.0.1:14556 --out=myoutput:udp:127.0.0.1:your_port
+    % mavproxy.py --master=udp:127.0.0.1:14556 --out=myoutput:udp:127.0.0.1:5000
 
 MAVproxy의 --out 플래그는 MAVLink로 데이터를 받아서 UDP 프로토콜로 내보낸다.
 
     서버에서 UDP를 받아들이면 될듯?
+
+## 4. MAVproxy 
+
+    % pip install MAVProxy  // 설치
+
+    mavproxy.py           // 실행
+
+    module load {드론에 다른 모듈 이름}  // 드론 연결
+
+    set udpout/destip 127.0.0.1
+    set udpout/destport 14556
 
 <br>
 <br>
