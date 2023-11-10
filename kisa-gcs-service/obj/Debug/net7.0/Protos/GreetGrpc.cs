@@ -7,13 +7,13 @@
 
 using grpc = global::Grpc.Core;
 
-namespace kisa-gcs-service {
+namespace GrpcService1 {
   /// <summary>
   /// The greeting service definition.
   /// </summary>
   public static partial class Greeter
   {
-    static readonly string __ServiceName = "Greeter";
+    static readonly string __ServiceName = "greet.Greeter";
 
     static void __Helper_SerializeMessage(global::Google.Protobuf.IMessage message, grpc::SerializationContext context)
     {
@@ -45,20 +45,20 @@ namespace kisa-gcs-service {
       return parser.ParseFrom(context.PayloadAsNewBuffer());
     }
 
-    static readonly grpc::Marshaller<global::kisa-gcs-service.HelloRequest> __Marshaller_HelloRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::kisa-gcs-service.HelloRequest.Parser));
-    static readonly grpc::Marshaller<global::kisa-gcs-service.HelloReply> __Marshaller_HelloReply = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::kisa-gcs-service.HelloReply.Parser));
+    static readonly grpc::Marshaller<global::GrpcService1.HelloRequest> __Marshaller_greet_HelloRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::GrpcService1.HelloRequest.Parser));
+    static readonly grpc::Marshaller<global::GrpcService1.HelloReply> __Marshaller_greet_HelloReply = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::GrpcService1.HelloReply.Parser));
 
-    static readonly grpc::Method<global::kisa-gcs-service.HelloRequest, global::kisa-gcs-service.HelloReply> __Method_SayHello = new grpc::Method<global::kisa-gcs-service.HelloRequest, global::kisa-gcs-service.HelloReply>(
+    static readonly grpc::Method<global::GrpcService1.HelloRequest, global::GrpcService1.HelloReply> __Method_SayHello = new grpc::Method<global::GrpcService1.HelloRequest, global::GrpcService1.HelloReply>(
         grpc::MethodType.Unary,
         __ServiceName,
         "SayHello",
-        __Marshaller_HelloRequest,
-        __Marshaller_HelloReply);
+        __Marshaller_greet_HelloRequest,
+        __Marshaller_greet_HelloReply);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
     {
-      get { return global::kisa-gcs-service.GreetReflection.Descriptor.Services[0]; }
+      get { return global::GrpcService1.GreetReflection.Descriptor.Services[0]; }
     }
 
     /// <summary>Base class for server-side implementations of Greeter</summary>
@@ -71,7 +71,7 @@ namespace kisa-gcs-service {
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>The response to send back to the client (wrapped by a task).</returns>
-      public virtual global::System.Threading.Tasks.Task<global::kisa-gcs-service.HelloReply> SayHello(global::kisa-gcs-service.HelloRequest request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::GrpcService1.HelloReply> SayHello(global::GrpcService1.HelloRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -109,7 +109,7 @@ namespace kisa-gcs-service {
       /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The response received from the server.</returns>
-      public virtual global::kisa-gcs-service.HelloReply SayHello(global::kisa-gcs-service.HelloRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::GrpcService1.HelloReply SayHello(global::GrpcService1.HelloRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return SayHello(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
@@ -119,7 +119,7 @@ namespace kisa-gcs-service {
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
       /// <returns>The response received from the server.</returns>
-      public virtual global::kisa-gcs-service.HelloReply SayHello(global::kisa-gcs-service.HelloRequest request, grpc::CallOptions options)
+      public virtual global::GrpcService1.HelloReply SayHello(global::GrpcService1.HelloRequest request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_SayHello, null, options, request);
       }
@@ -131,7 +131,7 @@ namespace kisa-gcs-service {
       /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The call object.</returns>
-      public virtual grpc::AsyncUnaryCall<global::kisa-gcs-service.HelloReply> SayHelloAsync(global::kisa-gcs-service.HelloRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::GrpcService1.HelloReply> SayHelloAsync(global::GrpcService1.HelloRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return SayHelloAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
@@ -141,7 +141,7 @@ namespace kisa-gcs-service {
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
       /// <returns>The call object.</returns>
-      public virtual grpc::AsyncUnaryCall<global::kisa-gcs-service.HelloReply> SayHelloAsync(global::kisa-gcs-service.HelloRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::GrpcService1.HelloReply> SayHelloAsync(global::GrpcService1.HelloRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_SayHello, null, options, request);
       }
@@ -166,7 +166,7 @@ namespace kisa-gcs-service {
     /// <param name="serviceImpl">An object implementing the server-side handling logic.</param>
     public static void BindService(grpc::ServiceBinderBase serviceBinder, GreeterBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_SayHello, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::kisa-gcs-service.HelloRequest, global::kisa-gcs-service.HelloReply>(serviceImpl.SayHello));
+      serviceBinder.AddMethod(__Method_SayHello, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::GrpcService1.HelloRequest, global::GrpcService1.HelloReply>(serviceImpl.SayHello));
     }
 
   }
