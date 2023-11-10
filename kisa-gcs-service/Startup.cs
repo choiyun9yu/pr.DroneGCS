@@ -4,6 +4,8 @@ using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json.Converters;
+
 
 using kisa_gcs_service.Hubs;
 
@@ -11,7 +13,7 @@ using kisa_gcs_service.Hubs;
 namespace kisa_gcs_service
 {
     public class Startup : IStartup    // 애플리케이션의 초기 설정 및 구성을 담당, C#에서 클래스가 인터페이스를 구현하는 경우 콜론(:)을 통해 어떤 인터페이스를 구현하고 있는지 나타낸다.
-    {
+    {                                  // IStartup은 Configure 메서드만 요구한다. 
         public void Configure(IApplicationBuilder app) // Configure 메소드는 HTTP 파이프라인 구성하는 역할, IApplicationBuilder는 ASP.NET Core 미들웨어 파이프라인을 구성하고 구축하는데 사용, 미들웨어 파이프라인은 HTTP 요청을 처리하고 응답을 생성하는데 사용
         {                                                                                                                          // 미들웨어(Middleware)는 소프트웨어 응용 프로그램 및 시스템 구성 요소 간의 통신과 상호 작용을 지원하기 위한 중간 소프트웨어 레이어 또는 서비스를 말한다.                                           
             // DefaultFilesOptions를 설정하여 기본 파일 이름을 "index.html"로 설정
@@ -73,19 +75,17 @@ namespace kisa_gcs_service
             });
          }
         
-        public IServiceProvider ConfigureServices(IServiceCollection services)  // IStartup 인터페이스에서 파생된 메서드인 ConfiguireService는 서비스 컨테이너를 설정하고 구성하기 위해 사용, 서비스 컨테이너는 의존성 주입을 지원하며 웹 애플리케이션서에 사용되는 서비스 및 종속성을 등록하고 구성하는데 사용 
+        public IServiceProvider ConfigureServices(IServiceCollection services) // IStartup 인터페이스에서 파생된 메서드인 ConfiguireService는 서비스 컨테이너를 설정하고 구성하기 위해 사용, 서비스 컨테이너는 의존성 주입을 지원하며 웹 애플리케이션서에 사용되는 서비스 및 종속성을 등록하고 구성하는데 사용 
         {
             services.AddConnections();
             services.AddCors();
-    
-            // SignalR 설정 및 JSON 직렬화 옵션 지정
             services.AddSignalR().AddNewtonsoftJsonProtocol(options =>
             {
                 options.PayloadSerializerSettings.ContractResolver = new DefaultContractResolver();
-                options.PayloadSerializerSettings.Converters.Add(new StringEnumConverter());
+                options.PayloadSerializerSettings.Converters
+                    .Add(new StringEnumConverter());
             });
-    
-            return services.BuildServiceProvider();
+            return services?.BuildServiceProvider();
         }
     }   
 }
