@@ -15,11 +15,11 @@ namespace kisa_gcs_service.Controllers;
 [Route("/api")]                 // 기본 라우트
 public class DroneController : ControllerBase    // C#에서 콜른(:)은 다른 클래스의 상속이나 인터페이스의 구현을 의미, 여기에서는 ControllerBase 클래스의 상속을 받고 있음을 의미 
 {
-    private readonly DroneServiceHTTPAPI _droneServiceHttpapi; // DroneService를 사용하기 위한 멤버 변수
+    private readonly DroneServiceHttpAPI _droneServiceHttpApi; // DroneService를 사용하기 위한 멤버 변수
 
-    public DroneController(DroneServiceHTTPAPI droneServiceHttpapi)   // 생성자
+    public DroneController(DroneServiceHttpAPI droneServiceHttpApi)   // 생성자
     {
-        _droneServiceHttpapi = droneServiceHttpapi; // DroneService 주입
+        _droneServiceHttpApi = droneServiceHttpApi; // DroneService 주입
     }
 
     [HttpGet("test")]
@@ -27,7 +27,7 @@ public class DroneController : ControllerBase    // C#에서 콜른(:)은 다른
     {
         try
         {
-            List<Drone> drones = _droneServiceHttpapi.Get(); // DroneService를 사용하여 데이터 가져오기
+            List<Drone> drones = _droneServiceHttpApi.Get(); // DroneService를 사용하여 데이터 가져오기
 
             if (drones.Count == 0) { return NotFound(); }
             return Ok(drones);
@@ -44,7 +44,7 @@ public class DroneController : ControllerBase    // C#에서 콜른(:)은 다른
     {
         try
         {
-            List<String> drones = _droneServiceHttpapi.GetDroneIds(); // DroneService를 사용하여 데이터 가져오기
+            List<String> drones = _droneServiceHttpApi.GetDroneIds(); // DroneService를 사용하여 데이터 가져오기
 
             if (drones.Count == 0) { return NotFound(); }
             return Ok(drones);
@@ -64,7 +64,7 @@ public class DroneController : ControllerBase    // C#에서 콜른(:)은 다른
             IFormCollection form = Request.Form;
             string? DroneId = form["DroneId"];
             if (DroneId == null) { return BadRequest("Invalid request data"); }
-            Drone drone = _droneServiceHttpapi.GetDroneByDroneId(DroneId);
+            Drone drone = _droneServiceHttpApi.GetDroneByDroneId(DroneId);
 
             if (drone != null)
             {

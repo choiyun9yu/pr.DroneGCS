@@ -1,5 +1,0 @@
-/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/obj/Debug/net461/kisa-gcs-service.csproj.AssemblyReference.cache
-/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/obj/Debug/net461/kisa-gcs-service.GeneratedMSBuildEditorConfig.editorconfig
-/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/obj/Debug/net461/kisa-gcs-service.AssemblyInfoInputs.cache
-/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/obj/Debug/net461/kisa-gcs-service.AssemblyInfo.cs
-/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/obj/Debug/net461/kisa-gcs-service.csproj.CoreCompileInputs.cache

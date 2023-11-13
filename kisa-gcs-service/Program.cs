@@ -9,7 +9,7 @@ namespace kisa_gcs_service
         public static void Main(string[] args)      // 애플리케이션 진입점, Main 메소드 정의
         {
             CreateHostBuilder(args).Build().Run();  // CreateHostBuilder 호출해서 애플리케이션 실행
-            DroneServiceMAVLink.MavLinkMessage();   // MAVLink 수신
+            DroneServiceMavlink.MavLinkMessage();   // MAVLink 수신
 
         }
         

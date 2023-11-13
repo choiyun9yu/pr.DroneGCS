@@ -24,9 +24,16 @@ MAVLink를 설치하였다면 MAVLink Generator를 사용해서 MAVLink 라이�
     // Out 빈칸에는 생성될 라이브러리를 저장할 폴더 지정 : /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/MAVSDK 
     // Laguage는 CS를 선택하고 Protocol은 2.0 선택
 
+    // Rider Solution창에서 project 우클릭 -> Manage NuGet Packages 클릭 -> 검색 창에서 MAVLink 검색 후 우클릭 +install... 클릭
+
 ### 2-2. mavgen 사용하는 경우
 
 ## 3. MAVLink 수신 (Drone to Server)
+
+### 3-1. MAVLink Parsing
+1) MAVLink 라이브러리 설치
+2) MAVLink 데이터 수신
+3) MAVLink 데이터 파싱
 
 
 ## 4. MAVLink 발신 (Server to Drone)
