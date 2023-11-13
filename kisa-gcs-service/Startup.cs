@@ -16,7 +16,7 @@ namespace kisa_gcs_service
         public void ConfigureServices(IServiceCollection services)  // ConfigureServices 메소드, 서비스 컨테이너에 서비스를 추가하는 역할
         {                                                           // IServiceCollection 인터페이스는 의존성 주입 컨테이너의 일부로, 애플리케이션에서 필요한 서비스 및 의존성을 등록하고 관리하는데 사용
             services.AddControllers();          // 컨트롤러 서비스 등록, 컨트롤러는 API의 엔드포인트 구성하는데 사용
-            services.AddScoped<DroneService>(); // 드론 서비스 등록,
+            services.AddScoped<DroneServiceHTTPAPI>(); // 드론 서비스 등록,
             services.AddCors(options =>         // CORS 정책을 추가
             {
                 options.AddPolicy("CorsPolicy", builder =>

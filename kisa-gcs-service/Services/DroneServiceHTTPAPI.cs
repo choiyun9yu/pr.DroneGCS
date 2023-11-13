@@ -5,11 +5,11 @@ using kisa_gcs_service.Model;
 
 namespace kisa_gcs_service.Service
 {
-    public class DroneService
+    public class DroneServiceHTTPAPI
     {
-        private readonly ILogger<DroneService> _logger;
+        private readonly ILogger<DroneServiceHTTPAPI> _logger;
         private readonly IMongoCollection<Drone> _droneCollection;
-        public DroneService(ILogger<DroneService> logger, IConfiguration configuration)
+        public DroneServiceHTTPAPI(ILogger<DroneServiceHTTPAPI> logger, IConfiguration configuration)
         {
             // Looger
             _logger = logger;
