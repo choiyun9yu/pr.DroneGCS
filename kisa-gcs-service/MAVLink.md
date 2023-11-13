@@ -1,1 +1,32 @@
-# MAV Link
+# MAVLink
+MAVLink는 직렬 통신으로 무인이동장치와 GCS간의 데이터와 명령을 송수신하는데 사용되는 경량 메시지 프로토콜이다. 이 메시지는 XML파일로 정의되는데 특정 MAVLink 시스템이 지원하는 이런 XML 파일 메시지를 dialect라고도 한다.
+
+개별 dialect를 사용하기 위해서 MAVLink 소스 파일을 다운로드하거나 생성할 수 있다. 만약 C/C++로 작업하고 표준 dialect를 사용할 경우에는 '빌드 전 MAVLink 소스 파일'을 다운로드하여 그대로 사용할 수 있다. 그러나 C/C++가 아닌 다른 언어로 작업하거나 MAVLink 메시지나 dialect를 추가/수정하고 싶은 경우 MAVLink 소스 파일을 생성해야 한다.
+
+MAVLink 소스 파일을 생성하려면 우선 MAVLink를 설치해야한다. MAVLink를 설치한다는 것은 'XML 메시지 정의'와 이를 사용해서 MAVLink 소스 파일을 생성하는 'GUI/명령 라인 툴'을 포함하는 MAVLink 툴체인을 설치한다는 의미이다.
+
+## 1. Ubuntu에 MAVLink 설치하기
+
+    % pip install future
+    % sudo apt-get install python3-tk
+    % git clone https://github.com/mavlink/mavlink.git --recursive  // mavlink 복제
+    % vi ~/.bashrc      // bash shell로 진행
+      export PYTHONPATH={mavlink 복제된 경로}
+    % exit              // 터미널창 껏다 키기
+    % echo $PYTHONPATH  // 경로 확인
+
+## 2. MAVLink 라이브러리 생성하기 [ref](https://kwangpil.tistory.com/82)
+MAVLink를 설치하였다면 MAVLink Generator를 사용해서 MAVLink 라이브러리를 생성할 수 있다. Generator를 사용하면 XML 파일인 dialect를 특정 프로그래밍 언어의 MAVLink 라이브러리로 변환할 수 있다. MAVLink 프로젝트에서는 GUI 형식인 mavgenerate와 CLI형식인 mavgen이라는 두 개의 코드 생성기를 제공한다.
+
+### 2-1. mavgenerate 사용하는 경우
+    % python mavgerate.py       // mavlink를 복제한 폴더에서 mavgerate.py 실행
+    // XML 빈칸에는 MAVLink 라이브러리를 생성할 dialect를 입력 : /home/choiyungyu/mygit/mavlink/message_definitions/v1.0/ardupilotmega.xml
+    // Out 빈칸에는 생성될 라이브러리를 저장할 폴더 지정 : /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/MAVSDK 
+    // Laguage는 CS를 선택하고 Protocol은 2.0 선택
+
+### 2-2. mavgen 사용하는 경우
+
+## 3. MAVLink 수신 (Drone to Server)
+
+
+## 4. MAVLink 발신 (Server to Drone)

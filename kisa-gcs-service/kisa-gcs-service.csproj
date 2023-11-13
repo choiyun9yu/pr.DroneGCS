@@ -1,9 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <OutputType>Exe</OutputType> <!-- 실행 파일로 출력 -->
+    <TargetFramework>netcoreapp7.0</TargetFramework> <!-- .NET Core 7.0을 대상으로 함 -->
+    <LangVersion>10.0</LangVersion> <!-- C# 언어 버전 10 사용 -->
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <NullableContextOptions>enable</NullableContextOptions> <!-- Null 검사 옵션 활성화 -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks> <!-- Unsafe 코드 사용 허용 -->
+    <SelfContained>true</SelfContained> <!-- 실행 파일이 자체 포함되도록 설정 -->
+    <PublishTrimmed>true</PublishTrimmed> <!-- 필요한 것만 포함한 릴리스 생성 -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo> <!-- 어셈블리 정보 자동 생성 비활성화 -->
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute> <!-- 대상 프레임워크 속성 자동 생성 비활성화 -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract> <!-- 자체 추출용 네이티브 라이브러리 포함 -->
     <RootNamespace>kisa_gcs_service</RootNamespace>
   </PropertyGroup>
   
@@ -16,6 +25,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />
+    <PackageReference Include="System.IO.Pipelines" Version="6.0.2" />
+    <PackageReference Include="System.IO.Ports" Version="6.0.0" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="6.0.3" />
   </ItemGroup>
   
 </Project>

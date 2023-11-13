@@ -22,11 +22,12 @@ namespace kisa_gcs_service
             // 호스트 빌드
             var host = CreateHostBuilder(args).Build(); // CreateHostBuilder 호출해서 호스트 빌드   // var를 사용하면 컴파일러가 변수의 데이터 형식을 자동으로 결정
             
+            // 드론 UDP 서비스
+            DroneServiceMAVLink.MavLinkMessage();   
+            
             // 드론 소켓 서비스 
             
             // 조이스틱 서비스
-            
-            // 드론 UDP 서비스
             
             // 시리얼 드론 모니터 서비스
             

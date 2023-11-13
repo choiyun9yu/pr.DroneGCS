@@ -85,7 +85,7 @@ namespace kisa_gcs_service
                 options.PayloadSerializerSettings.Converters
                     .Add(new StringEnumConverter());
             });
-            return services?.BuildServiceProvider();
+            return services?.BuildServiceProvider();    // 서비스 컨테이너를 반환, services가 null이 아니라고 명시적으로 표시
         }
     }   
 }
