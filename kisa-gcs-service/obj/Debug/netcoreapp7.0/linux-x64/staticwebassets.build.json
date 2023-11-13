@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "NvFTgjvCGoXB4qc4pQ0+gGjj8rOWyx+vZt6tFKzbwUM=",
+  "Source": "kisa-gcs-service",
+  "BasePath": "_content/kisa-gcs-service",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

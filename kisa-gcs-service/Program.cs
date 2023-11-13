@@ -1,4 +1,5 @@
-using kisa_gcs_service.MAVSDK;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace kisa_gcs_service
 {
@@ -8,7 +9,7 @@ namespace kisa_gcs_service
         public static void Main(string[] args)      // 애플리케이션 진입점, Main 메소드 정의
         {
             CreateHostBuilder(args).Build().Run();  // CreateHostBuilder 호출해서 애플리케이션 실행
-            DroneServiceMAVLink.ProcessMavLinkMessage(); // MAVLink 수신
+            DroneServiceMAVLink.MavLinkMessage();   // MAVLink 수신
 
         }
         

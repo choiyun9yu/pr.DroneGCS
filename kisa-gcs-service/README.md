@@ -24,7 +24,6 @@ kisa-gcs-service.csproj 파일만으로 실행되지 않는 경우
     % dotnet add package Newtonsoft.Json
     % dotnet add package Microsoft.AspNetCore.Cors      // CORS 정책을 위해 설치
     % dotnet add package Microsoft.AspNetCore.SignalR   // SignalR 설치
-    % dotnet add package MAVSDK-CSharp                  // MAVLink 설치
 
 ## 3. Database
 ### [MongoDB Specification](https://docs.google.com/spreadsheets/d/1H0tCsqDfMZ2z4MZ82Cf29FznkBN-HQiu5DckXepfIy8/edit?usp=sharing)

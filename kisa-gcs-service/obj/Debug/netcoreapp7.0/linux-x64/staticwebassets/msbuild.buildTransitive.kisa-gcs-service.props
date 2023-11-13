@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../buildMultiTargeting/kisa-gcs-service.props" />
+</Project>
