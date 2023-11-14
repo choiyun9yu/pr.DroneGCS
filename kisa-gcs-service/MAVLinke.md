@@ -19,7 +19,7 @@ MAVLink 소스 파일을 생성하려면 우선 MAVLink를 설치해야한다. M
 MAVLink를 설치하였다면 MAVLink Generator를 사용해서 MAVLink 라이브러리를 생성할 수 있다. Generator를 사용하면 XML 파일인 dialect를 특정 프로그래밍 언어의 MAVLink 라이브러리로 변환할 수 있다. MAVLink 프로젝트에서는 GUI 형식인 mavgenerate와 CLI형식인 mavgen이라는 두 개의 코드 생성기를 제공한다. 
 
 ### 2-1. mavgenerate 사용하는 경우
-    % python mavgerate.py       // mavlink를 복제한 폴더에서 mavgerate.py 실행
+    % python mavgenrate.py       // mavlink를 복제한 폴더에서 mavgerate.py 실행
     // XML 빈칸에는 MAVLink 라이브러리를 생성할 dialect를 입력 : /home/choiyungyu/mygit/mavlink/message_definitions/v1.0/ardupilotmega.xml
     // Out 빈칸에는 생성될 라이브러리를 저장할 폴더 지정 : /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-service/MAVSDK 
     // Laguage는 CS를 선택하고 Protocol은 2.0 선택
@@ -29,11 +29,10 @@ MAVLink를 설치하였다면 MAVLink Generator를 사용해서 MAVLink 라이�
 ### 2-2. mavgen 사용하는 경우
 
 ## 3. MAVLink 수신 (Drone to Server)
-
+![img.png](img.png)
 ### 3-1. MAVLink Parsing
 1) MAVLink 라이브러리 설치
 2) MAVLink 데이터 수신
 3) MAVLink 데이터 파싱
-
 
 ## 4. MAVLink 발신 (Server to Drone)

@@ -12,8 +12,8 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="Mavlink.Common" Version="1.0.0" />
 
-    <PackageReference Include="MavLink.Net.Extensions" Version="0.3.0-alpha003" />
     <PackageReference Include="MongoDB.Bson" Version="2.22.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -21,10 +21,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
-    <PackageReference Include="System.IO.Ports" Version="8.0.0-rc.2.23479.6" />
-<!--    <PackageReference Include="MAVLink" Version="1.0.8" />-->
-<!--    <PackageReference Include="DotNetty.Transport" Version="0.6.0" /> &lt;!&ndash; 네트워크 전송 계층을 처리하는 기능 제공 &ndash;&gt;-->
-<!--    <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />  &lt;!&ndash; 데이터 핸들링 및 프로토콜 처리를 위한 핸들러 및 유틸리티 클래스 제공 &ndash;&gt;-->
+    <PackageReference Include="DotNetty.Transport" Version="0.6.0" /> <!-- 네트워크 전송 계층을 처리하는 기능 제공 -->
+    <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />  <!-- 데이터 핸들링 및 프로토콜 처리를 위한 핸들러 및 유틸리티 클래스 제공 -->
+    <PackageReference Include="System.IO.Pipelines" Version="6.0.2" />
+    <PackageReference Include="System.IO.Ports" Version="6.0.0" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
    
   <ItemGroup>

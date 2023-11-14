@@ -38,9 +38,17 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
-            "MavLink.Net.Extensions": {
+            "DotNetty.Handlers": {
               "target": "Package",
-              "version": "[0.3.0-alpha003, )"
+              "version": "[0.6.0, )"
+            },
+            "DotNetty.Transport": {
+              "target": "Package",
+              "version": "[0.6.0, )"
+            },
+            "Mavlink.Common": {
+              "target": "Package",
+              "version": "[1.0.0, )"
             },
             "Microsoft.AspNetCore.Cors": {
               "target": "Package",
@@ -76,9 +84,17 @@
               "target": "Package",
               "version": "[6.5.0, )"
             },
+            "System.IO.Pipelines": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
             "System.IO.Ports": {
               "target": "Package",
-              "version": "[8.0.0-rc.2.23479.6, )"
+              "version": "[6.0.0, )"
+            },
+            "System.Reactive": {
+              "target": "Package",
+              "version": "[5.0.0, )"
             }
           },
           "imports": [

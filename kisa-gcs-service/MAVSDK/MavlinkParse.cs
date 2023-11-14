@@ -351,29 +351,29 @@ public partial class MAVLink
                     signingKey = new byte[32];
                 }
                 
-                using (SHA256CryptoServiceProvider signit = new SHA256CryptoServiceProvider())
-                {
-                    MemoryStream ms = new MemoryStream();
-                    ms.Write(signingKey, 0, signingKey.Length);
-                    ms.Write(packet, 0, i);
-                    ms.Write(sig, 0, sig.Length);
-
-                    var ctx = signit.ComputeHash(ms.GetBuffer());
-                    // trim to 48
-                    Array.Resize(ref ctx, 6);
-
-                    foreach (byte b in sig)
-                    {
-                        packet[i] = b;
-                        i++;
-                    }
-
-                    foreach (byte b in ctx)
-                    {
-                        packet[i] = b;
-                        i++;
-                    }
-                }
+                // using (SHA256CryptoServiceProvider signit = new SHA256CryptoServiceProvider())
+                // {
+                //     MemoryStream ms = new MemoryStream();
+                //     ms.Write(signingKey, 0, signingKey.Length);
+                //     ms.Write(packet, 0, i);
+                //     ms.Write(sig, 0, sig.Length);
+                //
+                //     var ctx = signit.ComputeHash(ms.GetBuffer());
+                //     // trim to 48
+                //     Array.Resize(ref ctx, 6);
+                //
+                //     foreach (byte b in sig)
+                //     {
+                //         packet[i] = b;
+                //         i++;
+                //     }
+                //
+                //     foreach (byte b in ctx)
+                //     {
+                //         packet[i] = b;
+                //         i++;
+                //     }
+                // }
             }
 
             return packet;
