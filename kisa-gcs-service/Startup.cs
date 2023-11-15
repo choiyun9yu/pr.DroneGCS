@@ -1,5 +1,3 @@
-
-using kisa_gcs_service.Hubs;
 using kisa_gcs_service.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +31,7 @@ namespace kisa_gcs_service
                         .AllowCredentials(); // 모든 인증 정보 허용 
                 });
             });
+            services.AddSingleton<DroneMonitorServiceMavUdpNetty>();        // UDP
             services.AddSignalR();  // SignalR 추가
         }
 
@@ -60,7 +59,7 @@ namespace kisa_gcs_service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<DroneHub>("/droneHub");    // SignalR
+                endpoints.MapHub<SignalRHub>("/droneHub");    // SignalR
             });
         }
     }   

@@ -36,6 +36,7 @@ public partial class MAVLink
     public const bool MAVLINK_NEED_BYTE_SWAP = (MAVLINK_ENDIAN == MAVLINK_LITTLE_ENDIAN);
         
     // msgid, name, crc, minlength, length, type
+        // msgid: 메세지의 고유 식별자, name: 메시지의 이름, crc(순환 중복 검사): 메시지의 무결성을 검증하는데 사용, minlength: 메시지의 최소 길이, length: 메시지의 최대 길이, type: 메시지의 타입(구조체)
     public static message_info[] MAVLINK_MESSAGE_INFOS = new message_info[] {
         new message_info(0, "HEARTBEAT", 50, 9, 9, typeof( mavlink_heartbeat_t )),
         new message_info(1, "SYS_STATUS", 124, 31, 43, typeof( mavlink_sys_status_t )),

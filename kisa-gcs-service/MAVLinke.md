@@ -29,10 +29,35 @@ MAVLink를 설치하였다면 MAVLink Generator를 사용해서 MAVLink 라이�
 ### 2-2. mavgen 사용하는 경우
 
 ## 3. MAVLink 수신 (Drone to Server)
-![img.png](img.png)
+![img.png](data/img2.png)
 ### 3-1. MAVLink Parsing
 1) MAVLink 라이브러리 설치
-2) MAVLink 데이터 수신
-3) MAVLink 데이터 파싱
+2) MAVLink 메세지 데이터 수신
+3) MAVLink 메세지 데이터 파싱
+
+         0001. 1. 1. 오전 12:00:00,True,1,1,30,ATTITUDE
+         DateTime: 0001. 1. 1. 오전 12:00:00 
+         True/False: 해당 메시지 활성화 여부
+         Numbers:  
+         Message Name: MAVLink 메시지 식별자
+
+4) MAVLink 메세지 데이터 객체화: 메세지에 대한 C# 클래스나 구조체가 필요, MAVLink는 XML 정의 파일을 통해 메시지에 대한 정보를 제공하므로, MAVLink의 XML 정의를 사용하여 C# 클래스를 생성할 수 있음
+
+        MAVLink.MAVLinkMessage mavlinkMessage = // 디코딩한 MAVLink 메시지가 들어 있는 변수
+    
+        // 메시지의 ID를 기반으로 적절한 MAVLink 메시지 클래스 생성
+        switch ((MAVLink.MAVLINK_MSG_ID)mavlinkMessage.msgid)
+        {
+            case MAVLink.MAVLINK_MSG_ID.HEARTBEAT:
+                MAVLink.heartbeat_t heartbeat = MAVLink.MAVLinkMessageExtensions.Deserialize<MAVLink.heartbeat_t>(mavlinkMessage);
+                // heartbeat 객체를 사용하여 무언가를 수행
+                 break;
+            case MAVLink.MAVLINK_MSG_ID.OTHER_MESSAGE_ID:
+                // 다른 MAVLink 메시지에 대한 처리
+                break;
+            // 다른 메시지 ID에 대한 처리 추가
+        }
+        
+        // Deserialize 메소드를 사용하여 메시지를 C# 객체로 변환할 수 있습니다.
 
 ## 4. MAVLink 발신 (Server to Drone)
