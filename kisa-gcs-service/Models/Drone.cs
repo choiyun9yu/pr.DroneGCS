@@ -1,12 +1,13 @@
 #nullable enable
 
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace kisa_gcs_service.Model;
-
-public class Drone
+public class DroneMongo
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)] // MongoDB의 ObjectId를 문자열로 표현
@@ -34,5 +35,4 @@ public class Drone
     public DateTime? CompleteTime { get; set; }
     public object? CommunicationLink { get; set; }
     public float? DroneSpeed { get; set; }
-
 }

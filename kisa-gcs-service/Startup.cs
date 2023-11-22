@@ -1,9 +1,11 @@
-using kisa_gcs_service.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+
+using kisa_gcs_service.Service;
+using Microsoft.AspNetCore.Http;
 
 namespace kisa_gcs_service
 {
@@ -59,7 +61,13 @@ namespace kisa_gcs_service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                // endpoints.MapHub<SignalRHub>("/hub");
                 endpoints.MapHub<SignalRHub>("/droneHub");    // SignalR
+                endpoints.MapGet("/", async context =>
+                {
+                    await context.Response.WriteAsync("Hello World!");
+                });
+
             });
         }
     }   

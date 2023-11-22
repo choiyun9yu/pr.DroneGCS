@@ -17,7 +17,7 @@ namespace kisa_gcs_service
                 .Services // ASP.NET Core에서 Host 또는 WebHost를 생성하면 'IServiceProvider 인터페이스를 구현한 컨테이너가 생성된다. 이 서비스 컨테이너는 애플리케이션 전체에서 사용가능한 서비스를 관리하고 제공한다. .Services는 이 서비스 컨테이너에서 서비스를 검색하는데 사용된다. 주로 의존성 주입을 통해 서비스를 사용할 때 쓰인다. 
                 .GetService(typeof(DroneMonitorServiceMavUdpNetty));
             if (droneUdpService != null)
-                await droneUdpService.StartAsync(14556); // StartAsync 메서드를 호출하고 포트 번호 14556을 전달
+                await droneUdpService.StartAsync(14556); // 가져온 서비스의 StartAsync 메서드를 호출해서 시작(포트 번호 14556을 전달)
 
             // 호스트 실행
             await host.RunAsync();

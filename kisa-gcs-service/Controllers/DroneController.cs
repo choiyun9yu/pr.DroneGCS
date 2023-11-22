@@ -27,7 +27,7 @@ public class DroneController : ControllerBase    // C#에서 콜른(:)은 다른
     {
         try
         {
-            List<Drone> drones = _droneServiceHttpApi.Get(); // DroneService를 사용하여 데이터 가져오기
+            List<DroneMongo> drones = _droneServiceHttpApi.Get(); // DroneService를 사용하여 데이터 가져오기
 
             if (drones.Count == 0) { return NotFound(); }
             return Ok(drones);
@@ -64,7 +64,7 @@ public class DroneController : ControllerBase    // C#에서 콜른(:)은 다른
             IFormCollection form = Request.Form;
             string? DroneId = form["DroneId"];
             if (DroneId == null) { return BadRequest("Invalid request data"); }
-            Drone drone = _droneServiceHttpApi.GetDroneByDroneId(DroneId);
+            DroneMongo drone = _droneServiceHttpApi.GetDroneByDroneId(DroneId);
 
             if (drone != null)
             {

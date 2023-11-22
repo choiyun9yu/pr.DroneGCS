@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  dashboard-service:
+    container_name: kisa-dashboard-service
+    build:
+      dockerfile: Dockerfile
+      context: ./kisa-dashboard-service
+    ports:
+      - "5050:5050"
+    depends_on:
+      - mongodb
+    networks:
+      - mynetwork
+    environment:
+      MONGO_URI_DB1: "mongodb://localhost:27017/prediction_service"
+      MONGO_URI_DB2: "mongodb://localhost:27017/gcs_drone"
+
+  kisa-gcs-service:
+    container_name: kisa-gcs-service
+    build:
+      dockerfile: Dockerfile
+      context: ./kisa-gcs-service
+    ports:
+      - "5000:5000"
+
+  mongodb:
+    image: mongo
+    container_name: kisa-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - mynetwork
+
+  web-app:
+    container_name: kisa-web-app
+    build:
+      dockerfile: Dockerfile
+      context: ./kisa-webapp
+
+    ports:
+      - "3000:3000"
+
+volumes:
+  mongodb_data:
+
+networks:
+  mynetwork:

@@ -14,6 +14,7 @@ import { VideoProcessing } from './components/DeIdentification/VideoProcessing';
 import {Chat} from "./components/Others/Chat";
 import {ProjectDocuments} from "./components/Others/ProjectDocuments";
 import {SignalRProvider} from "./components/GCS/SignalRContainder";
+import ChatPage from "./components/Others/ChatPage";
 
 export const Main = () => {
     return (
