@@ -6,7 +6,7 @@ from . import app
 
 # 첫 번째 MongoDB에 대한 PyMongo 인스턴스 생성
 app.config['MONGO_URI_DB1'] = Config.MONGO_URI_DB1  # config.py에서 URI 설정 가져오기
-mongodb = PyMongo(app, uri=app.config['MONGO_URI_DB1'])
+mongo_db1 = PyMongo(app, uri=app.config['MONGO_URI_DB1'])
 
 # 두 번째 MongoDB에 대한 PyMongo 인스턴스 생성
 app.config['MONGO_URI_DB2'] = Config.MONGO_URI_DB2  # config.py에서 URI 설정 가져오기
@@ -15,19 +15,19 @@ mongo_db2 = PyMongo(app, uri=app.config['MONGO_URI_DB2'])
 class Drone:
     @staticmethod
     def get_drones():
-        ai_drones_cursor = mongodb.db.ai_drone.find()
+        ai_drones_cursor = mongo_db1.db.ai_drone.find()
         ai_drones_list = list(ai_drones_cursor)
         return ai_drones_list
 
     @staticmethod
     def all_devices_id():
-        cursor = mongodb.db.ai_drone.distinct('device_id')
+        cursor = mongo_db1.db.ai_drone.distinct('device_id')
         all_devices_list = list(cursor)
         return all_devices_list
 
     @staticmethod
     def all_flights_id():
-        cursor = mongodb.db.ai_drone.distinct('flight_id')
+        cursor = mongo_db1.db.ai_drone.distinct('flight_id')
         all_flights_list = list(cursor)
         return all_flights_list
 
@@ -36,7 +36,7 @@ class Drone:
         query = {
             "device_id": DroneId
         }
-        cursor = mongodb.db.ai_drone.find_one(query, sort=[('server_response_timestamp', DESCENDING)])
+        cursor = mongo_db1.db.ai_drone.find_one(query, sort=[('server_response_timestamp', DESCENDING)])
 
         def transfer_data(obj):
             return {
@@ -115,7 +115,7 @@ class Drone:
             ]
         }
         sort_order = [("server_response_timestamp", -1)]
-        cursor = mongodb.db.ai_drone.find(query).sort(sort_order)
+        cursor = mongo_db1.db.ai_drone.find(query).sort(sort_order)
         logdata_list = list(cursor)
 
         # MongoDB 구조 변경 전에 서버에서 데이터 수정
@@ -188,7 +188,7 @@ class Drone:
             ]
         }
         sort_order = [("server_response_timestamp", -1)]
-        cursor = mongodb.db.ai_drone.find(query).sort(sort_order)
+        cursor = mongo_db1.db.ai_drone.find(query).sort(sort_order)
         predict_list = list(cursor)
 
         # MongoDB 구조 변경 전에 서버에서 데이터 수정
