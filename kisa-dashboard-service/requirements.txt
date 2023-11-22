@@ -1,5 +1,0 @@
-Flask==3.0.0
-Flask_Cors==4.0.0
-Flask_PyMongo==2.3.0
-Flask_SocketIO==5.3.6
-pymongo==4.5.0
