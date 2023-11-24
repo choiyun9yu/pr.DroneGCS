@@ -28,6 +28,7 @@ namespace kisa_gcs_service
                 .ConfigureWebHostDefaults(webBuilder => // 웹 호스팅을 구성하는 메소드, webBuilder.UseStartup<Startup>()을 호출해서
                 {
                     webBuilder.UseStartup<Startup>();   // Startup 클래스를 사용해서 웹 애플리케이션을 설정
+                    webBuilder.UseUrls("http://0.0.0.0:5000");  // Kestrel 설정, 외부 접속 허용 원하는 포트로 변경도 가능하고 
                 });
     };    
 }

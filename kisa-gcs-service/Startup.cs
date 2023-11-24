@@ -62,12 +62,11 @@ namespace kisa_gcs_service
             {
                 endpoints.MapControllers();
                 // endpoints.MapHub<SignalRHub>("/hub");
-                endpoints.MapHub<SignalRHub>("/droneHub");    // SignalR
+                endpoints.MapHub<SignalRHub>("/hub");    // SignalR
                 endpoints.MapGet("/", async context =>
                 {
                     await context.Response.WriteAsync("Hello World!");
                 });
-
             });
         }
     }   

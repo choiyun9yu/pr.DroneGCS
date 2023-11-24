@@ -23,7 +23,7 @@ export const RealTimeForm = (props) => {
             const Body = new FormData();
             Body.append([name], value);
 
-            const response = await fetch('http://127.0.0.1:5050/api/realtime', {
+            const response = await fetch('http://localhost:5050/api/realtime', {
                 method: 'POST',
                 body: Body,
             });
@@ -80,7 +80,7 @@ export const RealTimeForm = (props) => {
                 const Body = new FormData();
                 Body.append('DroneId', formData["DroneId"]);
 
-                const response = await fetch('http://127.0.0.1:5050/api/realtime', {
+                const response = await fetch('http://localhost:5050/api/realtime', {
                     method: 'POST',
                     body: Body,
                 });

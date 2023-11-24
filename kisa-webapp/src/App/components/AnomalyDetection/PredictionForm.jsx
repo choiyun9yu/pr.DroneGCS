@@ -12,7 +12,7 @@ export const PredictionForm = (props) => {
         event.preventDefault(); // 폼 제출 기본 동작을 막음
         const formData = new FormData(event.target); // 폼 데이터 수집
         try {
-            const response = await fetch('http://127.0.0.1:5050/api/predict', {
+            const response = await fetch('http://localhost:5050/api/predict', {
                 method: 'POST',
                 body: formData, // 폼 데이터 전송
             });
@@ -85,7 +85,7 @@ export const PredictionForm = (props) => {
             <span className="mb-5 rounded-md font-bold text-medium text-white">• 부품 및 조회기간 선택</span>
             <form
                 method="POST"
-                action="http://127.0.0.1:5050/api/predict"
+                action="http://localhost:5050/api/predict"
                 onSubmit={handleSubmit}
                 className="flex flex-row text-[#AEABD8]"
             >

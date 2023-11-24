@@ -21,7 +21,8 @@ api_blueprint = Blueprint('api', __name__)
 def index():
     if request.method == 'GET':
         drones = Drone.get_drones()
-        return jsonify({"ai_drones": drones})
+        # return jsonify({"ai_drones": drones})
+        return "Hello world!"
 
 @api_blueprint.route('/api/realtime', methods=['GET', 'POST'])
 def realtime_data():
