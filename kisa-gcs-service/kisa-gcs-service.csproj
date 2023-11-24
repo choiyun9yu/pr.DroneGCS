@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType> <!-- 실행 파일로 출력 -->
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <LangVersion>10.0</LangVersion> <!-- C# 언어 버전 10 사용 -->
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks> <!-- Unsafe 코드 사용 허용 -->
       <NullableContextOptions>enable</NullableContextOptions> <!-- Null 검사 옵션 활성화 -->

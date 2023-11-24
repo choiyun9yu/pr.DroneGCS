@@ -1,6 +1,6 @@
 // const signalR = require("@microsoft/signalr");
 //
-// const URL = process.env.HUB_ADDRESS || "https://localhost:5000/droneHub";
+// const URL = process.env.HUB_ADDRESS || "https://localhost:5000/hub";
 //
 // class Connector {
 //     constructor() {

@@ -8,10 +8,6 @@ services:
       context: ./kisa-dashboard-service
     restart: always
     network_mode: host
-#    networks:
-#      - my-bridge-net
-    ports:
-      - "5050:5050"
     depends_on:
       - mongo-db
     environment:
@@ -25,10 +21,6 @@ services:
       context: ./kisa-gcs-service
     restart: always
     network_mode: host
-#    networks:
-#      - my-bridge-net
-    ports:
-      - "5000:5000"
     depends_on:
       - mongo-db
 
@@ -37,10 +29,6 @@ services:
     container_name: mongodb
     restart: always
     network_mode: host
-#    networks:
-#      - my-bridge-net
-    ports:
-      - "27017:27017"
     volumes:
       - mongodb_data:/data/db
 
@@ -51,17 +39,9 @@ services:
       context: ./kisa-webapp
     restart: always
     network_mode: host
-#    networks:
-#      - my-bridge-net
-    ports:
-      - "3000:3000"
     depends_on:
       - dashboard-service
       - gcs-service
 
 volumes:
   mongodb_data:
-
-#networks:
-#  my-bridge-net:
-#    driver: bridge

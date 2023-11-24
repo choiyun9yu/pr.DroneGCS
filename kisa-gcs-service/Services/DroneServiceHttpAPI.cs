@@ -6,6 +6,7 @@ using MongoDB.Driver;
 using kisa_gcs_service.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver.Core.Configuration;
 
 namespace kisa_gcs_service.Service
 {
@@ -18,12 +19,12 @@ namespace kisa_gcs_service.Service
             // Looger
             _logger = logger;
             
-            // MongoDB 연결
-            var connectionString = configuration.GetConnectionString("MongoDB");
+            // MongoDB 연결,  // null인지 확인
+            // var connectionString = configuration.GetConnectionString("MongoDB");
+            var connectionString = "mongodb://localhost:27017";     // local에서 실행하면 문제가 없는데 Docker로 실행하면 null 값을 자꾸 넘겨 받아서 직접 입력함..
             var mongoClient = new MongoClient(connectionString);
             var database = mongoClient.GetDatabase("gcs_drone");
             _droneCollection = database.GetCollection<DroneMongo>("Drone");
-            
         }
         
         public List<DroneMongo> Get()

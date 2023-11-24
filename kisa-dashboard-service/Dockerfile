@@ -2,7 +2,7 @@ FROM python:3.10-alpine
 LABEL authors="choiyungyu"
 
 # 이미지 내에서 명령어를 실행할 경로 설정
-WORKDIR .
+WORKDIR /kisa-dashboard-service
 
 # 경로의 디렉토리 내용물을 컨테이너로 복사
 COPY requirements.txt .
@@ -13,7 +13,7 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # 소스코드 복사
-COPY . .
+COPY . ./
 
 # 컨테이너 실행시 최초 실행될 명령
 ENTRYPOINT ["python", "run.py"]
