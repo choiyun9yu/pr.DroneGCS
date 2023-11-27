@@ -1,6 +1,3 @@
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.SignalR;
 
 public class SignalRHub : Hub

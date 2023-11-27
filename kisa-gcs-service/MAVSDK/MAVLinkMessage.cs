@@ -1,4 +1,4 @@
-﻿
+﻿#nullable disable
 using System;
 
 public partial class MAVLink

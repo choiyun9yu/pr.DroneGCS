@@ -29,7 +29,7 @@ MAVLink를 설치하였다면 MAVLink Generator를 사용해서 MAVLink 라이�
 ### 2-2. mavgen 사용하는 경우
 
 ## 3. MAVLink 수신 (Drone to Server)
-![img.png](data/img2.png)
+![img.png](../kisa-gcs-service/data/img2.png)
 ### 3-1. MAVLink Parsing
 1) MAVLink 라이브러리 설치
 2) MAVLink 메세지 데이터 수신

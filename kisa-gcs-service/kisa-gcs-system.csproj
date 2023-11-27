@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks> <!-- Unsafe 코드 사용 허용 -->
+    <NullableContextOptions>enable</NullableContextOptions> <!-- Null 검사 옵션 활성화 -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <RootNamespace>kisa_gcs_system</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetty.Buffers" Version="0.7.5" />
+    <PackageReference Include="DotNetty.Codecs" Version="0.7.5" />
+    <PackageReference Include="DotNetty.Transport" Version="0.7.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    
+<!--    <PackageReference Include="Mavlink.Common" Version="1.0.0" />-->
+<!--    <PackageReference Include="DotNetty.Transport" Version="0.6.0" /> &lt;!&ndash; 네트워크 전송 계층을 처리하는 기능 제공 &ndash;&gt;-->
+<!--    <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />  &lt;!&ndash; 데이터 핸들링 및 프로토콜 처리를 위한 핸들러 및 유틸리티 클래스 제공 &ndash;&gt;-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Properties\launchSettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
+</Project>

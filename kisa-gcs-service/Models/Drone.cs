@@ -1,16 +1,8 @@
 #nullable enable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
 namespace kisa_gcs_service.Model;
 public class DroneMongo
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.String)] // MongoDB의 ObjectId를 문자열로 표현
     public string? _id { get; set; }
     public DateTime? LastHeartbeatMessage { get; set; }
     public string? DroneId { get; set; }

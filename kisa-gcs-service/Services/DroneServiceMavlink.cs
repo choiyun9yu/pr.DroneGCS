@@ -1,17 +1,13 @@
 #nullable enable
 
-// using System.Buffers;
-// using System.IO.Pipelines;
 using System.Net;
 using System.Net.Sockets;
-using System.Text.Json;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Common.Utilities;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
-using MongoDB.Bson;
 
 namespace kisa_gcs_service;
 
@@ -20,7 +16,7 @@ public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> 
   private readonly MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
   
   
-  protected override void Decode(IChannelHandlerContext context, DatagramPacket input, List<object> output) // Decode 메서드는 기본 클래스 메서드를 재정의하여 DatagramPacket을 MAVLink 메시지로 디코딩
+  protected override void Decode(IChannelHandlerContext context, DatagramPacket input, List<object?> output) // Decode 메서드는 기본 클래스 메서드를 재정의하여 DatagramPacket을 MAVLink 메시지로 디코딩
   {
     context.Channel.GetAttribute( // 채널 컨텍스트에 발신자 주소를 설정
         AttributeKey<IPEndPoint>.ValueOf("SenderAddress")).Set((IPEndPoint)input.Sender);
@@ -31,7 +27,7 @@ public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> 
     {
       // object obj = JsonSerializer.Serialize(decoded); // Json 형태로 변환
       // Console.WriteLine(decoded.GetType());
-      String obj = decoded.ToString();
+      string? obj = decoded.ToString();
       // Console.WriteLine(obj.GetType());
       Console.WriteLine(obj);
       output.Add(obj);
@@ -95,35 +91,3 @@ public class DroneMonitorServiceMavUdpNetty // UDP 서버 구성하는 클래스
       await _bootstrapChannel.CloseAsync();
   }
 }
-
-// public class MavlinkTest
-// {
-//   private readonly MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
-//     
-//   public static void MavLinkMessage()
-//   {
-//     UdpClient udpClient = new UdpClient(14556); // ArduPilot SITL에서 데이터 받을 포트 지정
-//     try
-//     {
-//       while (true)
-//       {
-//         IPEndPoint remoteEp = new IPEndPoint(IPAddress.Any, 0);
-//         byte[] data = udpClient.Receive(ref remoteEp);  // data 배열에는 수신한 바이트 데이터가 들어있다.
-//         // 여기서 MAVLink 메시지를 해석하고 처리하는 로직을 추가하면 된다.
-//         MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
-//         Console.WriteLine(data);
-//       }
-//     }
-//     catch (Exception e)
-//     {
-//       Console.WriteLine(e.ToString());
-//     }
-//     finally
-//     {
-//       udpClient.Close();
-//     }
-//   }
-// }
-
-// CreateHostBuilder(args).Build().Run(); // CreateHostBuilder 호출해서 애플리케이션 실행
-// MavlinkTest.MavLinkMessage();

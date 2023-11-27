@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-
+#nullable disable
 
 /// <summary>
 /// Static methods and helpers for creation and manipulation of Mavlink packets
