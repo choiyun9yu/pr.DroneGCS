@@ -4,6 +4,10 @@ import * as signalR from '@microsoft/signalr';
 export const ChatContext = React.createContext({})
 
 export const SignalRProvider = ({ children }) => {
+
+}
+
+export const ChatRProvider = ({ children }) => {
     const [ connStt, setConnStt ] = useState('init');
     const [ connection, setConnection ] = useState(null);
 

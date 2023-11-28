@@ -13,7 +13,7 @@ import { AppDeIdentification } from './route/AppDeIdentification';
 import { VideoProcessing } from './components/DeIdentification/VideoProcessing';
 import {Chat} from "./components/Others/Chat";
 import {ProjectDocuments} from "./components/Others/ProjectDocuments";
-import {SignalRProvider} from "./components/GCS/SignalRContainder";
+import {ChatRProvider, SignalRProvider} from "./components/GCS/SignalRContainder";
 
 export const Main = () => {
     return (
@@ -38,9 +38,9 @@ export const Main = () => {
                         <Route path="img" element={<VideoProcessing />} />
                     </Route>
                     <Route path={"chat"} element={
-                        <SignalRProvider>
+                        <ChatRProvider>
                             <Chat />
-                        </SignalRProvider>
+                        </ChatRProvider>
                         } />
                     <Route path={"docs"} element={<ProjectDocuments />} />
                 </Route>
