@@ -13,10 +13,11 @@ namespace SignalRChat.Hubs
 
     public class DroneHub : Hub
     {
-        public async Task SendMessageToClient(string message)
+        // 클라이언트로 메시지를 보내는 예제 이벤트 핸들러
+        public async Task SendEventToClient(string message)
         {
-            // 클라이언트에게 메시지 보내기
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            // 클라이언트로 메시지를 보냅니다.
+            await Clients.All.SendAsync("ReceiveEvent", message);
         }
     }
 }

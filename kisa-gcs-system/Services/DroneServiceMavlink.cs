@@ -2,14 +2,39 @@
 
 using System.Net;
 using System.Net.Sockets;
+using Microsoft.AspNetCore.SignalR;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Common.Utilities;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
+using SignalRChat.Hubs;
+
 
 namespace kisa_gcs_service;
+
+public class BackgroundWorker : BackgroundService
+{
+    private readonly IHubContext<DroneHub> _hubContext;
+
+    public BackgroundWorker(IHubContext<DroneHub> hubContext)
+    {
+        _hubContext = hubContext;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+      while (!stoppingToken.IsCancellationRequested)
+      {
+        // 일정 간격으로 SendEventToClients 메서드 호출
+        await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+
+        // SendEventToClients 메서드 호출하여 클라이언트에게 이벤트 전송
+        await _hubContext.Clients.All.SendAsync("ReceiveEvent", "Hello from server!");
+      }
+    }
+}
 
 public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> // MavlinkUdpMessageDecoder 클래스는 MessageToMessageDecoder<DatagramPacket>을 확장
 {                                                                               // MessageToMessageDecoder 클래스는 dotNetty에서 사용자가 정의한 프로토콜로 인코딩된 메시지를 디코딩하는 데 사용, 이 클래스를 상속받아 용자 정의 디코딩 로직을 구현할 수 있음
@@ -29,6 +54,7 @@ public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> 
       // Console.WriteLine(decoded.GetType());
       string? obj = decoded.ToString();
       // Console.WriteLine(obj.GetType());
+      
       Console.WriteLine(obj);
       output.Add(obj);
     }
