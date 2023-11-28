@@ -14,34 +14,17 @@ using SignalRChat.Hubs;
 
 namespace kisa_gcs_service;
 
-public class BackgroundWorker : BackgroundService
-{
-    private readonly IHubContext<DroneHub> _hubContext;
-
-    public BackgroundWorker(IHubContext<DroneHub> hubContext)
-    {
-        _hubContext = hubContext;
-    }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-      while (!stoppingToken.IsCancellationRequested)
-      {
-        // 일정 간격으로 SendEventToClients 메서드 호출
-        await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
-
-        // SendEventToClients 메서드 호출하여 클라이언트에게 이벤트 전송
-        await _hubContext.Clients.All.SendAsync("ReceiveEvent", "Hello from server!");
-      }
-    }
-}
-
 public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> // MavlinkUdpMessageDecoder 클래스는 MessageToMessageDecoder<DatagramPacket>을 확장
 {                                                                               // MessageToMessageDecoder 클래스는 dotNetty에서 사용자가 정의한 프로토콜로 인코딩된 메시지를 디코딩하는 데 사용, 이 클래스를 상속받아 용자 정의 디코딩 로직을 구현할 수 있음
   private readonly MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
-  
-  
-  protected override void Decode(IChannelHandlerContext context, DatagramPacket input, List<object?> output) // Decode 메서드는 기본 클래스 메서드를 재정의하여 DatagramPacket을 MAVLink 메시지로 디코딩
+  private readonly IHubContext<DroneHub> _hubContext;
+
+  public MavlinkUdpMessageDecoder(IHubContext<DroneHub> hubContext)
+  {
+    _hubContext = hubContext;
+  }
+
+  protected override async void Decode(IChannelHandlerContext context, DatagramPacket input, List<object?> output) // Decode 메서드는 기본 클래스 메서드를 재정의하여 DatagramPacket을 MAVLink 메시지로 디코딩
   {
     context.Channel.GetAttribute( // 채널 컨텍스트에 발신자 주소를 설정
         AttributeKey<IPEndPoint>.ValueOf("SenderAddress")).Set((IPEndPoint)input.Sender);
@@ -55,6 +38,8 @@ public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> 
       string? obj = decoded.ToString();
       // Console.WriteLine(obj.GetType());
       
+      // SendEventToClients 메서드 호출하여 클라이언트에게 이벤트 전송
+      await _hubContext.Clients.All.SendAsync("ReceiveEvent", obj);
       Console.WriteLine(obj);
       output.Add(obj);
     }
@@ -84,7 +69,7 @@ public class DroneMonitorServiceMavUdpNetty // UDP 서버 구성하는 클래스
   private IChannel? _bootstrapChannel;
 
   
-  public DroneMonitorServiceMavUdpNetty()
+  public DroneMonitorServiceMavUdpNetty(IHubContext<DroneHub> hubContext)
   {
     // 부트스트랩 초기화 (_언더스코어를 변수 앞에 붙이면 해당 클래스 내에서만 사용된다는 것을 의미)
     _bootstrap = new Bootstrap();   // _bootstrap: UDP 서버를 설정하고 시작하기 위한 부트스트랩 
@@ -98,7 +83,7 @@ public class DroneMonitorServiceMavUdpNetty // UDP 서버 구성하는 클래스
       .Handler(new ActionChannelInitializer<IChannel>(channel =>  // Netty의 ChannelInitializer를 사용하여 소켓 채널의 초기화 담당, ChannelInitializer는 새로운 채널이 생성될 때마다 호출되는 초기화 로직을 정의한다. 주로 이곳에 채널 파이프라인에 필요한 핸들러 및 디코더, 인코더 등을 추가한다. 
         {
           var pipeline = channel.Pipeline;  // Netty에서는 데이터가 채널을 통과하는 동안 적용되는 일련의 처리 단계를 파이프라인이라고 한다. pipeline 객체는 이러한 파이프라인을 정의하고 구성하는데 사용된다.
-          pipeline.AddLast("MavLink udp decoder", new MavlinkUdpMessageDecoder());  // 패킷 디코더 및 핸들러 추가(위에서 정의한)
+          pipeline.AddLast("MavLink udp decoder", new MavlinkUdpMessageDecoder(hubContext));  // 패킷 디코더 및 핸들러 추가(위에서 정의한)
         }
       ));
   }
