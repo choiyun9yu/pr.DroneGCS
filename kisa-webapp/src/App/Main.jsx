@@ -14,7 +14,6 @@ import { VideoProcessing } from './components/DeIdentification/VideoProcessing';
 import {Chat} from "./components/Others/Chat";
 import {ProjectDocuments} from "./components/Others/ProjectDocuments";
 import {SignalRProvider} from "./components/GCS/SignalRContainder";
-import ChatPage from "./components/Others/ChatPage";
 
 export const Main = () => {
     return (
@@ -38,7 +37,11 @@ export const Main = () => {
                     <Route element={<AppDeIdentification />}>
                         <Route path="img" element={<VideoProcessing />} />
                     </Route>
-                    <Route path={"chat"} element={<Chat />} />
+                    <Route path={"chat"} element={
+                        <SignalRProvider>
+                            <Chat />
+                        </SignalRProvider>
+                        } />
                     <Route path={"docs"} element={<ProjectDocuments />} />
                 </Route>
             </Routes>

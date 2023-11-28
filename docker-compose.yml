@@ -1,11 +1,11 @@
 version: '3.8'
 
 services:
-  dashboard-service:
+  dashboard-system:
     container_name: flask
     build:
       dockerfile: Dockerfile
-      context: ./kisa-dashboard-service
+      context: kisa-dashboard-system
     restart: always
     network_mode: host
     depends_on:
@@ -14,11 +14,11 @@ services:
       MONGO_URI_DB1: "mongodb://localhost:27017/prediction_service"
       MONGO_URI_DB2: "mongodb://localhost:27017/gcs_drone"
 
-  gcs-service:
+  gcs-system:
     container_name: dotnet
     build:
       dockerfile: Dockerfile
-      context: ./kisa-gcs-service
+      context: kisa-gcs-system
     restart: always
     network_mode: host
     depends_on:

@@ -6,7 +6,6 @@ import React, {useEffect, useState} from "react";
 
 export const LeftSidebar = (props) => {
     const [gcsMode, setGcsMode] = useOutletContext();
-    // const [time, setTime] = useState(Date.now())
     const [droneList, setDroneList] = useState([]);
     const [formData, setFormData] = useState({
         DroneId: ' ',
@@ -71,64 +70,28 @@ export const LeftSidebar = (props) => {
         }
     };
 
-    // useEffect(() => {
-    //     const intervalId = setInterval(() => {
-    //         // 1초마다 현재 시간 업데이트
-    //         setTime(Date.now());
-    //     }, 10000)
-    //
-    //     // 컴포넌트가 언마운트되면 clearInterval을 사용하여 인터벌 정리
-    //     return () => clearInterval(intervalId);
-    // }, []);
-
-    useEffect(() => {
-        const fetchGet = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/api/drones', {
-                    method: 'GET',
-                });
-                if (response.ok) {
-                    // console.log('요청 성공');
-                    const data = await response.json();
-                    setDroneList(data);
-                } else {
-                    console.error('요청 실패');
-                }
-            } catch (error) {
-                console.error('요청 중 오류 발생', error);
-            }
-        };
-
-        fetchGet();
-    }, []);
 
     // useEffect(() => {
-    //     const fetchPost = async () => {
-    //         // POST 요청
+    //     const fetchGet = async () => {
     //         try {
-    //             const Body = new FormData();
-    //             Body.append('DroneId', formData["DroneId"]);
-    //
     //             const response = await fetch('http://localhost:5000/api/drones', {
-    //                 method: 'POST',
-    //                 body: Body,
+    //                 method: 'GET',
     //             });
-    //
     //             if (response.ok) {
-    //                 const data = await response.json();
     //                 // console.log('요청 성공');
-    //                 // console.log(data)
-    //                 props.dataTransfer(data);
+    //                 const data = await response.json();
+    //                 setDroneList(data);
     //             } else {
     //                 console.error('요청 실패');
     //             }
     //         } catch (error) {
     //             console.error('요청 중 오류 발생', error);
     //         }
-    //     }
+    //     };
     //
-    //     fetchPost()
-    // }, [formData]) //[time, props]
+    //     fetchGet();
+    // }, []);
+
 
     return (
         <div className={`flex flex-col items-start w-full h-full rounded-2xl font-bold text-medium text-gray-200 ${ColorThema.Secondary4}`}>
