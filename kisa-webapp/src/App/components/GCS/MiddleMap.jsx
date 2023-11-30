@@ -64,7 +64,6 @@ export const MiniMap = (props) => {
 }
 
 export const Table = (props) => {
-    const middleTable = {...props.middleTable};
 
     return(
         <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
@@ -72,35 +71,35 @@ export const Table = (props) => {
                 <tbody>
                     <tr>
                         <th className={`px-2`}>전체 이동거리</th>
-                        <td className={`px-2`}> {middleTable.TotalDistance} km</td>
+                        <td className={`px-2`}> km</td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>현재 비행거리</th>
-                        <td className={`px-2`}> {middleTable.ElapsedDistance} km</td>
+                        <td className={`px-2`}> km</td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>잔여 이동거리</th>
-                        <td className={`px-2`}> {middleTable.RemainDistance} km</td>
+                        <td className={`px-2`}> km</td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>현재 이동속도</th>
-                        <td className={`px-2`}> {middleTable.DroneSpeed} m/s</td>
+                        <td className={`px-2`}> m/s</td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>평균 이동속도</th>
-                        <td className={`px-2`}> {middleTable.DroneAvgSpeed} m/s</td>
+                        <td className={`px-2`}> m/s</td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>이륙 시작시간</th>
-                        <td className={`px-2`}> {middleTable.StartTime} </td>
+                        <td className={`px-2`}> </td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>비행 소요시간</th>
-                        <td className={`px-2`}> {middleTable.TakenTime}</td>
+                        <td className={`px-2`}> </td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>비행 완료시간</th>
-                        <td className={`px-2`}> {middleTable.CompleteTime}</td>
+                        <td className={`px-2`}> </td>
                     </tr>
                 </tbody>
             </table>

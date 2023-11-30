@@ -5,19 +5,17 @@ import { MiddleMap } from './MiddleMap';
 import { FlightMode } from './FlightMode';
 import { MissionMode } from './MissionMode';
 import { VideoMode } from './VideoMode';
-import { useState } from "react";
+import {useContext, useState} from "react";
 import {DataMap} from "../DataMap";
+import {DroneContext} from "../GCS/SignalRContainder";
 
 export const DroneMonitor = () => {
     const [gcsMode, setGcsMode] = useOutletContext();
     const [swapMap, setSwapMap] = useState(false);
     const [isLeftPanel, setIsLeftPanel ] = useState(true);
-    const [isRightPanel, setIsRightPanel] = useState(true)
-    const [monitorItems, setMonitorItems] = useState(DataMap.monitorMap);
+    const [isRightPanel, setIsRightPanel] = useState(true);
+    const { SendMessageToClient } = useContext(DroneContext);
 
-    const dataTransfer = (data) => {
-        setMonitorItems(data)
-    }
 
     const handleSwapMap = () => {
         setSwapMap(!swapMap)
@@ -36,7 +34,7 @@ export const DroneMonitor = () => {
         <div className="flex flex-row w-full h-full p-3 overflow-hidden">
                 { isLeftPanel
                     ? <div id="left-sidebar" className="w-[180px]">
-                        <LeftSidebar gcsMode={gcsMode} setGcsMode={setGcsMode} dataTransfer={dataTransfer} />
+                        <LeftSidebar gcsMode={gcsMode} setGcsMode={setGcsMode} />
                       </div>
                     : null}
             <div id="middle-map" className="flex-grow m-3">
@@ -47,7 +45,6 @@ export const DroneMonitor = () => {
                            handleIsLeftPanel={handleIsLeftPanel}
                            isRightPanel={isRightPanel}
                            handleIsRightPanel={handleIsRightPanel}
-                           middleTable={monitorItems.middleTable}
                 />
             </div>
                 {gcsMode === 'flight' && isRightPanel ? (
@@ -55,7 +52,6 @@ export const DroneMonitor = () => {
                         handleSwapMap={handleSwapMap}
                         handleIsRightPanel={handleIsRightPanel}
                         swapMap={swapMap}
-                        rightTable={monitorItems.rightTable}
                     />) : null}
                 {gcsMode === 'mission' ? <MissionMode /> : null}
                 {gcsMode === 'video' ? <VideoMode /> : null}

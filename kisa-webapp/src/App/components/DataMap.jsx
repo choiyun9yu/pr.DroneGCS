@@ -165,23 +165,4 @@ export const DataMap = {
         '채널 15',
         '채널 16',
     ],
-    monitorMap: {
-        droneId: 'None',
-        totalDistance: 'None',
-        elapsedDistance: 'None',
-        remainDistance: 'None',
-        startTime: 'None',
-        completeTime: 'None',
-        droneRawState: {
-            WP_NO: 'None',
-            POWER_V: 'None',
-            TEMPERATURE_C: 'None',
-            GPS_STATE: 'None',
-            HDOP: 'None',
-            DR_LAT: 'None',
-            DR_LON: 'None',
-            DR_ALT: 'None',
-            DR_SPEED: 'None',
-        },
-    }
 };

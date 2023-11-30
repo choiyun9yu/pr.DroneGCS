@@ -7,7 +7,7 @@ import {MiniMap, Table} from "./MiddleMap";
 export const FlightMode = (props) => {
     return (
         <div id="right-sidebar" className="flex  flex-col w-[500px]">
-            <RightSideTop rightTable={props.rightTable} />
+            <RightSideTop />
             <RightSideBottom swapMap={props.swapMap}
                              handleSwapMap={props.handleSwapMap}/>
         </div>
@@ -15,7 +15,6 @@ export const FlightMode = (props) => {
 };
 
 const RightSideTop = (props) => {
-    const rightTable = {...props.rightTable};
 
     return (
         <div className={`items-start w-full h-1/2 mb-3 rounded-2xl ${ColorThema.Secondary4}`}>
@@ -26,37 +25,37 @@ const RightSideTop = (props) => {
                 <tbody>
                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 ID</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{rightTable.DroneId}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>현재 WP 번호</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{rightTable.WayPointNum}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
                 </tr>
 
                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 전압 (V)</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{rightTable.PowerV}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 온도 (°C)</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{rightTable.TempC}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
                 </tr>
 
                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>GPS 수신</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{rightTable.GpsStt}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>HDOP</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{rightTable.HDOP}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
                 </tr>
 
                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>위도</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{rightTable.Lat}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>경도</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{rightTable.Lon}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
                 </tr>
 
                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>고도 (m)</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{rightTable.Alt}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>제어권</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{rightTable.Control}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
                 </tr>
                 </tbody>
             </table>

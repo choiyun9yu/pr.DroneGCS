@@ -1,7 +1,6 @@
-#nullable enable
-
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using Microsoft.AspNetCore.SignalR;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
@@ -10,41 +9,36 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using SignalRChat.Hubs;
+using Exception = System.Exception;
 
+namespace kisa_gcs_service.Service;
 
-namespace kisa_gcs_service;
-
-public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> // MavlinkUdpMessageDecoder 클래스는 MessageToMessageDecoder<DatagramPacket>을 확장
+//////////////////////////////////////// DroneMavLinkMonitorUnit.cs ////////////////////////////////////////
+public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> // MavlinkUdpMessageDecoder 클래스는 MessageToMessageDecoder<DatagramPacket>을 상속받아 UDP 패킷을 MAVLink 메시지로 디코딩 한다.
 {                                                                               // MessageToMessageDecoder 클래스는 dotNetty에서 사용자가 정의한 프로토콜로 인코딩된 메시지를 디코딩하는 데 사용, 이 클래스를 상속받아 용자 정의 디코딩 로직을 구현할 수 있음
-  private readonly MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();
-  private readonly IHubContext<DroneHub> _hubContext;
+  private readonly MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();    // MAVLink 라이브러리의 MavlinkParse 클래스 생성(MavlinkParse 클래스는 MAVLink 메시지를 파싱하고 생성하는데 사용되는 클래스)
+  private readonly IHubContext<DroneHub> _hubContext;   // IHubContext를 주입 받아 SignalR Hub와 통신
 
   public MavlinkUdpMessageDecoder(IHubContext<DroneHub> hubContext)
   {
-    _hubContext = hubContext;
+    _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));  // ?? 이하는 null인경우 예외처리 코드
   }
 
-  protected override async void Decode(IChannelHandlerContext context, DatagramPacket input, List<object?> output) // Decode 메서드는 기본 클래스 메서드를 재정의하여 DatagramPacket을 MAVLink 메시지로 디코딩
+  protected override async void Decode(IChannelHandlerContext context, DatagramPacket input, List<object?> output) // Decode 메서드는 기본 클래스 메서드를 재정의하여 DatagramPacket을 MAVLink 메시지로 디코딩하고, 디코딩 된 메시지를 SignalR Hub로 전송
   {
     context.Channel.GetAttribute( // 채널 컨텍스트에 발신자 주소를 설정
         AttributeKey<IPEndPoint>.ValueOf("SenderAddress")).Set((IPEndPoint)input.Sender);
     
-    // DatagramPacket을 MAVLink 메시지로 디코딩
-    var decoded = this.Decode(context, input);
+    var decoded = Decode(context, input);     // DatagramPacket을 MAVLink 메시지로 디코딩
     if (decoded != null)
     {
-      // object obj = JsonSerializer.Serialize(decoded); // Json 형태로 변환
       // Console.WriteLine(decoded.GetType());
       string? obj = decoded.ToString();
-      // Console.WriteLine(obj.GetType());
-      
-      // SendEventToClients 메서드 호출하여 클라이언트에게 이벤트 전송
-      await _hubContext.Clients.All.SendAsync("ReceiveEvent", obj);
+      await _hubContext.Clients.All.SendAsync("ReceiveEvent", obj);       // SendEventToClients 메서드 호출하여 클라이언트에게 이벤트 전송
       Console.WriteLine(obj);
       output.Add(obj);
     }
   }
-  
   
   protected virtual object? Decode(IChannelHandlerContext context, DatagramPacket input) // DatagramPacket에서 MAVLink 메시지를 추출하기 위한 가상 Decode 메서드
   {
@@ -62,14 +56,14 @@ public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> 
 }
 
 
+//////////////////////////////////////// DroneMonitorServiceMavNetty.cs ////////////////////////////////////////
 public class DroneMonitorServiceMavUdpNetty // UDP 서버 구성하는 클래스
 {
-  private readonly MultithreadEventLoopGroup _bossGroup = new(2);
+  private readonly MultithreadEventLoopGroup _bossGroup = new MultithreadEventLoopGroup(2);
   private readonly Bootstrap _bootstrap;
   private IChannel? _bootstrapChannel;
-
   
-  public DroneMonitorServiceMavUdpNetty(IHubContext<DroneHub> hubContext)
+  public DroneMonitorServiceMavUdpNetty(IHubContext<DroneHub> hubContext)   // IHubContext를 주입받아 MavlinkUdpMessageDecoder 클래스에 전달
   {
     // 부트스트랩 초기화 (_언더스코어를 변수 앞에 붙이면 해당 클래스 내에서만 사용된다는 것을 의미)
     _bootstrap = new Bootstrap();   // _bootstrap: UDP 서버를 설정하고 시작하기 위한 부트스트랩 
@@ -88,13 +82,12 @@ public class DroneMonitorServiceMavUdpNetty // UDP 서버 구성하는 클래스
       ));
   }
   
-  
   public async Task StartAsync(int port)  // 지정된 호스트 및 포트로 UDP 클라이언트를 시작하고 데이터를 수신
   { // UDP 서버 시작 및 바인딩
-    _bootstrapChannel = await _bootstrap.BindAsync(port);   // _bootstrapChannel: 서버가 바인딩된 채널을 저장하는 변수
+    _bootstrapChannel = await _bootstrap.BindAsync(new IPEndPoint(IPAddress.Any, port));  // 서버를 모든 네트워크 인터페이스에 바인딩
+    // _bootstrapChannel = await _bootstrap.BindAsync(port);   // _bootstrapChannel: 서버가 바인딩된 채널을 저장하는 변수
     Console.WriteLine("Started UDP server for Mavlink: " + port);
   }
-  
   
   public async Task StopAsync()   // 클라이언트 중지
   { // UDP 서버 중지
@@ -102,3 +95,7 @@ public class DroneMonitorServiceMavUdpNetty // UDP 서버 구성하는 클래스
       await _bootstrapChannel.CloseAsync();
   }
 }
+
+
+//////////////////////////////////////// DroneMonitorServiceMavNetty.cs ////////////////////////////////////////
+

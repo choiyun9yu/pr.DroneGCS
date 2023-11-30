@@ -27,7 +27,7 @@
 ![img.png](img.png)
 
 ### 2-1. Undeveloped List
-- Parsing MAVLink message to Drone State with MAVSDK
-- Send Drone State from .NET Server to Flask Server with Socket.IO
-- Convert Mssion message to MAVLink message with MAVSDK
-- Send MAVLink message from .NET Server to Ardupilot with dotNetty
+③ Parsing MAVLink message to Drone State with MAVSDK  
+⑤ Send Drone State from .NET Server to Flask Server with Socket.IO  
+⑦ Convert Mssion message to MAVLink message with MAVSDK  
+⑧ Send MAVLink message from .NET Server to Ardupilot with dotNetty  

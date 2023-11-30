@@ -2,6 +2,19 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace SignalRChat.Hubs
 {
+    public class DroneHub : Hub
+    {
+        // 클라이언트로 메시지를 보내는 예제 이벤트 핸들러
+        public async Task SendEventToClient(string? mavMessage)
+        {
+            // 클라이언트로 메시지를 보냅니다.
+            await Clients.All.SendAsync("ReceiveMavMessage", mavMessage);
+        }
+    }
+    
+    
+    
+    
     public class ChatHub : Hub
     {
         public async Task SendMessage(string user, string message)  // 클라이언트로부터 호출되는 메서드
@@ -11,13 +24,5 @@ namespace SignalRChat.Hubs
         }
     }
 
-    public class DroneHub : Hub
-    {
-        // 클라이언트로 메시지를 보내는 예제 이벤트 핸들러
-        public async Task SendEventToClient(string message)
-        {
-            // 클라이언트로 메시지를 보냅니다.
-            await Clients.All.SendAsync("ReceiveEvent", message);
-        }
-    }
+
 }

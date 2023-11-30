@@ -6,92 +6,6 @@ import React, {useEffect, useState} from "react";
 
 export const LeftSidebar = (props) => {
     const [gcsMode, setGcsMode] = useOutletContext();
-    const [droneList, setDroneList] = useState([]);
-    const [formData, setFormData] = useState({
-        DroneId: ' ',
-    });
-
-
-    const handleSelectChange = async (e) => {
-        const { name, value } = e.target;
-
-        // 선택된 값이 변경될 때마다 로컬 스토리지에 저장
-        // useState의 setter가 비동기로 상태 업데이트를 수행하는 경우 업데이트 이후의 값을 사용하려면 await로 기다려줘야 한다.
-        await setFormData({
-            [name]: value,
-        });
-
-        // POST 요청
-        try {
-            const Body = new FormData();
-            Body.append([name], value);
-
-            const response = await fetch('http://localhost:5000/api/drones', {
-                method: 'POST',
-                body: Body,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                // console.log('요청 성공');
-
-                // 데이터 포뜨기
-                const transferData = {
-                    rightTable : {
-                        DroneId: data.droneId,
-                        WayPointNum: data.droneRawState.WP_NO,
-                        PowerV: data.droneRawState.POWER_V,
-                        TempC: data.droneRawState.TEMPERATURE_C,
-                        GpsStt: data.droneRawState.GPS_STATE,
-                        HDOP: data.droneRawState.HDOP,
-                        Lat: data.droneRawState.DR_LAT,
-                        Lon: data.droneRawState.DR_LON,
-                        Alt: data.droneRawState.DR_ALT,
-                        Control: '???',
-                    },
-                    middleTable : {
-                        TotalDistance: data.totalDistance,
-                        ElapsedDistance: data.elapsedDistance,
-                        RemainDistance: data.remainDistance,
-                        DroneSpeed: data.droneRawState.DR_SPEED,
-                        StartTime: data.startTime,
-                        CompleteTime: data.completeTime,
-                        TakenTime: '???',
-                        DroneAvgSpeed: '???',
-                    }
-                }
-                props.dataTransfer(transferData);
-
-            } else {
-                console.error('요청 실패');
-            }
-        } catch (error) {
-            console.error('요청 중 오류 발생', error);
-        }
-    };
-
-
-    // useEffect(() => {
-    //     const fetchGet = async () => {
-    //         try {
-    //             const response = await fetch('http://localhost:5000/api/drones', {
-    //                 method: 'GET',
-    //             });
-    //             if (response.ok) {
-    //                 // console.log('요청 성공');
-    //                 const data = await response.json();
-    //                 setDroneList(data);
-    //             } else {
-    //                 console.error('요청 실패');
-    //             }
-    //         } catch (error) {
-    //             console.error('요청 중 오류 발생', error);
-    //         }
-    //     };
-    //
-    //     fetchGet();
-    // }, []);
-
 
     return (
         <div className={`flex flex-col items-start w-full h-full rounded-2xl font-bold text-medium text-gray-200 ${ColorThema.Secondary4}`}>
@@ -107,22 +21,12 @@ export const LeftSidebar = (props) => {
 
             <div className="w-full m-2 items-center">
                 <span className="ml-3">• 등록 드론 </span>
-                <form>
-                    <label>
-                        <select className="h-[30px] w-[130px] ml-5 mt-1 px-2 rounded-lg border border-gray-300  text-gray-400 bg-transparent font-normal"
-                                name={'DroneId'} value={formData.DroneId} onChange={handleSelectChange}>
-                            <option> 드론 선택 </option>
-                            {droneList.map((item, index) => (
-                                <option value={item} key={index}>{item}</option>
-                            ))}
-                        </select>
-                    </label>
-                </form>
             </div>
 
             <div className="w-full m-2 items-center">
                 <span className="ml-3">• Way Point </span>
             </div>
+
         </div>
     );
 };
