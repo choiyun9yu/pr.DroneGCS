@@ -20,7 +20,7 @@ public class Startup
         {
             options.AddPolicy("CorsPolicy", builder =>
             {
-                builder.WithOrigins("http://localhost:3000")// 특정 오리진 허용
+                builder.WithOrigins("http://localhost:3000, http://localhost:5050")// 특정 오리진 허용
                     .AllowAnyMethod()   // 모든 HTTP 메서드 허용
                     .AllowAnyHeader()   // 모든 헤더 허용
                     .AllowCredentials();// Credentails 모드 제거 (보안 상의 이유로 모든 오리진 허용 옵션과 동시 사용 불가)
@@ -52,7 +52,7 @@ public class Startup
         {
             endpoints.MapControllers();
             endpoints.MapHub<ChatHub>("/chatHub");   // SignalR
-            endpoints.MapHub<DroneHub>("/droneHub");    
+            endpoints.MapHub<DroneHub>("/droneHub");
             endpoints.MapGet("/", async context =>
             {
                 await context.Response.WriteAsync("Hello World!");

@@ -18,7 +18,7 @@ public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> 
 {                                                                               // MessageToMessageDecoder 클래스는 dotNetty에서 사용자가 정의한 프로토콜로 인코딩된 메시지를 디코딩하는 데 사용, 이 클래스를 상속받아 용자 정의 디코딩 로직을 구현할 수 있음
   private readonly MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();    // MAVLink 라이브러리의 MavlinkParse 클래스 생성(MavlinkParse 클래스는 MAVLink 메시지를 파싱하고 생성하는데 사용되는 클래스)
   private readonly IHubContext<DroneHub> _hubContext;   // IHubContext를 주입 받아 SignalR Hub와 통신
-
+  
   public MavlinkUdpMessageDecoder(IHubContext<DroneHub> hubContext)
   {
     _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));  // ?? 이하는 null인경우 예외처리 코드
@@ -35,7 +35,7 @@ public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> 
       // Console.WriteLine(decoded.GetType());
       string? obj = decoded.ToString();
       await _hubContext.Clients.All.SendAsync("ReceiveEvent", obj);       // SendEventToClients 메서드 호출하여 클라이언트에게 이벤트 전송
-      Console.WriteLine(obj);
+      // Console.WriteLine(obj);
       output.Add(obj);
     }
   }

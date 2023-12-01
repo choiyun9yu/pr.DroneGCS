@@ -1,32 +1,22 @@
-from flask import Flask, request
+from flask import Flask
 from flask_socketio import SocketIO
-
+from flask_cors import CORS
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app) # 경로를 /socket.io로 설정
+CORS(app)
 
 @app.route('/')
 def index():
-    return 'Hello World!'
+    return 'hello world!'
 
 @socketio.on('connect')
 def handle_connect():
-    print('Connected to Flask WebSocket')
+    print('Client Connected!')
 
-@socketio.on('disconnect')
-def handle_disconnect():
-    print('Disconnected from Flask WebSocket')
-
-def send_data_to_signalr(data):
-    # 'send_data_to_signalr' 이벤트를 통해 데이터를 .NET SignalR 서버로 전송
-    socketio.emit('send_data_to_signalr', data)
-
-# 사용자가 데이터를 전송할 수 있는 엔드포인트
-@app.route('/send_data', methods=['POST'])
-def send_data():
-    data = request.form.get('data')
-    send_data_to_signalr(data)
-    return 'Data sent to SignalR'
+@socketio.on('message')
+def handle_message(message):
+    print('Received message:', message)
 
 if __name__ == '__main__':
     socketio.run(app, port=5050, debug=True, allow_unsafe_werkzeug=True)

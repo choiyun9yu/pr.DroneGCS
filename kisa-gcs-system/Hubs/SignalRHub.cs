@@ -12,9 +12,7 @@ namespace SignalRChat.Hubs
         }
     }
     
-    
-    
-    
+
     public class ChatHub : Hub
     {
         public async Task SendMessage(string user, string message)  // 클라이언트로부터 호출되는 메서드
