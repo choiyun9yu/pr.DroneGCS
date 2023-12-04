@@ -9,7 +9,7 @@ services:
     restart: always
     network_mode: host
     depends_on:
-      - mongo-db
+      - mongo
     environment:
       MONGO_URI_DB1: "mongodb://localhost:27017/prediction_service"
       MONGO_URI_DB2: "mongodb://localhost:27017/gcs_drone"
@@ -22,11 +22,22 @@ services:
     restart: always
     network_mode: host
     depends_on:
-      - mongo-db
+      - mongo
+      - gcs-websocket
 
-  mongo-db:
+  gcs-websocket:
+    container_name: websocket
+    build:
+      dockerfile: Dockerfile
+      context: web-socket-server
+    restart: always
+    network_mode: host
+    depends_on:
+      - mongo
+
+  mongo:
     image: mongo
-    container_name: mongodb
+    container_name: mongo
     restart: always
     network_mode: host
     volumes:
@@ -40,8 +51,8 @@ services:
     restart: always
     network_mode: host
     depends_on:
-      - dashboard-service
-      - gcs-service
+      - dashboard-system
+      - gcs-system
 
 volumes:
   mongodb_data:

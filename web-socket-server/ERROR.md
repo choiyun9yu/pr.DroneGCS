@@ -1,0 +1,27 @@
+# ERROR
+
+## 1. SocketIO 사용 
+- .Net : < PackageReference Include="SocketIoClientDotNet" Version="1.0.2-beta1" />
+- Flask : flask-SocketIO 5.3.6
+######
+    The client is using an unsupported version of the Socket.IO or Engine.IO protocols (further occurrences of this error will be logged with level INFO)
+    127.0.0.1 - - [04/Dec/2023 10:25:14] "GET /socket.io/?EIO=3&transport=polling&t=638372823140135725-0&b64=1 HTTP/1.1" 400 -
+
+Socket.IO or Engine.IO의 버전이 호환되지 않는 것으로 파악   
+SocketIoClientDotNet 1.0.2-beta1 은 SocketIO 1.x프로토콜을 사용하고 flask_socketIO 5.3.6은 2.X프로토콜을 사용    
+flask_socketIO를 SocketIO 1.X 프로토콜을 사용하는 1.1로 다운그레이드 -> Werkzeug와 호환이 안됨 -> Werkzeug 다운그레이드 -> Flask와 호환이 안됨 -> Flask 다운그레이드 -> Markup, jinja2와 호환이 안됨 
+
+.NET의 NuGetPackage에 있는 SocketIO 라이브러리는 너무 옛날 버전이라서 최신 Flask SocketIO 들과는 호환이 어려워 보임
+
+
+## 2. WebSocket과 SocketIO는 서로 다른 프로토콜을 사용해서 호환되지 않는다.
+
+
+## 3. WebSocket 사용
+
+    % pip insall websocket
+
+이 방식의 단점은 WebSocket 서버는 Flask 서버와 별도의 서버라는 점이다. redis와 같은 것을 사용하여 메시지큐로 websocket에서 받은 메시지를 flask로 넘겨주는 별도의 과정을 삽입하거나 
+
+websocket 서버에서 수신되는 메세지를 모델로 돌려서 mongodb에 저장하는 프로세스가 필요할 것 같다.
+

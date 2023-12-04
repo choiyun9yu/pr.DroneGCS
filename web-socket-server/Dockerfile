@@ -2,7 +2,7 @@ FROM python:3.10-alpine
 LABEL authors="choiyungyu"
 
 # 이미지 내에서 명령어를 실행할 경로 설정
-WORKDIR /kisa-dashboard-system
+WORKDIR /web-socket-server
 
 # 경로의 디렉토리 내용물을 컨테이너로 복사
 COPY requirements.txt .

@@ -1,5 +1,9 @@
+using System;
+using System.Net.WebSockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using kisa_gcs_service.Service;
-using Microsoft.AspNetCore.SignalR.Client;
 
 namespace kisa_gcs_service;
 public static class Program
@@ -16,22 +20,24 @@ public static class Program
 			.GetService(typeof(DroneMonitorServiceMavUdpNetty))!;
 		await droneUdpService.StartAsync(14556); // 가져온 서비스의 StartAsync 메서드를 호출해서 시작(포트 번호 14556을 전달)
 		
-		// 장애 진단 서버로 전송
-		var connection = new HubConnectionBuilder()
-			.WithUrl("http://localhost:5050/socket.io/?EIO=4&transport=websocket")
-			.Build();
-
-		connection.On<string>("ReceiveMessage", message =>
-		{
-			Console.WriteLine($"Received message: {message}");
-		});
+		// // 장애 진단 서버로 전송
+		// var webSocket = new ClientWebSocket();
+		// var uri = new Uri("ws://localhost:8765"); // WebSocket 서버 주소
+		//
+		// try
+		// {
+		// 	await webSocket.ConnectAsync(uri, CancellationToken.None);
+		//
+		// 	// 메시지 전송
+		// 	var message = "Hello, WebSocket!";
+		// 	var buffer = Encoding.UTF8.GetBytes(message);
+		// 	await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+		// }
+		// finally
+		// {
+		// 	await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by the client", CancellationToken.None);
+		// }
 		
-		await connection.StartAsync();
-
-		await connection.InvokeAsync("SendMessage", "Hello from .NET");
-
-		Console.ReadLine();
-
 		// 호스트 실행
 		await host.RunAsync();
 	}

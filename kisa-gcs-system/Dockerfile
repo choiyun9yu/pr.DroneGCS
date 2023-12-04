@@ -14,6 +14,6 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /kisa-gcs-system
 COPY --from=build-env /kisa-gcs-system/out .
-ENTRYPOINT ["dotnet", "kisa-gcs-service.dll"]
+ENTRYPOINT ["dotnet", "kisa-gcs-system.dll"]
 
 

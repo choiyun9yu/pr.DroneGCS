@@ -1,21 +1,8 @@
 from flask import jsonify, Blueprint, request
 
 from .controller import Drone
-# from . import socketio
 
 api_blueprint = Blueprint('api', __name__)
-
-# 추가
-# @socketio.on('connect', namespace='/test')
-# def test_connect():
-#     socketio.emit('my_response', {'data': 'Connected'})
-
-# 사용자가 데이터를 전송할 수 있는 엔드포인트
-# @app.route('/send_data', methods=['POST'])
-# def send_data():
-#     data = request.form.get('data')
-#     send_data_to_signalr(data)
-#     return 'Data sent to SignalR'
 
 @api_blueprint.route('/', methods=['GET'])
 def index():

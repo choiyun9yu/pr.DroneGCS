@@ -19,7 +19,7 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.0" /> 
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.0" />
     
 <!--    <PackageReference Include="Mavlink.Common" Version="1.0.0" />-->
 <!--    <PackageReference Include="DotNetty.Transport" Version="0.6.0" /> &lt;!&ndash; 네트워크 전송 계층을 처리하는 기능 제공 &ndash;&gt;-->
