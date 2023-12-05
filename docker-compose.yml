@@ -25,11 +25,11 @@ services:
       - mongo
       - gcs-websocket
 
-  gcs-websocket:
-    container_name: websocket
+  predict-system:
+    container_name: machinelearning
     build:
       dockerfile: Dockerfile
-      context: web-socket-server
+      context: kisa-predict-server
     restart: always
     network_mode: host
     depends_on:

@@ -1,2 +1,0 @@
-motor==3.3.2
-websockets==12.0

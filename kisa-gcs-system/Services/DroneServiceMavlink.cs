@@ -8,7 +8,7 @@ using DotNetty.Common.Utilities;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
-using SignalRChat.Hubs;
+using SignalR.Hubs;
 using System.Net.WebSockets;
 using Exception = System.Exception;
 
@@ -18,7 +18,7 @@ namespace kisa_gcs_service.Service;
 public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> // MavlinkUdpMessageDecoder 클래스는 MessageToMessageDecoder<DatagramPacket>을 상속받아 UDP 패킷을 MAVLink 메시지로 디코딩 한다.
 {                                                                               // MessageToMessageDecoder 클래스는 dotNetty에서 사용자가 정의한 프로토콜로 인코딩된 메시지를 디코딩하는 데 사용, 이 클래스를 상속받아 용자 정의 디코딩 로직을 구현할 수 있음
   private readonly MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();    // MAVLink 라이브러리의 MavlinkParse 클래스 생성(MavlinkParse 클래스는 MAVLink 메시지를 파싱하고 생성하는데 사용되는 클래스)
-  private readonly IHubContext<DroneHub> _hubContext;   // IHubContext를 주입 받아 SignalR Hub와 통신
+  private readonly IHubContext<DroneHub> _hubContext;                           // IHubContext를 주입 받아 SignalR Hub와 통신
   
   public MavlinkUdpMessageDecoder(IHubContext<DroneHub> hubContext)
   {
@@ -35,27 +35,27 @@ public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> 
     {
       // Console.WriteLine(decoded.GetType());
       string? obj = decoded.ToString();
-      await _hubContext.Clients.All.SendAsync("ReceiveEvent", obj);       // SendEventToClients 메서드 호출하여 클라이언트에게 이벤트 전송
+      await _hubContext.Clients.All.SendAsync("ReceiveMavMessage", obj);       // SendEventToClients 메서드 호출하여 클라이언트에게 이벤트 전송
       // Console.WriteLine(obj);
       output.Add(obj);
       
-      // 장애 진단 서버로 전송
-      var webSocket = new ClientWebSocket();
-      var uri = new Uri("ws://localhost:8765"); // WebSocket 서버 주소
-
-      try
-      {
-        await webSocket.ConnectAsync(uri, CancellationToken.None);
-
-        // 메시지 전송
-        var message = obj;
-        var buffer = Encoding.UTF8.GetBytes(obj);
-        await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-      }
-      finally
-      {
-        await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by the client", CancellationToken.None);
-      }
+      // // 장애 진단 서버로 전송
+      // var webSocket = new ClientWebSocket();
+      // var uri = new Uri("ws://localhost:8765"); // WebSocket 서버 주소
+      //
+      // try
+      // {
+      //   await webSocket.ConnectAsync(uri, CancellationToken.None);
+      //
+      //   // 메시지 전송
+      //   var message = obj;
+      //   var buffer = Encoding.UTF8.GetBytes(obj);
+      //   await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+      // }
+      // finally
+      // {
+      //   await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by the client", CancellationToken.None);
+      // }
     }
   }
   
@@ -114,7 +114,6 @@ public class DroneMonitorServiceMavUdpNetty // UDP 서버 구성하는 클래스
       await _bootstrapChannel.CloseAsync();
   }
 }
-
 
 //////////////////////////////////////// DroneMonitorServiceMavNetty.cs ////////////////////////////////////////
 

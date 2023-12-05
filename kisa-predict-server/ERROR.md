@@ -17,11 +17,14 @@ flask_socketIO를 SocketIO 1.X 프로토콜을 사용하는 1.1로 다운그레�
 ## 2. WebSocket과 SocketIO는 서로 다른 프로토콜을 사용해서 호환되지 않는다.
 
 
-## 3. WebSocket 사용
+## 3. WebSockets 사용
 
     % pip insall websocket
 
-이 방식의 단점은 WebSocket 서버는 Flask 서버와 별도의 서버라는 점이다. redis와 같은 것을 사용하여 메시지큐로 websocket에서 받은 메시지를 flask로 넘겨주는 별도의 과정을 삽입하거나 
+이 방식의 경우 WebSocket 서버는 Flask 서버와 별도의 서버이다.
 
-websocket 서버에서 수신되는 메세지를 모델로 돌려서 mongodb에 저장하는 프로세스가 필요할 것 같다.
+>  Error: Error parsing handshake response: SyntaxError: Unexpected token 'S', "Server rec"... is not valid JSON
+
+SignalR과 Websockets를 동시에 사용할 때 SignalR의 핸드쉐이크가 제대로 작동하지 않는 오류가 발생했다.
+
 

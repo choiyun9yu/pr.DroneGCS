@@ -1,4 +1,4 @@
-using SignalRChat.Hubs;
+using SignalR.Hubs;
 using kisa_gcs_service.Service;
 
 namespace kisa_gcs_service;
@@ -20,7 +20,7 @@ public class Startup
         {
             options.AddPolicy("CorsPolicy", builder =>
             {
-                builder.WithOrigins("http://localhost:3000, http://localhost:5050")// 특정 오리진 허용
+                builder.WithOrigins("http://localhost:3000")// 특정 오리진 허용
                     .AllowAnyMethod()   // 모든 HTTP 메서드 허용
                     .AllowAnyHeader()   // 모든 헤더 허용
                     .AllowCredentials();// Credentails 모드 제거 (보안 상의 이유로 모든 오리진 허용 옵션과 동시 사용 불가)
@@ -48,8 +48,8 @@ public class Startup
         app.UseRouting();               // 라우팅, URL 라우팅 활성화, 요청을 적절한 컨트롤러 액션으로 라우팅하는데 사용
         app.UseAuthorization();         // 인증 및 권한 부여 미들웨어 추가
         app.UseCors("CorsPolicy");      // CORS
-        app.UseWebSockets();            // 웹 소켓 사용
-        app.UseMiddleware<WebSocketHandler>();
+        // app.UseWebSockets();            // 웹 소켓 사용
+        // app.UseMiddleware<WebSocketHandler>();
         app.UseEndpoints(endpoints => // 엔드포인트 매핑, 컨트롤러 엔드 포인트를 애플리케이션에 매핑, API 요청을 처리하고 컨트롤러 액션을 실행하는데 사용 
         {
             endpoints.MapControllers();
