@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   dashboard-system:
-    container_name: flask
+    container_name: dashbard
     build:
       dockerfile: Dockerfile
       context: kisa-dashboard-system
@@ -15,7 +15,7 @@ services:
       MONGO_URI_DB2: "mongodb://localhost:27017/gcs_drone"
 
   gcs-system:
-    container_name: dotnet
+    container_name: gcs
     build:
       dockerfile: Dockerfile
       context: kisa-gcs-system
@@ -23,10 +23,9 @@ services:
     network_mode: host
     depends_on:
       - mongo
-      - gcs-websocket
 
   predict-system:
-    container_name: machinelearning
+    container_name: predict
     build:
       dockerfile: Dockerfile
       context: kisa-predict-server

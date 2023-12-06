@@ -1,23 +1,21 @@
 import asyncio
-import logging
-
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 
 async def main():
     hub_connection = HubConnectionBuilder() \
         .with_url("ws://localhost:5000/droneHub/") \
-        .configure_logging(logging.DEBUG) \
+        .configure_logging(logging_level=30) \
         .with_automatic_reconnect({
         "type": "raw",
         "keep_alive_interval": 10,
         "reconnect_interval": 5,
         "max_attempts": 10
     }).build()
+    # logging_level (CRITICAL: 50, ERROR: 40, WARNING: 30, INFO: 20, DEBUG: 10, NOTSET: 0)
 
     hub_connection.on_open(lambda: print("connection opened and handshake received ready to send messages"))
     hub_connection.on_close(lambda: print("connection closed"))
     hub_connection.on_reconnect(lambda: print("reconnection in progress"))
-
     hub_connection.on("ReceiveMavMessage", print)
 
     hub_connection.start()

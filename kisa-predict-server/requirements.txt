@@ -1,1 +1,2 @@
 motor==3.3.2
+signalrcore==0.9.5

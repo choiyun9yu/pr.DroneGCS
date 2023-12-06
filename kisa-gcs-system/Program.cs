@@ -20,6 +20,7 @@ public static class Program
 			.GetService(typeof(DroneMonitorServiceMavUdpNetty))!;
 		await droneUdpService.StartAsync(14556); // 가져온 서비스의 StartAsync 메서드를 호출해서 시작(포트 번호 14556을 전달)
 		
+		
 		// 호스트 실행
 		await host.RunAsync();
 	}
