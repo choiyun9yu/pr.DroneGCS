@@ -1,4 +1,6 @@
 using System;
+using System.Net;
+using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -12,14 +14,13 @@ public static class Program
 	{
 		// 호스트 빌드
 		var host = CreateHostBuilder(args).Build();		
-
-		// MAVLink 수신
+		
+		// // MAVLink 수신
 		var droneUdpService =
 		(DroneMonitorServiceMavUdpNetty)host // 서비스 프로바이더로부터 DroneMonitorServiceMavUdpNetty 서비스를 가져온다.
 			.Services // ASP.NET Core에서 Host 또는 WebHost를 생성하면 'IServiceProvider 인터페이스를 구현한 컨테이너가 생성된다. 이 서비스 컨테이너는 애플리케이션 전체에서 사용가능한 서비스를 관리하고 제공한다. .Services는 이 서비스 컨테이너에서 서비스를 검색하는데 사용된다. 주로 의존성 주입을 통해 서비스를 사용할 때 쓰인다. 
 			.GetService(typeof(DroneMonitorServiceMavUdpNetty))!;
 		await droneUdpService.StartAsync(14556); // 가져온 서비스의 StartAsync 메서드를 호출해서 시작(포트 번호 14556을 전달)
-		
 		
 		// 호스트 실행
 		await host.RunAsync();

@@ -36,7 +36,7 @@ public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> 
       // Console.WriteLine(decoded.GetType());
       string? obj = decoded.ToString();
       await _hubContext.Clients.All.SendAsync("ReceiveMavMessage", obj);       // SendEventToClients 메서드 호출하여 클라이언트에게 이벤트 전송
-      // Console.WriteLine(obj);
+      Console.WriteLine(obj);
       output.Add(obj);
       
       // // 장애 진단 서버로 전송
