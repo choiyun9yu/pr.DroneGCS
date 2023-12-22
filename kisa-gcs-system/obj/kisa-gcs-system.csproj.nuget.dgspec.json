@@ -1,26 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "/Users/yun9yuchoi/Documents/mygit/pr.DroneGCS/kisa-gcs-system/kisa-gcs-system.csproj": {}
+    "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/kisa-gcs-system.csproj": {}
   },
   "projects": {
-    "/Users/yun9yuchoi/Documents/mygit/pr.DroneGCS/kisa-gcs-system/kisa-gcs-system.csproj": {
+    "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/kisa-gcs-system.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/yun9yuchoi/Documents/mygit/pr.DroneGCS/kisa-gcs-system/kisa-gcs-system.csproj",
+        "projectUniqueName": "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/kisa-gcs-system.csproj",
         "projectName": "kisa-gcs-system",
-        "projectPath": "/Users/yun9yuchoi/Documents/mygit/pr.DroneGCS/kisa-gcs-system/kisa-gcs-system.csproj",
-        "packagesPath": "/Users/yun9yuchoi/.nuget/packages/",
-        "outputPath": "/Users/yun9yuchoi/Documents/mygit/pr.DroneGCS/kisa-gcs-system/obj/",
+        "projectPath": "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/kisa-gcs-system.csproj",
+        "packagesPath": "/home/choiyungyu/.nuget/packages/",
+        "outputPath": "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/yun9yuchoi/.nuget/NuGet/NuGet.Config"
+          "/home/choiyungyu/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/sdk/7.0.308/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -51,6 +50,14 @@
               "target": "Package",
               "version": "[0.7.5, )"
             },
+            "MavLink4Net.Messages": {
+              "target": "Package",
+              "version": "[0.4.0, )"
+            },
+            "MavSdk.Net": {
+              "target": "Package",
+              "version": "[1.1.3, )"
+            },
             "Microsoft.AspNetCore.Cors": {
               "target": "Package",
               "version": "[2.2.0, )"
@@ -67,9 +74,13 @@
               "target": "Package",
               "version": "[8.0.0, )"
             },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.4.0, )"
+              "version": "[6.5.0, )"
             }
           },
           "imports": [
@@ -91,7 +102,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.308/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
