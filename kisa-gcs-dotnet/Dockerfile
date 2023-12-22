@@ -13,7 +13,7 @@ RUN dotnet publish -c Release -o out
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /kisa-gcs-system
-COPY --from=build-env /kisa-gcs-system/out .
+COPY --from=build-env /kisa-gcs-dotnet/out .
 ENTRYPOINT ["dotnet", "kisa-gcs-system.dll"]
 
 

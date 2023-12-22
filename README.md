@@ -11,4 +11,4 @@
 ## Back-end 
 ### [kisa-dashboard-service: Flask(Python)](kisa-dashboard-system/README.md)
 
-### [kisa-gcs-service: .NET(C#)](kisa-gcs-system/README.md)
+### [kisa-gcs-service: .NET(C#)](kisa-gcs-dotnet/README.md)

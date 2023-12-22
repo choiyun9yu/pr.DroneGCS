@@ -24,7 +24,7 @@ services:
     container_name: gcs
     build:
       dockerfile: Dockerfile
-      context: kisa-gcs-system
+      context: kisa-gcs-dotnet
     network_mode: host
     depends_on:
       - mongo
