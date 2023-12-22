@@ -1,4 +1,6 @@
-﻿public partial class MAVLink
+﻿namespace MAVSDK;
+
+public partial class MAVLink
 {
     public class MavlinkCRC
     {

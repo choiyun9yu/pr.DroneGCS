@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
-import {ChatContext} from "../GCS/SignalRContainder";
+import {ChatContext} from "../Others/SignalRChat";
 
 const ChatPage = () => {
     const [user, setUser] = useState('');
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
-    const { sendMessage, connStt } = useContext(ChatContext);
+    const { sendMessage } = useContext(ChatContext);
 
     const handleUserChange = (e) => {
         setUser(e.target.value);

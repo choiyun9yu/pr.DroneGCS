@@ -118,3 +118,12 @@
 /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/Microsoft.AspNetCore.Http.Connections.Client.dll
 /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/Microsoft.AspNetCore.SignalR.Client.dll
 /home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/Microsoft.AspNetCore.SignalR.Client.Core.dll
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/MavLink4Net.Messages.dll
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/Microsoft.EntityFrameworkCore.dll
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/Microsoft.EntityFrameworkCore.Abstractions.dll
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/Google.Protobuf.dll
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/Grpc.Core.Api.dll
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/Grpc.Net.Client.dll
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/Grpc.Net.Common.dll
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/MavSdk.dll
+/home/choiyungyu/mygit/pr.DroneGCS/kisa-gcs-system/bin/Debug/net8.0/System.Reactive.dll

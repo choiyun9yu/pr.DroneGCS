@@ -1,12 +1,18 @@
 version: '3.8'
 
 services:
+#  ardupilot:
+#    container_name: arducopter
+#    build:
+#      dockerfile: Dcokerfile
+#      context: ardupilot
+#    network_mode: host
+
   dashboard-system:
     container_name: dashbard
     build:
       dockerfile: Dockerfile
       context: kisa-dashboard-system
-    restart: always
     network_mode: host
     depends_on:
       - mongo
@@ -19,7 +25,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: kisa-gcs-system
-    restart: always
     network_mode: host
     depends_on:
       - mongo
@@ -29,7 +34,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: kisa-predict-server
-    restart: always
     network_mode: host
     depends_on:
       - mongo
@@ -37,7 +41,6 @@ services:
   mongo:
     image: mongo
     container_name: mongo
-    restart: always
     network_mode: host
     volumes:
       - mongodb_data:/data/db
@@ -47,7 +50,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./kisa-webapp
-    restart: always
     network_mode: host
     depends_on:
       - dashboard-system

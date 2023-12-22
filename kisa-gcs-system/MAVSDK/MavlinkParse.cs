@@ -3,8 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 #nullable disable 
+
+namespace MAVSDK;
+
 public partial class MAVLink
 {
+    // MAVLink 메시지의 필드에 대한 단위 정보를 가져오는 메서드
     public static string GetUnit(string fieldname, Type packetype = null, string name="", uint msgid = UInt32.MaxValue)
     {
         try
@@ -35,6 +39,7 @@ public partial class MAVLink
         return "";
     }
 
+    // MAVLink 메시지의 필드에 대한 단위 정보를 지정하는 사용자 지정 속성
     public class Units : Attribute
     {
         public Units(string unit)
@@ -45,6 +50,7 @@ public partial class MAVLink
         public string Unit { get; set; }
     }
 
+    // MAVLink 메시지에 대한 설명을 지정하는 사용자 지정 속성
     public class Description : Attribute
     {
         public Description(string desc)
@@ -55,13 +61,14 @@ public partial class MAVLink
         public string Text { get; set; }
     }
 
+    // MAVLink 메시지를 해석하고 생성하는 클래스
     public class MavlinkParse
     {
         public int packetcount = 0;
 
         public int badCRC = 0;
         public int badLength = 0;
-
+        
         public bool hasTimestamp = false;
 
         public MavlinkParse(bool hasTimestamp = false)
@@ -118,6 +125,7 @@ public partial class MAVLink
             }
         }
 
+        // 스트림에서 MAVLink 패킷을 읽는 메서드
         public MAVLinkMessage ReadPacket(Stream BaseStream)
         {
             byte[] buffer = new byte[MAVLink.MAVLINK_MAX_PACKET_LEN];
@@ -226,6 +234,7 @@ public partial class MAVLink
             return message;
         }
 
+        // MAVLink 1.0 형식의 패킷을 생성하는 메서드
         public byte[] GenerateMAVLinkPacket10(MAVLINK_MSG_ID messageType, object indata, byte sysid = 255, byte compid = (byte)MAV_COMPONENT.MAV_COMP_ID_MISSIONPLANNER, int sequence = -1)
         {
             byte[] data;
@@ -269,6 +278,7 @@ public partial class MAVLink
             return packet;
         }
 
+        // MAVLink 2.0 형식의 패킷을 생성하는 메서드
         public byte[] GenerateMAVLinkPacket20(MAVLINK_MSG_ID messageType, object indata, bool sign = false, byte sysid = 255, byte compid= (byte)MAV_COMPONENT.MAV_COMP_ID_MISSIONPLANNER, int sequence = -1)
         {
             byte[] data;
@@ -379,10 +389,10 @@ public partial class MAVLink
             return packet;
         }
 
-        public byte sendlinkid { get; set; }
+        public byte sendlinkid { get; set; }        // 패킷에 추가 정보를 식별하는 데 사용되는 링크 ID
 
-        public ulong lasttimestamp { get; set; }
+        public ulong lasttimestamp { get; set; }    // 패킷 생성 시간을 저장하는 변수
 
-        public byte[] signingKey { get; set; }
+        public byte[] signingKey { get; set; }      // 패킷 서명을 생성하는 데 사용되는 서명 키
     }
 }

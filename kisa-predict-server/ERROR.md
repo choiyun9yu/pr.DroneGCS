@@ -28,3 +28,7 @@ flask_socketIO를 SocketIO 1.X 프로토콜을 사용하는 1.1로 다운그레�
 SignalR과 Websockets를 동시에 사용할 때 SignalR의 핸드쉐이크가 제대로 작동하지 않는 오류가 발생했다.
 
 
+## 4. Python SignalR Client 만들기 (성공)
+
+
+

@@ -1,5 +1,4 @@
 import { useOutletContext } from 'react-router-dom';
-
 import { LeftSidebar } from './LeftSidebar';
 import { MiddleMap } from './MiddleMap';
 import { FlightMode } from './FlightMode';
@@ -7,15 +6,13 @@ import { MissionMode } from './MissionMode';
 import { VideoMode } from './VideoMode';
 import {useContext, useState} from "react";
 import {DataMap} from "../DataMap";
-import {DroneContext} from "../GCS/SignalRContainder";
+import {DroneContext, SignalRProvider} from "../GCS/SignalRContainder";
 
 export const DroneMonitor = () => {
     const [gcsMode, setGcsMode] = useOutletContext();
     const [swapMap, setSwapMap] = useState(false);
     const [isLeftPanel, setIsLeftPanel ] = useState(true);
     const [isRightPanel, setIsRightPanel] = useState(true);
-    const { SendMessageToClient } = useContext(DroneContext);
-
 
     const handleSwapMap = () => {
         setSwapMap(!swapMap)

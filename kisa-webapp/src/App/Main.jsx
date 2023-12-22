@@ -13,7 +13,8 @@ import { AppDeIdentification } from './route/AppDeIdentification';
 import { VideoProcessing } from './components/DeIdentification/VideoProcessing';
 import {Chat} from "./components/Others/Chat";
 import {ProjectDocuments} from "./components/Others/ProjectDocuments";
-import {ChatRProvider, SignalRProvider} from "./components/GCS/SignalRContainder";
+import {SignalRProvider} from "./components/GCS/SignalRContainder";
+import {ChatRProvider} from "./components/Others/SignalRChat";
 
 export const Main = () => {
     return (

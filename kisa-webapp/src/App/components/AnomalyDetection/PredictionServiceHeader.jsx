@@ -18,8 +18,8 @@ export const PredictionServiceHeader = (props) => {
         <>
             <div
                 id="prediction-header"
-                className={`m-5 p-3 rounded-lg font-normal  text-[#6359E9]  ${ColorThema.Secondary4}`}
-            >
+                className={`m-5 p-3 rounded-lg font-normal  text-[#6359E9]  ${ColorThema.Secondary4}`}>
+
                 {props.predMode === 'realTime' ? (
                     <button
                         className={`ml-1 mr-4 p-1 px-2 rounded-md border  border-[#6359E9] text-white ${ColorThema.Primary1}`}
@@ -62,6 +62,7 @@ export const PredictionServiceHeader = (props) => {
                         장애진단 예측결과 조회
                     </button>
                 )}
+
             </div>
         </>
     );

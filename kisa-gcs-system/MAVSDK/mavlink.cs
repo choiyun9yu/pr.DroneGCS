@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
+namespace MAVSDK;
+
 public partial class MAVLink
 {
     public const string MAVLINK_BUILD_DATE = "Tue Nov 14 2023";

@@ -1,5 +1,23 @@
-using SignalR.Hubs;
+global using System;
+global using System.Net;
+global using System.Net.Sockets;
+global using System.Net.WebSockets;
+global using System.Text;
+global using System.Threading;
+global using System.Threading.Tasks;
+global using System.Linq;
+global using System.Collections.Generic;
+global using DotNetty.Buffers;
+global using DotNetty.Codecs;
+global using DotNetty.Common.Utilities;
+global using DotNetty.Transport.Bootstrapping;
+global using DotNetty.Transport.Channels;
+global using DotNetty.Transport.Channels.Sockets;
+global using Microsoft.AspNetCore.SignalR;
+global using Newtonsoft.Json.Linq;
+using kisa_gcs_service.Controller;
 using kisa_gcs_service.Service;
+using SignalR.Hubs;
 
 namespace kisa_gcs_service;
 
@@ -20,13 +38,14 @@ public class Startup
         {
             options.AddPolicy("CorsPolicy", builder =>
             {
-                builder.WithOrigins("http://localhost:3000")// 특정 오리진 허용
+                builder.WithOrigins("http://localhost:3000", "http://localhost:3001")// 특정 오리진 허용
                     .AllowAnyMethod()   // 모든 HTTP 메서드 허용
                     .AllowAnyHeader()   // 모든 헤더 허용
                     .AllowCredentials();// Credentails 모드 제거 (보안 상의 이유로 모든 오리진 허용 옵션과 동시 사용 불가)
             });
         });
-        services.AddSingleton<DroneMonitorServiceMavUdpNetty>();  // UDP 
+        services.AddSingleton<GcsController>(); // GcsController
+        services.AddSingleton<MavlinkNetty>();  // UDP 
         services.AddSignalR();      // SignalR 추가
     }
 
@@ -53,8 +72,8 @@ public class Startup
         app.UseEndpoints(endpoints => // 엔드포인트 매핑, 컨트롤러 엔드 포인트를 애플리케이션에 매핑, API 요청을 처리하고 컨트롤러 액션을 실행하는데 사용 
         {
             endpoints.MapControllers();
-            endpoints.MapHub<ChatHub>("/chatHub");   // SignalR
-            endpoints.MapHub<DroneHub>("/droneHub");
+            // endpoints.MapHub<ChatHub>("/chatHub");   // SignalR
+            endpoints.MapHub<DroneHub>("/droneHub");  // droneHub
             endpoints.MapGet("/", async context =>
             {
                 await context.Response.WriteAsync("Hello World!");

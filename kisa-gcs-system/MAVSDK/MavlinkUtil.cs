@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 #nullable disable
 
+namespace MAVSDK;
+
 /// <summary>
 /// Static methods and helpers for creation and manipulation of Mavlink packets
 /// </summary>

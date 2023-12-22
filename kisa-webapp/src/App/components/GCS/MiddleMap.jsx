@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 import { ColorThema } from '../ProejctThema';
 import './GCSstyles.css';
 import {FlightContents} from "./FlightMode";
 import {OtherContents} from "./MissionMode";
+import {DroneContext} from "./SignalRContainder";
 
 const center = {
     lat: 36.37425121863451,
@@ -63,26 +64,32 @@ export const MiniMap = (props) => {
     );
 }
 
-export const Table = (props) => {
-
-    return(
-        <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
-            <table className={`mx-3 my-2 text-lg text-[#00DCF8]`}>
-                <tbody>
+export const Table = () => {
+    const { droneStates } = useContext(DroneContext);
+    // if (droneStates !== null) {
+    //     const droneState = droneStates[1]
+        return(
+            <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
+                <table className={`mx-3 my-2 text-lg text-[#00DCF8]`}>
+                    <tbody>
                     <tr>
                         <th className={`px-2`}>전체 이동거리</th>
+                        {/*<td className={`px-2`}> {droneState['TotalDistance']} km</td>*/}
                         <td className={`px-2`}> km</td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>현재 비행거리</th>
+                        {/*<td className={`px-2`}> {droneState['ElapsedDistance']} km</td>*/}
                         <td className={`px-2`}> km</td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>잔여 이동거리</th>
+                        {/*<td className={`px-2`}> {droneState['RemainDistance']} km</td>*/}
                         <td className={`px-2`}> km</td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>현재 이동속도</th>
+                        {/*<td className={`px-2`}> {droneState['DroneSpeed']} m/s</td>*/}
                         <td className={`px-2`}> m/s</td>
                     </tr>
                     <tr>
@@ -91,18 +98,22 @@ export const Table = (props) => {
                     </tr>
                     <tr>
                         <th className={`px-2`}>이륙 시작시간</th>
-                        <td className={`px-2`}> </td>
+                        {/*<td className={`px-2`}> {droneState['StartTime']} </td>*/}
+                        <td className={`px-2`}></td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>비행 소요시간</th>
-                        <td className={`px-2`}> </td>
+                        {/*<td className={`px-2`}> {droneState['CompleteTime'] - droneState['StartTime']}</td>*/}
+                        <td className={`px-2`}></td>
                     </tr>
                     <tr>
                         <th className={`px-2`}>비행 완료시간</th>
-                        <td className={`px-2`}> </td>
+                        {/*<td className={`px-2`}> {droneState['CompleteTime']} </td>*/}
+                        <td className={`px-2`}></td>
                     </tr>
-                </tbody>
-            </table>
-        </div>
-    );
+                    </tbody>
+                </table>
+            </div>
+        );
+    // }
 }

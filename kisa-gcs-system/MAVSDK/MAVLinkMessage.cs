@@ -1,5 +1,6 @@
 ﻿#nullable disable
-using System;
+
+namespace MAVSDK;
 
 public partial class MAVLink
 {

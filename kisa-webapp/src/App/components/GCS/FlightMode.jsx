@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useContext} from "react";
 
 import {JoyStick} from "./JoyStick";
 import { ColorThema } from '../ProejctThema';
 import {MiniMap, Table} from "./MiddleMap";
+import {DroneContext} from "./SignalRContainder";
 
 export const FlightMode = (props) => {
     return (
@@ -14,53 +15,106 @@ export const FlightMode = (props) => {
     );
 };
 
-const RightSideTop = (props) => {
+const RightSideTop = () => {
+    const { droneStates } = useContext(DroneContext);
+    console.log(droneStates);
+    // if (droneStates !== null) {
+    //     const droneState = droneStates[1]
+    //     return (
+    //         <div className={`items-start w-full h-1/2 mb-3 rounded-2xl ${ColorThema.Secondary4}`}>
+    //             <div className="flex m-2 items-center">
+    //                 <span className="text-white rounded-md m-3 font-bold text-medium">• 드론 정보</span>
+    //             </div>
+    //             <table id={'gcs-mini-table'}
+    //                    className={`w-[90%] h-[70%] mx-auto border-t-2 border-l-2 border-[#4B4B99] text-white text-sm`}>
+    //                 <tbody>
+    //                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+    //                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 ID</th>
+    //                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneState.DroneId}</td>
+    //                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>현재 WP 번호</th>
+    //                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneState['DroneRawState']['WP_NO']}</td>
+    //                 </tr>
+    //
+    //                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+    //                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 전압 (V)</th>
+    //                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneState['DroneRawState']['POWER_V']}</td>
+    //                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 온도 (°C)</th>
+    //                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneState['DroneRawState']['TEMPERATURE_C']}</td>
+    //                 </tr>
+    //
+    //                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+    //                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>GPS 수신</th>
+    //                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneState['DroneRawState']['GPS_STATE']}</td>
+    //                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>HDOP</th>
+    //                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneState['DroneRawState']['HDOP']}</td>
+    //                 </tr>
+    //
+    //                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+    //                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>위도</th>
+    //                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneState['DroneRawState']['DR_LAT']}</td>
+    //                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>경도</th>
+    //                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneState['DroneRawState']['DR_LON']}</td>
+    //                 </tr>
+    //
+    //                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+    //                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>고도 (m)</th>
+    //                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneState['DroneRawState']['DR_ALT']}</td>
+    //                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>제어권</th>
+    //                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+    //                 </tr>
+    //                 </tbody>
+    //             </table>
+    //         </div>
+    //     );
+    // }
+    // else {
+        return (
+            <div className={`items-start w-full h-1/2 mb-3 rounded-2xl ${ColorThema.Secondary4}`}>
+                <div className="flex m-2 items-center">
+                    <span className="text-white rounded-md m-3 font-bold text-medium">• 드론 정보</span>
+                </div>
+                <table id={'gcs-mini-table'}
+                       className={`w-[90%] h-[70%] mx-auto border-t-2 border-l-2 border-[#4B4B99] text-white text-sm`}>
+                    <tbody>
+                    <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+                        <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 ID</th>
+                        <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+                        <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>현재 WP 번호</th>
+                        <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+                    </tr>
 
-    return (
-        <div className={`items-start w-full h-1/2 mb-3 rounded-2xl ${ColorThema.Secondary4}`}>
-            <div className="flex m-2 items-center">
-                <span className="text-white rounded-md m-3 font-bold text-medium">• 드론 정보</span>
+                    <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+                        <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 전압 (V)</th>
+                        <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+                        <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 온도 (°C)</th>
+                        <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+                    </tr>
+
+                    <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+                        <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>GPS 수신</th>
+                        <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+                        <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>HDOP</th>
+                        <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+                    </tr>
+
+                    <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+                        <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>위도</th>
+                        <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+                        <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>경도</th>
+                        <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+                    </tr>
+
+                    <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+                        <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>고도 (m)</th>
+                        <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+                        <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>제어권</th>
+                        <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            <table id={'gcs-mini-table'} className={`w-[90%] h-[70%] mx-auto border-t-2 border-l-2 border-[#4B4B99] text-white text-sm`}>
-                <tbody>
-                <tr className={'w-full border-b-2 border-[#4B4B99]'}>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 ID</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>현재 WP 번호</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
-                </tr>
-
-                <tr className={'w-full border-b-2 border-[#4B4B99]'}>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 전압 (V)</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 온도 (°C)</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
-                </tr>
-
-                <tr className={'w-full border-b-2 border-[#4B4B99]'}>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>GPS 수신</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>HDOP</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
-                </tr>
-
-                <tr className={'w-full border-b-2 border-[#4B4B99]'}>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>위도</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>경도</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
-                </tr>
-
-                <tr className={'w-full border-b-2 border-[#4B4B99]'}>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>고도 (m)</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>제어권</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    );
+        )
+    // }
 };
 
 const RightSideBottom = (props) => {
