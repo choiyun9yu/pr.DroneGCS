@@ -33,7 +33,7 @@ MAVLink를 설치하였다면 MAVLink Generator를 사용해서 MAVLink 라이�
 ## 3.MAVLink Protocol
 
 ### 3-1. Frame 
-![img2.png](..%2Fdata%2Fimg2.png)
+![img2.png](..%2Fkisa-gcs-dotnet%2Fdata%2Fimg2.png)
 [ref](https://kimdictor.kr/post/embedded/mavlink/)
 - STX: 0xFD로 고정된 패킷 시작 마커
 - LEN: "PAYLOAD" 부분의 기링
