@@ -6,7 +6,7 @@ public static class Program
 {
     public static async Task Main(string[] args)	// 어프리케이션 진입점. Main 메소드 정의
     {
-        DroneConfiguration.Initialization();
+        // DroneConfiguration.Initialization();
 		
         // 호스트 빌드
         var host = CreateHostBuilder(args).Build();

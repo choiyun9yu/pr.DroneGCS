@@ -1,4 +1,3 @@
-using kisa_gcs_service.Controller;
 using MAVSDK;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -7,9 +6,9 @@ namespace kisa_gcs_service.Model;
 
 public class DroneState
 {
-    private static readonly string LogFileDateTimeNamingFormat =
-        DroneConfiguration.Environment.GetValue<string>("LOG_FILE_DATE_TIME_NAMING_FORMAT", "yyyy-mm-dd-HH-mm-ss");
- 
+    // private static readonly string LogFileDateTimeNamingFormat =
+    //     DroneConfiguration.Environment.GetValue<string>("LOG_FILE_DATE_TIME_NAMING_FORMAT", "yyyy-mm-dd-HH-mm-ss");
+    //
     // 드론의 고유 아이디
     public readonly string DroneId;
     
@@ -28,7 +27,6 @@ public class DroneState
     
     // 드론의 온라인 여부
     public bool IsOnline { get; set; }
-    public DroneCommunication CommunicationLink;
     
     // 이벤트들
     public event Action<string, DroneStateStruct>? OnDroneStatsUpdate;
@@ -37,7 +35,6 @@ public class DroneState
     
     // 드론 속도, 모니터 유닛, 메시지 카운터 현재 위치 및 타임 스태프 등의 변수  
     public double DroneSpeed;
-    public IGcsControllerUnit? ControllerUnit;
     private uint _messageCounter = 0;
     private DateTime _lastReceivedStatusMsg;
     public DateTime LastHeartbeatMessage;

@@ -15,7 +15,6 @@ global using DotNetty.Transport.Channels;
 global using DotNetty.Transport.Channels.Sockets;
 global using Microsoft.AspNetCore.SignalR;
 global using Newtonsoft.Json.Linq;
-using kisa_gcs_service.Controller;
 using kisa_gcs_service.Service;
 using SignalR.Hubs;
 
@@ -44,7 +43,7 @@ public class Startup
                     .AllowCredentials();// Credentails 모드 제거 (보안 상의 이유로 모든 오리진 허용 옵션과 동시 사용 불가)
             });
         });
-        services.AddSingleton<GcsController>(); // GcsController
+        // services.AddSingleton<GcsController>(); // GcsController
         services.AddSingleton<MavlinkNetty>();  // UDP 
         services.AddSignalR();      // SignalR 추가
     }

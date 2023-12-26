@@ -1,11 +1,10 @@
 using MAVSDK;
-using SignalR.Hubs;
 
 namespace kisa_gcs_service.Service;
 
 public class MavlinkDecoder : MessageToMessageDecoder<DatagramPacket> // MavlinkUdpMessageDecoder 클래스는 MessageToMessageDecoder<DatagramPacket>을 상속받아 UDP 패킷을 MAVLink 메시지로 디코딩 한다.
 {                                                                               // MessageToMessageDecoder 클래스는 dotNetty에서 사용자가 정의한 프로토콜로 인코딩된 메시지를 디코딩하는 데 사용, 이 클래스를 상속받아 사용자 정의 디코딩 로직을 구현할 수 있다.
-  private readonly MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();    // MAVLink 라이브러리의 MavlinkParse 클래스 생성(MavlinkParse 클래스는 MAVLink 메시지를 파싱하고 생성하는데 사용되는 클래스)
+  private readonly MAVLink.MavlinkParse parser = new();    // MAVLink 라이브러리의 MavlinkParse 클래스 생성(MavlinkParse 클래스는 MAVLink 메시지를 파싱하고 생성하는데 사용되는 클래스)
   
   protected override async void Decode(IChannelHandlerContext context, DatagramPacket input, List<object?> output) // Decode 메서드는 기본 클래스 메서드를 재정의하여 DatagramPacket을 MAVLink 메시지로 디코딩하고, 디코딩 된 메시지를 SignalR Hub로 전송
   {

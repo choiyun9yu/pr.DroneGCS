@@ -1,4 +1,3 @@
-using kisa_gcs_service.Controller;
 using SignalR.Hubs;
 
 namespace kisa_gcs_service.Service;
@@ -13,7 +12,7 @@ public class MavlinkNetty
   // private readonly MavlinkHandler _handler;
 
   // 생성자
-  public MavlinkNetty(GcsController gcsController)   // IHubContext를 주입받아 MavlinkUdpMessageDecoder 클래스에 전달
+  public MavlinkNetty()   // IHubContext를 주입받아 MavlinkUdpMessageDecoder 클래스에 전달
   {
     _decoder = new MavlinkDecoder();
     // _handler = new MavlinkHandler(gcsController);
