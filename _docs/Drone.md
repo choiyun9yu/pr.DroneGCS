@@ -37,7 +37,7 @@ Mavlink는 프로토콜이다. 프로토콜은 통신 규약이다. 통신 규�
 
 마브 링크는 전문의 내용이 미리 확정이 되어 있는 고정적 전문 방식이다.
 
-![img2.png](..%2Fdata%2Fimg2.png)
+![img2.png](..%2Fkisa-gcs-system%2Fdata%2Fimg2.png)
 
 MAVLink는 드론과 지상국 간에 데이터 및 명령을 전송하는 데 가장 일반적으로 사용되는 직렬 프로토콜이다. 이 프로토콜은 common.xml 및 ardupilot.xml 에서 찾을 수 있는 대규모 메시지 집합을 정의한다.
 

@@ -1,11 +1,13 @@
 # GCS Service
 
-## 1. Project Directory Structure
+## 1. Proejct Init
+
+      % dotnet new webapi -f net8.0 -o kisa-gcs-system
+      % 
+
+## 2. Project Directory Structure
 
     kisa-gcs-service/
-    ├── Controllers/
-    ├── Hubs/                   
-    │   ├── SignalRHub.cs
     ├── MAVSDK/                   
     │   ├── mavlink.cs
     │   ├── MavlinkCRC.cs
@@ -13,11 +15,15 @@
     │   ├── MavlinkParse.cs
     │   ├── MavlinkUtil.cs
     ├── Models/                 
-    │   ├── Drone.cs              
-    ├── Services/               
-    │   ├── DroneServiceMavlink.cs
-    │   ├── DroneState.cs
-    │   ├── MavLinkUdpMEssageDecoder.cs
+    │   ├── Drone.cs         
+    │   ├── DroneInterface.cs         
+    │   ├── DroneState.cs         
+    ├── Services/         
+    │   ├── MavlinkNetty.cs
+    │   ├── MavLinkDecoder.cs
+    │   ├── MavLinkMapping.cs
+    │   ├── SignalRHub.cs
+    │   ├── WebSocketHandler.cs
     ├── Program.cs
     ├── Startup.cs
     ├── appsettings.json

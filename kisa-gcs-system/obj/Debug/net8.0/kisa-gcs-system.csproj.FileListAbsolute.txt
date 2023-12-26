@@ -150,12 +150,7 @@
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/DotNetty.Codecs.dll
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/DotNetty.Common.dll
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/DotNetty.Transport.dll
-/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/Google.Protobuf.dll
-/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/Grpc.Core.Api.dll
-/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/Grpc.Net.Client.dll
-/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/Grpc.Net.Common.dll
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/MavLink4Net.Messages.dll
-/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/MavSdk.dll
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/Microsoft.AspNetCore.Http.Connections.Client.dll
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/Microsoft.AspNetCore.OpenApi.dll
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/Microsoft.AspNetCore.SignalR.Client.dll
@@ -168,7 +163,6 @@
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/System.Net.WebSockets.WebSocketProtocol.dll
-/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/bin/Debug/net8.0/System.Reactive.dll
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/obj/Debug/net8.0/staticwebassets.build.json
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/obj/Debug/net8.0/staticwebassets.development.json
 /home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/obj/Debug/net8.0/staticwebassets/msbuild.kisa-gcs-system.Microsoft.AspNetCore.StaticWebAssets.props
