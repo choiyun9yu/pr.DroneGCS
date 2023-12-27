@@ -104,13 +104,21 @@ BindAsync() 메소드를 사용해서 바인딩
     }
 
 ### 5-3. Datagram MessageToMessageDecoder<DatagramPacket> 클래스
-MessageToMessageDecoder 클래스는 dotNetty에서 사용자가 정의한 프로토콜로 인코딩된 메시지를 디코딩하는 데 사용한다. 이 클래스를 상속받으면 사용자 정의 디코딩 로직을 구현할 수 있다.  
+이 클래스는 dotNetty 라이브러리의 일부이며 주로 네트워크 통신에서 메시지를 디코딩하는데 사용한다.  
+이 클래스를 상속하면서 DatagramPacket을 제네릭으로 사용하는 경우, 입력 메시지 타입은 DatagramPacket이 되며,  
+디코딩된 메시지의 타입은 클래스의 두번째 제네릭 매겨변수로 정의된다.   
 
-이 클래스의 상속자는 아래 메소드를 필수적으로 구현해야한다.
+MessageToMessageDecoder 클래스는 dotNetty에서 사용자가 정의한 프로토콜로 인코딩된 메시지를 디코딩하는 데 사용한다.
+이 클래스를 상속받으면 사용자 정의 디코딩 로직을 구현할 수 있다.  
+(이 클래스의 상속자는 아래 메소드를 필수적으로 구현해야한다.)
 
     protected override void Decode(IChannelHandlerContext context, DatagramPacket input, List<object?> output)
     {
-        // output.Add() 메서드는 디코딩된 메시지를 처리된 메시지 목록에 추가한다. 이 목록은 다음으로 연결된 핸들러로 전달된다. Netty의 핸들러 파이프라인에서 다음 단계의 핸들러는 이 목록에서 메시지를 꺼내어 추가적은 처리를 수행할 수 있다.
+        // 발신자 주소를 채널 컨텍스트에 저장 
+        context.Channel.GetAttribute(                                               
+            AttributeKey<IPEndPoint>.ValueOf("SenderAddress")).Set((IPEndPoint)input.Sender);
+     
+        output.Add() 메서드는 디코딩된 메시지를 처리된 메시지 목록에 추가한다. 이 목록은 다음으로 연결된 핸들러로 전달된다. Netty의 핸들러 파이프라인에서 다음 단계의 핸들러는 이 목록에서 메시지를 꺼내어 추가적은 처리를 수행할 수 있다.
     }
 
      /*
@@ -135,7 +143,42 @@ MessageToMessageDecoder 클래스는 dotNetty에서 사용자가 정의한 프�
         }
     }
 
+#### IChannelHandlerContext context
+dotNetty에서 IChannelHandlerConteext 인터페이스는 채널 파이프라인에 대한 컨텍스트 정보를 제공한다.  
+이 컨텍스트에는 채널, 이벤트, 상태 및 기타 관련 정보가 포함되어 있다.  
+context는 디코더가 현재 실행 중인 채널의 컨텍스트를 나타낸다.  
+이 인터페이스를 통해 디코더는 채널 파이프라인의 다른 핸들러와 상호 작용 한다.  
+새로운 이벤트를 발생시키거나 채널에 대한 동작을 수행할 수 있다.  
 
+발신자 주소를 채널 컨텍스트에 저장하는 이유
+- 출처 추적: 발신자의 주소를 저장하면 시스템은 수신된 메시지의 출처를 추적할 수 있다. 
+- 응답 처리: 저장된 발신자의 주소는 나중에 MAVLink 메시지에 대한 응답을 보낼 때 사용할 수 있다.
+- 맥락 정보: 발신자의 주소는 응용 프로그램의 더 넓은 맥락에서 관련이 있을 수 있다. 
 
+#### List<object?> output
+디코딩된 메시지를 저장하는 목록이다. 디코더는 Docde 메서드를 통해 입력 메시지를 해석하고, 그 결과를 output 목록에 추가한다.  
+이 목록의 내용은 최종적으로 채널 파이프라인에서 다음 핸들러로 전달되어 처리된다.  
+각 디코딩된 메시지는 목록에 추가되어 파이프라인에서 다음 핸들러로 전파된다.  
 
+### SimpleChannelInboundHandler
+이 인터페이스는 채널 파이프라인에서 디코더 뒤에 위치하여 디코딩된 메시지를 처리할 수 있다.  
+아래 ChannelRead0 메소드는 반드시 구현되어야 한다. 
+
+    public class YourNextHandler : SimpleChannelInboundHandler<object>
+    {
+        protected override void ChannelRead0(IChannelHandlerContext context, object message)
+        {
+            // 이 메서드는 다음 핸들러에서 수신된 디코딩된 메시지를 처리합니다.
+            // message는 디코딩된 메시지입니다.
+            
+            // 예시: 출력
+            Console.WriteLine("Received a decoded message: " + message.ToString());
+    
+            // 여기서 추가적인 로직을 수행할 수 있습니다.
+        }
+    }
+
+1. Decode 메서드에서 디코딩된 메시지가 output 목록에 추가된다. 
+2. 채널 파이프라인은 Decode 메서드 이후의 다음 핸들러로 디코딩된 메시지를 전달한다. 
+3. 다음 핸들러인 YourNextHandler의 ChannelRead0 메서드가 호출되어 디코딩된 메시지를 처리한다.
 
