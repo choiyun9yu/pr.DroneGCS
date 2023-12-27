@@ -29,6 +29,7 @@ SignalR과 Websockets를 동시에 사용할 때 SignalR의 핸드쉐이크가 �
 
 
 ## 4. Python SignalR Client 만들기 (성공)
+signalrcore 라이브러리를 사용하여 구현
 
 
 
