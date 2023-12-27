@@ -7,6 +7,7 @@ global using System.Threading;
 global using System.Threading.Tasks;
 global using System.Linq;
 global using System.Collections.Generic;
+global using System.Runtime.Serialization;
 global using DotNetty.Buffers;
 global using DotNetty.Codecs;
 global using DotNetty.Common.Utilities;
@@ -15,10 +16,11 @@ global using DotNetty.Transport.Channels;
 global using DotNetty.Transport.Channels.Sockets;
 global using Microsoft.AspNetCore.SignalR;
 global using Newtonsoft.Json;
-using kisa_gcs_service.Service;
+
+using kisa_gcs_system.Services;
 using SignalR.Hubs;
 
-namespace kisa_gcs_service;
+namespace kisa_gcs_system;
 
 public class Startup
 {

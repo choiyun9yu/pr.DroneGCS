@@ -1,12 +1,7 @@
-using kisa_gcs_service.Model;
+using kisa_gcs_system.Models;
 
 namespace SignalR.Hubs
 {
-    public interface IDroneHubClient
-    {
-        // Task DroneStatesUpdate(DroneGCS droneGcs);
-    }
-
     public class DroneHub : Hub
     {
         public async Task DroneStateUpdate(object message)
@@ -15,5 +10,4 @@ namespace SignalR.Hubs
             await Clients.All.SendAsync("DroneStateUpdate", message);
         }
     }
-    
 }

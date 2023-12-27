@@ -1,19 +1,20 @@
 using SignalR.Hubs;
 
-namespace kisa_gcs_service.Service;
+namespace kisa_gcs_system.Services;
 
 public class MavlinkNetty
 {
   private readonly MultithreadEventLoopGroup _bossGroup = new (2); 
   private readonly Bootstrap _bootstrap;    
   private IChannel? _bootstrapChannel; 
+  
   private readonly MavlinkDecoder _decoder;
-  // private readonly MavlinkHandler _handler;
-
-  public MavlinkNetty()  
+  private readonly MavlinkHandler _handler;
+  public MavlinkNetty(IHubContext<DroneHub> hubContext)  
   {
     _decoder = new MavlinkDecoder();
-    // _handler = new MavlinkHandler(gcsController);
+    
+    _handler = new MavlinkHandler(hubContext);
       
     _bootstrap = new Bootstrap();   
     _bootstrap            
@@ -27,7 +28,7 @@ public class MavlinkNetty
         {
           var pipeline = channel.Pipeline; 
           pipeline.AddLast("Mavlink Decoder", _decoder);
-          // pipeline.AddLast("Mavlink Handler", _handler);
+          pipeline.AddLast("Mavlink Handler", _handler);
         }
       ));
   }

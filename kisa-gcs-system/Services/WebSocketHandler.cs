@@ -1,7 +1,5 @@
-using System.Net.WebSockets;
-using System.Text;
 
-namespace kisa_gcs_service.Service;
+namespace kisa_gcs_service.Services;
 
 public class WebSocketHandler
 {

@@ -1,6 +1,6 @@
-using kisa_gcs_service.Service;
+using kisa_gcs_system.Services;
 
-namespace kisa_gcs_service;
+namespace kisa_gcs_system;
 public static class Program
 {
     public static async Task Main(string[] args)	            
@@ -24,8 +24,7 @@ public static class Program
     {
         var MavlinkNettyService =
             (MavlinkNetty)host 
-                .Services                                          
-                .GetService(typeof(MavlinkNetty))!;                
+                .Services.GetService(typeof(MavlinkNetty))!;                
         await MavlinkNettyService.StartAsync(port); 
     }
 }

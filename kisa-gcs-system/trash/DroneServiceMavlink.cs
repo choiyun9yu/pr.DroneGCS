@@ -5,10 +5,9 @@
 // namespace kisa_gcs_service.Service;
 //
 // //////////////////////////////////////// DroneMavLinkMonitorUnit.cs ////////////////////////////////////////
-// public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> // MavlinkUdpMessageDecoder 클래스는 MessageToMessageDecoder<DatagramPacket>을 상속받아 UDP 패킷을 MAVLink 메시지로 디코딩 한다.
-// {                                                                               // MessageToMessageDecoder 클래스는 dotNetty에서 사용자가 정의한 프로토콜로 인코딩된 메시지를 디코딩하는 데 사용, 이 클래스를 상속받아 용자 정의 디코딩 로직을 구현할 수 있음
-//   private readonly MAVLink.MavlinkParse parser = new MAVLink.MavlinkParse();    // MAVLink 라이브러리의 MavlinkParse 클래스 생성(MavlinkParse 클래스는 MAVLink 메시지를 파싱하고 생성하는데 사용되는 클래스)
-//   private readonly IHubContext<DroneHub> _hubContext;                           // IHubContext를 주입 받아 SignalR Hub와 통신
+// public class MavlinkUdpMessageDecoder : MessageToMessageDecoder<DatagramPacket> 
+// {                                                                              
+//    private readonly IHubContext<DroneHub> _hubContext;                           
 //   
 //   public MavlinkUdpMessageDecoder(IHubContext<DroneHub> hubContext)
 //   {
