@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Polyline, Marker, OverlayView } from '@react-google-maps/api';
 
 import { ColorThema } from '../ProejctThema';
 import './GCSstyles.css';
@@ -8,11 +8,30 @@ import {OtherContents} from "./MissionMode";
 import {DroneContext} from "./SignalRContainder";
 
 const center = {
-    lat: 36.37425121863451,
-        lng: 127.38407125979359
+    lat: -35.3632623,
+        lng: 149.1652378
 }
 export const MiddleMap = (props) => {
     const [isController, setIsController] = useState(true)
+    const [dronePosition, setDronePosition] = useState({ lat: -35.3632623, lng: 149.1652378 });
+    const [dronePath, setDronePath] = useState([{ lat: -35.3632623, lng: 149.1652378 }]);
+
+    // // 드론 위치를 업데이트하는 함수
+    // const updateDronePosition = () => {
+    //     const newDronePosition = {
+    //         lat:0,
+    //         lng:0
+    //     };
+    // }
+    //
+    // // 드론 위치 업데이트
+    // setDronePosition(newDronePosition)
+    //
+    // // 드론 경로에 새로운 좌표 추가
+    // setDronePath([...dronePath, newDronePosition]);
+
+    // // 5초마다 드론 위치 업데이트
+    // setTimeout(updateDronePosition, 5000);
 
     const handleIsController= () => {
         setIsController(!isController)
@@ -21,7 +40,7 @@ export const MiddleMap = (props) => {
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY
-        })
+    })
 
     if (!isLoaded) {
         return null; // Google Maps JavaScript API가 로드되지 않았을 때 아무것도 렌더링하지 않음
@@ -33,7 +52,30 @@ export const MiddleMap = (props) => {
               </div>
             : <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
                 <GoogleMap mapContainerClassName={`flex w-full h-full rounded-xl`}
-                           center={center} zoom={15}>
+                           center={center} zoom={18}>
+
+                    {/* 드론 마커 */}
+                    <OverlayView
+                        position={dronePosition}
+                        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                        getPixelPositionOffset={(width, height) => ({
+                            x: -(width / 2),
+                            y: -(height / 2),
+                        })}
+                    >
+                        <div
+                            style={{
+                                width: '60px',
+                                height: '76px',
+                                backgroundImage: `url(${process.env.PUBLIC_URL}/Drone.png)`,
+                                backgroundSize: 'contain',
+                                transform: 'translate(-50%, -50%)',
+                            }}
+                        />
+                    </OverlayView>
+
+                    {/* 드론 경로 */}
+                    <Polyline path={dronePath} options={{ strokeColor: '#000000', strokeWeight: 2 }} />
                     {props.gcsMode === 'flight' ? <FlightContents isLeftPanel={props.isLeftPanel}
                                                                   handleIsLeftPanel={props.handleIsLeftPanel}
                                                                   isRightPanel={props.isRightPanel}
@@ -66,8 +108,7 @@ export const MiniMap = (props) => {
 
 export const Table = () => {
     const { droneStates } = useContext(DroneContext);
-    // if (droneStates !== null) {
-    //     const droneState = droneStates[1]
+
         return(
             <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
                 <table className={`mx-3 my-2 text-lg text-[#00DCF8]`}>

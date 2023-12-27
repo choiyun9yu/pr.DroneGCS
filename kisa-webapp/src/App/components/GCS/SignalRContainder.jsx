@@ -4,7 +4,7 @@ import * as signalR from '@microsoft/signalr';
 export const DroneContext = React.createContext({})
 
 export const SignalRProvider = ({ children }) => {
-    const [droneStates, setDroneStates] = useState(null)
+    const [droneMessage, setDroneMessage] = useState(null)
     const connection = useRef();
 
      useEffect(() => {
@@ -34,13 +34,13 @@ export const SignalRProvider = ({ children }) => {
          if (!connectionObj) return
 
          // GCS로 부터 드론 상태 수신
-         connectionObj.on('DroneStateUpdate', (decoded) => {
-             setDroneStates(old => ({...old, decoded}));
-             // console.log(decoded['payloadlength'])
+         connectionObj.on('droneMessage', (msg) => {
+             const droneMessage = JSON.parse(msg);
+             setDroneMessage(old => ({...old, droneMessage}));
          })
 
          return () => {
-             ['SelectedDroneStateUpdate'].forEach(handler => {
+             ['droneMessage'].forEach(handler => {
                  connectionObj.off(handler)
              })
          };
@@ -48,7 +48,7 @@ export const SignalRProvider = ({ children }) => {
 
     return (
         <DroneContext.Provider value={{
-            droneStates
+            droneMessage
         }}>
             {children}
         </DroneContext.Provider>

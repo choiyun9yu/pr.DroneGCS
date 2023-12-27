@@ -6,8 +6,9 @@
 }
 
 .control_btn:hover {
-    background-image: linear-gradient(180deg,
-    rgba(53, 62, 73, 1) 0%,
-    rgba(43, 52, 63, 1) 35%);
+    /*background-image: linear-gradient(180deg,*/
+    /*rgba(53, 62, 73, 1) 0%,*/
+    /*rgba(43, 52, 63, 1) 35%);*/
+    background: #6359e9;
     color: white
 }

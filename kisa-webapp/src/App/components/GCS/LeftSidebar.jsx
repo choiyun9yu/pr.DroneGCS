@@ -24,7 +24,7 @@ export const LeftSidebar = (props) => {
             </div>
 
             <div className="w-full m-2 items-center">
-                <span className="ml-3">• Way Point </span>
+                <span className="ml-3">• 비행 경로 </span>
             </div>
 
         </div>
