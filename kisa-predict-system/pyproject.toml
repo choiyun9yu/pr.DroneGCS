@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "kisa-predict-system"
+version = "0.1.0"
+description = ""
+authors = ["choiyun9yu <sw22tapple@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+signalrcore = "^0.9.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

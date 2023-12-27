@@ -1,13 +1,13 @@
 using MAVSDK;
 
-using kisa_gcs_service.Model;
+using kisa_gcs_system.Models;
 
 namespace kisa_gcs_system.Services;
 
 public class MavlinkMapper
 {
   private SensorData sensorData = new();
-  private DroneGps droneGps = new();
+  private DroneGcs droneGcs = new();
 
   public void gcsMapping(object data)
   {
@@ -32,7 +32,7 @@ public class MavlinkMapper
     {
       // gcs
       // Console.WriteLine($"Vcc:{powerStatus.Vcc}");
-      droneGps.DroneStt.PowerV = powerStatus.Vcc;
+      droneGcs.DroneStt.PowerV = powerStatus.Vcc;
     }
     // if (data is MAVLink.mavlink_meminfo_t meminfo)
     // {
@@ -82,8 +82,8 @@ public class MavlinkMapper
     {
       // gcs
       // Console.WriteLine($"lat:{gpsRawInt.lat}, lon:{gpsRawInt.lon}");
-      droneGps.DroneStt.Lat = gpsRawInt.lat;
-      droneGps.DroneStt.Lon = gpsRawInt.lon;
+      droneGcs.DroneStt.Lat = gpsRawInt.lat;
+      droneGcs.DroneStt.Lon = gpsRawInt.lon;
     }
     // if (data is MAVLink.mavlink_system_time_t systemTime)
     // {
@@ -113,7 +113,7 @@ public class MavlinkMapper
     {
       // gcs
       // Console.WriteLine($"alt:{ekfStatusReport.terrain_alt_variance}");
-      droneGps.DroneStt.Alt = ekfStatusReport.terrain_alt_variance;
+      droneGcs.DroneStt.Alt = ekfStatusReport.terrain_alt_variance;
     }
     // if (data is MAVLink.mavlink_local_position_ned_t localPositionNed)
     // {
@@ -328,8 +328,8 @@ public class MavlinkMapper
   
   public string gcsToJson() 
   {
-    string gcsJson = JsonConvert.SerializeObject(droneGps);
-    // Console.WriteLine(gcsJson);
+    string gcsJson = JsonConvert.SerializeObject(droneGcs);
+    Console.WriteLine(gcsJson);
     return gcsJson;
   }
 }
