@@ -1,5 +1,3 @@
-using SignalR.Hubs;
-
 namespace kisa_gcs_system.Services;
 
 public class MavlinkNetty
@@ -10,11 +8,10 @@ public class MavlinkNetty
   
   private readonly MavlinkDecoder _decoder;
   private readonly MavlinkHandler _handler;
-  public MavlinkNetty(IHubContext<DroneHub> hubContext)  
+  public MavlinkNetty(IHubContext<DroneHub> hubContext, DroneController controller)  
   {
     _decoder = new MavlinkDecoder();
-    
-    _handler = new MavlinkHandler(hubContext);
+    _handler = new MavlinkHandler(hubContext, controller);
       
     _bootstrap = new Bootstrap();   
     _bootstrap            

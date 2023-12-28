@@ -18,7 +18,6 @@ global using Microsoft.AspNetCore.SignalR;
 global using Newtonsoft.Json;
 
 using kisa_gcs_system.Services;
-using SignalR.Hubs;
 
 namespace kisa_gcs_system;
 
@@ -44,6 +43,7 @@ public class Startup
                     .AllowCredentials();
             });
         });
+        services.AddScoped<DroneController>();
         services.AddSingleton<MavlinkNetty>(); 
         services.AddSignalR();
     }

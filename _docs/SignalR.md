@@ -107,3 +107,8 @@
                             "chan16_raw_RC_CHANNELS":0.0}
         }
     ]
+
+
+###
+
+DroneHub의 인스턴스는 SignalR 허브가 시작될 때 자동으로 생성되며, ASP.NET Core의 의존성 주입(Dependency Injection) 시스템에 의해 관리됩니다. 허브를 생성하는 코드를 직접 작성하지 않아도 ASP.NET Core가 적절한 시점에 허브를 초기화하고 관리합니다.

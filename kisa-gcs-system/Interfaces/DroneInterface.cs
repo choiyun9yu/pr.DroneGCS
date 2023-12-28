@@ -1,8 +1,27 @@
 
-namespace kisa_gcs_system.Models;
+namespace kisa_gcs_system.Interfaces;
+
+public class DroneCommunication
+{
+    public DroneConnectionProtocol Protocol;
+    public string Address;
+
+    public DroneCommunication(DroneConnectionProtocol protocol, string address)
+    {
+        Protocol = protocol;
+        Address = address;
+    }
+}
+
+public enum DroneConnectionProtocol
+{
+    UDP,
+    TCP,
+    SERIAL,
+}
 
 [DataContract] 
-public struct Drone
+public struct DroneInterface
 {
     [DataMember] 
     public string? DroneId;
@@ -11,10 +30,7 @@ public struct Drone
     public string[]? DroneLogger;
     
     [DataMember] 
-    public bool? IsOnline;
-    
-    [DataMember] 
-    public bool? HasDeliverPlan;
+    public bool? IsOnline; 
     
     [DataMember] 
     public double[]? WayPointsDistance;
@@ -37,15 +53,16 @@ public struct Drone
     [DataMember] 
     public SensorData? SensorData;
 
-    public Drone()
+    // [DataMember] 
+    // public bool? HasDeliverPlan;
+    
+    public DroneInterface()
     {
         DroneId = "";
         
         DroneLogger = [];
         
-        IsOnline = false;
-        
-        HasDeliverPlan = false;
+        IsOnline = true;
         
         WayPointsDistance = [];
         
@@ -60,6 +77,8 @@ public struct Drone
         CommunicationLink = new CommunicationLink();
 
         SensorData = new SensorData();
+        
+        // HasDeliverPlan = false;
     }
 }
 
@@ -71,6 +90,9 @@ public class DroneStt
     
     [DataMember] 
     public double? PowerV;
+
+    [DataMember] 
+    public double? BatteryStt;
     
     [DataMember] 
     public char? GpsStt;
@@ -112,7 +134,7 @@ public class DroneStt
     public double? HODP;
     
     [DataMember] 
-    public char? FlightMode;
+    public int? FlightMode;
     
     [DataMember] 
     public double? SatCount;
@@ -131,6 +153,8 @@ public class DroneStt
         WayPointNum = 0.0;
         
         PowerV = 0.0;
+
+        BatteryStt = 0.0;
         
         GpsStt = ' ';
         
@@ -158,7 +182,7 @@ public class DroneStt
         
         HODP = 0.0;
         
-        FlightMode = ' ';
+        FlightMode = 0;
         
         SatCount = 0.0;
         
@@ -245,12 +269,13 @@ public class DroneTrack
     [DataMember] 
     public double? PathIndex;
     
+    // 드론의 이동 경로 저장하는 큐 
     [DataMember] 
-    public double[]? DroneTrails;
+    public FixedSizedQueue<CurrentGisLocation> DroneTrails = new(600);
     
+    // 드론의 이동 진척과 관련된 리스트
     [DataMember] 
     public double[]? DroneProgress;
-    
     [DataMember] 
     public double[]? DroneProgressPresentation;
     
@@ -262,7 +287,6 @@ public class DroneTrack
     
     [DataMember] 
     public double? RemainDistance;
-    
 }
 
 [DataContract] 

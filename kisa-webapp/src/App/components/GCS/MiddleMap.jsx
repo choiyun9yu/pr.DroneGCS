@@ -9,29 +9,13 @@ import {DroneContext} from "./SignalRContainder";
 
 const center = {
     lat: -35.3632623,
-        lng: 149.1652378
+    lng: 149.1652378
 }
 export const MiddleMap = (props) => {
     const [isController, setIsController] = useState(true)
     const [dronePosition, setDronePosition] = useState({ lat: -35.3632623, lng: 149.1652378 });
     const [dronePath, setDronePath] = useState([{ lat: -35.3632623, lng: 149.1652378 }]);
 
-    // // 드론 위치를 업데이트하는 함수
-    // const updateDronePosition = () => {
-    //     const newDronePosition = {
-    //         lat:0,
-    //         lng:0
-    //     };
-    // }
-    //
-    // // 드론 위치 업데이트
-    // setDronePosition(newDronePosition)
-    //
-    // // 드론 경로에 새로운 좌표 추가
-    // setDronePath([...dronePath, newDronePosition]);
-
-    // // 5초마다 드론 위치 업데이트
-    // setTimeout(updateDronePosition, 5000);
 
     const handleIsController= () => {
         setIsController(!isController)
@@ -49,12 +33,13 @@ export const MiddleMap = (props) => {
     return (
         props.swapMap
             ? <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
-              </div>
+            </div>
             : <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
                 <GoogleMap mapContainerClassName={`flex w-full h-full rounded-xl`}
                            center={center} zoom={18}>
 
                     {/* 드론 마커 */}
+                    {/*usecontext로 드론 위치 가져와서  position 자리에 넣어보기 */}
                     <OverlayView
                         position={dronePosition}
                         mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
@@ -88,7 +73,7 @@ export const MiddleMap = (props) => {
                     {props.gcsMode === 'mission' ? <OtherContents middleTable={props.middleTable}/> : null}
                     {props.gcsMode === 'video' ? <OtherContents middleTable={props.middleTable}/> : null}
                 </GoogleMap>
-              </div>
+            </div>
     );
 };
 
@@ -109,52 +94,52 @@ export const MiniMap = (props) => {
 export const Table = () => {
     const { droneStates } = useContext(DroneContext);
 
-        return(
-            <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
-                <table className={`mx-3 my-2 text-lg text-[#00DCF8]`}>
-                    <tbody>
-                    <tr>
-                        <th className={`px-2`}>전체 이동거리</th>
-                        {/*<td className={`px-2`}> {droneState['TotalDistance']} km</td>*/}
-                        <td className={`px-2`}> km</td>
-                    </tr>
-                    <tr>
-                        <th className={`px-2`}>현재 비행거리</th>
-                        {/*<td className={`px-2`}> {droneState['ElapsedDistance']} km</td>*/}
-                        <td className={`px-2`}> km</td>
-                    </tr>
-                    <tr>
-                        <th className={`px-2`}>잔여 이동거리</th>
-                        {/*<td className={`px-2`}> {droneState['RemainDistance']} km</td>*/}
-                        <td className={`px-2`}> km</td>
-                    </tr>
-                    <tr>
-                        <th className={`px-2`}>현재 이동속도</th>
-                        {/*<td className={`px-2`}> {droneState['DroneSpeed']} m/s</td>*/}
-                        <td className={`px-2`}> m/s</td>
-                    </tr>
-                    <tr>
-                        <th className={`px-2`}>평균 이동속도</th>
-                        <td className={`px-2`}> m/s</td>
-                    </tr>
-                    <tr>
-                        <th className={`px-2`}>이륙 시작시간</th>
-                        {/*<td className={`px-2`}> {droneState['StartTime']} </td>*/}
-                        <td className={`px-2`}></td>
-                    </tr>
-                    <tr>
-                        <th className={`px-2`}>비행 소요시간</th>
-                        {/*<td className={`px-2`}> {droneState['CompleteTime'] - droneState['StartTime']}</td>*/}
-                        <td className={`px-2`}></td>
-                    </tr>
-                    <tr>
-                        <th className={`px-2`}>비행 완료시간</th>
-                        {/*<td className={`px-2`}> {droneState['CompleteTime']} </td>*/}
-                        <td className={`px-2`}></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        );
+    return(
+        <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
+            <table className={`mx-3 my-2 text-lg text-[#00DCF8]`}>
+                <tbody>
+                <tr>
+                    <th className={`px-2`}>전체 이동거리</th>
+                    {/*<td className={`px-2`}> {droneState['TotalDistance']} km</td>*/}
+                    <td className={`px-2`}> km</td>
+                </tr>
+                <tr>
+                    <th className={`px-2`}>현재 비행거리</th>
+                    {/*<td className={`px-2`}> {droneState['ElapsedDistance']} km</td>*/}
+                    <td className={`px-2`}> km</td>
+                </tr>
+                <tr>
+                    <th className={`px-2`}>잔여 이동거리</th>
+                    {/*<td className={`px-2`}> {droneState['RemainDistance']} km</td>*/}
+                    <td className={`px-2`}> km</td>
+                </tr>
+                <tr>
+                    <th className={`px-2`}>현재 이동속도</th>
+                    {/*<td className={`px-2`}> {droneState['DroneSpeed']} m/s</td>*/}
+                    <td className={`px-2`}> m/s</td>
+                </tr>
+                <tr>
+                    <th className={`px-2`}>평균 이동속도</th>
+                    <td className={`px-2`}> m/s</td>
+                </tr>
+                <tr>
+                    <th className={`px-2`}>이륙 시작시간</th>
+                    {/*<td className={`px-2`}> {droneState['StartTime']} </td>*/}
+                    <td className={`px-2`}></td>
+                </tr>
+                <tr>
+                    <th className={`px-2`}>비행 소요시간</th>
+                    {/*<td className={`px-2`}> {droneState['CompleteTime'] - droneState['StartTime']}</td>*/}
+                    <td className={`px-2`}></td>
+                </tr>
+                <tr>
+                    <th className={`px-2`}>비행 완료시간</th>
+                    {/*<td className={`px-2`}> {droneState['CompleteTime']} </td>*/}
+                    <td className={`px-2`}></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    );
     // }
 }

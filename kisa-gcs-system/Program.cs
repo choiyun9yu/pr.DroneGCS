@@ -7,7 +7,7 @@ public static class Program
     {
         var host = CreateHostBuilder(args).Build();
         
-        DroneConnection(host, 14556);
+        await DroneConnection(host, 14556);
 
         await host.RunAsync();
     }
@@ -22,9 +22,9 @@ public static class Program
 	
     public static async Task DroneConnection(IHost host, int port)
     {
-        var MavlinkNettyService =
+        var mavlinkNettyService =
             (MavlinkNetty)host 
                 .Services.GetService(typeof(MavlinkNetty))!;                
-        await MavlinkNettyService.StartAsync(port); 
+        await mavlinkNettyService.StartAsync(port); 
     }
 }

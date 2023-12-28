@@ -6,9 +6,9 @@ public class MavlinkDecoder : MessageToMessageDecoder<DatagramPacket>
 {                                                                              
   private readonly MAVLink.MavlinkParse _parser = new();   
   
-  protected override void Decode(IChannelHandlerContext context, DatagramPacket input, List<object?> output) 
+  protected override void Decode(IChannelHandlerContext ctx, DatagramPacket input, List<object?> output) 
   {
-    context.Channel.GetAttribute(                                               
+    ctx.Channel.GetAttribute(                                               
         AttributeKey<IPEndPoint>.ValueOf("SenderAddress")).Set((IPEndPoint)input.Sender);
     
     var decoded = Decode(input);           
@@ -16,8 +16,7 @@ public class MavlinkDecoder : MessageToMessageDecoder<DatagramPacket>
     if ((decoded != null))                                                      
     {
       MAVLink.MAVLinkMessage mavlinkMessage = decoded;
-      object data = mavlinkMessage.data;
-      output.Add(data);                                                    
+      output.Add(mavlinkMessage);         
     }
   }
   
