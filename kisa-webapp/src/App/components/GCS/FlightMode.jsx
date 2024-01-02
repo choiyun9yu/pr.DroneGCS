@@ -10,19 +10,16 @@ export const FlightMode = (props) => {
         <div id="right-sidebar" className="flex  flex-col w-[500px]">
             <RightSideTop />
             <RightSideBottom swapMap={props.swapMap}
-                             handleSwapMap={props.handleSwapMap}/>
+                             handleSwapMap={props.handleSwapMap}
+                             center={props.center}
+            />
         </div>
     );
 };
 
 const RightSideTop = () => {
     const { droneMessage } = useContext(DroneContext);
-    let droneState;
-    if (droneMessage !== null)
-    {
-        droneState = droneMessage['droneMessage'];
-        console.log(droneMessage['droneMessage']);
-    }
+    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
     return (
         <div className={`items-start w-full h-1/2 mb-3 rounded-2xl ${ColorThema.Secondary4}`}>
             <div className="flex m-2 items-center">
@@ -78,7 +75,9 @@ const RightSideBottom = (props) => {
                 <span className="text-white rounded-md m-3 font-bold text-medium">• 드론 운용</span>
                 <div className={`w-full h-full min-h-[200px] bg-black`}>
                     {props.swapMap
-                        ? <MiniMap handleSwapMap={props.handleSwapMap}/>
+                        ? <MiniMap handleSwapMap={props.handleSwapMap}
+                                   center={props.center}
+                        />
                         : null}
                 </div>
                 <div className={'flex flex-col w-full h-full text-[#AEABD8]'}>

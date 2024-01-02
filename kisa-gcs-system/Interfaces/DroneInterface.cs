@@ -116,6 +116,9 @@ public class DroneStt
     public double? Alt;
     
     [DataMember] 
+    public double? Head;
+    
+    [DataMember] 
     public double? Speed;
     
     [DataMember] 
@@ -169,6 +172,8 @@ public class DroneStt
         Lon = 0.0;
         
         Alt = 0.0;
+
+        Head = 0.0;
         
         Speed = 0.0;
         

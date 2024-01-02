@@ -51,10 +51,11 @@ public class MavlinkMapper
     // {
     //   Console.WriteLine(missionCurrent);
     // }
-    // if (data is MAVLink.mavlink_vfr_hud_t vfrHud)
-    // {
-    //   Console.WriteLine(vfrHud);
-    // }
+    if (data is MAVLink.mavlink_vfr_hud_t vfrHud)
+    {
+      // Console.WriteLine(vfrHud.heading);
+      _droneInterface.DroneStt.Head = vfrHud.heading;
+    }
     // if (data is MAVLink.mavlink_servo_output_raw_t servoOutput)
     // {
     //   Console.WriteLine(sensorData);

@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import { GoogleMap, useJsApiLoader, Polyline, Marker, OverlayView } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Polyline, OverlayView } from '@react-google-maps/api';
 
 import { ColorThema } from '../ProejctThema';
 import './GCSstyles.css';
@@ -7,15 +7,13 @@ import {FlightContents} from "./FlightMode";
 import {OtherContents} from "./MissionMode";
 import {DroneContext} from "./SignalRContainder";
 
-const center = {
-    lat: -35.3632623,
-    lng: 149.1652378
-}
 export const MiddleMap = (props) => {
     const [isController, setIsController] = useState(true)
-    const [dronePosition, setDronePosition] = useState({ lat: -35.3632623, lng: 149.1652378 });
-    const [dronePath, setDronePath] = useState([{ lat: -35.3632623, lng: 149.1652378 }]);
+    const { droneMessage } = useContext(DroneContext);
+    // const [dronePosition, setDronePosition] = useState({ lat: -35.3632623, lng: 149.1652378 });
+    // const [dronePath, setDronePath] = useState([{ lat: -35.3632623, lng: 149.1652378 }]);
 
+    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
 
     const handleIsController= () => {
         setIsController(!isController)
@@ -36,12 +34,12 @@ export const MiddleMap = (props) => {
             </div>
             : <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
                 <GoogleMap mapContainerClassName={`flex w-full h-full rounded-xl`}
-                           center={center} zoom={18}>
+                           center={props.center} zoom={18}>
 
                     {/* 드론 마커 */}
                     {/*usecontext로 드론 위치 가져와서  position 자리에 넣어보기 */}
                     <OverlayView
-                        position={dronePosition}
+                        position={{ lat: droneMessage && droneState.DroneStt.Lat, lng: droneMessage && droneState.DroneStt.Lon }}
                         mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                         getPixelPositionOffset={(width, height) => ({
                             x: -(width / 2),
@@ -54,13 +52,14 @@ export const MiddleMap = (props) => {
                                 height: '76px',
                                 backgroundImage: `url(${process.env.PUBLIC_URL}/Drone.png)`,
                                 backgroundSize: 'contain',
-                                transform: 'translate(-50%, -50%)',
+                                transform: `translate(-50%, -50%) rotate(${droneMessage && droneState.DroneStt.Head}deg)`,
                             }}
                         />
                     </OverlayView>
 
-                    {/* 드론 경로 */}
-                    <Polyline path={dronePath} options={{ strokeColor: '#000000', strokeWeight: 2 }} />
+                    {/*/!* 드론 경로 *!/*/}
+                    {/*<Polyline path={dronePath} options={{ strokeColor: '#000000', strokeWeight: 2 }} />*/}
+
                     {props.gcsMode === 'flight' ? <FlightContents isLeftPanel={props.isLeftPanel}
                                                                   handleIsLeftPanel={props.handleIsLeftPanel}
                                                                   isRightPanel={props.isRightPanel}
@@ -80,7 +79,7 @@ export const MiddleMap = (props) => {
 export const MiniMap = (props) => {
     return (
         <>
-            <GoogleMap mapContainerClassName={`flex w-full h-full`} center={center} zoom={15}>
+            <GoogleMap mapContainerClassName={`flex w-full h-full`} center={props.center} zoom={15}>
                 <button onClick={props.handleSwapMap} className={`absolute bottom-[10px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                         <path fillRule="evenodd" d="M15.97 2.47a.75.75 0 011.06 0l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H7.5a.75.75 0 010-1.5h11.69l-3.22-3.22a.75.75 0 010-1.06zm-7.94 9a.75.75 0 010 1.06l-3.22 3.22H16.5a.75.75 0 010 1.5H4.81l3.22 3.22a.75.75 0 11-1.06 1.06l-4.5-4.5a.75.75 0 010-1.06l4.5-4.5a.75.75 0 011.06 0z" clipRule="evenodd" />
@@ -92,7 +91,12 @@ export const MiniMap = (props) => {
 }
 
 export const Table = () => {
-    const { droneStates } = useContext(DroneContext);
+    // const { droneMessage } = useContext(DroneContext);
+    // let droneState;
+    // if (droneMessage !== null)
+    // {
+    //     droneState = droneMessage['droneMessage'];
+    // }
 
     return(
         <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
