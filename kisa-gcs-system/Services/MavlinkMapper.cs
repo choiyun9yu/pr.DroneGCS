@@ -328,10 +328,22 @@ public class MavlinkMapper
       _droneInterface.SensorData.mag_ofs_y_SENSOR_OFFSETS = sensorOffsets.mag_ofs_y;
     }
   }
+  
 
   public void SetDroneId(string droneId)
   {
     _droneInterface.DroneId = droneId;
+  }
+
+  public void UpdateDroneLogger(string text)
+  {
+    _droneInterface.DroneLogger.Add(
+      new MavlinkLog()
+      {
+        logtime = DateTime.Now,
+        message = text
+      }
+      );
   }
 
   public string ObjectToJson() 
@@ -340,4 +352,5 @@ public class MavlinkMapper
     // Console.WriteLine(droneMessage);
     return droneMessage;
   }
+  
 }

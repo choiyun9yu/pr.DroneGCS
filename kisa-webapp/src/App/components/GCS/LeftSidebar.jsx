@@ -16,7 +16,6 @@ export const LeftSidebar = (props) => {
             lat: droneMessage && droneState.DroneStt.Lat,
             lng: droneMessage && droneState.DroneStt.Lon
         });
-        console.log('set center!')
     }
 
     return (

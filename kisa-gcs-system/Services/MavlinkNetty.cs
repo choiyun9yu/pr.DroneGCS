@@ -7,6 +7,7 @@ public class MavlinkNetty
   private IChannel? _bootstrapChannel; 
   
   private readonly MavlinkDecoder _decoder;
+  private readonly MavlinkEncoder _encoder;
   private readonly MavlinkHandler _handler;
   public MavlinkNetty(IHubContext<DroneHub> hubContext, DroneController controller)  
   {
@@ -25,6 +26,7 @@ public class MavlinkNetty
         {
           var pipeline = channel.Pipeline; 
           pipeline.AddLast("Mavlink Decoder", _decoder);
+          // pipeline.AddLast("Mavlink Encoder", _encoder);
           pipeline.AddLast("Mavlink Handler", _handler);
         }
       ));

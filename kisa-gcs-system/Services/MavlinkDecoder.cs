@@ -11,13 +11,8 @@ public class MavlinkDecoder : MessageToMessageDecoder<DatagramPacket>
     ctx.Channel.GetAttribute(                                               
         AttributeKey<IPEndPoint>.ValueOf("SenderAddress")).Set((IPEndPoint)input.Sender);
     
-    var decoded = Decode(input);           
+    var decoded = Decode(input);
     output.Add(decoded);    
-    if ((decoded != null))                                                      
-    {
-      MAVLink.MAVLinkMessage mavlinkMessage = decoded;
-      output.Add(mavlinkMessage);         
-    }
   }
   
   protected MAVLink.MAVLinkMessage? Decode(DatagramPacket input) 
@@ -33,4 +28,5 @@ public class MavlinkDecoder : MessageToMessageDecoder<DatagramPacket>
       return null;
     }
   }
+  
 }

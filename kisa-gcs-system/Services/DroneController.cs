@@ -32,6 +32,13 @@ public class DroneController
     {
         string droneId = msg.sysid.ToString();
         _mapper.SetDroneId(droneId);
+
+        if ((MAVLink.MAVLINK_MSG_ID)msg.msgid == MAVLink.MAVLINK_MSG_ID.STATUSTEXT)
+        {
+            var logdata = (MAVLink.mavlink_statustext_t)msg.data;
+            var text = string.Join("", logdata.text.Select(c => (char)c));
+            _mapper.UpdateDroneLogger(text);
+        }
         
         object data = msg.data;
         _mapper.PredictionMapping(data);
@@ -39,6 +46,5 @@ public class DroneController
         
         string droneMessage = _mapper.ObjectToJson();
         await _hubContext.Clients.All.SendAsync("droneMessage", droneMessage);
-        
     }
 }

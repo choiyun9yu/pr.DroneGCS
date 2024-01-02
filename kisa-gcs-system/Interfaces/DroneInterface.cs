@@ -20,14 +20,16 @@ public enum DroneConnectionProtocol
     SERIAL,
 }
 
+
+
 [DataContract] 
 public struct DroneInterface
 {
     [DataMember] 
     public string? DroneId;
-    
+
     [DataMember] 
-    public string[]? DroneLogger;
+    public List<MavlinkLog> DroneLogger;
     
     [DataMember] 
     public bool? IsOnline; 
@@ -60,7 +62,7 @@ public struct DroneInterface
     {
         DroneId = "";
         
-        DroneLogger = [];
+        DroneLogger = new ();
         
         IsOnline = true;
         
@@ -80,6 +82,16 @@ public struct DroneInterface
         
         // HasDeliverPlan = false;
     }
+}
+
+[DataContract]
+public struct MavlinkLog
+{
+    [DataMember]
+    public DateTime logtime;
+    
+    [DataMember]
+    public string message;
 }
 
 [DataContract]
