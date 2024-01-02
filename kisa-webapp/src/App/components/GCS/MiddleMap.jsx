@@ -91,12 +91,26 @@ export const MiniMap = (props) => {
 }
 
 export const Table = () => {
-    // const { droneMessage } = useContext(DroneContext);
-    // let droneState;
-    // if (droneMessage !== null)
-    // {
-    //     droneState = droneMessage['droneMessage'];
-    // }
+    const { droneMessage } = useContext(DroneContext);
+    let droneState;
+    let startTime;
+    let completeTime;
+    let takeTime;
+
+    if (droneMessage !== null)
+    {
+        droneState = droneMessage['droneMessage'];
+
+        startTime = droneMessage && new Date(droneState.DroneMission.StartTime).toLocaleTimeString('en-US', {hour12: false})
+        completeTime = droneMessage && new Date(droneState.DroneMission.CompleteTime).toLocaleTimeString('en-US', {hour12: false})
+
+        if ((completeTime-startTime) > 0) {
+            takeTime = completeTime-startTime
+        }
+        else {
+            takeTime = '00:00:00'
+        }
+    }
 
     return(
         <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
@@ -104,23 +118,19 @@ export const Table = () => {
                 <tbody>
                 <tr>
                     <th className={`px-2`}>전체 이동거리</th>
-                    {/*<td className={`px-2`}> {droneState['TotalDistance']} km</td>*/}
-                    <td className={`px-2`}> km</td>
+                    <td className={`px-2`}> {droneMessage && droneState.DroneTrack.TotalDistance} km</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>현재 비행거리</th>
-                    {/*<td className={`px-2`}> {droneState['ElapsedDistance']} km</td>*/}
-                    <td className={`px-2`}> km</td>
+                    <td className={`px-2`}> {droneMessage && droneState.DroneTrack.ElapsedDistance} km</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>잔여 이동거리</th>
-                    {/*<td className={`px-2`}> {droneState['RemainDistance']} km</td>*/}
-                    <td className={`px-2`}> km</td>
+                    <td className={`px-2`}> {droneMessage && droneState.DroneTrack.RemainDistance} km</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>현재 이동속도</th>
-                    {/*<td className={`px-2`}> {droneState['DroneSpeed']} m/s</td>*/}
-                    <td className={`px-2`}> m/s</td>
+                    <td className={`px-2`}> {droneMessage && droneState.DroneStt.Speed} m/s</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>평균 이동속도</th>
@@ -128,18 +138,15 @@ export const Table = () => {
                 </tr>
                 <tr>
                     <th className={`px-2`}>이륙 시작시간</th>
-                    {/*<td className={`px-2`}> {droneState['StartTime']} </td>*/}
-                    <td className={`px-2`}></td>
+                    <td className={`px-2`}>{startTime}</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>비행 소요시간</th>
-                    {/*<td className={`px-2`}> {droneState['CompleteTime'] - droneState['StartTime']}</td>*/}
-                    <td className={`px-2`}></td>
+                    <td className={`px-2`}>{takeTime}</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>비행 완료시간</th>
-                    {/*<td className={`px-2`}> {droneState['CompleteTime']} </td>*/}
-                    <td className={`px-2`}></td>
+                    <td className={`px-2`}>{completeTime}</td>
                 </tr>
                 </tbody>
             </table>

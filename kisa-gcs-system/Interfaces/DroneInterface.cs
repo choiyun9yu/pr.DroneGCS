@@ -278,6 +278,12 @@ public class DroneMission
     
     [DataMember] 
     public DateTime? CompleteTime;
+
+    public DroneMission()
+    {
+        StartTime = DateTime.Now;
+        CompleteTime = DateTime.Now;
+    }
 }
 
 [DataContract] 
@@ -286,11 +292,9 @@ public class DroneTrack
     [DataMember] 
     public double? PathIndex;
     
-    // 드론의 이동 경로 저장하는 큐 
     [DataMember] 
     public FixedSizedQueue<CurrentGisLocation> DroneTrails = new(600);
     
-    // 드론의 이동 진척과 관련된 리스트
     [DataMember] 
     public double[]? DroneProgress;
     [DataMember] 
@@ -304,6 +308,13 @@ public class DroneTrack
     
     [DataMember] 
     public double? RemainDistance;
+
+    public DroneTrack()
+    {
+        TotalDistance = 0.0;
+        ElapsedDistance = 0.0;
+        RemainDistance = 0.0;
+    }
 }
 
 [DataContract] 
