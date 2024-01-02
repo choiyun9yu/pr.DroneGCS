@@ -10,10 +10,12 @@ public class MavlinkMapper
 
   public void GcsMapping(object data)
   {
-    // if (data is MAVLink.mavlink_heartbeat_t heartbeat)
-    // {
-    //   Console.WriteLine(heartbeat);
-    // }
+    if (data is MAVLink.mavlink_heartbeat_t heartbeat)
+    {
+      // Console.WriteLine("base_mode: "+$"{(uint)heartbeat.base_mode}");
+      // Console.WriteLine("custom_mode: "+$"{(CustomMode)heartbeat.custom_mode}");
+      _droneInterface.DroneStt.FlightMode = (CustomMode)heartbeat.custom_mode;
+    }
     if (data is MAVLink.mavlink_attitude_t attitude)
     {
       // Console.WriteLine(attitude);

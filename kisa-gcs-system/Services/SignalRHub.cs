@@ -13,7 +13,7 @@ public class DroneHub : Hub
     
     public async Task SendMavlinkCommand(MAVLink.MAVLinkMessage message, string? droneId) { }
 
-    public async Task SendDroneFlightModeChange(MavCopterFlightMode flightMode)
+    public async Task SendDroneFlightModeChange(CustomMode flightMode)
     {
         var commandBody = new MAVLink.mavlink_set_mode_t()
         {

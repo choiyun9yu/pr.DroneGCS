@@ -238,9 +238,9 @@ const Btn = (props) => {
     const [isSensorArea, setIsSensorArea] = useState(false);
     const [isLogArea, setIsLogArea] = useState(false);
     const {droneMessage} = useContext(DroneContext);
-    const sensorState = droneMessage ? droneMessage['droneMessage'] : null;
+    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
 
-    console.log(sensorState)
+    console.log(droneState)
 
     const handleSensorArea = () => {
         setIsSensorArea(!isSensorArea);
@@ -286,85 +286,85 @@ const Btn = (props) => {
                         border: '1px solid #000'
                     }}>
                         <div className={`px-2`}>
-                            <p>roll: {droneMessage && sensorState.SensorData.roll_ATTITUDE}</p>
+                            <p>roll: {droneMessage && droneState.SensorData.roll_ATTITUDE}</p>
 
-                            <p>pitch: {droneMessage && sensorState.SensorData.pitch_ATTITUDE}</p>
+                            <p>pitch: {droneMessage && droneState.SensorData.pitch_ATTITUDE}</p>
 
-                            <p>yaw: {droneMessage && sensorState.SensorData.yaw_ATTITUDE}</p>
+                            <p>yaw: {droneMessage && droneState.SensorData.yaw_ATTITUDE}</p>
 
-                            <p>xacc: {droneMessage && sensorState.SensorData.xacc_RAW_IMU}</p>
+                            <p>xacc: {droneMessage && droneState.SensorData.xacc_RAW_IMU}</p>
 
-                            <p>yacc: {droneMessage && sensorState.SensorData.yacc_RAW_IMU}</p>
+                            <p>yacc: {droneMessage && droneState.SensorData.yacc_RAW_IMU}</p>
 
-                            <p>zacc: {droneMessage && sensorState.SensorData.zacc_RAW_IMU}</p>
+                            <p>zacc: {droneMessage && droneState.SensorData.zacc_RAW_IMU}</p>
 
-                            <p>xgyro: {droneMessage && sensorState.SensorData.xgyro_RAW_IMU}</p>
+                            <p>xgyro: {droneMessage && droneState.SensorData.xgyro_RAW_IMU}</p>
 
-                            <p>ygyro: {droneMessage && sensorState.SensorData.ygyro_RAW_IMU}</p>
+                            <p>ygyro: {droneMessage && droneState.SensorData.ygyro_RAW_IMU}</p>
 
-                            <p>zgyro: {droneMessage && sensorState.SensorData.zgyro_RAW_IMU}</p>
+                            <p>zgyro: {droneMessage && droneState.SensorData.zgyro_RAW_IMU}</p>
 
-                            <p>xmag: {droneMessage && sensorState.SensorData.xmag_RAW_IMU}</p>
+                            <p>xmag: {droneMessage && droneState.SensorData.xmag_RAW_IMU}</p>
 
-                            <p>ymag: {droneMessage && sensorState.SensorData.ymag_RAW_IMU}</p>
+                            <p>ymag: {droneMessage && droneState.SensorData.ymag_RAW_IMU}</p>
 
-                            <p>zmag: {droneMessage && sensorState.SensorData.zmag_RAW_IMU}</p>
+                            <p>zmag: {droneMessage && droneState.SensorData.zmag_RAW_IMU}</p>
 
-                            <p>xvib: {droneMessage && sensorState.SensorData.vibration_x_VIBRATION}</p>
+                            <p>xvib: {droneMessage && droneState.SensorData.vibration_x_VIBRATION}</p>
 
-                            <p>yvib: {droneMessage && sensorState.SensorData.vibration_y_VIBRATION}</p>
+                            <p>yvib: {droneMessage && droneState.SensorData.vibration_y_VIBRATION}</p>
 
-                            <p>zvib: {droneMessage && sensorState.SensorData.vibration_z_VIBRATION}</p>
+                            <p>zvib: {droneMessage && droneState.SensorData.vibration_z_VIBRATION}</p>
 
-                            <p>xacc_ofs: {droneMessage && sensorState.SensorData.accel_cal_x_SENSOR_OFFSETS}</p>
+                            <p>xacc_ofs: {droneMessage && droneState.SensorData.accel_cal_x_SENSOR_OFFSETS}</p>
 
-                            <p>yacc_ofs: {droneMessage && sensorState.SensorData.accel_cal_y_SENSOR_OFFSETS}</p>
+                            <p>yacc_ofs: {droneMessage && droneState.SensorData.accel_cal_y_SENSOR_OFFSETS}</p>
 
-                            <p>zacc_ofs: {droneMessage && sensorState.SensorData.accel_cal_z_SENSOR_OFFSETS}</p>
+                            <p>zacc_ofs: {droneMessage && droneState.SensorData.accel_cal_z_SENSOR_OFFSETS}</p>
 
-                            <p>xmag_ofs: {droneMessage && sensorState.SensorData.mag_ofs_x_SENSOR_OFFSETS}</p>
+                            <p>xmag_ofs: {droneMessage && droneState.SensorData.mag_ofs_x_SENSOR_OFFSETS}</p>
 
-                            <p>ymag_ofs: {droneMessage && sensorState.SensorData.mag_ofs_y_SENSOR_OFFSETS}</p>
+                            <p>ymag_ofs: {droneMessage && droneState.SensorData.mag_ofs_y_SENSOR_OFFSETS}</p>
 
-                            <p>vx_global: {droneMessage && sensorState.SensorData.vx_GLOBAL_POSITION_INT}</p>
+                            <p>vx_global: {droneMessage && droneState.SensorData.vx_GLOBAL_POSITION_INT}</p>
 
-                            <p>vy_global: {droneMessage && sensorState.SensorData.vy_GLOBAL_POSITION_INT}</p>
+                            <p>vy_global: {droneMessage && droneState.SensorData.vy_GLOBAL_POSITION_INT}</p>
 
-                            <p>x_local: {droneMessage && sensorState.SensorData.x_LOCAL_POSITION_NED}</p>
+                            <p>x_local: {droneMessage && droneState.SensorData.x_LOCAL_POSITION_NED}</p>
 
-                            <p>vx_local: {droneMessage && sensorState.SensorData.vx_LOCAL_POSITION_NED}</p>
+                            <p>vx_local: {droneMessage && droneState.SensorData.vx_LOCAL_POSITION_NED}</p>
 
-                            <p>vy_local: {droneMessage && sensorState.SensorData.vy_LOCAL_POSITION_NED}</p>
+                            <p>vy_local: {droneMessage && droneState.SensorData.vy_LOCAL_POSITION_NED}</p>
 
-                            <p>nav_pitch: {droneMessage && sensorState.SensorData.nav_pitch_NAV_CONTROLLER_OUTPUT}</p>
+                            <p>nav_pitch: {droneMessage && droneState.SensorData.nav_pitch_NAV_CONTROLLER_OUTPUT}</p>
 
-                            <p>nav_bearing: {droneMessage && sensorState.SensorData.nav_bearing_NAV_CONTROLLER_OUTPUT}</p>
+                            <p>nav_bearing: {droneMessage && droneState.SensorData.nav_bearing_NAV_CONTROLLER_OUTPUT}</p>
 
-                            <p>servo3: {droneMessage && sensorState.SensorData.servo3_raw_SERVO_OUTPUT_RAW}</p>
+                            <p>servo3: {droneMessage && droneState.SensorData.servo3_raw_SERVO_OUTPUT_RAW}</p>
 
-                            <p>servo8: {droneMessage && sensorState.SensorData.servo8_raw_SERVO_OUTPUT_RAW}</p>
+                            <p>servo8: {droneMessage && droneState.SensorData.servo8_raw_SERVO_OUTPUT_RAW}</p>
 
-                            <p>groundspeed: {droneMessage && sensorState.SensorData.groundspeed_VFR_HUD}</p>
+                            <p>groundspeed: {droneMessage && droneState.SensorData.groundspeed_VFR_HUD}</p>
 
-                            <p>airspeed: {droneMessage && sensorState.SensorData.airspeed_VFR_HUD}</p>
+                            <p>airspeed: {droneMessage && droneState.SensorData.airspeed_VFR_HUD}</p>
 
-                            <p>press_abs: {droneMessage && sensorState.SensorData.press_abs_SCALED_PRESSURE}</p>
+                            <p>press_abs: {droneMessage && droneState.SensorData.press_abs_SCALED_PRESSURE}</p>
 
-                            <p>Vservo: {droneMessage && sensorState.SensorData.Vservo_POWER_STATUS}</p>
+                            <p>Vservo: {droneMessage && droneState.SensorData.Vservo_POWER_STATUS}</p>
 
-                            <p>voltages1: {droneMessage && sensorState.SensorData.voltages1_BATTERY_STATUS}</p>
+                            <p>voltages1: {droneMessage && droneState.SensorData.voltages1_BATTERY_STATUS}</p>
 
-                            <p>chancount: {droneMessage && sensorState.SensorData.chancount_RC_CHANNELS}</p>
+                            <p>chancount: {droneMessage && droneState.SensorData.chancount_RC_CHANNELS}</p>
 
-                            <p>chan12: {droneMessage && sensorState.SensorData.chan12_raw_RC_CHANNELS}</p>
+                            <p>chan12: {droneMessage && droneState.SensorData.chan12_raw_RC_CHANNELS}</p>
 
-                            <p>chan13: {droneMessage && sensorState.SensorData.chan13_raw_RC_CHANNELS}</p>
+                            <p>chan13: {droneMessage && droneState.SensorData.chan13_raw_RC_CHANNELS}</p>
 
-                            <p>chan14: {droneMessage && sensorState.SensorData.chan14_raw_RC_CHANNELS}</p>
+                            <p>chan14: {droneMessage && droneState.SensorData.chan14_raw_RC_CHANNELS}</p>
 
-                            <p>chan15: {droneMessage && sensorState.SensorData.chan15_raw_RC_CHANNELS}</p>
+                            <p>chan15: {droneMessage && droneState.SensorData.chan15_raw_RC_CHANNELS}</p>
 
-                            <p>chan16: {droneMessage && sensorState.SensorData.chan16_raw_RC_CHANNELS}</p>
+                            <p>chan16: {droneMessage && droneState.SensorData.chan16_raw_RC_CHANNELS}</p>
                         </div>
                     </div>
                 )
@@ -411,8 +411,8 @@ const Btn = (props) => {
                             border: '1px solid #000'
                         }}>
                             <div className={`px-2`}>
-                                {sensorState.DroneLogger
-                                    ? printDroneLogs(sensorState.DroneLogger)
+                                {droneState.DroneLogger
+                                    ? printDroneLogs(droneState.DroneLogger)
                                     : null
                                 }
                             </div>
@@ -433,19 +433,44 @@ const Btn = (props) => {
 
             </button>
 
-            {/* middle button*/}
+            {/* middle button */}
             <div className={`flex h-[30px] z-10 mx-auto mt-[10px]`}>
-                <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Auto</button>
-                <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Stabilized</button>
-                <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Loiter</button>
-                <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>PosHold</button>
-                <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>AltHold</button>
-                <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Break</button>
-                <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Guided</button>
-                <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>RTL</button>
+
+                {droneMessage && droneState.DroneStt.FlightMode === 3
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Auto</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Auto</button>
+                }
+                {droneMessage && droneState.DroneStt.FlightMode === 0
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Stabilize</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Stabilize</button>
+                }
+                {droneMessage && droneState.DroneStt.FlightMode === 5
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Loiter</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Loiter</button>
+                }
+                {droneMessage && droneState.DroneStt.FlightMode === 16
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>PosHold</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>PosHold</button>
+                }
+                {droneMessage && droneState.DroneStt.FlightMode === 2
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>AltHold</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>AltHold</button>
+                }
+                {droneMessage && droneState.DroneStt.FlightMode === 17
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Break</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Break</button>
+                }
+                {droneMessage && droneState.DroneStt.FlightMode === 4
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Guided</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Guided</button>
+                }
+                {droneMessage && droneState.DroneStt.FlightMode === 6
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>RTL</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>RTL</button>
+                }
             </div>
 
-            {/* right button*/}
+            {/* right button */}
             <button onClick={props.handleIsRightPanel}
                     className={`absolute top-[60px] right-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
                 {props.isRightPanel

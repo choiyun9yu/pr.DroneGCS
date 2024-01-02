@@ -149,7 +149,7 @@ public class DroneStt
     public double? HODP;
     
     [DataMember] 
-    public int? FlightMode;
+    public CustomMode? FlightMode;
     
     [DataMember] 
     public double? SatCount;

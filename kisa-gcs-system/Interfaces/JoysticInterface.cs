@@ -5,7 +5,7 @@ public class JoysticInterface
     
 }
 
-public enum MavCopterFlightMode : int
+public enum CustomMode : int
 {
     STABILIZE = 0,
     ACRO = 1,
@@ -35,24 +35,24 @@ public enum MavCopterFlightMode : int
 
 public enum DroneFlightCommand
 {
-    arm,
-    takeOff,
-    disArm,
-    land
+    ARM,
+    TAKEOFF,
+    DISARM,
+    LAND
 }
 
 public enum ArrowButton
 {
-    up,
-    donw,
-    left,
-    right,
-    stop
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    STOP
 }
 
 public enum ArrowButtonTarget
 {
-    drone,
-    body,
-    camera
+    DRONE,
+    BODY,
+    CAMERA
 }
