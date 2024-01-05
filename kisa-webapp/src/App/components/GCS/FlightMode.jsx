@@ -237,7 +237,7 @@ const MainController = (props) => {
 const Btn = (props) => {
     const [isSensorArea, setIsSensorArea] = useState(false);
     const [isLogArea, setIsLogArea] = useState(false);
-    const {droneMessage} = useContext(DroneContext);
+    const {droneMessage, handleDroneFlightMode} = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
 
     console.log(droneState)
@@ -438,35 +438,43 @@ const Btn = (props) => {
 
                 {droneMessage && droneState.DroneStt.FlightMode === 3
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Auto</button>
-                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Auto</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightMode(3)}>Auto</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 0
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Stabilize</button>
-                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Stabilize</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightMode(0)}>Stabilize</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 5
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Loiter</button>
-                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Loiter</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightMode(5)}>Loiter</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 16
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>PosHold</button>
-                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>PosHold</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightMode(16)}>PosHold</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 2
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>AltHold</button>
-                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>AltHold</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightMode(2)}>AltHold</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 17
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Break</button>
-                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Break</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightMode(17)}>Break</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 4
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Guided</button>
-                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>Guided</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightMode(4)}>Guided</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 6
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>RTL</button>
-                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}>RTL</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightMode(6)}>RTL</button>
                 }
             </div>
 

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "NmQisqj3pq1JyfzX9GmfiwNKCaAzBvWec7dmhhpXfQRm5U3NVkmH9KQHcBss67KShTgudiVvRiqVjEjUanx+Hg==",
+  "dgSpecHash": "myFL45cHnyqXzcphIreDyWLuD8M1XKkjmV76Z5UJ/Q6czXzGN9BLweO9uQD2oanYcUS1nj7Oq2HMLm12uFdUjA==",
   "success": true,
-  "projectFilePath": "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/kisa-gcs-system.csproj",
+  "projectFilePath": "/home/choiyungyu/mygit/pr.DroneSystem/kisa-gcs-system/kisa-gcs-system.csproj",
   "expectedPackageFiles": [
     "/home/choiyungyu/.nuget/packages/dotnetty.buffers/0.7.5/dotnetty.buffers.0.7.5.nupkg.sha512",
     "/home/choiyungyu/.nuget/packages/dotnetty.codecs/0.7.5/dotnetty.codecs.0.7.5.nupkg.sha512",

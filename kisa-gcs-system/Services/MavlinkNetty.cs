@@ -7,12 +7,14 @@ public class MavlinkNetty
   private IChannel? _bootstrapChannel; 
   
   private readonly MavlinkDecoder _decoder;
-  private readonly MavlinkEncoder _encoder;
   private readonly MavlinkHandler _handler;
+  // private readonly MavlinkEncoder _encoder;
+
   public MavlinkNetty(IHubContext<DroneHub> hubContext, DroneController controller)  
   {
     _decoder = new MavlinkDecoder();
     _handler = new MavlinkHandler(hubContext, controller);
+    // _encoder = new MavlinkEncoder(hubContext);
       
     _bootstrap = new Bootstrap();   
     _bootstrap            
@@ -26,13 +28,13 @@ public class MavlinkNetty
         {
           var pipeline = channel.Pipeline; 
           pipeline.AddLast("Mavlink Decoder", _decoder);
-          // pipeline.AddLast("Mavlink Encoder", _encoder);
           pipeline.AddLast("Mavlink Handler", _handler);
+          // pipeline.AddLast("Mavlink Encoder", _encoder);
         }
       ));
   }
   
-  public async Task StartAsync(int port) 
+  public async Task Bind(int port) 
   { 
     _bootstrapChannel = await _bootstrap.BindAsync(port);
     Console.WriteLine("Started UDP server for Mavlink: " + port);

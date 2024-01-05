@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import { GoogleMap, useJsApiLoader, Polyline, OverlayView } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Polyline, Marker, OverlayView } from '@react-google-maps/api';
 
 import { ColorThema } from '../ProejctThema';
 import './GCSstyles.css';
@@ -10,8 +10,6 @@ import {DroneContext} from "./SignalRContainder";
 export const MiddleMap = (props) => {
     const [isController, setIsController] = useState(true)
     const { droneMessage } = useContext(DroneContext);
-    // const [dronePosition, setDronePosition] = useState({ lat: -35.3632623, lng: 149.1652378 });
-    // const [dronePath, setDronePath] = useState([{ lat: -35.3632623, lng: 149.1652378 }]);
 
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
 

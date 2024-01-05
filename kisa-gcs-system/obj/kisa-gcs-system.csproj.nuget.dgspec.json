@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/kisa-gcs-system.csproj": {}
+    "/home/choiyungyu/mygit/pr.DroneSystem/kisa-gcs-system/kisa-gcs-system.csproj": {}
   },
   "projects": {
-    "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/kisa-gcs-system.csproj": {
+    "/home/choiyungyu/mygit/pr.DroneSystem/kisa-gcs-system/kisa-gcs-system.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/kisa-gcs-system.csproj",
+        "projectUniqueName": "/home/choiyungyu/mygit/pr.DroneSystem/kisa-gcs-system/kisa-gcs-system.csproj",
         "projectName": "kisa-gcs-system",
-        "projectPath": "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/kisa-gcs-system.csproj",
+        "projectPath": "/home/choiyungyu/mygit/pr.DroneSystem/kisa-gcs-system/kisa-gcs-system.csproj",
         "packagesPath": "/home/choiyungyu/.nuget/packages/",
-        "outputPath": "/home/choiyungyu/mygit/pr.GCSdrone/kisa-gcs-system/obj/",
+        "outputPath": "/home/choiyungyu/mygit/pr.DroneSystem/kisa-gcs-system/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/choiyungyu/.nuget/NuGet/NuGet.Config"
