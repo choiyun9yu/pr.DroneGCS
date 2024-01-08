@@ -54,7 +54,6 @@ export const SignalRProvider = ({ children }) => {
             setDroneMessage(old => ({...old, droneMessage}));
         })
 
-
         // useEffect 훅에서 반환되는 클린업 함수, 컴퓨넌트가 언마운트 되거나 업데이트되기 전에 실행되며, 주로 리소스의 정리나 이벤트 리스너의 해제와 같은 작업을 수행
         return () => {
         ['droneMessage']                                            // SignalR 연결 객체에서 해제할 이벤트 핸들러들을 나타낸다.
@@ -65,11 +64,31 @@ export const SignalRProvider = ({ children }) => {
     const handleDroneFlightMode = flightMode => {
         connection.current.invoke('HandleDroneFlightMode', flightMode)
     }
+    const handleDroneFlightCommand = flightCommand => {
+        connection.current.invoke('HandleDroneFlightCommand', flightCommand)
+    }
+    const handleDroneJoystick = arrow => {
+        connection.current.invoke('HandleDroneJoystick', arrow)
+    }
+    const handleBodyJoystick = arrow => {
+        connection.current.invoke('HandleBodyJoystick', arrow)
+    }
+    const handleCameraJoystick = arrow => {
+        connection.current.invoke('HandleCameraJoystick', arrow)
+    }
+    const handleCameraCommand = command => {
+        connection.current.invoke('HandleCameraCommand', command)
+    }
 
     return (
         <DroneContext.Provider value={{
             droneMessage,
-            handleDroneFlightMode
+            handleDroneFlightMode,
+            handleDroneFlightCommand,
+            handleDroneJoystick,
+            handleBodyJoystick,
+            handleCameraJoystick,
+            handleCameraCommand,
         }}>
             {children}
         </DroneContext.Provider>

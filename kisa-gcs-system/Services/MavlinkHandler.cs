@@ -19,13 +19,11 @@ public class MavlinkHandler : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage
     protected override async void ChannelRead0(IChannelHandlerContext ctx, MAVLink.MAVLinkMessage msg)
     {
         UpdateDroneAddress(ctx);
-        var ep = GetChannelEndpoint(ctx);
         
-        // 드론 통신 객체 생성 및 초기화 (이 작업을 왜하는지 아직 모르겠음)
-        DroneCommunication link = new (_protocol, ep.Address.MapToIPv4() + ":" + ep.Port);
-
-        // 드론 메시지 처리
-        await _controller.HandleMavlinkMessage(msg, link, ctx, _droneAddress);
+        // var ep = GetChannelEndpoint(ctx);
+        // DroneCommunication link = new (_protocol, ep.Address.MapToIPv4() + ":" + ep.Port);
+        
+        await _controller.HandleMavlinkMessage(msg, ctx, _droneAddress);
     }
     
     private void UpdateDroneAddress(IChannelHandlerContext ctx)
@@ -58,12 +56,4 @@ public class MavlinkHandler : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage
     }
     
 }
-
-// public class MavlinkOutboundHandler : ChannelHandlerAdapter
-// {
-//     public override async Task WriteAsync(IChannelHandlerContext ctx, object msg)
-//     {
-//         await ctx.WriteAndFlushAsync(msg);
-//     }
-// }
 

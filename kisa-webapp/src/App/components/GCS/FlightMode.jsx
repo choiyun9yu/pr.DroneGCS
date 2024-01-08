@@ -201,13 +201,14 @@ export const FlightContents = (props) => {
 }
 
 const MainController = (props) => {
+    const { handleDroneFlightCommand } = useContext(DroneContext);
     return (
         <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]`}>
             <div className={`flex flex-col`}>
-                <button className={`w-20 h-10 m-2 rounded-xl control_btn`}>
+                <button className={`w-20 h-10 m-2 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(0)}>
                     Arm
                 </button>
-                <button className={`w-20 h-10 m-2 rounded-xl control_btn`}>
+                <button className={`w-20 h-10 m-2 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(2)}>
                     Take Off
                 </button>
             </div>
@@ -227,8 +228,12 @@ const MainController = (props) => {
             </div>
 
             <div className={`flex flex-col`}>
-                <button className={`w-20 h-10 m-2 rounded-xl control_btn`}>Dis-Arm</button>
-                <button className={`w-20 h-10 m-2 rounded-xl control_btn`}>Land</button>
+                <button className={`w-20 h-10 m-2 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(1)}>
+                    Dis-Arm
+                </button>
+                <button className={`w-20 h-10 m-2 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(3)}>
+                    Land
+                </button>
             </div>
         </div>
     );

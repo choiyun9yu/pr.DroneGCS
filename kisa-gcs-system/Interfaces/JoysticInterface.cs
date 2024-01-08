@@ -33,12 +33,12 @@ public enum CustomMode : int
     AUTOROTATE = 26,
 };
 
-public enum DroneFlightCommand
+public enum DroneFlightCommand : int
 {
-    ARM,
-    TAKEOFF,
-    DISARM,
-    LAND
+    ARM = 0,
+    DISARM = 1,
+    TAKEOFF = 2,
+    LAND= 3,
 }
 
 public enum ArrowButton

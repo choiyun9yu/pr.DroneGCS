@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("kisa-gcs-system")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b4052e994c2b62100a5896a1296ab156fad734af")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+80d66599a7aa276ab7ab391d87e95ecd85ebfe65")]
 [assembly: System.Reflection.AssemblyProductAttribute("kisa-gcs-system")]
 [assembly: System.Reflection.AssemblyTitleAttribute("kisa-gcs-system")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

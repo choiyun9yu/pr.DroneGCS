@@ -18,5 +18,11 @@ namespace kisa_gcs_system.Interfaces;
 public interface IDroneHub
 {
     Task UpdateDroneMessage(object message);
-    Task HandleDroneFlightMode(string doneId, CustomMode flightMode);
+    Task HandleDroneFlightMode(CustomMode flightMode);
+    Task HandleDroneFlightCommand(DroneFlightCommand flightCommand);
+    Task HandleDroneJoystick(ArrowButton arrow, ArrowButtonTarget target=ArrowButtonTarget.DRONE);
+    Task HandleBodyJoystick(ArrowButton arrow, ArrowButtonTarget target=ArrowButtonTarget.BODY);
+    Task HandleCameraJoystick(ArrowButton arrow, ArrowButtonTarget target=ArrowButtonTarget.CAMERA);
+    
+    // Task HandleCameraCommand();
 }
