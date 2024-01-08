@@ -274,3 +274,4 @@
 /home/choiyungyu/mygit/pr.DroneSystem/kisa-gcs-system/obj/Debug/net8.0/kisa-gcs-system.pdb
 /home/choiyungyu/mygit/pr.DroneSystem/kisa-gcs-system/obj/Debug/net8.0/kisa-gcs-system.genruntimeconfig.cache
 /home/choiyungyu/mygit/pr.DroneSystem/kisa-gcs-system/obj/Debug/net8.0/ref/kisa-gcs-system.dll
+/home/choiyungyu/mygit/pr.DroneSystem/kisa-gcs-system/bin/Debug/net8.0/Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson.dll

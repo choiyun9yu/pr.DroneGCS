@@ -1,3 +1,5 @@
+using kisa_gcs_system.Interfaces;
+
 namespace kisa_gcs_system.Services;
 
 public class MavlinkNetty
@@ -9,12 +11,11 @@ public class MavlinkNetty
   private readonly MavlinkDecoder _decoder;
   private readonly MavlinkHandler _handler;
   // private readonly MavlinkEncoder _encoder;
-
-  public MavlinkNetty(IHubContext<DroneHub> hubContext, DroneController controller)  
+  
+  public MavlinkNetty(DroneController controller)  
   {
     _decoder = new MavlinkDecoder();
-    _handler = new MavlinkHandler(hubContext, controller);
-    // _encoder = new MavlinkEncoder(hubContext);
+    _handler = new MavlinkHandler(controller);
       
     _bootstrap = new Bootstrap();   
     _bootstrap            

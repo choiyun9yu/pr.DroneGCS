@@ -13,7 +13,12 @@ global using DotNetty.Transport.Channels;
 global using DotNetty.Transport.Channels.Sockets;
 global using Microsoft.AspNetCore.SignalR;
 global using Newtonsoft.Json;
+using Microsoft.AspNetCore.SignalR.Protocol;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
+using kisa_gcs_system.Interfaces;
 using kisa_gcs_system.Services;
 
 namespace kisa_gcs_system;
@@ -40,8 +45,10 @@ public class Startup
                     .AllowCredentials();
             });
         });
-        services.AddScoped<DroneController>();
-        services.AddSingleton<MavlinkNetty>(); 
+        services.AddSingleton<MavlinkHandler>();
+        services.AddSingleton<DroneController>();
+        services.AddSingleton<MavlinkNetty>();
+
         services.AddSignalR();
     }
 
@@ -62,11 +69,18 @@ public class Startup
         app.UseEndpoints(endpoints => 
         {
             endpoints.MapControllers();
-            endpoints.MapHub<DroneHub>("/droneHub");
+            endpoints.MapHub<DroneController>("/droneHub");
             endpoints.MapGet("/", async context =>
             {
                 await context.Response.WriteAsync("Hello World!");
             });
         });
+    }
+    
+    public static TBuilder AddNewtonsoftJsonProtocol<TBuilder>(TBuilder builder, Action<NewtonsoftJsonHubProtocolOptions> configure) where TBuilder : ISignalRBuilder
+    {
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHubProtocol, NewtonsoftJsonHubProtocol>());
+        builder.Services.Configure(configure);
+        return builder;
     }
 }

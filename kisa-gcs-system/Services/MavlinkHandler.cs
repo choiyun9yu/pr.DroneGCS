@@ -1,20 +1,19 @@
 using MAVSDK;
+
 using kisa_gcs_system.Interfaces;
 
 namespace kisa_gcs_system.Services;
 
 public class MavlinkHandler : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage>
 {
-    private readonly IHubContext<DroneHub> _hubContext;
-    private DroneConnectionProtocol _protocol = DroneConnectionProtocol.UDP;
-    private IPEndPoint? _droneAddress;
     private IChannelHandlerContext? _context;
     private DroneController _controller;
-    
-    public MavlinkHandler(IHubContext<DroneHub> hubContext, DroneController controller)
+    private DroneConnectionProtocol _protocol = DroneConnectionProtocol.UDP;
+    private IPEndPoint? _droneAddress;
+
+    public MavlinkHandler(DroneController controller)
     {
-        _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
-        _controller = controller;
+        _controller = controller ?? throw new ArgumentNullException(nameof(controller));
     }
     
     protected override async void ChannelRead0(IChannelHandlerContext ctx, MAVLink.MAVLinkMessage msg)
@@ -22,12 +21,11 @@ public class MavlinkHandler : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage
         UpdateDroneAddress(ctx);
         var ep = GetChannelEndpoint(ctx);
         
-        // 드론 통신 객체 생성 및 초기화
+        // 드론 통신 객체 생성 및 초기화 (이 작업을 왜하는지 아직 모르겠음)
         DroneCommunication link = new (_protocol, ep.Address.MapToIPv4() + ":" + ep.Port);
-        _context = ctx;
 
         // 드론 메시지 처리
-        await _controller.HandleMavlinkMessage(msg, link);
+        await _controller.HandleMavlinkMessage(msg, link, ctx, _droneAddress);
     }
     
     private void UpdateDroneAddress(IChannelHandlerContext ctx)
@@ -61,11 +59,11 @@ public class MavlinkHandler : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage
     
 }
 
-public class MavlinkOutboundHandler : ChannelHandlerAdapter
-{
-    public override async Task WriteAsync(IChannelHandlerContext ctx, object msg)
-    {
-        await ctx.WriteAndFlushAsync(msg);
-    }
-}
+// public class MavlinkOutboundHandler : ChannelHandlerAdapter
+// {
+//     public override async Task WriteAsync(IChannelHandlerContext ctx, object msg)
+//     {
+//         await ctx.WriteAndFlushAsync(msg);
+//     }
+// }
 
