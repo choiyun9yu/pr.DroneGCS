@@ -91,23 +91,49 @@ export const MiniMap = (props) => {
 export const Table = () => {
     const { droneMessage } = useContext(DroneContext);
     let droneState;
+
     let startTime;
     let completeTime;
     let takeTime;
+    let currentTime;
 
-    if (droneMessage !== null)
-    {
+    let formattedStartTime;
+    let formattedTakeTime;
+    let formattedCompleteTime;
+
+    if (droneMessage !== null) {
         droneState = droneMessage['droneMessage'];
 
-        startTime = droneMessage && new Date(droneState.DroneMission.StartTime).toLocaleTimeString('en-US', {hour12: false})
-        completeTime = droneMessage && new Date(droneState.DroneMission.CompleteTime).toLocaleTimeString('en-US', {hour12: false})
+        startTime = droneState.DroneMission.StartTime
+            ? new Date(droneState.DroneMission.StartTime).getTime()
+            : null;
+        completeTime = droneState.DroneMission.CompleteTime
+            ? new Date(droneState.DroneMission.CompleteTime).getTime()
+            : null;
 
-        if ((completeTime-startTime) > 0) {
-            takeTime = completeTime-startTime
+        if ((startTime !== null && completeTime === null) || completeTime < startTime) {
+            currentTime = Date.now(); // 현재 시간을 밀리초로 얻음
+            takeTime = currentTime - startTime;
+            formattedTakeTime = formatTime(takeTime);
+        } else {
+            takeTime = completeTime - startTime;
+            formattedTakeTime = formatTime(takeTime);
         }
-        else {
-            takeTime = '00:00:00'
-        }
+
+        formattedStartTime = startTime
+            ? new Date(startTime).toLocaleTimeString('en-US', {hour12: false})
+            : '00:00:00';
+        formattedCompleteTime = completeTime
+            ? new Date(completeTime).toLocaleTimeString('en-US', {hour12: false})
+            : '00:00:00';
+
+        function formatTime(timeInMilliseconds) {
+            const date = new Date(timeInMilliseconds);
+            const hours = date.getUTCHours().toString().padStart(2, '0');
+            const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+            const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+
+            return `${hours}:${minutes}:${seconds}`;
     }
 
     return(
@@ -116,39 +142,41 @@ export const Table = () => {
                 <tbody>
                 <tr>
                     <th className={`px-2`}>전체 이동거리</th>
-                    <td className={`px-2`}> {droneMessage && droneState.DroneTrack.TotalDistance} km</td>
+                    <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.TotalDistance)/1000).toFixed(3)} km</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>현재 비행거리</th>
-                    <td className={`px-2`}> {droneMessage && droneState.DroneTrack.ElapsedDistance} km</td>
+                    <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.ElapsedDistance)/1000).toFixed(3)} km</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>잔여 이동거리</th>
-                    <td className={`px-2`}> {droneMessage && droneState.DroneTrack.RemainDistance} km</td>
+                    <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.RemainDistance)/1000).toFixed(3)} km</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>현재 이동속도</th>
-                    <td className={`px-2`}> {droneMessage && droneState.DroneStt.Speed} m/s</td>
+                    {/*<td className={`px-2`}> {droneMessage && (droneState.DroneStt.Speed).toFixed(3)} m/s</td>*/}
+                    <td className={`px-2`}>{droneMessage && (droneState.DroneStt.Speed <= 0.015 ? 0 : droneState.DroneStt.Speed).toFixed(3)} m/s</td>
                 </tr>
                 <tr>
+                    {/* 현재 비행 거리(킬로 미터) 나누기 비행 소요 시간(마이크로 초) -> 단위 맞추기*/}
                     <th className={`px-2`}>평균 이동속도</th>
-                    <td className={`px-2`}> m/s</td>
+                    <td className={`px-2`}>{(0).toFixed(3)} m/s</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>이륙 시작시간</th>
-                    <td className={`px-2`}>{startTime}</td>
+                    <td className={`px-2`}>{formattedStartTime}</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>비행 소요시간</th>
-                    <td className={`px-2`}>{takeTime}</td>
+                    <td className={`px-2`}>{formattedTakeTime}</td>
                 </tr>
                 <tr>
                     <th className={`px-2`}>비행 완료시간</th>
-                    <td className={`px-2`}>{completeTime}</td>
+                    <td className={`px-2`}>{formattedCompleteTime}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
     );
-    // }
+    }
 }

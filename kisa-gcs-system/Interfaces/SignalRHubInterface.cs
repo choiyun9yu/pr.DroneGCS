@@ -20,9 +20,9 @@ public interface IDroneHub
     Task UpdateDroneMessage(object message);
     Task HandleDroneFlightMode(CustomMode flightMode);
     Task HandleDroneFlightCommand(DroneFlightCommand flightCommand);
-    Task HandleDroneJoystick(ArrowButton arrow, ArrowButtonTarget target=ArrowButtonTarget.DRONE);
-    Task HandleControlJoystick(ArrowButton arrow, ArrowButtonTarget target=ArrowButtonTarget.BODY);
-    Task HandleCameraJoystick(ArrowButton arrow, ArrowButtonTarget target=ArrowButtonTarget.CAMERA);
+    Task HandleDroneJoystick(ArrowButton arrow);
+    Task HandleControlJoystick(ArrowButton arrow);
     
+    // Task HandleCameraJoystick(ArrowButton arrow);
     // Task HandleCameraCommand();
 }

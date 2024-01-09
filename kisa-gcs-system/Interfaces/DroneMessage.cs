@@ -99,8 +99,8 @@ public class DroneCamera
 public class DroneMission
 {
     public string? MavMission;
-    public DateTime? StartTime = DateTime.Now;
-    public DateTime? CompleteTime = DateTime.Now;
+    public DateTime? StartTime = null;      // Take Off 기준 
+    public DateTime? CompleteTime = null;   // Disarm 기준 
 }
 
 public class DroneTrack

@@ -43,16 +43,8 @@ public enum DroneFlightCommand : int
 
 public enum ArrowButton
 {
-    UP = 0,
-    DOWN = 1,
-    LEFT = 2,
-    RIGHT = 3,
-    STOP = 4
-}
-
-public enum ArrowButtonTarget
-{
-    DRONE = 0,
-    BODY = 1,
-    CAMERA =2,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
 }

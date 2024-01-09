@@ -29,6 +29,9 @@ public class MavlinkMapper
     {
       // Console.WriteLine(globalPositionInt);
       _droneMessage.DroneStt.Alt = globalPositionInt.relative_alt * 1.0 / 1000;
+      _droneMessage.DroneStt.Speed = (float)Math.Sqrt(globalPositionInt.vx * globalPositionInt.vx +
+                                                      globalPositionInt.vy * globalPositionInt.vy +
+                                                      globalPositionInt.vz * globalPositionInt.vz) / 100f;
     }
     if (data is MAVLink.mavlink_sys_status_t sysStatus)
     {
@@ -349,6 +352,18 @@ public class MavlinkMapper
       }
       );
   }
+
+  public void HandleStartTimte()
+  {
+    _droneMessage.DroneMission.StartTime = DateTime.Now;
+  }
+
+  public void HandleCompleteTime(string text)
+  {
+    Console.WriteLine(text);
+    _droneMessage.DroneMission.CompleteTime = DateTime.Now;
+  }
+
 
   public string ObjectToJson() 
   {

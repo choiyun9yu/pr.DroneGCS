@@ -50,6 +50,12 @@ public class DroneController : Hub<IDroneHub>
         {
             var logdata = (MAVLink.mavlink_statustext_t)msg.data;
             var text = string.Join("", logdata.text.Select(c => (char)c));
+            
+            if (text.StartsWith("Disarming motors"))
+            {
+                _mapper.HandleCompleteTime(text);
+            }
+
             _mapper.UpdateDroneLogger(text);
         }
         
@@ -115,6 +121,7 @@ public class DroneController : Hub<IDroneHub>
             
             case DroneFlightCommand.TAKEOFF:
             {
+                _mapper.HandleStartTimte();
                 commandBody = new MAVLink.mavlink_command_long_t()
                 {
                     command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
@@ -169,16 +176,13 @@ public class DroneController : Hub<IDroneHub>
      * 
      * yaw(좌우회전): 좌회전 (상) (하)   우회전 (하) (상)
      *                   (하) (상)        (상) (하)
-     *
-     * chan1_raw: Throttle
-     * chan2_raw: Roll
-     * chan3_raw: Pitch
+     * 
+     * chan1_raw: Roll
+     * chan2_raw: Pitch
+     * chan3_raw: Throttle
      * chan4_raw: Yaw
-     * chan5_raw: FlightMode 자동 비행, 안정화, 로버티 모드 등 
-     * chan6_raw: Gimabal Control
      * 
      */
-    
     
     // 드론
     public async Task HandleDroneJoystick(ArrowButton arrow)
@@ -294,7 +298,6 @@ public class DroneController : Hub<IDroneHub>
     // 카메라 
     public async Task HandleCameraJoystick(ArrowButton arrow)
     {
-        ArrowButtonTarget target = ArrowButtonTarget.CAMERA;
         Console.WriteLine($"input Camera : {arrow}");
     }
 
