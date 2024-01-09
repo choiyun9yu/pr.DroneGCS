@@ -70,8 +70,8 @@ export const SignalRProvider = ({ children }) => {
     const handleDroneJoystick = arrow => {
         connection.current.invoke('HandleDroneJoystick', arrow)
     }
-    const handleBodyJoystick = arrow => {
-        connection.current.invoke('HandleBodyJoystick', arrow)
+    const handleControlJoystick = arrow => {
+        connection.current.invoke('HandleControlJoystick', arrow)
     }
     const handleCameraJoystick = arrow => {
         connection.current.invoke('HandleCameraJoystick', arrow)
@@ -86,7 +86,7 @@ export const SignalRProvider = ({ children }) => {
             handleDroneFlightMode,
             handleDroneFlightCommand,
             handleDroneJoystick,
-            handleBodyJoystick,
+            handleControlJoystick,
             handleCameraJoystick,
             handleCameraCommand,
         }}>

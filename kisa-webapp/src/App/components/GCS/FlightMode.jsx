@@ -1,9 +1,11 @@
 import React, {useContext, useState} from "react";
 
-import {JoyStick} from "./JoyStick";
 import { ColorThema } from '../ProejctThema';
-import {MiniMap, Table} from "./MiddleMap";
 import {DroneContext} from "./SignalRContainder";
+import {MiniMap, Table} from "./MiddleMap";
+import {DroneJoyStick} from "./DroneJoyStick";
+import {ControlJoyStick} from "./ControlJoyStick";
+import {CameraJoyStick} from "./CameraJoyStick";
 
 export const FlightMode = (props) => {
     return (
@@ -134,7 +136,7 @@ const RightSideBottom = (props) => {
                         </div>
 
                         <div className={`flex w-full`}>
-                            <JoyStick />
+                            <CameraJoyStick />
                         </div>
 
                         <div className={`flex w-full h-full items-center`}>
@@ -215,7 +217,7 @@ const MainController = (props) => {
 
             <div className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl ${ColorThema.Secondary4}`}>
                 <span className={`flex justify-center w-[40px] mb-3 rounded-md border border-[#6359E9] text-sm text-[#6359E9]`}>드론</span>
-                <JoyStick/>
+                <DroneJoyStick/>
             </div>
             <button onClick={props.handleIsController} className={`absolute bottom-0 w-5 h-5 rounded-t-md bg-white hover:bg-gray-300`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1D1D41" style={{ transform: 'rotate(90deg)' }} className="w-5 h-4 mx-auto mt-0.5 hover:text-white">
@@ -224,7 +226,7 @@ const MainController = (props) => {
             </button>
             <div className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl ${ColorThema.Secondary4}`}>
                 <span className={`flex justify-center w-[40px] mb-3 rounded-md border border-[#6359E9] text-sm text-[#6359E9]`}>제어</span>
-                <JoyStick/>
+                <ControlJoyStick/>
             </div>
 
             <div className={`flex flex-col`}>

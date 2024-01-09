@@ -12896,6 +12896,7 @@ public partial class MAVLink
     /// extensions_start 10
     [StructLayout(LayoutKind.Sequential,Pack=1,Size=38)]
     ///<summary> The RAW values of the RC channels sent to the MAV to override info received from the RC radio. The standard PPM modulation is as follows: 1000 microseconds: 0%, 2000 microseconds: 100%. Individual receivers/transmitters might violate this specification.  Note carefully the semantic differences between the first 8 channels and the subsequent channels </summary>
+    /// MAVLink를 통해 받은 RC 라디오에서의 정보를 덮어쓰기 위한 MAV 메시지인 mavlink_rc_channels_override_t 구조체
     public struct mavlink_rc_channels_override_t
     {
         public mavlink_rc_channels_override_t(ushort chan1_raw,ushort chan2_raw,ushort chan3_raw,ushort chan4_raw,ushort chan5_raw,ushort chan6_raw,ushort chan7_raw,ushort chan8_raw,byte target_system,byte target_component,ushort chan9_raw,ushort chan10_raw,ushort chan11_raw,ushort chan12_raw,ushort chan13_raw,ushort chan14_raw,ushort chan15_raw,ushort chan16_raw,ushort chan17_raw,ushort chan18_raw) 
@@ -12908,8 +12909,8 @@ public partial class MAVLink
               this.chan6_raw = chan6_raw;
               this.chan7_raw = chan7_raw;
               this.chan8_raw = chan8_raw;
-              this.target_system = target_system;
-              this.target_component = target_component;
+              this.target_system = target_system;           // SYS ID
+              this.target_component = target_component;     // COMP ID
               this.chan9_raw = chan9_raw;
               this.chan10_raw = chan10_raw;
               this.chan11_raw = chan11_raw;

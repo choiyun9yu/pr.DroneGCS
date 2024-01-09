@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useContext} from "react";
+import {DroneContext} from "./SignalRContainder";
 
 const circle = {
     width: '150px',
@@ -65,28 +66,29 @@ const btnRight = {
         'rgba(96.71694979071617, 93.3640743046999, 141.64585292339325, 1) 0%, ' +
         'rgba(46.116092428565025, 43.2159436494112, 117.27387472987175, 1) 35%)',
 }
-export const JoyStick = () => {
+export const DroneJoyStick = () => {
+    const { handleDroneJoystick } = useContext(DroneContext);
     return (
         <div style={circle} className={`flex h-full justify-center items-center w-full mx-auto shadow-2xl ${circle}`}>
             <div style={controllerCol} className={`flex flex-col justify-between items-center`}>
-                <button style={btnUp} className='flex justify-center items-center m-1.5 pb-1'>
+                <button style={btnUp} className='flex justify-center items-center m-1.5 pb-1' onClick={() => {handleDroneJoystick(0)}}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ transform: 'rotate(270deg)' }} className="w-5 h-5 hover:text-white">
                         <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
                     </svg>
                 </button>
-                <button style={btnDown} className='flex justify-center items-center m-1.5 pt-1'>
+                <button style={btnDown} className='flex justify-center items-center m-1.5 pt-1' onClick={() => {handleDroneJoystick(1)}}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ transform: 'rotate(90deg)' }} className="w-5 h-5 hover:text-white">
                         <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
                     </svg>
                 </button>
             </div>
             <div style={controllerRow} className={`flex flex-row justify-between items-center`}>
-                <button style={btnLeft} className='flex justify-center items-center m-1.5 pr-1'>
+                <button style={btnLeft} className='flex justify-center items-center m-1.5 pr-1' onClick={() => {handleDroneJoystick(2)}}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ transform: 'rotate(180deg)' }} className="w-5 h-5 hover:text-white">
                         <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
                     </svg>
                 </button>
-                <button style={btnRight} className='flex items-center justify-center m-1.5 pl-1'>
+                <button style={btnRight} className='flex items-center justify-center m-1.5 pl-1' onClick={() => {handleDroneJoystick(3)}}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 hover:text-white">
                         <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
                     </svg>

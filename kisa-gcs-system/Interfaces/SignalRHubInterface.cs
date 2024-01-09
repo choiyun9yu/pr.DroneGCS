@@ -21,7 +21,7 @@ public interface IDroneHub
     Task HandleDroneFlightMode(CustomMode flightMode);
     Task HandleDroneFlightCommand(DroneFlightCommand flightCommand);
     Task HandleDroneJoystick(ArrowButton arrow, ArrowButtonTarget target=ArrowButtonTarget.DRONE);
-    Task HandleBodyJoystick(ArrowButton arrow, ArrowButtonTarget target=ArrowButtonTarget.BODY);
+    Task HandleControlJoystick(ArrowButton arrow, ArrowButtonTarget target=ArrowButtonTarget.BODY);
     Task HandleCameraJoystick(ArrowButton arrow, ArrowButtonTarget target=ArrowButtonTarget.CAMERA);
     
     // Task HandleCameraCommand();

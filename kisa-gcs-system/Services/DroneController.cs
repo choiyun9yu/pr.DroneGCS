@@ -1,6 +1,7 @@
 using MAVSDK;
 
 using kisa_gcs_system.Interfaces;
+using static kisa_gcs_system.Interfaces.ArrowButton;
 
 namespace kisa_gcs_system.Services;
 
@@ -26,6 +27,10 @@ public class DroneController : Hub<IDroneHub>
     private IChannelHandlerContext? _context;
     
     private IPEndPoint? _droneAddress;
+    
+    private static int ThrottleIncrement = 300;
+    private static int yawIncrement = 50;
+    // private static int SpeedIncrement = 50;
     
     public DroneController(IHubContext<DroneController> hubContext)
     {
@@ -82,8 +87,8 @@ public class DroneController : Hub<IDroneHub>
     {
         try
         {
-                    MAVLink.mavlink_command_long_t? commandBody = null;
-        MAVLink.mavlink_set_mode_t? setModeMsg = null;
+            MAVLink.mavlink_command_long_t? commandBody = null;
+            MAVLink.mavlink_set_mode_t? setModeMsg = null;
 
         switch (flightCommand)
         {
@@ -114,11 +119,11 @@ public class DroneController : Hub<IDroneHub>
                 {
                     command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
                     param1 = 0, // pitch(rad), 드론의 전방 기울기 각도 
-                    param3 = (float)0.5, // ascend rate (m/s), 이륙 중에 드론이 수직으로 상승하는 속도
+                    param3 = (float)5, // ascend rate (m/s), 이륙 중에 드론이 수직으로 상승하는 속도
                     param4 = 0, // yaw(rad), 드론의 회전을 나타내는 각도
                     param5 = 0, // x, 드론의 이륙 위치 x
                     param6 = 0, // y, 드론의 이륙 위치 y
-                    param7 = 1, // z(m), 드론의 이륙 높이(미터) 
+                    param7 = 10, // z(m), 드론의 이륙 높이(미터) 
                 };
                 break;
             }
@@ -150,13 +155,159 @@ public class DroneController : Hub<IDroneHub>
         }
     }
     
+    // TO DO: 드론 조이스틱 만들기 
     
+    /*
+     * throttle(상승하강): 상승 (상) (상)   하강 (하) (하)
+     *                      (상) (상)       (하) (하)
+     *
+     * roll(측방기동): 좌측 (하) (상)   우측 (상) (하)
+     *                  (하) (상)       (상) (하)
+     * 
+     * pitch(전지후진): 전진 (하) (하)  후진 (상) (상)
+     *                   (상) (상)      (하) (하)
+     * 
+     * yaw(좌우회전): 좌회전 (상) (하)   우회전 (하) (상)
+     *                   (하) (상)        (상) (하)
+     *
+     * chan1_raw: Throttle
+     * chan2_raw: Roll
+     * chan3_raw: Pitch
+     * chan4_raw: Yaw
+     * chan5_raw: FlightMode 자동 비행, 안정화, 로버티 모드 등 
+     * chan6_raw: Gimabal Control
+     * 
+     */
+    
+    
+    // 드론
+    public async Task HandleDroneJoystick(ArrowButton arrow)
+    {
+        MAVLink.mavlink_rc_channels_override_t commandBody;
+    
+        switch (arrow)
+        {
+            case UP:    // drone up btn, throttle up
+                // Console.WriteLine($"input Drone : {arrow}");
+                commandBody = new MAVLink.mavlink_rc_channels_override_t()
+                {
+                    chan1_raw = 1500,
+                    chan2_raw = 1500,
+                    chan3_raw = (ushort)(1500 + ThrottleIncrement),
+                    chan4_raw = 1500,
+                };
+                break;
+            case DOWN:  // drone down btn, throttle down 
+                // Console.WriteLine($"input Drone : {arrow}");
+                commandBody = new MAVLink.mavlink_rc_channels_override_t()
+                {
+                    chan1_raw = 1500,
+                    chan2_raw = 1500,
+                    chan3_raw = (ushort)(1500 - ThrottleIncrement),
+                    chan4_raw = 1500
+                };
+                break;
+            case LEFT:  // drone left btn, yaw left
+                // Console.WriteLine($"input Drone : {arrow}");
+                commandBody = new MAVLink.mavlink_rc_channels_override_t()
+                {
+                    chan1_raw = 1500,
+                    chan2_raw = 1500,
+                    chan3_raw = 1500,
+                    chan4_raw = (ushort)(1500 - yawIncrement),
+                };
+                break;
+            case RIGHT: // drone right btn, yaw right
+                // Console.WriteLine($"input Drone : {arrow}");
+                commandBody = new MAVLink.mavlink_rc_channels_override_t()
+                {
+                    chan1_raw = 1500,
+                    chan2_raw = 1500,
+                    chan3_raw = 1500,
+                    chan4_raw = (ushort)(1500 + yawIncrement),
+                };
+                break;
+            default:
+                commandBody = new MAVLink.mavlink_rc_channels_override_t();
+                break;
+        }
+        var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+                    MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_OVERRIDE, commandBody));
+        await SetCommandAsync(msg);
+    }
+
+    // 제어 
+    public async Task HandleControlJoystick(ArrowButton arrow)
+    {
+        MAVLink.mavlink_rc_channels_override_t commandBody;
+        switch (arrow)
+        {
+            case UP:    // controll up btn, pitch up
+                // Console.WriteLine($"input Controll : {arrow}");
+                commandBody = new MAVLink.mavlink_rc_channels_override_t()
+                {
+                    chan1_raw = 1500,
+                    chan2_raw = (ushort)(1500 - ThrottleIncrement),
+                    chan3_raw = 1500,
+                    chan4_raw = 1500
+                };
+                break;
+            case DOWN:  // controll down btn, pitch down 
+                // Console.WriteLine($"input Controll : {arrow}");
+                commandBody = new MAVLink.mavlink_rc_channels_override_t()
+                {
+                    chan1_raw = 1500,
+                    chan2_raw = (ushort)(1500 + ThrottleIncrement),
+                    chan3_raw = 1500,
+                    chan4_raw = 1500
+                };
+                break;
+            case LEFT:  // controll left btn, roll left 
+                // Console.WriteLine($"input Controll : {arrow}");
+                commandBody = new MAVLink.mavlink_rc_channels_override_t()
+                {
+                    chan1_raw = (ushort)(1500 - ThrottleIncrement),
+                    chan2_raw = 1500,
+                    chan3_raw = 1500,
+                    chan4_raw = 1500,
+                };
+                break;
+            case RIGHT: // controll right btn, roll right
+                // Console.WriteLine($"input Controll : {arrow}");
+                commandBody = new MAVLink.mavlink_rc_channels_override_t()
+                {
+                    chan1_raw = (ushort)(1500 + ThrottleIncrement),
+                    chan2_raw = 1500,
+                    chan3_raw = 1500,
+                    chan4_raw = 1500,
+                };
+                break;
+            default:
+                commandBody = new MAVLink.mavlink_rc_channels_override_t();
+                break;
+        }
+        var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+            MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_OVERRIDE, commandBody));
+        await SetCommandAsync(msg);
+    }
+
+    // 카메라 
+    public async Task HandleCameraJoystick(ArrowButton arrow)
+    {
+        ArrowButtonTarget target = ArrowButtonTarget.CAMERA;
+        Console.WriteLine($"input Camera : {arrow}");
+    }
+
+
+
+
     // 공용
     public async Task SetCommandAsync(MAVLink.MAVLinkMessage msg)
     {
         if (_context is null || !_context.Channel.Active) return;
      
         try {
+            // await _context.Channel.WriteAndFlushAsync(EncodeUdpDroneMessage(msg));
             await _context.Channel.WriteAndFlushAsync(EncodeUdpDroneMessage(msg));
         } catch (Exception e) {
             Console.WriteLine(e.Message);
