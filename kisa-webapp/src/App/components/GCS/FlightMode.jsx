@@ -6,6 +6,7 @@ import {MiniMap, Table} from "./MiddleMap";
 import {DroneJoyStick} from "./DroneJoyStick";
 import {ControlJoyStick} from "./ControlJoyStick";
 import {CameraJoyStick} from "./CameraJoyStick";
+import {AttitudeIndicator, GaugeStyleComponent} from "./AttitudeIndicator";
 
 export const FlightMode = (props) => {
     return (
@@ -182,14 +183,28 @@ const RightSideBottom = (props) => {
 };
 
 export const FlightContents = (props) => {
+    const [monitorTable, setMonitorTable] = useState(true);
+    const [indicator, setIndicator] = useState(true);
+
+    const handleMonitorTable = () => {
+        setMonitorTable(!monitorTable);
+    }
+
+    const handleIndicator = () => {
+        setIndicator(!indicator);
+    }
+
     return (
         <div id='map-contents' className={`flex justify-center w-full h-full`}>
             <Btn isLeftPanel={props.isLeftPanel}
                  handleIsLeftPanel={props.handleIsLeftPanel}
                  handleSwapMap={props.handleSwapMap}
                  isRightPanel={props.isRightPanel}
-                 handleIsRightPanel={props.handleIsRightPanel}/>
-            <Table middleTable={props.middleTable}/>
+                 handleIsRightPanel={props.handleIsRightPanel}
+                 handleMonitorTable={handleMonitorTable}
+                 handleIndicator={handleIndicator}/>
+            <Table middleTable={props.middleTable} monitorTable={monitorTable} setMonitorTable={setMonitorTable}/>
+            <AttitudeIndicator indicator={indicator}/>
             {props.isController
                 ? <MainController isController={props.isController}
                                   handleIsController={props.handleIsController}/>
@@ -246,8 +261,8 @@ const Btn = (props) => {
     const [isLogArea, setIsLogArea] = useState(false);
     const {droneMessage, handleDroneFlightMode} = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
-
-    console.log(droneState)
+    const handleMonitorTable = props.handleMonitorTable;
+    const handleIndicator = props.handleIndicator
 
     const handleSensorArea = () => {
         setIsSensorArea(!isSensorArea);
@@ -256,6 +271,7 @@ const Btn = (props) => {
     const handleLogArea = () => {
         setIsLogArea(!isLogArea);
     }
+
 
     const printDroneLogs = (logdata) => {
         return logdata.map((entry, index) => (
@@ -272,12 +288,16 @@ const Btn = (props) => {
 
     return (
         <>
-            {/* top button*/}
-            <button className={`absolute top-[10px] left-[179px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}
-                    onClick={handleSensorArea}>
+            {/* top button */}
+            {/* sensor btn */}
+            <button
+                className={`absolute top-[10px] left-[179px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}
+                onClick={handleSensorArea}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                    <path d="M16.5 7.5h-9v9h9v-9z" />
-                    <path fillRule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z" clipRule="evenodd" />
+                    <path d="M16.5 7.5h-9v9h9v-9z"/>
+                    <path fillRule="evenodd"
+                          d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A.75.75 0 016.75 6h10.5a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V6.75z"
+                          clipRule="evenodd"/>
                 </svg>
             </button>
             {/* sensor area */}
@@ -285,102 +305,92 @@ const Btn = (props) => {
                 ? (
                     <div className={`overflow-scroll`} style={{
                         position: 'absolute',
-                        top: '51px',
+                        top: '60px',
                         left: '179px',
-                        width: '330px',
-                        height: '600px',
+                        width: '300px',
+                        height: '570px',
                         background: '#fff',
                         border: '1px solid #000'
                     }}>
                         <div className={`px-2`}>
                             <p>roll: {droneMessage && droneState.SensorData.roll_ATTITUDE}</p>
-
                             <p>pitch: {droneMessage && droneState.SensorData.pitch_ATTITUDE}</p>
-
                             <p>yaw: {droneMessage && droneState.SensorData.yaw_ATTITUDE}</p>
-
                             <p>xacc: {droneMessage && droneState.SensorData.xacc_RAW_IMU}</p>
-
                             <p>yacc: {droneMessage && droneState.SensorData.yacc_RAW_IMU}</p>
-
                             <p>zacc: {droneMessage && droneState.SensorData.zacc_RAW_IMU}</p>
-
                             <p>xgyro: {droneMessage && droneState.SensorData.xgyro_RAW_IMU}</p>
-
                             <p>ygyro: {droneMessage && droneState.SensorData.ygyro_RAW_IMU}</p>
-
                             <p>zgyro: {droneMessage && droneState.SensorData.zgyro_RAW_IMU}</p>
-
                             <p>xmag: {droneMessage && droneState.SensorData.xmag_RAW_IMU}</p>
-
                             <p>ymag: {droneMessage && droneState.SensorData.ymag_RAW_IMU}</p>
-
                             <p>zmag: {droneMessage && droneState.SensorData.zmag_RAW_IMU}</p>
-
                             <p>xvib: {droneMessage && droneState.SensorData.vibration_x_VIBRATION}</p>
-
                             <p>yvib: {droneMessage && droneState.SensorData.vibration_y_VIBRATION}</p>
-
                             <p>zvib: {droneMessage && droneState.SensorData.vibration_z_VIBRATION}</p>
-
                             <p>xacc_ofs: {droneMessage && droneState.SensorData.accel_cal_x_SENSOR_OFFSETS}</p>
-
                             <p>yacc_ofs: {droneMessage && droneState.SensorData.accel_cal_y_SENSOR_OFFSETS}</p>
-
                             <p>zacc_ofs: {droneMessage && droneState.SensorData.accel_cal_z_SENSOR_OFFSETS}</p>
-
                             <p>xmag_ofs: {droneMessage && droneState.SensorData.mag_ofs_x_SENSOR_OFFSETS}</p>
-
                             <p>ymag_ofs: {droneMessage && droneState.SensorData.mag_ofs_y_SENSOR_OFFSETS}</p>
-
                             <p>vx_global: {droneMessage && droneState.SensorData.vx_GLOBAL_POSITION_INT}</p>
-
                             <p>vy_global: {droneMessage && droneState.SensorData.vy_GLOBAL_POSITION_INT}</p>
-
                             <p>x_local: {droneMessage && droneState.SensorData.x_LOCAL_POSITION_NED}</p>
-
                             <p>vx_local: {droneMessage && droneState.SensorData.vx_LOCAL_POSITION_NED}</p>
-
                             <p>vy_local: {droneMessage && droneState.SensorData.vy_LOCAL_POSITION_NED}</p>
-
                             <p>nav_pitch: {droneMessage && droneState.SensorData.nav_pitch_NAV_CONTROLLER_OUTPUT}</p>
-
                             <p>nav_bearing: {droneMessage && droneState.SensorData.nav_bearing_NAV_CONTROLLER_OUTPUT}</p>
-
                             <p>servo3: {droneMessage && droneState.SensorData.servo3_raw_SERVO_OUTPUT_RAW}</p>
-
                             <p>servo8: {droneMessage && droneState.SensorData.servo8_raw_SERVO_OUTPUT_RAW}</p>
-
                             <p>groundspeed: {droneMessage && droneState.SensorData.groundspeed_VFR_HUD}</p>
-
                             <p>airspeed: {droneMessage && droneState.SensorData.airspeed_VFR_HUD}</p>
-
                             <p>press_abs: {droneMessage && droneState.SensorData.press_abs_SCALED_PRESSURE}</p>
-
                             <p>Vservo: {droneMessage && droneState.SensorData.Vservo_POWER_STATUS}</p>
-
                             <p>voltages1: {droneMessage && droneState.SensorData.voltages1_BATTERY_STATUS}</p>
-
                             <p>chancount: {droneMessage && droneState.SensorData.chancount_RC_CHANNELS}</p>
-
                             <p>chan12: {droneMessage && droneState.SensorData.chan12_raw_RC_CHANNELS}</p>
-
                             <p>chan13: {droneMessage && droneState.SensorData.chan13_raw_RC_CHANNELS}</p>
-
                             <p>chan14: {droneMessage && droneState.SensorData.chan14_raw_RC_CHANNELS}</p>
-
                             <p>chan15: {droneMessage && droneState.SensorData.chan15_raw_RC_CHANNELS}</p>
-
                             <p>chan16: {droneMessage && droneState.SensorData.chan16_raw_RC_CHANNELS}</p>
                         </div>
                     </div>
                 )
                 : null
             }
+            {/* log btn */}
+            <button
+                className={`absolute top-[10px] left-[220px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}
+                onClick={handleLogArea}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path fillRule="evenodd"
+                          d="M2.25 6a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V6Zm3.97.97a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 0 1-1.06-1.06l1.72-1.72-1.72-1.72a.75.75 0 0 1 0-1.06Zm4.28 4.28a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
+                          clipRule="evenodd"/>
+                </svg>
 
+                {isLogArea
+                    ? (
+                        <div className={`overflow-scroll`} style={{
+                            position: 'absolute',
+                            top: '50px',
+                            left: '-41px',
+                            width: '600px',
+                            height: '250px',
+                            background: '#fff',
+                            border: '1px solid #000'
+                        }}>
+                            <div className={`px-2`}>
+                                {droneState.DroneLogger
+                                    ? printDroneLogs(droneState.DroneLogger)
+                                    : null
+                                }
+                            </div>
+                        </div>
+                    ) : null
+                }
+            </button>
 
-            {/*left button*/
-            }
+            {/*left button */}
             <button onClick={props.handleIsLeftPanel}
                     className={`absolute top-[95px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
                 {props.isLeftPanel
@@ -397,51 +407,35 @@ const Btn = (props) => {
                               clipRule="evenodd"/>
                     </svg>}
             </button>
-            <button
-                className={`absolute top-[145px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}
-                onClick={handleLogArea}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                    <path fillRule="evenodd"
-                          d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                          clipRule="evenodd"/>
-                </svg>
-            {/* log area, DroneLogger */}
-                {isLogArea
-                    ? (
-                        <div className={`overflow-scroll`} style={{
-                            position: 'absolute',
-                            top: '0px',
-                            left: '41px',
-                            width: '600px',
-                            height: '400px',
-                            background: '#fff',
-                            border: '1px solid #000'
-                        }}>
-                            <div className={`px-2`}>
-                                {droneState.DroneLogger
-                                    ? printDroneLogs(droneState.DroneLogger)
-                                    : null
-                                }
-                            </div>
-                        </div>
-                    )
-                    : null
-                }
 
+            <button onClick={handleMonitorTable}
+                    className={`absolute top-[145px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path
+                        d="M5.625 3.75a2.625 2.625 0 1 0 0 5.25h12.75a2.625 2.625 0 0 0 0-5.25H5.625ZM3.75 11.25a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 0-1.5H3.75ZM3 15.75a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75ZM3.75 18.75a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 0-1.5H3.75Z"/>
+                </svg>
+            </button>
+
+            <button onClick={handleIndicator}
+                    className={`absolute top-[195px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path
+                        d="M21.721 12.752a9.711 9.711 0 0 0-.945-5.003 12.754 12.754 0 0 1-4.339 2.708 18.991 18.991 0 0 1-.214 4.772 17.165 17.165 0 0 0 5.498-2.477ZM14.634 15.55a17.324 17.324 0 0 0 .332-4.647c-.952.227-1.945.347-2.966.347-1.021 0-2.014-.12-2.966-.347a17.515 17.515 0 0 0 .332 4.647 17.385 17.385 0 0 0 5.268 0ZM9.772 17.119a18.963 18.963 0 0 0 4.456 0A17.182 17.182 0 0 1 12 21.724a17.18 17.18 0 0 1-2.228-4.605ZM7.777 15.23a18.87 18.87 0 0 1-.214-4.774 12.753 12.753 0 0 1-4.34-2.708 9.711 9.711 0 0 0-.944 5.004 17.165 17.165 0 0 0 5.498 2.477ZM21.356 14.752a9.765 9.765 0 0 1-7.478 6.817 18.64 18.64 0 0 0 1.988-4.718 18.627 18.627 0 0 0 5.49-2.098ZM2.644 14.752c1.682.971 3.53 1.688 5.49 2.099a18.64 18.64 0 0 0 1.988 4.718 9.765 9.765 0 0 1-7.478-6.816ZM13.878 2.43a9.755 9.755 0 0 1 6.116 3.986 11.267 11.267 0 0 1-3.746 2.504 18.63 18.63 0 0 0-2.37-6.49ZM12 2.276a17.152 17.152 0 0 1 2.805 7.121c-.897.23-1.837.353-2.805.353-.968 0-1.908-.122-2.805-.353A17.151 17.151 0 0 1 12 2.276ZM10.122 2.43a18.629 18.629 0 0 0-2.37 6.49 11.266 11.266 0 0 1-3.746-2.504 9.754 9.754 0 0 1 6.116-3.985Z"/>
+                </svg>
             </button>
 
             <button
-                className={`absolute top-[195px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
+                className={`absolute top-[245px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path fillRule="evenodd"
                           d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z"
                           clipRule="evenodd"/>
                 </svg>
-
             </button>
 
+
             {/* middle button */}
-            <div className={`flex h-[30px] z-10 mx-auto mt-[10px]`}>
+            <div className={`flex h-[30px] z-10 ml-[100px] mt-[10px]`}>
 
                 {droneMessage && droneState.DroneStt.FlightMode === 3
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Auto</button>
@@ -502,6 +496,7 @@ const Btn = (props) => {
                               clipRule="evenodd"/>
                     </svg>}
             </button>
+
             <button onClick={props.handleSwapMap}
                     className={`absolute top-[110px] right-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">

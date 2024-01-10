@@ -88,8 +88,10 @@ export const MiniMap = (props) => {
     );
 }
 
-export const Table = () => {
+export const Table = (props) => {
     const { droneMessage } = useContext(DroneContext);
+    const monitorTable = props.monitorTable;
+
     let droneState;
 
     let startTime;
@@ -137,46 +139,50 @@ export const Table = () => {
     }
 
     return(
-        <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
-            <table className={`mx-3 my-2 text-lg text-[#00DCF8]`}>
-                <tbody>
-                <tr>
-                    <th className={`px-2`}>전체 이동거리</th>
-                    <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.TotalDistance)/1000).toFixed(3)} km</td>
-                </tr>
-                <tr>
-                    <th className={`px-2`}>현재 비행거리</th>
-                    <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.ElapsedDistance)/1000).toFixed(3)} km</td>
-                </tr>
-                <tr>
-                    <th className={`px-2`}>잔여 이동거리</th>
-                    <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.RemainDistance)/1000).toFixed(3)} km</td>
-                </tr>
-                <tr>
-                    <th className={`px-2`}>현재 이동속도</th>
-                    {/*<td className={`px-2`}> {droneMessage && (droneState.DroneStt.Speed).toFixed(3)} m/s</td>*/}
-                    <td className={`px-2`}>{droneMessage && (droneState.DroneStt.Speed <= 0.015 ? 0 : droneState.DroneStt.Speed).toFixed(3)} m/s</td>
-                </tr>
-                <tr>
-                    {/* 현재 비행 거리(킬로 미터) 나누기 비행 소요 시간(마이크로 초) -> 단위 맞추기*/}
-                    <th className={`px-2`}>평균 이동속도</th>
-                    <td className={`px-2`}>{(0).toFixed(3)} m/s</td>
-                </tr>
-                <tr>
-                    <th className={`px-2`}>이륙 시작시간</th>
-                    <td className={`px-2`}>{formattedStartTime}</td>
-                </tr>
-                <tr>
-                    <th className={`px-2`}>비행 소요시간</th>
-                    <td className={`px-2`}>{formattedTakeTime}</td>
-                </tr>
-                <tr>
-                    <th className={`px-2`}>비행 완료시간</th>
-                    <td className={`px-2`}>{formattedCompleteTime}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+        monitorTable
+                ? (
+                <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
+                    <table className={`mx-3 my-2 text-lg text-[#00DCF8]`}>
+                        <tbody>
+                        <tr>
+                            <th className={`px-2`}>전체 이동거리</th>
+                            <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.TotalDistance)/1000).toFixed(3)} km</td>
+                        </tr>
+                        <tr>
+                            <th className={`px-2`}>현재 비행거리</th>
+                            <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.ElapsedDistance)/1000).toFixed(3)} km</td>
+                        </tr>
+                        <tr>
+                            <th className={`px-2`}>잔여 이동거리</th>
+                            <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.RemainDistance)/1000).toFixed(3)} km</td>
+                        </tr>
+                        <tr>
+                            <th className={`px-2`}>현재 이동속도</th>
+                            {/*<td className={`px-2`}> {droneMessage && (droneState.DroneStt.Speed).toFixed(3)} m/s</td>*/}
+                            <td className={`px-2`}>{droneMessage && (droneState.DroneStt.Speed <= 0.020 ? 0 : droneState.DroneStt.Speed).toFixed(3)} m/s</td>
+                        </tr>
+                        <tr>
+                            {/* 현재 비행 거리(킬로 미터) 나누기 비행 소요 시간(마이크로 초) -> 단위 맞추기*/}
+                            <th className={`px-2`}>평균 이동속도</th>
+                            <td className={`px-2`}>{(0).toFixed(3)} m/s</td>
+                        </tr>
+                        <tr>
+                            <th className={`px-2`}>이륙 시작시간</th>
+                            <td className={`px-2`}>{formattedStartTime}</td>
+                        </tr>
+                        <tr>
+                            <th className={`px-2`}>비행 소요시간</th>
+                            <td className={`px-2`}>{formattedTakeTime}</td>
+                        </tr>
+                        <tr>
+                            <th className={`px-2`}>비행 완료시간</th>
+                            <td className={`px-2`}>{formattedCompleteTime}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            )
+            : null
     );
     }
 }

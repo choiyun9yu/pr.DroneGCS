@@ -356,6 +356,7 @@ public class MavlinkMapper
   public void HandleStartTimte()
   {
     _droneMessage.DroneMission.StartTime = DateTime.Now;
+    _droneMessage.DroneMission.CompleteTime = null;
   }
 
   public void HandleCompleteTime(string text)
