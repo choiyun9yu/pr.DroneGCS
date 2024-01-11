@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, useRef, useEffect} from "react";
 import { GoogleMap, useJsApiLoader, Polyline, Marker, OverlayView } from '@react-google-maps/api';
 
 import { ColorThema } from '../ProejctThema';
@@ -10,8 +10,9 @@ import {DroneContext} from "./SignalRContainder";
 export const MiddleMap = (props) => {
     const [isController, setIsController] = useState(true)
     const { droneMessage } = useContext(DroneContext);
-
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
+    const dronePath = droneMessage ? droneState.DroneTrack.DroneTrails.q : [];
+    // console.log(dronePath instanceof Array)
 
     const handleIsController= () => {
         setIsController(!isController)
@@ -55,8 +56,7 @@ export const MiddleMap = (props) => {
                         />
                     </OverlayView>
 
-                    {/*/!* 드론 경로 *!/*/}
-                    {/*<Polyline path={dronePath} options={{ strokeColor: '#000000', strokeWeight: 2 }} />*/}
+                    <Polyline path={dronePath} options={{ strokeColor: '#000000', strokeWeight: 2 }} />
 
                     {props.gcsMode === 'flight' ? <FlightContents isLeftPanel={props.isLeftPanel}
                                                                   handleIsLeftPanel={props.handleIsLeftPanel}
@@ -136,7 +136,7 @@ export const Table = (props) => {
             const seconds = date.getUTCSeconds().toString().padStart(2, '0');
 
             return `${hours}:${minutes}:${seconds}`;
-    }
+        }
 
     return(
         monitorTable

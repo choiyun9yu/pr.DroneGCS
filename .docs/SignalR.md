@@ -1,4 +1,5 @@
 # SignalR
+(JAVA에서는 Atmosphere이 SignalR과 비슷한 라이브러리 인듯)
 
     [
         {

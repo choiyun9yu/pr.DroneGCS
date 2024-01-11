@@ -52,8 +52,8 @@ public class DroneStt
     public double? TempC = 0.0;
     public char? LoaderLoad = ' ';
     public char? LoaderLock = ' ';
-    public double? Lat = 0.0;
-    public double? Lon = 0.0;
+    public double Lat = 0.0;
+    public double Lon = 0.0;
     public double? Alt = 0.0;
     public double? Head = 0.0;
     public double? Speed = 0.0;
@@ -106,7 +106,7 @@ public class DroneMission
 public class DroneTrack
 {
     public double? PathIndex;
-    public FixedSizedQueue<CurrentGisLocation> DroneTrails = new(600);
+    public FixedSizedQueue<CurrentDroneLocation> DroneTrails = new(600);
     public double[]? DroneProgress;
     public double[]? DroneProgressPresentation;
     public double? TotalDistance = 0.0;

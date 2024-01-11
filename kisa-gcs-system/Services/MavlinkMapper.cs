@@ -1,3 +1,4 @@
+using System.Data;
 using MAVSDK;
 
 using kisa_gcs_system.Interfaces;
@@ -8,6 +9,7 @@ public class MavlinkMapper
 {
   // constructor가 새로운 연결일 때 동작하면 그때 마다 멤버 초기화 가능? / 지역변수는 직접 초기화 해야한다 
   private DroneMessage _droneMessage = new();
+  private DateTime _lastAddedTrails;
 
   public void GcsMapping(object data)
   {
@@ -28,10 +30,17 @@ public class MavlinkMapper
     if (data is MAVLink.mavlink_global_position_int_t globalPositionInt)
     {
       // Console.WriteLine(globalPositionInt);
+      _droneMessage.DroneStt.Lat = globalPositionInt.lat * 1.0 / 10000000;
+      _droneMessage.DroneStt.Lon = globalPositionInt.lon * 1.0 / 10000000;
       _droneMessage.DroneStt.Alt = globalPositionInt.relative_alt * 1.0 / 1000;
       _droneMessage.DroneStt.Speed = (float)Math.Sqrt(globalPositionInt.vx * globalPositionInt.vx +
                                                       globalPositionInt.vy * globalPositionInt.vy +
                                                       globalPositionInt.vz * globalPositionInt.vz) / 100f;
+
+      if (DateTime.Now.Subtract(_lastAddedTrails).Milliseconds > 500)
+      {
+        UpdateDroneTrails(_droneMessage.DroneStt.Lat, _droneMessage.DroneStt.Lon, true);
+      }
     }
     if (data is MAVLink.mavlink_sys_status_t sysStatus)
     {
@@ -90,13 +99,12 @@ public class MavlinkMapper
     // {
     //   Console.WriteLine(scaledPressure2);
     // }
-    if (data is MAVLink.mavlink_gps_raw_int_t gpsRawInt)
-    {
-      // gcs
-      // Console.WriteLine($"lat:{gpsRawInt.lat}, lon:{gpsRawInt.lon}");
-      _droneMessage.DroneStt.Lat = gpsRawInt.lat * 1.0 / 10000000;
-      _droneMessage.DroneStt.Lon = gpsRawInt.lon * 1.0 / 10000000;
-    }
+    // if (data is MAVLink.mavlink_gps_raw_int_t gpsRawInt)
+    // {
+    //   Console.WriteLine($"lat:{gpsRawInt.lat}, lon:{gpsRawInt.lon}");
+    //   _droneMessage.DroneStt.Lat = gpsRawInt.lat * 1.0 / 10000000;
+    //   _droneMessage.DroneStt.Lon = gpsRawInt.lon * 1.0 / 10000000;
+    // }
     // if (data is MAVLink.mavlink_system_time_t systemTime)
     // {
     //   Console.WriteLine(systemTime);
@@ -340,6 +348,16 @@ public class MavlinkMapper
   {
     // 여기서 드론 아이디에 따른 로직이 필요할 듯 
     _droneMessage.DroneId = droneId;
+  }
+
+  public void UpdateDroneTrails(double lat, double lon, bool updatedLocation = false)
+  {
+    _droneMessage.DroneTrack.DroneTrails.Enqueue(new CurrentDroneLocation()
+      {
+        lat = lat,
+        lng = lon
+      });
+    _lastAddedTrails = DateTime.Now;
   }
 
   public void UpdateDroneLogger(string text)

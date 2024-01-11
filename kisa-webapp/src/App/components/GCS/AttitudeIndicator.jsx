@@ -16,8 +16,8 @@ export const AttitudeIndicator = (props) => {
 
     const indicator = props.indicator;
 
-    const background = { start: '#4C77BA', stop: '#4C77BA' };
-    const pitchColor = { start: '#6EAB33', stop: '#497C11' };
+    const skyColor = { start: '#4C77BA', stop: '#4C77BA' };
+    const landColor = { start: '#6EAB33', stop: '#497C11' };
 
     const SIZE = 100;
 
@@ -40,7 +40,6 @@ export const AttitudeIndicator = (props) => {
         (SIZE / 20) + 8
     ]
 
-
     return (
         indicator
             ? (
@@ -54,24 +53,25 @@ export const AttitudeIndicator = (props) => {
                                         x1="0%"
                                         y1="0%"
                                         x2="0%"
-                                        y2="100%"
-                                    >
-                                        <stop offset="0%" stopColor={background.start} stopOpacity={1}/>
+                                        y2="100%">
+                                        <stop offset="0%" stopColor={skyColor.start} stopOpacity={1}/>
                                         <stop
                                             offset={`${SIZE / 2 - ((-pitch / 45) * SIZE) / 2}%`}
-                                            stopColor={background.stop}
-                                            stopOpacity={1}
-                                        />
+                                            stopColor={skyColor.stop}
+                                            stopOpacity={1}/>
                                         <stop
                                             offset={`${SIZE / 2 - ((-pitch / 45) * SIZE) / 2}%`}
-                                            stopColor={pitchColor.start}
-                                            stopOpacity={1}
-                                        />
-                                        <stop offset="100%" stopColor={pitchColor.stop} stopOpacity={1}/>
+                                            stopColor={landColor.start}
+                                            stopOpacity={1}/>
+                                        <stop offset="100%" stopColor={landColor.stop} stopOpacity={1}/>
                                     </linearGradient>
                                 </defs>
                                 <g transform={`rotate(${-roll} ${SIZE / 2} ${SIZE / 2})`}>
+
+                                    {/* sky & land 동그라미 */}
                                     <circle cx={SIZE / 2} cy={SIZE / 2} r={SIZE / 2} fill="url(#greenGradient)"/>
+
+                                    {/* 흰색 가로 선 */}
                                     {[...Array(5).keys()].map(value => (
                                         <line
                                             key={value}
@@ -83,6 +83,8 @@ export const AttitudeIndicator = (props) => {
                                             stroke="white"
                                         />
                                     ))}
+
+                                    {/* 윗 눈금 */}
                                     {[...Array(9).keys()].map(value => {
                                         const {x1, y1, x2, y2} = calculateRadLine(
                                             r1,
@@ -104,7 +106,9 @@ export const AttitudeIndicator = (props) => {
                                         )
                                     })}
                                 </g>
+                                {/* 가운데 빨간 점 */}
                                 <circle cx={SIZE / 2} cy={SIZE / 2} r={2} fill="red"/>
+                                {/* 좌측 빨간 선  */}
                                 <line
                                     x1={(SIZE / 12) * 2}
                                     x2={(SIZE / 12) * 3.5}
@@ -113,6 +117,7 @@ export const AttitudeIndicator = (props) => {
                                     stroke="red"
                                     strokeWidth={1}
                                 />
+                                {/* 우측 빨간 선 */}
                                 <line
                                     x1={(SIZE / 12) * 8.5}
                                     x2={(SIZE / 12) * 10}
@@ -121,6 +126,7 @@ export const AttitudeIndicator = (props) => {
                                     stroke="red"
                                     strokeWidth={1}
                                 />
+                                {/* 위에 역삼각형 */}
                                 <polygon points={trianglePoints} fill="red"/>
                             </svg>
                         </div>
