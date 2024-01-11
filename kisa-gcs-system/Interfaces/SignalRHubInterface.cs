@@ -24,5 +24,9 @@ public interface IDroneHub
     Task HandleControlJoystick(ArrowButton arrow);
     
     // Task HandleCameraJoystick(ArrowButton arrow);
+    
     // Task HandleCameraCommand();
+
+    Task HandleDroneMarkerMission(double lat, double lng);
+
 }

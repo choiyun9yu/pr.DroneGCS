@@ -1,5 +1,5 @@
 import React, {useContext, useState, useRef, useEffect} from "react";
-import { GoogleMap, useJsApiLoader, Polyline, Marker, OverlayView } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader,  OverlayView, Polyline, Marker} from '@react-google-maps/api';
 
 import { ColorThema } from '../ProejctThema';
 import './GCSstyles.css';
@@ -7,16 +7,42 @@ import {FlightContents} from "./FlightMode";
 import {OtherContents} from "./MissionMode";
 import {DroneContext} from "./SignalRContainder";
 
+/*
+ * 지도 좌클릭 시 해당 좌표 얻기!
+ * Google Maps API의 google.maps.Map 객체를 획득한 후에 해당 지도 객체에 리벤트 리스너를 추가하여 클릭 이벤트를 처리한다.
+ *
+ *
+ */
+
 export const MiddleMap = (props) => {
-    const [isController, setIsController] = useState(true)
-    const { droneMessage } = useContext(DroneContext);
+    const { droneMessage, handleDroneMarkerMission } = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
     const dronePath = droneMessage ? droneState.DroneTrack.DroneTrails.q : [];
     // console.log(dronePath instanceof Array)
 
+    const [isController, setIsController] = useState(true);
+    const [makerPosition, setMarkerPosition] = useState({lat:0,lng:0});
+    const [isMarker, setIsMarker] = useState(false);
+
     const handleIsController= () => {
         setIsController(!isController)
     }
+
+    const handleIsMarker = () => {
+        setIsMarker(!isMarker)
+    }
+
+    const handleMapClick = event => {
+        // marker 버튼 트루로 변경
+        if (isMarker){
+            setMarkerPosition({
+                lat: event.latLng.lat(),
+                lng: event.latLng.lng()
+            });
+            setIsMarker(false);
+        }
+        handleDroneMarkerMission(event.latLng.lat(), event.latLng.lng())
+    };
 
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
@@ -29,11 +55,13 @@ export const MiddleMap = (props) => {
 
     return (
         props.swapMap
-            ? <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
-            </div>
+            ? <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}></div>
             : <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
-                <GoogleMap mapContainerClassName={`flex w-full h-full rounded-xl`}
-                           center={props.center} zoom={18}>
+                <GoogleMap
+                    mapContainerClassName={`flex w-full h-full rounded-xl`}
+                    center={props.center}
+                    zoom={18}
+                    onClick={handleMapClick}> {/* 마우스 클릭 이벤트 핸들러 추가 */}
 
                     {/* 드론 마커 */}
                     {/*usecontext로 드론 위치 가져와서  position 자리에 넣어보기 */}
@@ -47,8 +75,8 @@ export const MiddleMap = (props) => {
                     >
                         <div
                             style={{
-                                width: '60px',
-                                height: '76px',
+                                width: '50px',
+                                height: '68px',
                                 backgroundImage: `url(${process.env.PUBLIC_URL}/Drone.png)`,
                                 backgroundSize: 'contain',
                                 transform: `translate(-50%, -50%) rotate(${droneMessage && droneState.DroneStt.Head}deg)`,
@@ -56,7 +84,11 @@ export const MiddleMap = (props) => {
                         />
                     </OverlayView>
 
+                    {/* 드론 경로 */}
                     <Polyline path={dronePath} options={{ strokeColor: '#000000', strokeWeight: 2 }} />
+
+                    {/* 좌표 마커  */}
+                    <Marker position={makerPosition} />
 
                     {props.gcsMode === 'flight' ? <FlightContents isLeftPanel={props.isLeftPanel}
                                                                   handleIsLeftPanel={props.handleIsLeftPanel}
@@ -66,6 +98,7 @@ export const MiddleMap = (props) => {
                                                                   handleIsController={handleIsController}
                                                                   handleSwapMap={props.handleSwapMap}
                                                                   middleTable={props.middleTable}
+                                                                  handleIsMarker={handleIsMarker}
                     /> : null}
                     {props.gcsMode === 'mission' ? <OtherContents middleTable={props.middleTable}/> : null}
                     {props.gcsMode === 'video' ? <OtherContents middleTable={props.middleTable}/> : null}

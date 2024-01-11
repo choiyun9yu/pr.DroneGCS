@@ -39,7 +39,7 @@ public class DroneController : Hub<IDroneHub>
     
     // 드론 상태 정보 내보내기 
     public async Task HandleMavlinkMessage(MAVLink.MAVLinkMessage msg, IChannelHandlerContext ctx, IPEndPoint droneAddress)
-    { // Console.WriteLine(link);
+    { 
         _context = ctx; 
         _droneAddress = droneAddress;
         
@@ -53,7 +53,7 @@ public class DroneController : Hub<IDroneHub>
             
             if (text.StartsWith("Disarming motors"))
             {
-                _mapper.HandleCompleteTime(text);
+                _mapper.HandleMissionComplete(text);
             }
 
             _mapper.UpdateDroneLogger(text);
@@ -121,7 +121,7 @@ public class DroneController : Hub<IDroneHub>
             
             case DroneFlightCommand.TAKEOFF:
             {
-                _mapper.HandleStartTimte();
+                _mapper.HandleMissionStart();
                 commandBody = new MAVLink.mavlink_command_long_t()
                 {
                     command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
@@ -161,6 +161,42 @@ public class DroneController : Hub<IDroneHub>
             Console.WriteLine($"Error handling drone flight command '{flightCommand}': {ex.Message}");
         }
     }
+    
+    // 미션 부여하기 
+    public async Task HandleDroneMarkerMission(double lat, double lng)
+    {
+        // Console.WriteLine($"lat: {lat}, lng: {lng}");
+        _mapper.SetTargetPoint(lat, lng);
+        double alt = _mapper.getAlt();
+        DroneMoveToHere(lat, lng, alt);
+    }
+    
+    public async Task DroneMoveToHere(double lat, double lng, double alt)
+    {
+        // Guided Mode 안되어 있으면 Guided Mode 
+        // Arm 안되어 있으면 Arm
+        // Take Off 안되어 있으면 Take Off
+    
+        // 좌표로 이동 명령
+        var commandBody = new MAVLink.mavlink_mission_item_int_t()
+        {
+            command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
+            x = (int)Math.Round(lat * 10000000),
+            y = (int)Math.Round(lng * 10000000),
+            z = (int)alt,
+            autocontinue = 1,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
+            current = 2,        // 현재 웨이포인트 번호
+            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
+            target_system = 1,
+            // 속도가 너무 느리다. 
+            // 고도가 자꾸 낮아진다 
+        };
+        var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,
+            commandBody));
+        await SetCommandAsync(msg);
+    }
+    
     
     // TO DO: 드론 조이스틱 만들기 
     

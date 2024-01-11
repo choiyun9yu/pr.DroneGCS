@@ -101,17 +101,29 @@ public class DroneMission
     public string? MavMission;
     public DateTime? StartTime = null;      // Take Off 기준 
     public DateTime? CompleteTime = null;   // Disarm 기준 
+    public DroneLocation StartingPoint;
+    public DroneLocation TargetPoint;
 }
 
 public class DroneTrack
 {
     public double? PathIndex;
-    public FixedSizedQueue<CurrentDroneLocation> DroneTrails = new(600);
-    public double[]? DroneProgress;
-    public double[]? DroneProgressPresentation;
+    public FixedSizedQueue<DroneLocation> DroneTrails = new(600);    // size 가 600 이면 0.5초에 하나씩 이라서 300초 -> 5분 
+    
+
+
     public double? TotalDistance = 0.0;
     public double? ElapsedDistance = 0.0;
     public double? RemainDistance = 0.0;
+    
+    public double[]? DroneProgress;
+    public double[]? DroneProgressPresentation;
+}
+
+public struct DroneLocation   
+{
+    public double lat;
+    public double lng;
 }
 
 public class CommunicationLink

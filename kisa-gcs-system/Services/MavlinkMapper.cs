@@ -346,18 +346,8 @@ public class MavlinkMapper
 
   public void SetDroneId(string droneId)
   {
-    // 여기서 드론 아이디에 따른 로직이 필요할 듯 
+    // 여기서 드론 아이디에 다른 로직이 필요할 듯 
     _droneMessage.DroneId = droneId;
-  }
-
-  public void UpdateDroneTrails(double lat, double lon, bool updatedLocation = false)
-  {
-    _droneMessage.DroneTrack.DroneTrails.Enqueue(new CurrentDroneLocation()
-      {
-        lat = lat,
-        lng = lon
-      });
-    _lastAddedTrails = DateTime.Now;
   }
 
   public void UpdateDroneLogger(string text)
@@ -368,21 +358,51 @@ public class MavlinkMapper
         logtime = DateTime.Now,
         message = text
       }
-      );
+    );
+  }
+  
+  public async Task SetStartingPoint()
+  {
+    _droneMessage.DroneMission.StartingPoint = new DroneLocation{
+      lat= _droneMessage.DroneStt.Lat,
+      lng= _droneMessage.DroneStt.Lon
+    };
+  }
+    
+  public void SetTargetPoint(double lat, double lng)
+  {
+    _droneMessage.DroneMission.TargetPoint = new DroneLocation
+    {
+      lat = lat,
+      lng = lng
+    };
+    // Console.WriteLine($"Starting lan: {_droneMessage.DroneStt.Lat}, lon: {_droneMessage.DroneStt.Lon}");
+    // Console.WriteLine($"Targeting lan: {lat}, lon: {lng}");
   }
 
-  public void HandleStartTimte()
+  public void HandleMissionStart()
   {
     _droneMessage.DroneMission.StartTime = DateTime.Now;
     _droneMessage.DroneMission.CompleteTime = null;
+    SetStartingPoint();
   }
-
-  public void HandleCompleteTime(string text)
+  
+  public void HandleMissionComplete(string text)
   {
     Console.WriteLine(text);
     _droneMessage.DroneMission.CompleteTime = DateTime.Now;
+    _droneMessage.DroneTrack.DroneTrails = new FixedSizedQueue<DroneLocation>(600); // 착륙 후 초기화
   }
-
+  
+  public void UpdateDroneTrails(double lat, double lon, bool updatedLocation = false)
+  {
+    _droneMessage.DroneTrack.DroneTrails.Enqueue(new DroneLocation
+    {
+      lat = lat,
+      lng = lon
+    });
+    _lastAddedTrails = DateTime.Now;
+  }
 
   public string ObjectToJson() 
   {
@@ -390,5 +410,10 @@ public class MavlinkMapper
     // Console.WriteLine(droneMessage);
     return droneMessage;
   }
-  
+
+  public double getAlt()
+  {
+    return (double)_droneMessage.DroneStt.Alt;
+  }
+
 }

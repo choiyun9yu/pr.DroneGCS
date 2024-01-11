@@ -202,7 +202,10 @@ export const FlightContents = (props) => {
                  isRightPanel={props.isRightPanel}
                  handleIsRightPanel={props.handleIsRightPanel}
                  handleMonitorTable={handleMonitorTable}
-                 handleIndicator={handleIndicator}/>
+                 handleIndicator={handleIndicator}
+                 handleIsMarker={props.handleIsMarker}
+            />
+
             <Table middleTable={props.middleTable} monitorTable={monitorTable} setMonitorTable={setMonitorTable}/>
             <AttitudeIndicator indicator={indicator}/>
             {props.isController
@@ -221,17 +224,27 @@ const MainController = (props) => {
     const { handleDroneFlightCommand } = useContext(DroneContext);
     return (
         <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]`}>
-            <div className={`flex flex-col`}>
-                <button className={`w-20 h-10 m-2 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(0)}>
+            <div className={`flex flex-col mt-0.5 mx-2`}>
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(0)}>
                     Arm
                 </button>
-                <button className={`w-20 h-10 m-2 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(2)}>
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(2)}>
                     Take Off
+                </button>
+
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(3)}>
+                    Land
+                </button>
+
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(1)}>
+                    Dis-Arm
                 </button>
             </div>
 
-            <div className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl ${ColorThema.Secondary4}`}>
-                <span className={`flex justify-center w-[40px] mb-3 rounded-md border border-[#6359E9] text-sm text-[#6359E9]`}>드론</span>
+            <div
+                className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl ${ColorThema.Secondary4}`}>
+                <span
+                    className={`flex justify-center w-[40px] mb-3 rounded-md border border-[#6359E9] text-sm text-[#6359E9]`}>드론</span>
                 <DroneJoyStick/>
             </div>
             <button onClick={props.handleIsController} className={`absolute bottom-0 w-5 h-5 rounded-t-md bg-white hover:bg-gray-300`}>
@@ -244,13 +257,15 @@ const MainController = (props) => {
                 <ControlJoyStick/>
             </div>
 
-            <div className={`flex flex-col`}>
-                <button className={`w-20 h-10 m-2 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(1)}>
-                    Dis-Arm
+            <div className={`flex flex-col mt-0.5 mx-2`}>
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} >
+                    Move
                 </button>
-                <button className={`w-20 h-10 m-2 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(3)}>
-                    Land
+
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} >
+                    Return
                 </button>
+
             </div>
         </div>
     );
@@ -262,7 +277,8 @@ const Btn = (props) => {
     const {droneMessage, handleDroneFlightMode} = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
     const handleMonitorTable = props.handleMonitorTable;
-    const handleIndicator = props.handleIndicator
+    const handleIndicator = props.handleIndicator;
+    const handleIsMarker = props.handleIsMarker;
 
     const handleSensorArea = () => {
         setIsSensorArea(!isSensorArea);
@@ -291,7 +307,7 @@ const Btn = (props) => {
             {/* top button */}
             {/* sensor btn */}
             <button
-                className={`absolute top-[10px] left-[179px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}
+                className={`absolute top-[10px] left-[179px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}
                 onClick={handleSensorArea}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path d="M16.5 7.5h-9v9h9v-9z"/>
@@ -307,7 +323,7 @@ const Btn = (props) => {
                         position: 'absolute',
                         top: '60px',
                         left: '179px',
-                        width: '300px',
+                        width: '320px',
                         height: '570px',
                         background: '#fff',
                         border: '1px solid #000'
@@ -360,14 +376,13 @@ const Btn = (props) => {
             }
             {/* log btn */}
             <button
-                className={`absolute top-[10px] left-[220px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}
+                className={`absolute top-[10px] left-[220px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}
                 onClick={handleLogArea}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path fillRule="evenodd"
                           d="M2.25 6a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V6Zm3.97.97a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 0 1-1.06-1.06l1.72-1.72-1.72-1.72a.75.75 0 0 1 0-1.06Zm4.28 4.28a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
                           clipRule="evenodd"/>
                 </svg>
-
                 {isLogArea
                     ? (
                         <div className={`overflow-scroll`} style={{
@@ -392,7 +407,7 @@ const Btn = (props) => {
 
             {/*left button */}
             <button onClick={props.handleIsLeftPanel}
-                    className={`absolute top-[95px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
+                    className={`absolute top-[95px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
                 {props.isLeftPanel
                     ?
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -409,7 +424,7 @@ const Btn = (props) => {
             </button>
 
             <button onClick={handleMonitorTable}
-                    className={`absolute top-[145px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
+                    className={`absolute top-[145px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path
                         d="M5.625 3.75a2.625 2.625 0 1 0 0 5.25h12.75a2.625 2.625 0 0 0 0-5.25H5.625ZM3.75 11.25a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 0-1.5H3.75ZM3 15.75a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75ZM3.75 18.75a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 0-1.5H3.75Z"/>
@@ -417,18 +432,18 @@ const Btn = (props) => {
             </button>
 
             <button onClick={handleIndicator}
-                    className={`absolute top-[195px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
+                    className={`absolute top-[195px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path
                         d="M21.721 12.752a9.711 9.711 0 0 0-.945-5.003 12.754 12.754 0 0 1-4.339 2.708 18.991 18.991 0 0 1-.214 4.772 17.165 17.165 0 0 0 5.498-2.477ZM14.634 15.55a17.324 17.324 0 0 0 .332-4.647c-.952.227-1.945.347-2.966.347-1.021 0-2.014-.12-2.966-.347a17.515 17.515 0 0 0 .332 4.647 17.385 17.385 0 0 0 5.268 0ZM9.772 17.119a18.963 18.963 0 0 0 4.456 0A17.182 17.182 0 0 1 12 21.724a17.18 17.18 0 0 1-2.228-4.605ZM7.777 15.23a18.87 18.87 0 0 1-.214-4.774 12.753 12.753 0 0 1-4.34-2.708 9.711 9.711 0 0 0-.944 5.004 17.165 17.165 0 0 0 5.498 2.477ZM21.356 14.752a9.765 9.765 0 0 1-7.478 6.817 18.64 18.64 0 0 0 1.988-4.718 18.627 18.627 0 0 0 5.49-2.098ZM2.644 14.752c1.682.971 3.53 1.688 5.49 2.099a18.64 18.64 0 0 0 1.988 4.718 9.765 9.765 0 0 1-7.478-6.816ZM13.878 2.43a9.755 9.755 0 0 1 6.116 3.986 11.267 11.267 0 0 1-3.746 2.504 18.63 18.63 0 0 0-2.37-6.49ZM12 2.276a17.152 17.152 0 0 1 2.805 7.121c-.897.23-1.837.353-2.805.353-.968 0-1.908-.122-2.805-.353A17.151 17.151 0 0 1 12 2.276ZM10.122 2.43a18.629 18.629 0 0 0-2.37 6.49 11.266 11.266 0 0 1-3.746-2.504 9.754 9.754 0 0 1 6.116-3.985Z"/>
                 </svg>
             </button>
 
-            <button
-                className={`absolute top-[245px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
+            <button onClick={handleIsMarker}
+                className={`absolute top-[245px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path fillRule="evenodd"
-                          d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z"
+                          d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
                           clipRule="evenodd"/>
                 </svg>
             </button>
@@ -481,7 +496,7 @@ const Btn = (props) => {
 
             {/* right button */}
             <button onClick={props.handleIsRightPanel}
-                    className={`absolute top-[60px] right-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
+                    className={`absolute top-[60px] right-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
                 {props.isRightPanel
                     ?
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -498,7 +513,7 @@ const Btn = (props) => {
             </button>
 
             <button onClick={props.handleSwapMap}
-                    className={`absolute top-[110px] right-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
+                    className={`absolute top-[110px] right-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path fillRule="evenodd"
                           d="M15.97 2.47a.75.75 0 011.06 0l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H7.5a.75.75 0 010-1.5h11.69l-3.22-3.22a.75.75 0 010-1.06zm-7.94 9a.75.75 0 010 1.06l-3.22 3.22H16.5a.75.75 0 010 1.5H4.81l3.22 3.22a.75.75 0 11-1.06 1.06l-4.5-4.5a.75.75 0 010-1.06l4.5-4.5a.75.75 0 011.06 0z"
