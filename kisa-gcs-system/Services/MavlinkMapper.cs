@@ -33,6 +33,7 @@ public class MavlinkMapper
       _droneMessage.DroneStt.Lat = globalPositionInt.lat * 1.0 / 10000000;
       _droneMessage.DroneStt.Lon = globalPositionInt.lon * 1.0 / 10000000;
       _droneMessage.DroneStt.Alt = globalPositionInt.relative_alt * 1.0 / 1000;
+      _droneMessage.DroneStt.AbsoluteAlt = globalPositionInt.alt * 1.0 / 1000;
       _droneMessage.DroneStt.Speed = (float)Math.Sqrt(globalPositionInt.vx * globalPositionInt.vx +
                                                       globalPositionInt.vy * globalPositionInt.vy +
                                                       globalPositionInt.vz * globalPositionInt.vz) / 100f;
@@ -411,9 +412,9 @@ public class MavlinkMapper
     return droneMessage;
   }
 
-  public double getAlt()
+  public double getAbsoluteAlt()
   {
-    return (double)_droneMessage.DroneStt.Alt;
+    return (double)_droneMessage.DroneStt.AbsoluteAlt;
   }
 
 }

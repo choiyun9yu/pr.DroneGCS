@@ -54,6 +54,7 @@ public class DroneStt
     public char? LoaderLock = ' ';
     public double Lat = 0.0;
     public double Lon = 0.0;
+    public double AbsoluteAlt = 0.0;
     public double? Alt = 0.0;
     public double? Head = 0.0;
     public double? Speed = 0.0;

@@ -113,7 +113,7 @@ public class DroneController : Hub<IDroneHub>
                 commandBody = new MAVLink.mavlink_command_long_t()
                 {
                     command = (ushort)MAVLink.MAV_CMD.COMPONENT_ARM_DISARM,
-                    param1 = 0, // dis-arm
+                    param1 = 0,     // dis-arm
                     param2 = 21196  // 펌웨어에 따라 다른 값일 수 있음 
                 };
                 break;
@@ -125,12 +125,12 @@ public class DroneController : Hub<IDroneHub>
                 commandBody = new MAVLink.mavlink_command_long_t()
                 {
                     command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
-                    param1 = 0, // pitch(rad), 드론의 전방 기울기 각도 
-                    param3 = (float)5, // ascend rate (m/s), 이륙 중에 드론이 수직으로 상승하는 속도
-                    param4 = 0, // yaw(rad), 드론의 회전을 나타내는 각도
-                    param5 = 0, // x, 드론의 이륙 위치 x
-                    param6 = 0, // y, 드론의 이륙 위치 y
-                    param7 = 10, // z(m), 드론의 이륙 높이(미터) 
+                    param1 = 0,         // pitch(rad), 드론의 전방 기울기 각도 
+                    param3 = (float)5,  // ascend rate (m/s), 이륙 중에 드론이 수직으로 상승하는 속도
+                    param4 = 0,         // yaw(rad), 드론의 회전을 나타내는 각도
+                    param5 = 0,         // x, 드론의 이륙 위치 x
+                    param6 = 0,         // y, 드론의 이륙 위치 y
+                    param7 = 10,        // z(m), 드론의 이륙 높이(미터) 
                 };
                 break;
             }
@@ -167,7 +167,7 @@ public class DroneController : Hub<IDroneHub>
     {
         // Console.WriteLine($"lat: {lat}, lng: {lng}");
         _mapper.SetTargetPoint(lat, lng);
-        double alt = _mapper.getAlt();
+        double alt = _mapper.getAbsoluteAlt();
         DroneMoveToHere(lat, lng, alt);
     }
     
@@ -180,6 +180,7 @@ public class DroneController : Hub<IDroneHub>
         // 좌표로 이동 명령
         var commandBody = new MAVLink.mavlink_mission_item_int_t()
         {
+            // 속도가 너무 느리다.
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
             x = (int)Math.Round(lat * 10000000),
             y = (int)Math.Round(lng * 10000000),
@@ -187,9 +188,9 @@ public class DroneController : Hub<IDroneHub>
             autocontinue = 1,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
             current = 2,        // 현재 웨이포인트 번호
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
+            // frame = (byte)0, // default: 0(absolute alt), 1(relative alt)
             target_system = 1,
-            // 속도가 너무 느리다. 
-            // 고도가 자꾸 낮아진다 
+
         };
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,
