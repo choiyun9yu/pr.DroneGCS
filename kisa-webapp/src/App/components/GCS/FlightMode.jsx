@@ -225,10 +225,17 @@ export const FlightContents = (props) => {
 
 const MainController = (props) => {
     const { handleDroneFlightCommand, handleDroneFlightMode } = useContext(DroneContext);
+
+    const handleArmBtn = () => {
+        handleDroneFlightMode(4)
+        handleDroneFlightCommand(0)
+    }
+
     const handelReturnBtn = () => {
         handleDroneFlightMode(6)
         props.handleIsRtl();
     }
+
     const handleTakeoffBtn = () => {
         handleDroneFlightCommand(2)
         props.lastPathReset();
@@ -236,7 +243,7 @@ const MainController = (props) => {
     return (
         <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]`}>
             <div className={`flex flex-col mt-0.5 mx-2`}>
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(0)}>
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleArmBtn()}>
                     Arm
                 </button>
                 <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleTakeoffBtn()}>

@@ -121,19 +121,21 @@ public class DroneController : Hub<IDroneHub>
             
             case DroneFlightCommand.TAKEOFF:
             {
-                // 고도 받아와서 고도가 1미터보다 높아야 Mission Start 되게 설정(?)
-                _mapper.HandleMissionStart();
-
-                commandBody = new MAVLink.mavlink_command_long_t()
+                Console.WriteLine(_mapper.getFlightMode());
+                if ((_mapper.getRelativeAlt() < 1) && (_mapper.getFlightMode() == CustomMode.GUIDED))
                 {
-                    command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
-                    param1 = 0,         // pitch(rad), 드론의 전방 기울기 각도 
-                    param3 = (float)5,  // ascend rate (m/s), 이륙 중에 드론이 수직으로 상승하는 속도
-                    param4 = 0,         // yaw(rad), 드론의 회전을 나타내는 각도
-                    param5 = 0,         // x, 드론의 이륙 위치 x
-                    param6 = 0,         // y, 드론의 이륙 위치 y
-                    param7 = 10,        // z(m), 드론의 이륙 높이(미터) 
+                    _mapper.HandleMissionStart();
+                    commandBody = new MAVLink.mavlink_command_long_t()
+                    {
+                        command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
+                        param1 = 0,         // pitch(rad), 드론의 전방 기울기 각도 
+                        param3 = (float)5,  // ascend rate (m/s), 이륙 중에 드론이 수직으로 상승하는 속도
+                        param4 = 0,         // yaw(rad), 드론의 회전을 나타내는 각도
+                        param5 = 0,         // x, 드론의 이륙 위치 x
+                        param6 = 0,         // y, 드론의 이륙 위치 y
+                        param7 = 10,        // z(m), 드론의 이륙 높이(미터) 
                 };
+                }
                 break;
             }
             case DroneFlightCommand.LAND:

@@ -413,9 +413,14 @@ public class MavlinkMapper
     return droneMessage;
   }
 
-  public double? getRealtiveAlt()
+  public CustomMode? getFlightMode()
   {
-    return _droneMessage.DroneStt.Alt;
+    return _droneMessage.DroneStt.FlightMode;
+  }
+
+  public double getRelativeAlt()
+  {
+    return (double)_droneMessage.DroneStt.Alt;
   }
 
   public double getAbsoluteAlt()
