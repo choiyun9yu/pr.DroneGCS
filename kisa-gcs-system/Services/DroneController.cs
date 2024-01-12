@@ -53,7 +53,7 @@ public class DroneController : Hub<IDroneHub>
             
             if (text.StartsWith("Disarming motors"))
             {
-                _mapper.HandleMissionComplete(text);
+                _mapper.HandleMissionComplete();
             }
 
             _mapper.UpdateDroneLogger(text);
@@ -121,7 +121,9 @@ public class DroneController : Hub<IDroneHub>
             
             case DroneFlightCommand.TAKEOFF:
             {
+                // 고도 받아와서 고도가 1미터보다 높아야 Mission Start 되게 설정(?)
                 _mapper.HandleMissionStart();
+
                 commandBody = new MAVLink.mavlink_command_long_t()
                 {
                     command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
@@ -165,32 +167,29 @@ public class DroneController : Hub<IDroneHub>
     // 미션 부여하기 
     public async Task HandleDroneMarkerMission(double lat, double lng)
     {
-        // Console.WriteLine($"lat: {lat}, lng: {lng}");
         _mapper.SetTargetPoint(lat, lng);
-        double alt = _mapper.getAbsoluteAlt();
-        DroneMoveToHere(lat, lng, alt);
+        // double alt = _mapper.getAbsoluteAlt();
+        await DroneMoveToHere(lat, lng);
     }
     
-    public async Task DroneMoveToHere(double lat, double lng, double alt)
+    public async Task DroneMoveToHere(double lat, double lng)
     {
         // Guided Mode 안되어 있으면 Guided Mode 
         // Arm 안되어 있으면 Arm
         // Take Off 안되어 있으면 Take Off
-    
+        
         // 좌표로 이동 명령
         var commandBody = new MAVLink.mavlink_mission_item_int_t()
         {
-            // 속도가 너무 느리다.
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
             x = (int)Math.Round(lat * 10000000),
             y = (int)Math.Round(lng * 10000000),
-            z = (int)alt,
+            z = 10,             // (int)Math.Round(alt),
             autocontinue = 1,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
             current = 2,        // 현재 웨이포인트 번호
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
-            // frame = (byte)0, // default: 0(absolute alt), 1(relative alt)
+            frame = 3,          // default: 0(위도경도고도 전역 좌표계), 3(위도경도 전역, 고도 상대좌표계)
             target_system = 1,
-
         };
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,

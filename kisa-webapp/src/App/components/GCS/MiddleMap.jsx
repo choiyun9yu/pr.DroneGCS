@@ -7,22 +7,32 @@ import {FlightContents} from "./FlightMode";
 import {OtherContents} from "./MissionMode";
 import {DroneContext} from "./SignalRContainder";
 
-/*
- * 지도 좌클릭 시 해당 좌표 얻기!
- * Google Maps API의 google.maps.Map 객체를 획득한 후에 해당 지도 객체에 리벤트 리스너를 추가하여 클릭 이벤트를 처리한다.
- *
- *
- */
-
 export const MiddleMap = (props) => {
     const { droneMessage, handleDroneMarkerMission } = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
+    const droneLanded = droneMessage ? droneState.DroneStt.Landed : true;
     const dronePath = droneMessage ? droneState.DroneTrack.DroneTrails.q : [];
-    // console.log(dronePath instanceof Array)
+    const StartingPoint = droneMessage ? droneState.DroneMission.StartingPoint: null;
+    const TargetPoint = droneMessage ? droneState.DroneMission.TargetPoint: null;
 
     const [isController, setIsController] = useState(true);
-    const [makerPosition, setMarkerPosition] = useState({lat:0,lng:0});
     const [isMarker, setIsMarker] = useState(false);
+    const [isRtl, setIsRtl] = useState(false);
+
+    const [makerPosition, setMarkerPosition] = useState({lat:null,lng:null});
+    const [currentPosition, setCurrentPosition] = useState({lat:null,lng:null})
+
+    const redMarkerIcon = {
+        url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+    };
+
+    const yellowMarkerIcon = {
+        url: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
+    };
+
+    const blueMarkerIcon = {
+        url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+    };
 
     const handleIsController= () => {
         setIsController(!isController)
@@ -32,16 +42,33 @@ export const MiddleMap = (props) => {
         setIsMarker(!isMarker)
     }
 
+    const lastPathReset = () => {
+        setCurrentPosition(null);
+        setMarkerPosition(null);
+    }
+
+    const handleIsRtl = () => {
+        setIsRtl(!isRtl);
+        setCurrentPosition({
+            lat: droneMessage && droneState.DroneStt.Lat,
+            lng: droneMessage && droneState.DroneStt.Lon
+        })
+        setMarkerPosition(droneMessage ? droneState.DroneMission.StartingPoint: null);
+    }
+
     const handleMapClick = event => {
-        // marker 버튼 트루로 변경
         if (isMarker){
             setMarkerPosition({
                 lat: event.latLng.lat(),
                 lng: event.latLng.lng()
             });
-            setIsMarker(false);
+            handleDroneMarkerMission(event.latLng.lat(), event.latLng.lng())
+            setIsMarker(false)
         }
-        handleDroneMarkerMission(event.latLng.lat(), event.latLng.lng())
+        setCurrentPosition({
+            lat: droneMessage && droneState.DroneStt.Lat,
+            lng: droneMessage && droneState.DroneStt.Lon
+        })
     };
 
     const { isLoaded } = useJsApiLoader({
@@ -64,7 +91,6 @@ export const MiddleMap = (props) => {
                     onClick={handleMapClick}> {/* 마우스 클릭 이벤트 핸들러 추가 */}
 
                     {/* 드론 마커 */}
-                    {/*usecontext로 드론 위치 가져와서  position 자리에 넣어보기 */}
                     <OverlayView
                         position={{ lat: droneMessage && droneState.DroneStt.Lat, lng: droneMessage && droneState.DroneStt.Lon }}
                         mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
@@ -84,11 +110,18 @@ export const MiddleMap = (props) => {
                         />
                     </OverlayView>
 
-                    {/* 드론 경로 */}
-                    <Polyline path={dronePath} options={{ strokeColor: '#000000', strokeWeight: 2 }} />
 
-                    {/* 좌표 마커  */}
-                    <Marker position={makerPosition} />
+                    {/* 드론이 이동할 경로 */}
+                    { !droneLanded ? <Polyline className={'z-10'} path={[currentPosition, makerPosition]} options={{ strokeColor: '#000000', strokeWeight: 1 }} /> : null}
+
+                    {/* 드론이 이동한 경로 */}
+                    <Polyline className={`z-50`} path={dronePath} options={{ strokeColor: '#BCBEC0', strokeWeight: 2 }} />
+
+                    {/* 출발 지점 마커 */}
+                    <Marker position={StartingPoint} icon={blueMarkerIcon}/>
+
+                    {/* 목표 지점 마커 */}
+                    <Marker position={TargetPoint} icon={redMarkerIcon} />
 
                     {props.gcsMode === 'flight' ? <FlightContents isLeftPanel={props.isLeftPanel}
                                                                   handleIsLeftPanel={props.handleIsLeftPanel}
@@ -98,7 +131,10 @@ export const MiddleMap = (props) => {
                                                                   handleIsController={handleIsController}
                                                                   handleSwapMap={props.handleSwapMap}
                                                                   middleTable={props.middleTable}
+                                                                  isMarker={isMarker}
                                                                   handleIsMarker={handleIsMarker}
+                                                                  handleIsRtl={handleIsRtl}
+                                                                  lastPathReset={lastPathReset}
                     /> : null}
                     {props.gcsMode === 'mission' ? <OtherContents middleTable={props.middleTable}/> : null}
                     {props.gcsMode === 'video' ? <OtherContents middleTable={props.middleTable}/> : null}

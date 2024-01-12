@@ -376,23 +376,24 @@ public class MavlinkMapper
     {
       lat = lat,
       lng = lng
-    };
-    // Console.WriteLine($"Starting lan: {_droneMessage.DroneStt.Lat}, lon: {_droneMessage.DroneStt.Lon}");
-    // Console.WriteLine($"Targeting lan: {lat}, lon: {lng}");
+    };  
   }
 
   public void HandleMissionStart()
   {
     _droneMessage.DroneMission.StartTime = DateTime.Now;
     _droneMessage.DroneMission.CompleteTime = null;
+    _droneMessage.DroneStt.Landed = false;
     SetStartingPoint();
   }
   
-  public void HandleMissionComplete(string text)
+  public void HandleMissionComplete()
   {
-    Console.WriteLine(text);
     _droneMessage.DroneMission.CompleteTime = DateTime.Now;
-    _droneMessage.DroneTrack.DroneTrails = new FixedSizedQueue<DroneLocation>(600); // 착륙 후 초기화
+    _droneMessage.DroneStt.Landed = true;
+    _droneMessage.DroneMission.StartingPoint = new();
+    _droneMessage.DroneMission.TargetPoint = new();
+    _droneMessage.DroneTrack.DroneTrails = new FixedSizedQueue<DroneLocation>(3000); 
   }
   
   public void UpdateDroneTrails(double lat, double lon, bool updatedLocation = false)
@@ -410,6 +411,11 @@ public class MavlinkMapper
     string droneMessage = JsonConvert.SerializeObject(_droneMessage);
     // Console.WriteLine(droneMessage);
     return droneMessage;
+  }
+
+  public double? getRealtiveAlt()
+  {
+    return _droneMessage.DroneStt.Alt;
   }
 
   public double getAbsoluteAlt()

@@ -64,6 +64,7 @@ public class DroneStt
     public char? HoverStt = ' ';
     public double? HODP = 0.0;
     public CustomMode?  FlightMode = 0;
+    public bool Landed = true;
     public double? SatCount = 0.0;
     public double? MabSysStt = 0.0;
     public SensorStt SensorStt = new SensorStt();
@@ -109,7 +110,7 @@ public class DroneMission
 public class DroneTrack
 {
     public double? PathIndex;
-    public FixedSizedQueue<DroneLocation> DroneTrails = new(600);    // size 가 600 이면 0.5초에 하나씩 이라서 300초 -> 5분 
+    public FixedSizedQueue<DroneLocation> DroneTrails = new(3000);    // size 가 600 이면 0.5초에 하나씩 이라서 300초 -> 5분 
     
 
 

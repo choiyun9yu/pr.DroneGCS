@@ -203,6 +203,7 @@ export const FlightContents = (props) => {
                  handleIsRightPanel={props.handleIsRightPanel}
                  handleMonitorTable={handleMonitorTable}
                  handleIndicator={handleIndicator}
+                 isMarker={props.isMarker}
                  handleIsMarker={props.handleIsMarker}
             />
 
@@ -210,7 +211,9 @@ export const FlightContents = (props) => {
             <AttitudeIndicator indicator={indicator}/>
             {props.isController
                 ? <MainController isController={props.isController}
-                                  handleIsController={props.handleIsController}/>
+                                  handleIsController={props.handleIsController}
+                                  handleIsRtl={props.handleIsRtl}
+                                  lastPathReset={props.lastPathReset}/>
                 : <button onClick={props.handleIsController} className={`absolute bottom-0 w-10 h-7 rounded-t-md bg-[#1D1D41] hover:bg-gray-300`}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" style={{ transform: 'rotate(270deg)' }} className="w-6 h-5 mx-auto mt-0.5 hover:text-[#1D1D41]">
                         <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
@@ -221,14 +224,22 @@ export const FlightContents = (props) => {
 }
 
 const MainController = (props) => {
-    const { handleDroneFlightCommand } = useContext(DroneContext);
+    const { handleDroneFlightCommand, handleDroneFlightMode } = useContext(DroneContext);
+    const handelReturnBtn = () => {
+        handleDroneFlightMode(6)
+        props.handleIsRtl();
+    }
+    const handleTakeoffBtn = () => {
+        handleDroneFlightCommand(2)
+        props.lastPathReset();
+    }
     return (
         <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]`}>
             <div className={`flex flex-col mt-0.5 mx-2`}>
                 <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(0)}>
                     Arm
                 </button>
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(2)}>
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleTakeoffBtn()}>
                     Take Off
                 </button>
 
@@ -258,11 +269,15 @@ const MainController = (props) => {
             </div>
 
             <div className={`flex flex-col mt-0.5 mx-2`}>
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} >
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`}>
                     Move
                 </button>
 
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} >
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightMode(17)}>
+                    Break
+                </button>
+
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handelReturnBtn()}>
                     Return
                 </button>
 
@@ -287,7 +302,6 @@ const Btn = (props) => {
     const handleLogArea = () => {
         setIsLogArea(!isLogArea);
     }
-
 
     const printDroneLogs = (logdata) => {
         return logdata.map((entry, index) => (
@@ -439,18 +453,20 @@ const Btn = (props) => {
                 </svg>
             </button>
 
-            <button onClick={handleIsMarker}
-                className={`absolute top-[245px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                    <path fillRule="evenodd"
-                          d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-                          clipRule="evenodd"/>
-                </svg>
-            </button>
+            {props.isMarker
+                ?(<button onClick={handleIsMarker} className={`absolute top-[245px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-[#6359E9] shadow-sm shadow-[#BBBBBB]`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                        <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd"/>
+                    </svg></button>)
+                :(<button onClick={handleIsMarker} className={`absolute top-[245px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                        <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd"/>
+                    </svg></button>)
+            }
 
 
             {/* middle button */}
-            <div className={`flex h-[30px] z-10 ml-[100px] mt-[10px]`}>
+            <div className={`flex h-[30px] z-10 ml-[200px] mt-[10px]`}>
 
                 {droneMessage && droneState.DroneStt.FlightMode === 3
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Auto</button>
@@ -477,15 +493,20 @@ const Btn = (props) => {
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(2)}>AltHold</button>
                 }
+                {droneMessage && droneState.DroneStt.FlightMode === 4
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Guided</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightMode(4)}>Guided</button>
+                }
                 {droneMessage && droneState.DroneStt.FlightMode === 17
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Break</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(17)}>Break</button>
                 }
-                {droneMessage && droneState.DroneStt.FlightMode === 4
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Guided</button>
+                {droneMessage && droneState.DroneStt.FlightMode === 3
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Break</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
-                              onClick={() => handleDroneFlightMode(4)}>Guided</button>
+                              onClick={() => handleDroneFlightMode(3)}>Land</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 6
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>RTL</button>
