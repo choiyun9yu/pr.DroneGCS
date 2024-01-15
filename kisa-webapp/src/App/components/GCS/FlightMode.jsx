@@ -224,7 +224,15 @@ export const FlightContents = (props) => {
 }
 
 const MainController = (props) => {
-    const { handleDroneFlightCommand, handleDroneFlightMode } = useContext(DroneContext);
+    const {
+        handleDroneFlightCommand,
+        handleDroneFlightMode,
+        handleDroneMovetoMarker } = useContext(DroneContext);
+
+    const handleMoveBtn = () => {
+        handleDroneFlightMode(4)
+        handleDroneMovetoMarker()
+    }
 
     const handleArmBtn = () => {
         handleDroneFlightMode(4)
@@ -250,7 +258,7 @@ const MainController = (props) => {
                     Take Off
                 </button>
 
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(3)}>
+                <button className={`w-20 h-10 mb-10 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(3)}>
                     Land
                 </button>
 
@@ -276,7 +284,7 @@ const MainController = (props) => {
             </div>
 
             <div className={`flex flex-col mt-0.5 mx-2`}>
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`}>
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleMoveBtn()}>
                     Move
                 </button>
 
@@ -296,7 +304,7 @@ const MainController = (props) => {
 const Btn = (props) => {
     const [isSensorArea, setIsSensorArea] = useState(false);
     const [isLogArea, setIsLogArea] = useState(false);
-    const {droneMessage, handleDroneFlightMode} = useContext(DroneContext);
+    const {droneMessage, handleDroneFlightMode, handleDroneFlightCommand} = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
     const handleMonitorTable = props.handleMonitorTable;
     const handleIndicator = props.handleIndicator;
@@ -510,15 +518,15 @@ const Btn = (props) => {
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(17)}>Break</button>
                 }
-                {droneMessage && droneState.DroneStt.FlightMode === 3
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Break</button>
-                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
-                              onClick={() => handleDroneFlightMode(3)}>Land</button>
-                }
                 {droneMessage && droneState.DroneStt.FlightMode === 6
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>RTL</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(6)}>RTL</button>
+                }
+                {droneMessage && droneState.DroneStt.FlightMode === 9
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Land</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightCommand(3)}>Land</button>
                 }
             </div>
 

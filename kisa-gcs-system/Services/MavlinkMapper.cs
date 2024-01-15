@@ -13,6 +13,11 @@ public class MavlinkMapper
 
   public void GcsMapping(object data)
   {
+    if (data is MAVLink.mavlink_mission_item_reached_t missionreached)
+    {
+      Console.WriteLine(missionreached);
+    }
+
     if (data is MAVLink.mavlink_heartbeat_t heartbeat)
     {
       // Console.WriteLine("base_mode: "+$"{(uint)heartbeat.base_mode}");
@@ -361,39 +366,23 @@ public class MavlinkMapper
       }
     );
   }
-  
-  public async Task SetStartingPoint()
-  {
-    _droneMessage.DroneMission.StartingPoint = new DroneLocation{
-      lat= _droneMessage.DroneStt.Lat,
-      lng= _droneMessage.DroneStt.Lon
-    };
-  }
-    
-  public void SetTargetPoint(double lat, double lng)
-  {
-    _droneMessage.DroneMission.TargetPoint = new DroneLocation
-    {
-      lat = lat,
-      lng = lng
-    };  
-  }
 
   public void HandleMissionStart()
   {
     _droneMessage.DroneMission.StartTime = DateTime.Now;
     _droneMessage.DroneMission.CompleteTime = null;
     _droneMessage.DroneStt.Landed = false;
-    SetStartingPoint();
+    _droneMessage.DroneTrack.DroneTrails = new FixedSizedQueue<DroneLocation>(3000);
+    setStartingPoint();
   }
   
   public void HandleMissionComplete()
   {
     _droneMessage.DroneMission.CompleteTime = DateTime.Now;
     _droneMessage.DroneStt.Landed = true;
-    _droneMessage.DroneMission.StartingPoint = new();
-    _droneMessage.DroneMission.TargetPoint = new();
-    _droneMessage.DroneTrack.DroneTrails = new FixedSizedQueue<DroneLocation>(3000); 
+    // 미션 완료 했을 때가 아니라 다시 뜰 때 초기화 하는게 나을 듯 
+    // _droneMessage.DroneMission.StartingPoint = new();
+    // _droneMessage.DroneMission.TargetPoint = new();
   }
   
   public void UpdateDroneTrails(double lat, double lon, bool updatedLocation = false)
@@ -428,4 +417,31 @@ public class MavlinkMapper
     return (double)_droneMessage.DroneStt.AbsoluteAlt;
   }
 
+  public double getTargetPointLat()
+  {
+    return _droneMessage.DroneMission.TargetPoint.lat;
+  }
+  
+  public double getTargetPointLng()
+  {
+    return _droneMessage.DroneMission.TargetPoint.lng;
+  }
+
+  public async Task setStartingPoint()
+  {
+    _droneMessage.DroneMission.StartingPoint = new DroneLocation{
+      lat= _droneMessage.DroneStt.Lat,
+      lng= _droneMessage.DroneStt.Lon
+    };
+  }
+    
+  public void setTargetPoint(double lat, double lng)
+  {
+    _droneMessage.DroneMission.TargetPoint = new DroneLocation
+    {
+      lat = lat,
+      lng = lng
+    };  
+  }
+  
 }

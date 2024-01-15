@@ -169,16 +169,13 @@ public class DroneController : Hub<IDroneHub>
     // 미션 부여하기 
     public async Task HandleDroneMarkerMission(double lat, double lng)
     {
-        _mapper.SetTargetPoint(lat, lng);
-        // double alt = _mapper.getAbsoluteAlt();
-        await DroneMoveToHere(lat, lng);
+        _mapper.setTargetPoint(lat, lng);
     }
     
-    public async Task DroneMoveToHere(double lat, double lng)
+    public async Task HandleDroneMoveToMarker()
     {
-        // Guided Mode 안되어 있으면 Guided Mode 
-        // Arm 안되어 있으면 Arm
-        // Take Off 안되어 있으면 Take Off
+        double lat = _mapper.getTargetPointLat();
+        double lng = _mapper.getTargetPointLng();
         
         // 좌표로 이동 명령
         var commandBody = new MAVLink.mavlink_mission_item_int_t()
