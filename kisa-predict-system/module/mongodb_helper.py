@@ -12,8 +12,8 @@ def save_prediction_to_mongodb(drone_id, flight_id, alt, sensor_data, predict_da
         last_save_time = datetime.now()
 
         client = MongoClient("mongodb://localhost:27017/")
-        db = client["prediction_service"]
-        collection = db['ai_drone']
+        db = client["drone"]
+        collection = db['drone_predict']
 
         data_to_insert = {
             "PredictTime": predict_time,
