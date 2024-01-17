@@ -9,9 +9,10 @@ public class MavlinkMapper
 {
   // constructor가 새로운 연결일 때 동작하면 그때 마다 멤버 초기화 가능? / 지역변수는 직접 초기화 해야한다 
   private DroneMessage _droneMessage = new();
+  private readonly GoogleMapHelper _googleMapHelper = GoogleMapHelper.GetInstace();
   private DateTime _lastAddedTrails;
 
-  public void GcsMapping(object data)
+  public async void GcsMapping(object data)
   {
     if (data is MAVLink.mavlink_mission_item_reached_t missionreached)
     {
@@ -35,17 +36,25 @@ public class MavlinkMapper
     if (data is MAVLink.mavlink_global_position_int_t globalPositionInt)
     {
       // Console.WriteLine(globalPositionInt);
-      _droneMessage.DroneStt.Lat = globalPositionInt.lat * 1.0 / 10000000;
-      _droneMessage.DroneStt.Lon = globalPositionInt.lon * 1.0 / 10000000;
-      _droneMessage.DroneStt.Alt = globalPositionInt.relative_alt * 1.0 / 1000;
-      _droneMessage.DroneStt.AbsoluteAlt = globalPositionInt.alt * 1.0 / 1000;
+      double lat = globalPositionInt.lat * 1.0 / 10000000;
+      double lon = globalPositionInt.lon * 1.0 / 10000000;
+      double relative_alt = globalPositionInt.relative_alt * 1.0 / 1000;
+      double global_alt = globalPositionInt.alt * 1.0 / 1000;
+      
+      _droneMessage.DroneStt.Lat = lat;
+      _droneMessage.DroneStt.Lon = lon;
+      _droneMessage.DroneStt.Alt = relative_alt;
+      _droneMessage.DroneStt.GlobalAlt = global_alt;
       _droneMessage.DroneStt.Speed = (float)Math.Sqrt(globalPositionInt.vx * globalPositionInt.vx +
                                                       globalPositionInt.vy * globalPositionInt.vy +
                                                       globalPositionInt.vz * globalPositionInt.vz) / 100f;
 
+      
+      
+      
       if (DateTime.Now.Subtract(_lastAddedTrails).Milliseconds > 500)
       {
-        UpdateDroneTrails(_droneMessage.DroneStt.Lat, _droneMessage.DroneStt.Lon, true);
+        UpdateDroneTrails(lat, lon, relative_alt, global_alt, true);
       }
     }
     if (data is MAVLink.mavlink_sys_status_t sysStatus)
@@ -373,7 +382,7 @@ public class MavlinkMapper
     _droneMessage.DroneMission.CompleteTime = null;
     _droneMessage.DroneStt.Landed = false;
     _droneMessage.DroneTrack.DroneTrails = new FixedSizedQueue<DroneLocation>(3000);
-    setStartingPoint();
+    setStartingPoint(); // 웹 브라우저를 새로고침 했을 때 손실하지 않는 방법
   }
   
   public void HandleMissionComplete()
@@ -385,12 +394,14 @@ public class MavlinkMapper
     // _droneMessage.DroneMission.TargetPoint = new();
   }
   
-  public void UpdateDroneTrails(double lat, double lon, bool updatedLocation = false)
+  public void UpdateDroneTrails(double lat, double lon, double relative_alt, double global_alt, bool updatedLocation = false)
   {
     _droneMessage.DroneTrack.DroneTrails.Enqueue(new DroneLocation
     {
       lat = lat,
-      lng = lon
+      lng = lon,
+      relative_alt = relative_alt,
+      global_frame_alt = global_alt,
     });
     _lastAddedTrails = DateTime.Now;
   }
@@ -412,11 +423,6 @@ public class MavlinkMapper
     return (double)_droneMessage.DroneStt.Alt;
   }
 
-  public double getAbsoluteAlt()
-  {
-    return (double)_droneMessage.DroneStt.AbsoluteAlt;
-  }
-
   public double getTargetPointLat()
   {
     return _droneMessage.DroneMission.TargetPoint.lat;
@@ -435,13 +441,27 @@ public class MavlinkMapper
     };
   }
     
-  public void setTargetPoint(double lat, double lng)
+  public async Task setTargetPoint(double lat, double lng)
   {
     _droneMessage.DroneMission.TargetPoint = new DroneLocation
     {
       lat = lat,
       lng = lng
     };  
+    // List<float> path_terrain_alt = await _googleMapHelper.FetchElevations(
+    //   _droneMessage.DroneMission.StartingPoint.lat, _droneMessage.DroneMission.StartingPoint.lng, 
+    //   lat, lng, 10);
+    
+    // sample 300, api 요청이 많으면 Google Maps API 요금이 올라감 (매달 200 달러 까지만 무료), 2018년 6월 11일 부터 API 키를 발급 받으려면 결제 계정이 필수적으로 필요
+    // List<GoogleWaypoint> path_terrain_alt = await _googleMapHelper.FetchElevations(
+    // _droneMessage.DroneMission.StartingPoint.lat, _droneMessage.DroneMission.StartingPoint.lng, 
+    // lat, lng, 10);
+    // Console.Write("path: ");
+    // path_terrain_alt.ForEach(path_num => Console.Write($"{path_num.Elevation}, "));
+    
+    // double path_max_alt = path_terrain_alt.Max();
+    // double path_terrain_min_alt = path_terrain_alt.Min();
+    // path_terrain_alt.ForEach(path_num => Console.Write($"[{path_num.Location.Lat}, {path_num.Location.Lng}, {path_num.Elevation}], "));
   }
   
 }

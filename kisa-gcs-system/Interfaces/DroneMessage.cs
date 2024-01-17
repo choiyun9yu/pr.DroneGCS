@@ -54,8 +54,9 @@ public class DroneStt
     public char? LoaderLock = ' ';
     public double Lat = 0.0;
     public double Lon = 0.0;
-    public double AbsoluteAlt = 0.0;
     public double? Alt = 0.0;
+    public double? GlobalAlt = 0.0;
+    // public double? terrain_alt = 0.0;
     public double? Head = 0.0;
     public double? Speed = 0.0;
     public double? ROLL_ATTITUDE = 0.0;
@@ -112,8 +113,6 @@ public class DroneTrack
     public double? PathIndex;
     public FixedSizedQueue<DroneLocation> DroneTrails = new(3000);    // size 가 600 이면 0.5초에 하나씩 이라서 300초 -> 5분 
     
-
-
     public double? TotalDistance = 0.0;
     public double? ElapsedDistance = 0.0;
     public double? RemainDistance = 0.0;
@@ -126,6 +125,9 @@ public struct DroneLocation
 {
     public double lat;
     public double lng;
+    public double global_frame_alt;
+    public double relative_alt;
+    public double terrain_alt;
 }
 
 public class CommunicationLink

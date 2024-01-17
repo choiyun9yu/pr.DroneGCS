@@ -1,4 +1,5 @@
 global using System;
+global using System.Threading;
 global using System.Net;
 global using System.Net.Sockets;
 global using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ global using DotNetty.Common.Utilities;
 global using DotNetty.Transport.Bootstrapping;
 global using DotNetty.Transport.Channels;
 global using DotNetty.Transport.Channels.Sockets;
+global using Newtonsoft.Json.Linq;
 global using Microsoft.AspNetCore.SignalR;
 global using Newtonsoft.Json;
 using Microsoft.AspNetCore.SignalR.Protocol;

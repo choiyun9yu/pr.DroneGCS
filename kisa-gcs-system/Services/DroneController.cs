@@ -24,6 +24,7 @@ public class DroneController : Hub<IDroneHub>
     private readonly IHubContext<DroneController> _hubContext;
     private readonly MAVLink.MavlinkParse _parser = new();
     private readonly MavlinkMapper _mapper = new();
+    
     private IChannelHandlerContext? _context;
     
     private IPEndPoint? _droneAddress;
@@ -122,7 +123,7 @@ public class DroneController : Hub<IDroneHub>
             case DroneFlightCommand.TAKEOFF:
             {
                 Console.WriteLine(_mapper.getFlightMode());
-                if ((_mapper.getRelativeAlt() < 1) && (_mapper.getFlightMode() == CustomMode.GUIDED))
+                if ((_mapper.getRelativeAlt() < 0.5) && (_mapper.getFlightMode() == CustomMode.GUIDED))
                 {
                     _mapper.HandleMissionStart();
                     commandBody = new MAVLink.mavlink_command_long_t()
@@ -195,8 +196,7 @@ public class DroneController : Hub<IDroneHub>
             commandBody));
         await SetCommandAsync(msg);
     }
-    
-    
+
     // TO DO: 드론 조이스틱 만들기 
     
     /*

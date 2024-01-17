@@ -183,11 +183,10 @@ const RightSideBottom = (props) => {
 };
 
 export const FlightContents = (props) => {
-    const [monitorTable, setMonitorTable] = useState(true);
     const [indicator, setIndicator] = useState(true);
 
     const handleMonitorTable = () => {
-        setMonitorTable(!monitorTable);
+        props.setMonitorTable(!props.monitorTable);
     }
 
     const handleIndicator = () => {
@@ -207,7 +206,7 @@ export const FlightContents = (props) => {
                  handleIsMarker={props.handleIsMarker}
             />
 
-            <Table middleTable={props.middleTable} monitorTable={monitorTable} setMonitorTable={setMonitorTable}/>
+            <Table middleTable={props.middleTable} monitorTable={props.monitorTable} setMonitorTable={props.setMonitorTable}/>
             <AttitudeIndicator indicator={indicator}/>
             {props.isController
                 ? <MainController isController={props.isController}
@@ -239,15 +238,16 @@ const MainController = (props) => {
         handleDroneFlightCommand(0)
     }
 
+    const handleTakeoffBtn = () => {
+        handleDroneFlightCommand(2)
+        props.lastPathReset();
+    }
+
     const handelReturnBtn = () => {
         handleDroneFlightMode(6)
         props.handleIsRtl();
     }
 
-    const handleTakeoffBtn = () => {
-        handleDroneFlightCommand(2)
-        props.lastPathReset();
-    }
     return (
         <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]`}>
             <div className={`flex flex-col mt-0.5 mx-2`}>

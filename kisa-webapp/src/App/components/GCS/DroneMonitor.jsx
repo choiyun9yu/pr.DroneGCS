@@ -49,6 +49,7 @@ export const DroneMonitor = () => {
                            isRightPanel={isRightPanel}
                            handleIsRightPanel={handleIsRightPanel}
                            center={center}
+                           setCenter={setCenter}
                 />
             </div>
                 {gcsMode === 'flight' && isRightPanel ? (

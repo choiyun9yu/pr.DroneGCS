@@ -10,6 +10,7 @@ import {DroneContext} from "./SignalRContainder";
 export const MiddleMap = (props) => {
     const { droneMessage, handleDroneMarkerMission } = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
+    console.log(droneState)
     const droneLanded = droneMessage ? droneState.DroneStt.Landed : true;
     const dronePath = droneMessage ? droneState.DroneTrack.DroneTrails.q : [];
     const StartingPoint = droneMessage ? droneState.DroneMission.StartingPoint: null;
@@ -18,6 +19,8 @@ export const MiddleMap = (props) => {
     const [isController, setIsController] = useState(true);
     const [isMarker, setIsMarker] = useState(false);
     const [isRtl, setIsRtl] = useState(false);
+
+    const [monitorTable, setMonitorTable] = useState(true);
 
     const [makerPosition, setMarkerPosition] = useState({lat:null,lng:null});
     const [currentPosition, setCurrentPosition] = useState({lat:null,lng:null})
@@ -71,6 +74,29 @@ export const MiddleMap = (props) => {
         })
     };
 
+    // 드론 시작점 센터 기능과
+    const handleStartPointCenter = () => {
+        props.setCenter({
+            lat: droneMessage && droneState.DroneMission.StartingPoint.lat,
+            lng: droneMessage && droneState.DroneMission.StartingPoint.lng
+        });
+    }
+
+    // 드론 도착점 센터 기능
+    const handleTargetPointCenter = () => {
+        props.setCenter({
+            lat: droneMessage && droneState.DroneMission.TargetPoint.lat,
+            lng: droneMessage && droneState.DroneMission.TargetPoint.lng
+        });
+    }
+
+    const handleCurrentCenter= () => {
+        props.setCenter({
+            lat: droneMessage && droneState.DroneStt.Lat,
+            lng: droneMessage && droneState.DroneStt.Lon
+        });
+    }
+
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY
@@ -123,7 +149,8 @@ export const MiddleMap = (props) => {
                     {/* 목표 지점 마커 */}
                     <Marker position={TargetPoint} icon={redMarkerIcon} />
 
-                    {props.gcsMode === 'flight' ? <FlightContents isLeftPanel={props.isLeftPanel}
+                    {props.gcsMode === 'flight' ?
+                        <FlightContents isLeftPanel={props.isLeftPanel}
                                                                   handleIsLeftPanel={props.handleIsLeftPanel}
                                                                   isRightPanel={props.isRightPanel}
                                                                   handleIsRightPanel={props.handleIsRightPanel}
@@ -135,9 +162,20 @@ export const MiddleMap = (props) => {
                                                                   handleIsMarker={handleIsMarker}
                                                                   handleIsRtl={handleIsRtl}
                                                                   lastPathReset={lastPathReset}
-                    /> : null}
-                    {props.gcsMode === 'mission' ? <OtherContents middleTable={props.middleTable}/> : null}
-                    {props.gcsMode === 'video' ? <OtherContents middleTable={props.middleTable}/> : null}
+                                                                  monitorTable={monitorTable}
+                                                                  setMonitorTable={setMonitorTable}
+                        /> : null}
+                    {props.gcsMode !== 'flight' ?
+                        <OtherContents
+                            middleTable={props.middleTable}
+                            handleCurrentCenter={handleCurrentCenter}
+                            handleStartPointCenter={handleStartPointCenter}
+                            handleTargetPointCenter={handleTargetPointCenter}
+                            lastPathReset={lastPathReset}
+                            handleIsRtl={handleIsRtl}
+                            monitorTable={monitorTable}
+                            setMonitorTable={setMonitorTable}
+                        /> : null}
                 </GoogleMap>
             </div>
     );
