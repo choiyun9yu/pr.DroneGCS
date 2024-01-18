@@ -26,7 +26,11 @@ public interface IDroneHub
     // Task HandleCameraJoystick(ArrowButton arrow);
     
     // Task HandleCameraCommand();
+    Task HandleDroneStartingMarking(double lat, double lng);
+    Task HandleDroneTargetMarking(double lat, double lng);
+    Task HandleMissionAlt(int missionAlt);
+    Task HandleDroneMoveToTarget(double lat, double lng);
+    Task HandleDroneMoveToBase(double lat, double lng);
 
-    Task HandleDroneMarkerMission(double lat, double lng);
-
+    
 }

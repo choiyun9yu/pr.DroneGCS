@@ -382,7 +382,7 @@ public class MavlinkMapper
   {
     _droneMessage.DroneMission.StartTime = DateTime.Now;
     _droneMessage.DroneMission.CompleteTime = null;
-    _droneMessage.DroneMission.DroneTrails = new FixedSizedQueue<DroneLocation>(3000);
+    _droneMessage.DroneMission.DroneTrails = new FixedSizedQueue<DroneLocation>(600); // 0.5 초에 1개 씩이니까 약 3분 정도 경로 저장 
     // setStartingPoint();
     // _droneMessage.DroneMission.TotalDistance = _haversineCalculator.Haversine(_droneMessage.DroneMission.StartingPoint.lat, _droneMessage.DroneMission.StartingPoint.lng,
     //                                                                         _droneMessage.DroneMission.TargetPoint.lat, _droneMessage.DroneMission.TargetPoint.lng);
@@ -401,8 +401,8 @@ public class MavlinkMapper
     {
       lat = lat,
       lng = lon,
-      relative_alt = relative_alt,
       global_frame_alt = global_alt,
+      terrain_alt = global_alt - relative_alt,
     });
 
     _droneMessage.DroneMission.RemainDistance = _vincentyCalculator.DistanceCalculater(lat, lon, _droneMessage.DroneMission.TargetPoint.lat,
@@ -447,6 +447,17 @@ public class MavlinkMapper
     return _droneMessage.DroneMission.TargetPoint.lng;
   }
 
+  public int getMissionAlt()
+  {
+    return _droneMessage.DroneMission.MissionAlt;
+  }
+
+  public async Task setMissionAlt(int missionAlt)
+  {
+    _droneMessage.DroneMission.MissionAlt = missionAlt;
+    // Console.WriteLine($"set mission alt: {missionAlt}");
+  }
+
   public async Task setStartingPoint()
   {
     _droneMessage.DroneMission.StartingPoint = new DroneLocation{
@@ -454,7 +465,15 @@ public class MavlinkMapper
       lng= _droneMessage.DroneStt.Lon
     };
   }
-    
+
+  public async Task setStartingPoint(double lat, double lng)
+  {
+    _droneMessage.DroneMission.StartingPoint = new DroneLocation{
+      lat= lat,
+      lng= lng
+    };
+  }
+
   public async Task setTargetPoint(double lat, double lng)
   {
     setStartingPoint();

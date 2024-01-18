@@ -103,6 +103,7 @@ public class DroneMission
     public string? MavMission;
     public DateTime? StartTime = null;      // Take Off 기준 
     public DateTime? CompleteTime = null;   // Disarm 기준 
+    public int MissionAlt = 10;         // 주행 고도
     public DroneLocation StartingPoint;
     public DroneLocation TargetPoint;
     public FixedSizedQueue<DroneLocation> DroneTrails = new(6000);    // size 가 6000 이면 0.5초에 하나씩 이라서 -> 30분 
@@ -115,8 +116,8 @@ public struct DroneLocation
     public double lat;
     public double lng;
     public double global_frame_alt;
-    public double relative_alt;
-    public double terrain_alt;
+    public double terrain_alt;          // 글로벌 고도에서 상대 고도를 빼면 지형 고도를 알 수 있다. API로 받아오는게 더 정확하지만 API 사용료가 너무 많이 나온다.
+    // public double relative_alt;
 }
 
 public class CommunicationLink

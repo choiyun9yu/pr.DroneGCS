@@ -1,6 +1,7 @@
+import { LineChart, Legend, XAxis, YAxis, Tooltip, Line, ResponsiveContainer } from 'recharts'
 import { ColorThema } from '../ProejctThema';
 import {Table} from "./MiddleMap";
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, useEffect} from "react";
 import {DroneContext} from "./SignalRContainder";
 
 export const MissionMode = () => {
@@ -17,7 +18,7 @@ export const MissionMode = () => {
 
 export const OtherContents = (props) => {
     const { handleDroneFlightMode, handleDroneFlightCommand } = useContext(DroneContext);
-    const [ isMissionBtn, setIsMissionBtn ] = useState(true);
+    const [ isMissionBtn, setIsMissionBtn ] = useState(false);
     const [ isWayPointBtn, setIsWayPointBtn ] = useState(false);
     const [ isCenterBtn, setIsCenterBtn ] = useState(false);
 
@@ -37,7 +38,7 @@ export const OtherContents = (props) => {
     }
 
     const handleIsMissionBtn = () => {
-
+        setIsMissionBtn(!isMissionBtn)
     }
 
     const handleIsWayPointBtn = () => {
@@ -81,7 +82,7 @@ export const OtherContents = (props) => {
                     Plan
                 </div>
 
-                <button className={`flex flex-col items-center`}>
+                <button className={`flex flex-col items-center`} onClick={handleIsMissionBtn}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                         <path
                             d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z"/>
@@ -120,15 +121,39 @@ export const OtherContents = (props) => {
 
             {isMissionBtn
                 ?(
-                    <div className={`flex p-2 flex-col text-xs rounded-md`} style={{
+                    <div className={`flex p-2 w-[180px] flex-col text-xs rounded-md`} style={{
                         position: 'absolute',
-                        top: '200px',
+                        top: '210px',
                         left: '70px',
                         opacity: '70%',
                         background: '#ffff',
                     }}>
-                        <div className={`flex flex-row`}>
-                            <button className={`flex  m-1`}>
+                        <div className={`flex flex-row justify-center`}>
+                            <button className={`flex flex-col items-center mx-auto w-[50px] hover:text-[#AEABD8]`}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round"
+                                          d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                    <path strokeLinecap="round" strokeLinejoin="round"
+                                          d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+                                </svg>
+                                Starting
+                            </button>
+                            <button className={`flex flex-col items-center mx-auto w-[50px] hover:text-[#AEABD8]`}>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                     className="w-6 h-6">
+                                    <path fillRule="evenodd"
+                                          d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+                                          clipRule="evenodd"/>
+                                </svg>
+                                Targeting
+                            </button>
+                        </div>
+
+                        <br/>
+
+                        <div className={`flex flex-row justify-center`}>
+                            <button className={`flex flex-col items-center mx-auto w-[50px] hover:text-[#AEABD8]`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                      className="w-6 h-6">
                                     <path
@@ -137,7 +162,7 @@ export const OtherContents = (props) => {
                                 Return
                             </button>
 
-                            <button className={`m-1`}>
+                            <button className={`flex flex-col items-center mx-auto w-[50px] hover:text-[#AEABD8]`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                      className="w-6 h-6">
                                     <path fillRule="evenodd"
@@ -147,7 +172,7 @@ export const OtherContents = (props) => {
                                 Break
                             </button>
 
-                            <button className={`m-1`}>
+                            <button className={`flex flex-col items-center mx-auto w-[50px] hover:text-[#AEABD8]`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                      className="w-6 h-6">
                                     <path fillRule="evenodd"
@@ -160,8 +185,9 @@ export const OtherContents = (props) => {
 
                         <br/>
 
-                        <div className={`flex flex-row`}>
-                            <button className={`flex flex-col m-1 items-center`} onClick={() => handleTakeoffBtn()}>
+                        <div className={`flex flex-row justify-center`}>
+                            <button className={`flex flex-col mx-auto items-center w-[50px] hover:text-[#AEABD8]`}
+                                    onClick={() => handleTakeoffBtn()}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                      className="w-6 h-6">
                                     <path
@@ -170,13 +196,24 @@ export const OtherContents = (props) => {
                                 Take Off
                             </button>
 
-                            <button className={`flex flex-col m-1 items-center`} onClick={() => handleLandBtn()}>
+                            <button className={`flex flex-col mx-auto items-center w-[50px] hover:text-[#AEABD8]`}
+                                    onClick={() => handleLandBtn()}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                      className="w-6 h-6">
                                     <path
                                         d="M12 1.5a.75.75 0 0 1 .75.75V7.5h-1.5V2.25A.75.75 0 0 1 12 1.5ZM11.25 7.5v5.69l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V7.5h3.75a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h3.75Z"/>
                                 </svg>
                                 Land
+                            </button>
+
+                            <button className={`flex flex-col mx-auto items-center w-[50px] hover:text-[#AEABD8]`}>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                     className="w-6 h-6">
+                                    <path fillRule="evenodd"
+                                          d="M3.792 2.938A49.069 49.069 0 0 1 12 2.25c2.797 0 5.54.236 8.209.688a1.857 1.857 0 0 1 1.541 1.836v1.044a3 3 0 0 1-.879 2.121l-6.182 6.182a1.5 1.5 0 0 0-.439 1.061v2.927a3 3 0 0 1-1.658 2.684l-1.757.878A.75.75 0 0 1 9.75 21v-5.818a1.5 1.5 0 0 0-.44-1.06L3.13 7.938a3 3 0 0 1-.879-2.121V4.774c0-.897.64-1.683 1.542-1.836Z"
+                                          clipRule="evenodd"/>
+                                </svg>
+                                Alt
                             </button>
                         </div>
 
@@ -189,13 +226,14 @@ export const OtherContents = (props) => {
                 ? (
                     <div className={`flex p-2 flex-col items-start rounded-md`} style={{
                         position: 'absolute',
-                        top: '450px',
+                        top: '330px',
                         left: '70px',
                         opacity: '70%',
                         background: '#ffff',
                     }}>
-                        <button className={`px-1 w-full rounded border border-gray-700 hover:bg-[#AEABD8]`} onClick={handleCurrentCenter}>
-                            Drone
+                        <button className={`px-1 w-full rounded border border-gray-700 hover:bg-[#AEABD8]`}
+                                onClick={handleCurrentCenter}>
+                        Drone
                         </button>
                         <button className={`px-1 my-1 w-full rounded border border-gray-700 hover:bg-[#AEABD8]`}
                                 onClick={handleStartPointCenter}>
@@ -208,8 +246,37 @@ export const OtherContents = (props) => {
 
             <Table className={'z-30'} middleTable={props.middleTable} monitorTable={props.monitorTable} setMonitorTable={props.setMonitorTable}/>
 
-            {/* Altitude */}
-            <div className={`absolute left-2 bottom-6 w-[90%] h-[200px] rounded-xl bg-black opacity-70`}></div>
+            {/* AltitudeChart */}
+            <div className={`absolute left-2 bottom-6 w-[90%] h-[200px] rounded-xl bg-black opacity-70`}>
+                <AltitudeChart />
+            </div>
         </>
     );
 }
+
+export const AltitudeChart = () => {
+    const {droneMessage} = useContext(DroneContext);
+    const data = droneMessage ? droneMessage['droneMessage']['DroneMission']['DroneTrails']['q'] : null;
+    const drone_alt = data.map((object, index) => ({index, value: object.global_frame_alt}));
+    const terrain_alt = data.map((object, index) => ({index, value: object.terrain_alt}));
+    const minYValue = Math.min(...terrain_alt.map(point => point.value)); // terrain_alt의 최소값 계산
+
+    // console.log(drone_alt)
+
+    if (!data) return null
+
+    return (
+        <div id="altitudechart" className="flex">
+            <ResponsiveContainer width="98%" height={200}>
+                <LineChart>
+                    <XAxis dataKey="index" type="number" tick={false} allowDuplicatedCategory={false}/>
+                    <YAxis domain={[minYValue - 1, 'auto']}/>
+                    <Legend />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="value" data={drone_alt} stroke="#64CFF6" dot={false} name={'드론 고도'} />
+                    <Line type="monotone" dataKey="value" data={terrain_alt} stroke="#8FE388" dot={false} name={'지형 고도'} />
+                </LineChart>
+            </ResponsiveContainer>
+        </div>
+    );
+};

@@ -8,7 +8,7 @@ import {OtherContents} from "./MissionMode";
 import {DroneContext} from "./SignalRContainder";
 
 export const MiddleMap = (props) => {
-    const { droneMessage, handleDroneMarkerMission } = useContext(DroneContext);
+    const { droneMessage, handleDroneTargetMarking } = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
     // console.log(droneState)
     const droneLanded = droneMessage ? droneState.DroneStt.Landed : true;
@@ -65,7 +65,7 @@ export const MiddleMap = (props) => {
                 lat: event.latLng.lat(),
                 lng: event.latLng.lng()
             });
-            handleDroneMarkerMission(event.latLng.lat(), event.latLng.lng())
+            handleDroneTargetMarking(event.latLng.lat(), event.latLng.lng())
             setIsMarker(false)
         }
         setCurrentPosition({
@@ -247,7 +247,7 @@ export const Table = (props) => {
 
         averageSpped = takeTime > 0 ? elapsedDistance / (takeTime / 1000) : 0;
 
-        console.log(averageSpped)
+        // console.log(averageSpped)
 
         formattedStartTime = startTime
             ? new Date(startTime).toLocaleTimeString('en-US', {hour12: false})
@@ -304,7 +304,7 @@ export const Table = (props) => {
                         </tr>
                         <tr>
                             <th className={`px-2`}>평균 이동속도</th>
-                            <td className={`px-2`}>{(averageSpped).toFixed(3)} m/s</td>
+                            <td className={`px-2`}>{((averageSpped>0)?averageSpped:0).toFixed(3)} m/s</td>
                         </tr>
                         <tr>
                             <th className={`px-2`}>이륙 시작시간</th>

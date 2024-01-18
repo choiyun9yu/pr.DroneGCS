@@ -122,7 +122,7 @@ public class DroneController : Hub<IDroneHub>
             
             case DroneFlightCommand.TAKEOFF:
             {
-
+                int alt = _mapper.getMissionAlt();
                 if ((_mapper.getRelativeAlt() < 0.5) && (_mapper.getFlightMode() == CustomMode.GUIDED))
                 {
                     _mapper.HandleMissionStart();
@@ -134,7 +134,7 @@ public class DroneController : Hub<IDroneHub>
                         param4 = 0,         // yaw(rad), 드론의 회전을 나타내는 각도
                         param5 = 0,         // x, 드론의 이륙 위치 x
                         param6 = 0,         // y, 드론의 이륙 위치 y
-                        param7 = 10,        // z(m), 드론의 이륙 높이(미터) 
+                        param7 = alt,        // z(m), 드론의 이륙 높이(미터) 
                 };
                 }
                 break;
@@ -168,15 +168,26 @@ public class DroneController : Hub<IDroneHub>
     }
     
     // 미션 부여하기 
-    public async Task HandleDroneMarkerMission(double lat, double lng)
+    public async Task HandleDroneStartingMarking(double lat, double lng)
+    {
+        _mapper.setStartingPoint(lat, lng);
+    }
+
+    public async Task HandleDroneTargetMarking(double lat, double lng)
     {
         _mapper.setTargetPoint(lat, lng);
     }
-    
+
+    public async Task HandleMissionAlt(int missionalt)
+    {
+        _mapper.setMissionAlt(missionalt);
+    }
+
     public async Task HandleDroneMoveToTarget()
     {
         double lat = _mapper.getTargetPointLat();
         double lng = _mapper.getTargetPointLng();
+        int alt = _mapper.getMissionAlt();
         
         // 좌표로 이동 명령
         var commandBody = new MAVLink.mavlink_mission_item_int_t()
@@ -184,7 +195,7 @@ public class DroneController : Hub<IDroneHub>
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
             x = (int)Math.Round(lat * 10000000),
             y = (int)Math.Round(lng * 10000000),
-            z = 10,             // (int)Math.Round(alt),
+            z = alt,             // (int)Math.Round(alt),
             autocontinue = 1,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
             current = 2,        // 현재 웨이포인트 번호
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
@@ -201,13 +212,14 @@ public class DroneController : Hub<IDroneHub>
     {
         double lat = _mapper.getStartingPointLat();
         double lng = _mapper.getStartingPointLng();
+        int alt = _mapper.getMissionAlt();
         
         var commandBody = new MAVLink.mavlink_mission_item_int_t()
         {
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
             x = (int)Math.Round(lat * 10000000),
             y = (int)Math.Round(lng * 10000000),
-            z = 10,             // (int)Math.Round(alt),
+            z = alt,            // (int)Math.Round(alt),
             autocontinue = 1,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
             current = 2,        // 현재 웨이포인트 번호
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
