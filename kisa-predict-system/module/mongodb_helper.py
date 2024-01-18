@@ -5,7 +5,7 @@ last_save_time = datetime.now()
 
 def save_prediction_to_mongodb(drone_id, flight_id, alt, sensor_data, predict_data):
     global last_save_time
-    predict_time= datetime.now()
+    predict_time = datetime.now()
 
     if ((predict_time - last_save_time) > timedelta(seconds=1)):
 
@@ -19,7 +19,7 @@ def save_prediction_to_mongodb(drone_id, flight_id, alt, sensor_data, predict_da
             "PredictTime": predict_time,
             "DroneId": drone_id,
             "FlightId": flight_id,
-            "Alt": alt,
+            # "Alt": alt,
             "SensorData": sensor_data,
             "PredictData": predict_data
         }

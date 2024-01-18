@@ -7,9 +7,9 @@ def parser(data):
     droneMessage= json.loads(data[0])
     DroneId = droneMessage['DroneId']
     FlightId= 'none'
-    Alt = droneMessage['DroneStt']['Alt']
+    # Alt = droneMessage['DroneStt']['Alt']
     SensorData = droneMessage['SensorData']
-    return DroneId, FlightId, Alt, SensorData
+    return DroneId, FlightId, SensorData
 
 def dict_to_df(dict_data):
     try:
@@ -148,4 +148,3 @@ def predict_vibration_z_VIBRATION(sensor_data):
     model = joblib.load('./ml/MLP_regression_vibration_z_VIBRATION.pkl')
     vibration_z_VIBRATION_PREDCIT = model.predict(X)
     return vibration_z_VIBRATION_PREDCIT[0]
-
