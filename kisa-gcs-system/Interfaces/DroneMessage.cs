@@ -29,7 +29,6 @@ public class DroneMessage
     public List<MavlinkLog> DroneLogger = new ();
     public double[]? WayPointsDistance = [];
     public DroneStt? DroneStt = new DroneStt();
-    public DroneTrack? DroneTrack = new DroneTrack();
     public DroneCamera? DroneCamera = new DroneCamera();
     public DroneMission? DroneMission = new DroneMission();
     public CommunicationLink? CommunicationLink = new CommunicationLink();
@@ -65,7 +64,7 @@ public class DroneStt
     public char? HoverStt = ' ';
     public double? HODP = 0.0;
     public CustomMode?  FlightMode = 0;
-    public bool Landed = true;
+    // public bool Landed = true;
     public double? SatCount = 0.0;
     public double? MabSysStt = 0.0;
     public SensorStt SensorStt = new SensorStt();
@@ -106,19 +105,9 @@ public class DroneMission
     public DateTime? CompleteTime = null;   // Disarm 기준 
     public DroneLocation StartingPoint;
     public DroneLocation TargetPoint;
-}
-
-public class DroneTrack
-{
-    public double? PathIndex;
-    public FixedSizedQueue<DroneLocation> DroneTrails = new(3000);    // size 가 600 이면 0.5초에 하나씩 이라서 300초 -> 5분 
-    
-    public double? TotalDistance = 0.0;
-    public double? ElapsedDistance = 0.0;
+    public FixedSizedQueue<DroneLocation> DroneTrails = new(6000);    // size 가 6000 이면 0.5초에 하나씩 이라서 -> 30분 
     public double? RemainDistance = 0.0;
-    
-    public double[]? DroneProgress;
-    public double[]? DroneProgressPresentation;
+    public double? TotalDistance = 0.0;
 }
 
 public struct DroneLocation   

@@ -11,7 +11,9 @@ public class MavlinkMapper
   private DroneMessage _droneMessage = new();
   private readonly GoogleMapHelper _googleMapHelper = GoogleMapHelper.GetInstace();
   private DateTime _lastAddedTrails;
+  private VincentyCalculator _vincentyCalculator = new();
 
+  
   public async void GcsMapping(object data)
   {
     if (data is MAVLink.mavlink_mission_item_reached_t missionreached)
@@ -380,36 +382,38 @@ public class MavlinkMapper
   {
     _droneMessage.DroneMission.StartTime = DateTime.Now;
     _droneMessage.DroneMission.CompleteTime = null;
-    _droneMessage.DroneStt.Landed = false;
-    _droneMessage.DroneTrack.DroneTrails = new FixedSizedQueue<DroneLocation>(3000);
-    setStartingPoint(); // 웹 브라우저를 새로고침 했을 때 손실하지 않는 방법
+    _droneMessage.DroneMission.DroneTrails = new FixedSizedQueue<DroneLocation>(3000);
+    // setStartingPoint();
+    // _droneMessage.DroneMission.TotalDistance = _haversineCalculator.Haversine(_droneMessage.DroneMission.StartingPoint.lat, _droneMessage.DroneMission.StartingPoint.lng,
+    //                                                                         _droneMessage.DroneMission.TargetPoint.lat, _droneMessage.DroneMission.TargetPoint.lng);
   }
   
   public void HandleMissionComplete()
   {
     _droneMessage.DroneMission.CompleteTime = DateTime.Now;
-    _droneMessage.DroneStt.Landed = true;
-    // 미션 완료 했을 때가 아니라 다시 뜰 때 초기화 하는게 나을 듯 
     // _droneMessage.DroneMission.StartingPoint = new();
     // _droneMessage.DroneMission.TargetPoint = new();
   }
   
   public void UpdateDroneTrails(double lat, double lon, double relative_alt, double global_alt, bool updatedLocation = false)
   {
-    _droneMessage.DroneTrack.DroneTrails.Enqueue(new DroneLocation
+    _droneMessage.DroneMission.DroneTrails.Enqueue(new DroneLocation
     {
       lat = lat,
       lng = lon,
       relative_alt = relative_alt,
       global_frame_alt = global_alt,
     });
+
+    _droneMessage.DroneMission.RemainDistance = _vincentyCalculator.DistanceCalculater(lat, lon, _droneMessage.DroneMission.TargetPoint.lat,
+      _droneMessage.DroneMission.TargetPoint.lng);
+    
     _lastAddedTrails = DateTime.Now;
   }
 
   public string ObjectToJson() 
   {
     string droneMessage = JsonConvert.SerializeObject(_droneMessage);
-    // Console.WriteLine(droneMessage);
     return droneMessage;
   }
 
@@ -423,6 +427,16 @@ public class MavlinkMapper
     return (double)_droneMessage.DroneStt.Alt;
   }
 
+  public double getStartingPointLat()
+  {
+    return _droneMessage.DroneMission.StartingPoint.lat;
+  }
+  
+  public double getStartingPointLng()
+  {
+    return _droneMessage.DroneMission.StartingPoint.lng;
+  }
+  
   public double getTargetPointLat()
   {
     return _droneMessage.DroneMission.TargetPoint.lat;
@@ -443,11 +457,16 @@ public class MavlinkMapper
     
   public async Task setTargetPoint(double lat, double lng)
   {
+    setStartingPoint();
     _droneMessage.DroneMission.TargetPoint = new DroneLocation
     {
       lat = lat,
       lng = lng
     };  
+    
+    _droneMessage.DroneMission.TotalDistance = _vincentyCalculator.DistanceCalculater(
+      _droneMessage.DroneMission.StartingPoint.lat, _droneMessage.DroneMission.StartingPoint.lng, lat, lng);
+    
     // List<float> path_terrain_alt = await _googleMapHelper.FetchElevations(
     //   _droneMessage.DroneMission.StartingPoint.lat, _droneMessage.DroneMission.StartingPoint.lng, 
     //   lat, lng, 10);

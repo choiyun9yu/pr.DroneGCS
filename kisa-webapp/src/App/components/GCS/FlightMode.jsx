@@ -207,6 +207,7 @@ export const FlightContents = (props) => {
             />
 
             <Table middleTable={props.middleTable} monitorTable={props.monitorTable} setMonitorTable={props.setMonitorTable}/>
+
             <AttitudeIndicator indicator={indicator}/>
             {props.isController
                 ? <MainController isController={props.isController}
@@ -226,11 +227,13 @@ const MainController = (props) => {
     const {
         handleDroneFlightCommand,
         handleDroneFlightMode,
-        handleDroneMovetoMarker } = useContext(DroneContext);
+        handleDroneMovetoTarget,
+        handleDroneMovetoBase
+    } = useContext(DroneContext);
 
     const handleMoveBtn = () => {
         handleDroneFlightMode(4)
-        handleDroneMovetoMarker()
+        handleDroneMovetoTarget()
     }
 
     const handleArmBtn = () => {
@@ -244,8 +247,8 @@ const MainController = (props) => {
     }
 
     const handelReturnBtn = () => {
-        handleDroneFlightMode(6)
-        props.handleIsRtl();
+        handleDroneFlightMode(4)
+        handleDroneMovetoBase()
     }
 
     return (
@@ -285,15 +288,19 @@ const MainController = (props) => {
 
             <div className={`flex flex-col mt-0.5 mx-2`}>
                 <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleMoveBtn()}>
-                    Move
+                    Go To
+                </button>
+
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handelReturnBtn()}>
+                    Return
                 </button>
 
                 <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightMode(17)}>
                     Break
                 </button>
 
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handelReturnBtn()}>
-                    Return
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`}>
+                    Patrol
                 </button>
 
             </div>
@@ -518,15 +525,15 @@ const Btn = (props) => {
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(17)}>Break</button>
                 }
-                {droneMessage && droneState.DroneStt.FlightMode === 6
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>RTL</button>
-                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
-                              onClick={() => handleDroneFlightMode(6)}>RTL</button>
-                }
                 {droneMessage && droneState.DroneStt.FlightMode === 9
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Land</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightCommand(3)}>Land</button>
+                }
+                {droneMessage && droneState.DroneStt.FlightMode === 6
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>RTL</button>
+                    : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
+                              onClick={() => handleDroneFlightMode(6)}>RTL</button>
                 }
             </div>
 

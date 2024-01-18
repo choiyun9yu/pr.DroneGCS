@@ -15,6 +15,7 @@
         "@testing-library/user-event": "^13.5.0",
         "framer-motion": "^10.16.4",
         "grpc-web": "^1.4.2",
+        "haversine": "^1.1.1",
         "moment": "^2.29.4",
         "react": "^18.2.0",
         "react-calendar": "^4.6.0",

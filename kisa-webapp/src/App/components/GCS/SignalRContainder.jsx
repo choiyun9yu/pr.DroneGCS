@@ -82,8 +82,11 @@ export const SignalRProvider = ({ children }) => {
     const handleDroneMarkerMission = (lat, lng) => {
         connection.current.invoke('HandleDroneMarkerMission', lat, lng)
     }
-    const handleDroneMovetoMarker= () => {
-        connection.current.invoke('HandleDroneMoveToMarker')
+    const handleDroneMovetoTarget= () => {
+        connection.current.invoke('HandleDroneMoveToTarget')
+    }
+    const handleDroneMovetoBase= () => {
+        connection.current.invoke('HandleDroneMoveToBase')
     }
 
     return (
@@ -96,7 +99,8 @@ export const SignalRProvider = ({ children }) => {
             handleCameraJoystick,
             handleCameraCommand,
             handleDroneMarkerMission,
-            handleDroneMovetoMarker
+            handleDroneMovetoTarget,
+            handleDroneMovetoBase,
         }}>
             {children}
         </DroneContext.Provider>

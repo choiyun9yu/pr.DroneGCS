@@ -10,9 +10,9 @@ import {DroneContext} from "./SignalRContainder";
 export const MiddleMap = (props) => {
     const { droneMessage, handleDroneMarkerMission } = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
-    console.log(droneState)
+    // console.log(droneState)
     const droneLanded = droneMessage ? droneState.DroneStt.Landed : true;
-    const dronePath = droneMessage ? droneState.DroneTrack.DroneTrails.q : [];
+    const dronePath = droneMessage ? droneState.DroneMission.DroneTrails.q : [];
     const StartingPoint = droneMessage ? droneState.DroneMission.StartingPoint: null;
     const TargetPoint = droneMessage ? droneState.DroneMission.TargetPoint: null;
 
@@ -106,6 +106,11 @@ export const MiddleMap = (props) => {
         return null; // Google Maps JavaScript API가 로드되지 않았을 때 아무것도 렌더링하지 않음
     }
 
+    // useEffect(() => {
+    //     const StartingPoint = droneMessage ? droneState.DroneMission.StartingPoint: null;
+    //     const TargetPoint = droneMessage ? droneState.DroneMission.TargetPoint: null;
+    // })
+
     return (
         props.swapMap
             ? <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}></div>
@@ -196,10 +201,17 @@ export const MiniMap = (props) => {
 }
 
 export const Table = (props) => {
+    const haversine = require('haversine');
     const { droneMessage } = useContext(DroneContext);
     const monitorTable = props.monitorTable;
 
     let droneState;
+
+    let averageSpped;
+
+    let totalDistance;
+    let remainDistance;
+    let elapsedDistance;
 
     let startTime;
     let completeTime;
@@ -212,6 +224,10 @@ export const Table = (props) => {
 
     if (droneMessage !== null) {
         droneState = droneMessage['droneMessage'];
+
+        totalDistance = (droneState.DroneMission.TotalDistance);
+        remainDistance = (droneState.DroneMission.RemainDistance);
+        elapsedDistance = (totalDistance - remainDistance).toFixed(3);
 
         startTime = droneState.DroneMission.StartTime
             ? new Date(droneState.DroneMission.StartTime).getTime()
@@ -229,6 +245,10 @@ export const Table = (props) => {
             formattedTakeTime = formatTime(takeTime);
         }
 
+        averageSpped = takeTime > 0 ? elapsedDistance / (takeTime / 1000) : 0;
+
+        console.log(averageSpped)
+
         formattedStartTime = startTime
             ? new Date(startTime).toLocaleTimeString('en-US', {hour12: false})
             : '00:00:00';
@@ -245,33 +265,46 @@ export const Table = (props) => {
             return `${hours}:${minutes}:${seconds}`;
         }
 
-    return(
+        /*
+         * haversine 라이브러리 위도와 경도를 활용하여 거리를 계산할 수 있게 도와주는 라이브러리
+         *
+         */
+
+        // const coord1 = { latitude: , longitude: };  // 현재 위치
+        // const coord2 = { latitude: , longitude: };  // 목표 지점
+
+        // const distance = haversine(coord1, coord2, {unit: 'km'});   // 잔여 거리 계산
+
+        return(
         monitorTable
                 ? (
                 <div className={`absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70`}>
                     <table className={`mx-3 my-2 text-lg text-[#00DCF8]`}>
                         <tbody>
                         <tr>
-                            <th className={`px-2`}>전체 이동거리</th>
-                            <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.TotalDistance)/1000).toFixed(3)} km</td>
+                            <th className={`px-2`}>전체 이동변위</th>
+                            {/*<td className={`px-2`}> {droneMessage && ((droneState.DroneMission.TotalDistance) / 1000).toFixed(3)} km</td>*/}
+                            <td className={`px-2`}> {droneMessage && (totalDistance / 1000).toFixed(3)} km</td>
                         </tr>
                         <tr>
-                            <th className={`px-2`}>현재 비행거리</th>
-                            <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.ElapsedDistance)/1000).toFixed(3)} km</td>
+                            <th className={`px-2`}>잔여 이동변위</th>
+                            {/*<td className={`px-2`}> {droneMessage && ((droneState.DroneMission.RemainDistance) / 1000).toFixed(3)} km</td>*/}
+                            <td className={`px-2`}> {droneMessage && (remainDistance / 1000).toFixed(3)} km</td>
                         </tr>
                         <tr>
-                            <th className={`px-2`}>잔여 이동거리</th>
-                            <td className={`px-2`}> {droneMessage && ((droneState.DroneTrack.RemainDistance)/1000).toFixed(3)} km</td>
+                            <th className={`px-2`}>현재 비행변위</th>
+                            {/*<td className={`px-2`}> {droneMessage && (((droneState.DroneMission.TotalDistance) - (droneState.DroneMission.RemainDistance)) / 1000).toFixed(3)} km</td>*/}
+                            <td className={`px-2`}> {droneMessage && (elapsedDistance / 1000).toFixed(3)} km</td>
                         </tr>
+
                         <tr>
-                            <th className={`px-2`}>현재 이동속도</th>
+                            <th className={`px-2`}>현재 이동속력</th>
                             {/*<td className={`px-2`}> {droneMessage && (droneState.DroneStt.Speed).toFixed(3)} m/s</td>*/}
                             <td className={`px-2`}>{droneMessage && (droneState.DroneStt.Speed <= 0.020 ? 0 : droneState.DroneStt.Speed).toFixed(3)} m/s</td>
                         </tr>
                         <tr>
-                            {/* 현재 비행 거리(킬로 미터) 나누기 비행 소요 시간(마이크로 초) -> 단위 맞추기*/}
                             <th className={`px-2`}>평균 이동속도</th>
-                            <td className={`px-2`}>{(0).toFixed(3)} m/s</td>
+                            <td className={`px-2`}>{(averageSpped).toFixed(3)} m/s</td>
                         </tr>
                         <tr>
                             <th className={`px-2`}>이륙 시작시간</th>
@@ -290,6 +323,6 @@ export const Table = (props) => {
                 </div>
             )
             : null
-    );
+        );
     }
 }

@@ -122,7 +122,7 @@ public class DroneController : Hub<IDroneHub>
             
             case DroneFlightCommand.TAKEOFF:
             {
-                Console.WriteLine(_mapper.getFlightMode());
+
                 if ((_mapper.getRelativeAlt() < 0.5) && (_mapper.getFlightMode() == CustomMode.GUIDED))
                 {
                     _mapper.HandleMissionStart();
@@ -173,12 +173,35 @@ public class DroneController : Hub<IDroneHub>
         _mapper.setTargetPoint(lat, lng);
     }
     
-    public async Task HandleDroneMoveToMarker()
+    public async Task HandleDroneMoveToTarget()
     {
         double lat = _mapper.getTargetPointLat();
         double lng = _mapper.getTargetPointLng();
         
         // 좌표로 이동 명령
+        var commandBody = new MAVLink.mavlink_mission_item_int_t()
+        {
+            command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
+            x = (int)Math.Round(lat * 10000000),
+            y = (int)Math.Round(lng * 10000000),
+            z = 10,             // (int)Math.Round(alt),
+            autocontinue = 1,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
+            current = 2,        // 현재 웨이포인트 번호
+            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
+            frame = 3,          // default: 0(위도경도고도 전역 좌표계), 3(위도경도 전역, 고도 상대좌표계)
+            target_system = 1,
+        };
+        var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,
+            commandBody));
+        await SetCommandAsync(msg);
+    }
+    
+    public async Task HandleDroneMoveToBase()
+    {
+        double lat = _mapper.getStartingPointLat();
+        double lng = _mapper.getStartingPointLng();
+        
         var commandBody = new MAVLink.mavlink_mission_item_int_t()
         {
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,

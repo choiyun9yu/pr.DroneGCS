@@ -39,9 +39,7 @@ export const LeftSidebar = (props) => {
                 <span className="ml-3">• 등록 드론 </span>
                 {droneMessage && droneMessage.droneMessage.DroneId !== '' && (
                     <button className="flex items-center ml-3 my-1 px-3 w-[80%] h-[40px] rounded bg-[#6359E9]"
-                            onClick={handleCurrentCenter}
-                    >
-                        {/* onClick하면 현재 해당 드론 센터로 가는 기능*/}
+                            onClick={handleCurrentCenter}>
 
                         {/* 드론이 등록되었을 때 보여질 내용 */}
                         <span>{droneMessage.droneMessage.DroneId}</span>
