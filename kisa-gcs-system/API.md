@@ -22,7 +22,11 @@
 
 ## 4. URLs
 
+<<<<<<< HEAD
+### 4-1. 실시간 장애진단 : hostip:5000/api/realtime
+=======
 ### 4-1. 실시간 장애진단 : hostip:5050/api/realtime
+>>>>>>> origin/main
 #### GET
 > request : url
 
@@ -42,10 +46,13 @@
             {
                 _id,
                 DroneId,
+<<<<<<< HEAD
+=======
                 Alt: [ // 드론 고도 리스트
                         {Alt:},
                         {Alt:},
                         ...
+>>>>>>> origin/main
                 ],    
                 SensorData: {
                     pitch_ATTITUDE,
@@ -86,7 +93,11 @@
         }
     }
 
+<<<<<<< HEAD
+### 4-2. 로그 데이터 조회 : hostip:5000/api/logdata
+=======
 ### 4-2. 로그 데이터 조회 : hostip:5050/api/logdata
+>>>>>>> origin/main
 #### GET
 > request : url
 
@@ -155,7 +166,11 @@
         ]
     }
 
+<<<<<<< HEAD
+### 4-3. 장애 진단 예측 결과 : hostip:5000/api/predict
+=======
 ### 4-3. 장애 진단 예측 결과 : hostip:5050/api/predict
+>>>>>>> origin/main
 #### GET
 > request : url
 
