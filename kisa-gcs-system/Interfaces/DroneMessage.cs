@@ -161,7 +161,7 @@ public class SensorData
     public double groundspeed_VFR_HUD = 0.0;
     public double airspeed_VFR_HUD = 0.0;
     public double press_abs_SCALED_PRESSURE = 0.0;
-    public double Vservo_POSER_STATUS = 0.0;
+    public double Vservo_POWER_STATUS = 0.0;
     public double voltages1_BATTERY_STATUS = 0.0;
     public double chancount_RC_CHANNELS = 0.0;
     public double chan12_raw_RC_CHANNELS = 0.0;

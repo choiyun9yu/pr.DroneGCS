@@ -211,7 +211,7 @@ public class MavlinkMapper
     {
       // predicton
       // Console.WriteLine($"Vservo:{powerStatus.Vservo}");
-      _droneMessage.SensorData.Vservo_POSER_STATUS = powerStatus.Vservo;
+      _droneMessage.SensorData.Vservo_POWER_STATUS = powerStatus.Vservo;
     }
     // if (data is MAVLink.mavlink_meminfo_t meminfo)
     // {
