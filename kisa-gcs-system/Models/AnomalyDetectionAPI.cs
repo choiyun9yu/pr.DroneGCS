@@ -74,10 +74,3 @@ public class PredictData
     public double vibration_y_VIBRATION_PREDICT { get; set; }
     public double vibration_z_VIBRATION_PREDICT { get; set; }
 }
-
-public class LogData
-{
-    public string? DroneId { get; set; }
-    public DateTime? PredictTime { get; set; }
-    public SensorData SensorData { get; set; }
-}

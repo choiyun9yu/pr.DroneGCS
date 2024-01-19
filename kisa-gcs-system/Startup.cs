@@ -13,12 +13,16 @@ global using DotNetty.Transport.Bootstrapping;
 global using DotNetty.Transport.Channels;
 global using DotNetty.Transport.Channels.Sockets;
 global using Newtonsoft.Json.Linq;
-global using Microsoft.AspNetCore.SignalR;
 global using Newtonsoft.Json;
-using Microsoft.AspNetCore.SignalR.Protocol;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+global using Newtonsoft.Json.Serialization;
+global using Newtonsoft.Json.Converters;
+global using Microsoft.AspNetCore.SignalR;
+global using Microsoft.AspNetCore.SignalR.Protocol;
+global using Microsoft.AspNetCore.Cors;
+global using Microsoft.Extensions.DependencyInjection.Extensions;
+global using MongoDB.Bson;
+global using MongoDB.Driver;
+global using MongoDB.Bson.Serialization.Attributes;
 
 using kisa_gcs_system.Interfaces;
 using kisa_gcs_system.Services;
@@ -36,7 +40,8 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddControllers();  
+        services.AddControllers();
+        services.AddScoped<ApiService>();
         services.AddCors(options => 
         {
             options.AddPolicy("CorsPolicy", builder =>

@@ -257,13 +257,13 @@ export const OtherContents = (props) => {
 export const AltitudeChart = () => {
     const {droneMessage} = useContext(DroneContext);
     const data = droneMessage ? droneMessage['droneMessage']['DroneMission']['DroneTrails']['q'] : null;
-    const drone_alt = data.map((object, index) => ({index, value: object.global_frame_alt}));
-    const terrain_alt = data.map((object, index) => ({index, value: object.terrain_alt}));
-    const minYValue = Math.min(...terrain_alt.map(point => point.value)); // terrain_alt의 최소값 계산
-
-    // console.log(drone_alt)
 
     if (!data) return null
+
+    const drone_alt = data.map((object, index) => ({index, value: object.global_frame_alt}));
+    const terrain_alt = data.map((object, index) => ({index, value: object.terrain_alt}));
+    const minYValue = Math.min(...terrain_alt.map(point => point.value));
+
 
     return (
         <div id="altitudechart" className="flex mt-3">

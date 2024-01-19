@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 using kisa_gcs_system.Model;
 using kisa_gcs_system.Services;
 
@@ -202,11 +201,4 @@ public class DroneController : ControllerBase
         }
     
     }
-=======
-namespace kisa_gcs_system.Controllers;
-
-public class ApiController
-{
-    
->>>>>>> origin/main
 }

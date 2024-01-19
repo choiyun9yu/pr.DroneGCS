@@ -15,6 +15,8 @@
     <PackageReference Include="DotNetty.Buffers" Version="0.7.5" />
     <PackageReference Include="DotNetty.Codecs" Version="0.7.5" />
     <PackageReference Include="DotNetty.Transport" Version="0.7.5" />
+    <PackageReference Include="MongoDB.Bson" Version="2.22.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
     <PackageReference Include="MavLink4Net.Messages" Version="0.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
