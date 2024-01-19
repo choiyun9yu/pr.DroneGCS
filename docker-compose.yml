@@ -8,17 +8,17 @@ services:
 #      context: ardupilot
 #    network_mode: host
 
-  dashboard-system:
-    container_name: dashbard
-    build:
-      dockerfile: Dockerfile
-      context: kisa-dashboard-system
-    network_mode: host
-    depends_on:
-      - mongo
-    environment:
-      MONGO_URI_DB1: "mongodb://localhost:27017/prediction_service"
-      MONGO_URI_DB2: "mongodb://localhost:27017/gcs_drone"
+#  dashboard-system:
+#    container_name: dashbard
+#    build:
+#      dockerfile: Dockerfile
+#      context: .trash/kisa-dashboard-system
+#    network_mode: host
+#    depends_on:
+#      - mongo
+#    environment:
+#      MONGO_URI_DB1: "mongodb://localhost:27017/prediction_service"
+#      MONGO_URI_DB2: "mongodb://localhost:27017/gcs_drone"
 
   gcs-system:
     container_name: gcs

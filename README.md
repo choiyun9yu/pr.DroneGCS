@@ -9,6 +9,6 @@
 ### [kisa-webapp: React.js](kisa-webapp/README.md)
 
 ## Back-end 
-### [kisa-dashboard-service: Flask(Python)](kisa-dashboard-system/README.md)
+### [kisa-dashboard-service: Flask(Python)](.trash/kisa-dashboard-system/README.md)
 
 ### [kisa-gcs-service: .NET(C#)](kisa-gcs-dotnet/README.md)
