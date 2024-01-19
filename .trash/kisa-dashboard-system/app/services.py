@@ -173,6 +173,7 @@ class Drone:
 
         return logdata_list
 
+
     @staticmethod
     def get_predict(DroneId, FlightId, periodFrom=None, periodTo=None, SelectData=None):
         # MongoDB FieldName 변경시 아래 query만 수정해주면 된다.
@@ -199,7 +200,6 @@ class Drone:
                 'FlightId': obj['flight_id'],
                 'PredictTime': obj['server_response_timestamp'],
                 'SelectData': obj[f'{SelectData}'],
-                # _predict 나중에 _PREDICT로 교체
                 'PredictData': obj[f'{SelectData}_predict'],
                 'SensorData': {
                     'roll_ATTITUDE': float(obj['roll_ATTITUDE']),
@@ -249,3 +249,33 @@ class Drone:
 
         return predict_list
 
+
+    def GetPredictDataByForm(DroneId, FlightId, periodFrom, periodTo, SelectData):
+
+        query = {
+            "$and": [
+                {"device_id": DroneId},
+                {"flight_id": int(FlightId)},
+                {"server_response_timestamp": {
+                    "$gte": periodFrom,
+                    "$lte": periodTo
+                }}
+            ]
+        }
+        sort_order = [("server_response_timestamp", -1)]
+        cursor = mongo_db1.db.ai_drone.find(query).sort(sort_order)
+        predict_list = list(cursor)
+
+
+        def transfer_data(obj):
+            return {
+                'PredictTime': obj['PredictTime'],
+                'DroneId': obj['DroneId'],
+                'FlightId': obj['FlightId'],
+                'SelectData': obj[f'{SelectData}'],
+                'PredictData': obj[f'{SelectData}_PREDICT'],
+            }
+
+        predict_list = list(map(transfer_data, predict_list))
+
+        return predict_list

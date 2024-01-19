@@ -18,10 +18,23 @@ export const PredictionForm = (props) => {
             });
             if (response.ok) {
                 // console.log('요청 성공');
-                const data = await response.json();
-                // console.log(data)
+                const res = await response.json();
+                const SelectData = res['selectData'];
+                const predictPage = res['predictPage']
+
+                const data = predictPage.map((obj) => ({
+                    predictTime: obj['predictTime'],
+                    droneId: obj['droneId'],
+                    // flightId: obj['flightId'],
+                    sensorData: obj['sensorData'],
+                    selectData: obj['sensorData'][`${SelectData}`],
+                    predictData: obj['predictData'][`${SelectData}_PREDICT`],
+                }));
+
+                console.log(data)
+
                 props.graphTransfer(
-                    data['predictPage'].map((obj) => {
+                    data.map((obj) => {
                         return {
                             PredictTime: obj['predictTime'],
                             PredictData: obj['predictData'],
@@ -31,13 +44,13 @@ export const PredictionForm = (props) => {
                 );
 
                 props.tableTransfer(
-                    data['predictPage'].map((obj) => {
+                    data.map((obj) => {
                         return {
                             DroneId: obj['droneId'],
                             PredictTime: obj['predictTime'],
                             PredictData: obj['predictData'],
                             SelectData: obj['selectData'],
-                            SensorData: obj['sensorData'],
+                            SensorData: obj['sensorData']
                         };
                     })
                 );
