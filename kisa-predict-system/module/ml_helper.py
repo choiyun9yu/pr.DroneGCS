@@ -6,8 +6,8 @@ import json
 def parser(data):
     droneMessage= json.loads(data[0])
     DroneId = droneMessage['DroneId']
-    # DroneId = '2'
-    FlightId= '123456'
+    # FligthId = droneMessage['FligthId']
+    FlightId= '123456'  # 임시
     SensorData = droneMessage['SensorData']
     return DroneId, FlightId, SensorData
 
