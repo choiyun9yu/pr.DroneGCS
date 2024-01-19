@@ -27,14 +27,19 @@ export const Main = () => {
                 <Route path="/auth/register" element={<RegisterPage />} />
                 <Route element={<AppWrapper />}>
                     <Route path="dashboard" element={<AppDashboard />} />
+
                     <Route element={ <SignalRProvider>
                                          <AppGCS />
                                      </SignalRProvider> }>
                         <Route path="gcs" element={<DroneMonitor />} />
                     </Route>
-                    <Route element={<AppAnomalyDetection />}>
+
+                    <Route element={<SignalRProvider>
+                                        <AppAnomalyDetection />
+                                    </SignalRProvider>}>
                         <Route path="ml" element={<Prediction />} />
                     </Route>
+
                     <Route element={<AppDeIdentification />}>
                         <Route path="img" element={<VideoProcessing />} />
                     </Route>

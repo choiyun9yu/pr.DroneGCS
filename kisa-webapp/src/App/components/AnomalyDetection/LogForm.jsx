@@ -6,12 +6,12 @@ export const LogForm = (props) => {
     const [flights, setFlights] = useState([]);
 
     const handleSubmit2 = async (event) => {
-        event.preventDefault(); // 폼 제출 기본 동작을 막음
-        const formData = new FormData(event.target); // 폼 데이터 수집
+        event.preventDefault();
+        const formData = new FormData(event.target);
         try {
-            const response = await fetch('http://localhost:5050/api/logdata', {
+            const response = await fetch('http://localhost:5000/api/logdata', {
                 method: 'POST',
-                body: formData, // 폼 데이터 전송
+                body: formData,
             });
             if (response.ok) {
                 // console.log('요청 성공');
@@ -24,7 +24,6 @@ export const LogForm = (props) => {
         } catch (error) {
             console.error('요청 중 오류 발생', error);
         } finally {
-            // 데이터 확인 (테스트용)
             const data = {};
             formData.forEach((value, key) => {
                 data[key] = value;
@@ -36,7 +35,7 @@ export const LogForm = (props) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:5050/api/logdata', {
+                const response = await fetch('http://localhost:5000/api/logdata', {
                     method: 'GET',
                 });
                 if (response.ok) {
@@ -61,7 +60,7 @@ export const LogForm = (props) => {
             <span className="rounded-md mb-5 font-bold text-medium text-white">• 부품 및 조회기간 선택</span>
             <form
                 method="POST"
-                action="http://localhost:5050/api/logdata"
+                action="http://localhost:5000/api/logdata"
                 onSubmit={handleSubmit2}
                 className="flex flex-row text-[#AEABD8] "
             >
@@ -69,6 +68,14 @@ export const LogForm = (props) => {
                     <span className="mb-5">✓ 드론 선택</span>
                     <select className="h-[30px] w-[175px] px-2  rounded  text-gray-500" name={'DroneId'}>
                         {drones.map((item, index) => (
+                            <option value={item} key={index}>{item}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="flex flex-col mr-5">
+                    <span className="mb-5">✓ 비행 로그 선택</span>
+                    <select className="h-[30px] w-[175px] px-2 rounded text-gray-500 " name={'FlightId'}>
+                        {flights.map((item, index) => (
                             <option value={item} key={index}>{item}</option>
                         ))}
                     </select>
@@ -90,14 +97,6 @@ export const LogForm = (props) => {
                             type={'date'}
                         ></input>
                     </div>
-                </div>
-                <div className="flex flex-col mr-5">
-                    <span className="mb-5">✓ 비행 로그 선택</span>
-                    <select className="h-[30px] w-[175px] px-2 rounded text-gray-500 " name={'FlightId'}>
-                        {flights.map((item, index) => (
-                            <option value={item} key={index}>{item}</option>
-                        ))}
-                    </select>
                 </div>
                 <div className="flex flex-col justify-end">
                     <button

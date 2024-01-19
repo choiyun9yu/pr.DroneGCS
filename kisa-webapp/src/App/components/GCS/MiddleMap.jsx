@@ -143,7 +143,7 @@ export const MiddleMap = (props) => {
 
 
                     {/* 드론이 이동할 경로 */}
-                    { !droneLanded ? <Polyline path={[currentPosition, makerPosition]} options={{ strokeColor: '#000000', strokeWeight: 1 }} /> : null}
+                    <Polyline path={[currentPosition, makerPosition]} options={{ strokeColor: '#000000', strokeWeight: 1 }} />
 
                     {/* 드론이 이동한 경로 */}
                     <Polyline path={dronePath} options={{ strokeColor: '#BCBEC0', strokeWeight: 2 }} />

@@ -266,12 +266,12 @@ export const AltitudeChart = () => {
     if (!data) return null
 
     return (
-        <div id="altitudechart" className="flex">
+        <div id="altitudechart" className="flex mt-3">
             <ResponsiveContainer width="98%" height={200}>
                 <LineChart>
                     <XAxis dataKey="index" type="number" tick={false} allowDuplicatedCategory={false}/>
                     <YAxis domain={[minYValue - 1, 'auto']}/>
-                    <Legend />
+                    {/*<Legend />*/}
                     <Tooltip />
                     <Line type="monotone" dataKey="value" data={drone_alt} stroke="#64CFF6" dot={false} name={'드론 고도'} />
                     <Line type="monotone" dataKey="value" data={terrain_alt} stroke="#8FE388" dot={false} name={'지형 고도'} />

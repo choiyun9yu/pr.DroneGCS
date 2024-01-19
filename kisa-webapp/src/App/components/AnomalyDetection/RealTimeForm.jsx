@@ -4,7 +4,7 @@ export const RealTimeForm = (props) => {
     const [time, setTime] = useState(Date.now())
     const [drones, setDrones] = useState([]);
     const [formData, setFormData] = useState({
-        DroneId: '12345678CD',
+        DroneId: '1',
     });
 
     const handleSelectChange = async (e) => {
@@ -23,7 +23,7 @@ export const RealTimeForm = (props) => {
             const Body = new FormData();
             Body.append([name], value);
 
-            const response = await fetch('http://localhost:5050/api/realtime', {
+            const response = await fetch('http://localhost:5000/api/realtime', {
                 method: 'POST',
                 body: Body,
             });
@@ -31,7 +31,8 @@ export const RealTimeForm = (props) => {
             if (response.ok) {
                 const data = await response.json();
                 // console.log('요청 성공');
-                props.dataTransfer(data['realtimePage']);
+                // props.dataTransfer(data['realtimePage']);
+                props.dataTransfer(data);
             } else {
                 console.error('요청 실패');
             }
@@ -53,7 +54,7 @@ export const RealTimeForm = (props) => {
     useEffect(() => {
         const fetchGet = async () => {
             try {
-                const response = await fetch('http://localhost:5050/api/realtime', {
+                const response = await fetch('http://localhost:5000/api/realtime', {
                     method: 'GET',
                 });
 
@@ -80,7 +81,7 @@ export const RealTimeForm = (props) => {
                 const Body = new FormData();
                 Body.append('DroneId', formData["DroneId"]);
 
-                const response = await fetch('http://localhost:5050/api/realtime', {
+                const response = await fetch('http://localhost:5000/api/realtime', {
                     method: 'POST',
                     body: Body,
                 });
@@ -88,7 +89,8 @@ export const RealTimeForm = (props) => {
                 if (response.ok) {
                     const data = await response.json();
                     // console.log('요청 성공');
-                    props.dataTransfer(data['realtimePage']);
+                    // props.dataTransfer(data['realtimePage']);
+                    props.dataTransfer(data);
                 } else {
                     console.error('요청 실패');
                 }

@@ -9,24 +9,23 @@ export const PredictionForm = (props) => {
     const dependent_var = DataMap.dependent_var;
 
     const handleSubmit = async (event) => {
-        event.preventDefault(); // 폼 제출 기본 동작을 막음
-        const formData = new FormData(event.target); // 폼 데이터 수집
+        event.preventDefault();
+        const formData = new FormData(event.target);
         try {
-            const response = await fetch('http://localhost:5050/api/predict', {
+            const response = await fetch('http://localhost:5000/api/predict', {
                 method: 'POST',
-                body: formData, // 폼 데이터 전송
+                body: formData,
             });
             if (response.ok) {
                 // console.log('요청 성공');
                 const data = await response.json();
                 // console.log(data)
-                // 여기서 포를 한 번 떠서 올려주자 이제 배열이니까 맵 적용하면된다
                 props.graphTransfer(
                     data['predictPage'].map((obj) => {
                         return {
-                            PredictTime: obj['PredictTime'],
-                            PredictData: obj['PredictData'],
-                            SelectData: obj['SelectData'],
+                            PredictTime: obj['predictTime'],
+                            PredictData: obj['predictData'],
+                            SelectData: obj['selectData'],
                         };
                     })
                 );
@@ -34,11 +33,11 @@ export const PredictionForm = (props) => {
                 props.tableTransfer(
                     data['predictPage'].map((obj) => {
                         return {
-                            DroneId: obj['DroneId'],
-                            PredictTime: obj['PredictTime'],
-                            PredictData: obj['PredictData'],
-                            SelectData: obj['SelectData'],
-                            SensorData: obj['SensorData'],
+                            DroneId: obj['droneId'],
+                            PredictTime: obj['predictTime'],
+                            PredictData: obj['predictData'],
+                            SelectData: obj['selectData'],
+                            SensorData: obj['sensorData'],
                         };
                     })
                 );
@@ -60,7 +59,7 @@ export const PredictionForm = (props) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:5050/api/predict', {
+                const response = await fetch('http://localhost:5000/api/predict', {
                     method: 'GET',
                 });
                 if (response.ok) {
@@ -98,6 +97,14 @@ export const PredictionForm = (props) => {
                     </select>
                 </div>
                 <div className="flex flex-col mr-5">
+                    <span className="mb-5">✓ 비행 로그 선택</span>
+                    <select className="h-[30px] w-[175px] px-2 rounded text-gray-500 " name={'FlightId'}>
+                        {flights.map((item, index) => (
+                            <option value={item} key={index}>{item}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="flex flex-col mr-5">
                     <span className="mb-5">✓ 기간 선택</span>
                     <div className="flex flex-row items-center">
                         <input
@@ -112,14 +119,6 @@ export const PredictionForm = (props) => {
                             type={'date'}
                         ></input>
                     </div>
-                </div>
-                <div className="flex flex-col mr-5">
-                    <span className="mb-5">✓ 비행 로그 선택</span>
-                    <select className="h-[30px] w-[175px] px-2 rounded text-gray-500 " name={'FlightId'}>
-                        {flights.map((item, index) => (
-                            <option value={item} key={index}>{item}</option>
-                        ))}
-                    </select>
                 </div>
                 <div className="flex flex-col mr-5">
                     <span className="mb-5">✓ 부품 선택</span>
