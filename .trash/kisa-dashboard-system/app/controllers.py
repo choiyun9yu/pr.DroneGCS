@@ -1,6 +1,6 @@
 from flask import jsonify, Blueprint, request
 
-from .controller import Drone
+from .services import Drone
 
 api_blueprint = Blueprint('api', __name__)
 

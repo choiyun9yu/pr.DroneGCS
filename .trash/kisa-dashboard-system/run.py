@@ -1,5 +1,5 @@
 from app import app
-from app.routes import api_blueprint
+from app.controllers import api_blueprint
 
 app.register_blueprint(api_blueprint)
 
