@@ -16,8 +16,8 @@ public class DroneController : ControllerBase
     }
 
 
-    [HttpGet("realtime")]
-    public IActionResult GetRealTime()
+    [HttpGet("getid")]
+    public IActionResult GetDroneId()
     {
         try
         {
@@ -25,12 +25,38 @@ public class DroneController : ControllerBase
 
             var JsonObject = new
             {
-                drones = drones
+                drones
             };
             
             string jsonString = JsonConvert.SerializeObject(JsonObject);
             
             if (drones.Count == 0) { return NotFound(); }
+            return Ok(jsonString);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+    
+    [HttpPost("getid")]
+    public IActionResult PostGetFlightId()
+    {
+        IFormCollection form = Request.Form;
+        string? DroneId = form["DroneId"];
+        try
+        {
+            List<String> flights = _apiService.GetFlightIdsByDroneIds(DroneId);
+
+            var JsonObject = new
+            {
+                flights
+            };
+            
+            string jsonString = JsonConvert.SerializeObject(JsonObject);
+            
+            if (flights.Count == 0) { return NotFound(); }
             return Ok(jsonString);
         }
         catch (Exception e)
@@ -71,32 +97,7 @@ public class DroneController : ControllerBase
             return StatusCode(500, "An error occurred while processing your request.");
         }
     }
-
-    [HttpGet("logdata")]
-    public IActionResult GetLogData()
-    {
-        try
-        {
-            List<String> drones = _apiService.GetDroneIds();
-            List<String> flights = _apiService.GetFlightIds();
-            
-            var JsonObject = new
-            {
-                drones = drones,
-                flights = flights
-            };
-            
-            string jsonString = JsonConvert.SerializeObject(JsonObject);
-            
-            if (drones.Count == 0) { return NotFound(); }
-            return Ok(jsonString);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
-        }
-    }
+    
 
     [HttpPost("logdata")] // form(DroneId, FlightId, periodFrom, periodTo) -> PredictTime, DroneId, FlightId, SensorData
     public IActionResult PostLogData()
@@ -132,32 +133,6 @@ public class DroneController : ControllerBase
         {
             Console.WriteLine(e);
             return StatusCode(500, "An error occurred while processing your request.");
-        }
-    }
-
-    [HttpGet("predict")] 
-    public IActionResult GetPredict()
-    {
-        try
-        {
-            List<String> drones = _apiService.GetDroneIds();
-            List<String> flights = _apiService.GetFlightIds();
-            
-            var JsonObject = new
-            {
-                drones = drones,
-                flights = flights
-            };
-            
-            string jsonString = JsonConvert.SerializeObject(JsonObject);
-            
-            if (drones.Count == 0) { return NotFound(); }
-            return Ok(jsonString);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
         }
     }
 

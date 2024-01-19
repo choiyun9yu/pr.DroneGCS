@@ -22,26 +22,6 @@ namespace kisa_gcs_system.Services
 
         }
 
-        // public List<DronePredict> Get()
-        // {
-        //     try
-        //     {
-        //         ProjectionDefinition<DronePredict> projection = Builders<DronePredict>.Projection
-        //             .Exclude(d => d._id);
-        //                                                                                         // _droneCollection 으로 모든 Document 가져와서 .Find() 메서드에 빈 BsonDcoumet를 사용하여 모든 문서 선택
-        //         List<DronePredict> drones = _dronePredict.Find(new BsonDocument())      // BsonDocument는 MongoDB형식으로(Binary JSON) 데이터를 나타내는 클래스
-        //             .Project<DronePredict>(projection)                                        // 선택한 필드만 가져오기
-        //             .ToList();                                                                  // 선택한 필드를 포함하는 Drone 문서의 목록을 List 형태로 반환
-        //     
-        //         return drones;
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger.LogError(ex, "An error occurred while fetching drone data from MongoDB.");
-        //         throw;
-        //     }
-        // }
-
         public List<string> GetDroneIds()
         {
             try
@@ -56,12 +36,18 @@ namespace kisa_gcs_system.Services
             }
         }
 
-        public List<string> GetFlightIds()
+        public List<string> GetFlightIdsByDroneIds(string DroneId)
         {
             try
             {
-                var distinctiFlightIds = _dronePredict.Distinct<string>("FlightId", new BsonDocument()).ToList();
-                return distinctiFlightIds;
+                var filter = Builders<AnomalyDetectionAPI>.Filter.Eq("DroneId", DroneId);
+        
+                var distinctFlightIds = _dronePredict.Find(filter)
+                    .Project(api => api.FlightId)
+                    .ToList()
+                    .Distinct()
+                    .ToList();
+                return distinctFlightIds;
             }
             catch (Exception ex)
             {
@@ -136,8 +122,6 @@ namespace kisa_gcs_system.Services
                     .Project<AnomalyDetectionAPI>(projection)
                     .Sort(Builders<AnomalyDetectionAPI>.Sort.Descending("PredictTime"))
                     .ToList();
-
-                Console.WriteLine(predictionList.Count);
                 
                 return predictionList;
             }

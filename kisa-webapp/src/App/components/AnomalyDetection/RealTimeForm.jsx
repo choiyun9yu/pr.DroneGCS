@@ -12,7 +12,6 @@ export const RealTimeForm = (props) => {
 
         // 선택된 값이 변경될 때마다 로컬 스토리지에 저장
 
-
         // useState의 setter가 비동기로 상태 업데이트를 수행하는 경우 업데이트 이후의 값을 사용하려면 await로 기다려줘야 한다.
         await setFormData({
             [name]: value,
@@ -54,7 +53,7 @@ export const RealTimeForm = (props) => {
     useEffect(() => {
         const fetchGet = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/realtime', {
+                const response = await fetch('http://localhost:5000/api/getid', {
                     method: 'GET',
                 });
 

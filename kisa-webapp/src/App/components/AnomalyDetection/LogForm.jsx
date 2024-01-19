@@ -4,6 +4,85 @@ import { ColorThema } from '../ProejctThema';
 export const LogForm = (props) => {
     const [drones, setDrones] = useState([]);
     const [flights, setFlights] = useState([]);
+    const [formData, setFormData] = useState({
+        DroneId: '1',
+    });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/getid', {
+                    method: 'GET',
+                });
+                if (response.ok) {
+                    // console.log('요청 성공');
+                    const data = await response.json();
+                    // console.log(data);
+                    setDrones(data['drones']);
+                } else {
+                    console.error('요청 실패');
+                }
+            } catch (error) {
+                console.error('요청 중 오류 발생', error);
+            }
+        };
+
+        const fetchPost = async () => {
+            // POST 요청
+            try {
+                const Body = new FormData();
+                Body.append('DroneId', formData["DroneId"]);
+
+                const response = await fetch('http://localhost:5000/api/getid', {
+                    method: 'POST',
+                    body: Body,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // console.log('요청 성공');
+                    setFlights(data['flights'])
+                } else {
+                    console.error('요청 실패');
+                }
+            } catch (error) {
+                console.error('요청 중 오류 발생', error);
+            }
+        }
+        fetchData();
+
+        fetchPost();
+    }, []);
+
+
+    const handleSelectChange = async (e) => {
+        const {name, value} = e.target;
+
+        await setFormData({
+            [name]: value,
+        });
+
+        // POST 요청
+        try {
+            const Body = new FormData();
+            Body.append([name], value);
+
+            const response = await fetch('http://localhost:5000/api/getid', {
+                method: 'POST',
+                body: Body,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // console.log('요청 성공');
+                setFlights(data['flights'])
+            } else {
+                console.error('요청 실패');
+            }
+        } catch (error) {
+            console.error('요청 중 오류 발생', error);
+        }
+    }
 
     const handleSubmit2 = async (event) => {
         event.preventDefault();
@@ -32,28 +111,7 @@ export const LogForm = (props) => {
         }
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/api/logdata', {
-                    method: 'GET',
-                });
-                if (response.ok) {
-                    // console.log('요청 성공');
-                    const data = await response.json();
-                    // console.log(data);
-                    setDrones(data['drones']);
-                    setFlights(data['flights']);
-                } else {
-                    console.error('요청 실패');
-                }
-            } catch (error) {
-                console.error('요청 중 오류 발생', error);
-            }
-        };
 
-        fetchData();
-    }, []);
 
     return (
         <div className={`flex flex-col w-full p-5 rounded-lg ${ColorThema.Secondary2}`}>
@@ -66,7 +124,7 @@ export const LogForm = (props) => {
             >
                 <div className="flex flex-col mr-5">
                     <span className="mb-5">✓ 드론 선택</span>
-                    <select className="h-[30px] w-[175px] px-2  rounded  text-gray-500" name={'DroneId'}>
+                    <select className="h-[30px] w-[175px] px-2  rounded  text-gray-500" name={'DroneId'} onChange={handleSelectChange}>
                         {drones.map((item, index) => (
                             <option value={item} key={index}>{item}</option>
                         ))}
