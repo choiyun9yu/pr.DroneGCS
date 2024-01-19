@@ -325,7 +325,7 @@ public class MavlinkMapper
       // Console.WriteLine($"x:{localPositionNed.x}, vx:{localPositionNed.vx}, vy:{localPositionNed.vy}");
       _droneMessage.SensorData.x_LOCAL_POSITION_NED = localPositionNed.x;
       _droneMessage.SensorData.vx_LOCAL_POSITION_NED = localPositionNed.vx;
-      _droneMessage.SensorData.vy_LOVAL_POSITION_NED = localPositionNed.vy;
+      _droneMessage.SensorData.vy_LOCAL_POSITION_NED = localPositionNed.vy;
     }
     if (data is MAVLink.mavlink_vibration_t vibration)
     {

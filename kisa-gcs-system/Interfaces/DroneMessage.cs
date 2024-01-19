@@ -153,7 +153,7 @@ public class SensorData
     public double vy_GLOBAL_POSITION_INT = 0.0;
     public double x_LOCAL_POSITION_NED = 0.0;
     public double vx_LOCAL_POSITION_NED = 0.0;
-    public double vy_LOVAL_POSITION_NED = 0.0;
+    public double vy_LOCAL_POSITION_NED = 0.0;
     public double nav_pitch_NAV_CONTROLLER_OUTPUT = 0.0;
     public double nav_bearing_NAV_CONTROLLER_OUTPUT = 0.0;
     public double servo3_raw_SERVO_OUTPUT_RAW = 0.0;

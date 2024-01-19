@@ -118,8 +118,7 @@ namespace kisa_gcs_system.Services
             }
         }
 
-        public List<AnomalyDetectionAPI> GetPredictDataByForm(string DroneId, string FlightId, string periodFrom,
-            string periodTo, string SelectData)
+        public List<AnomalyDetectionAPI> GetPredictDataByForm(string DroneId, string FlightId, string periodFrom, string periodTo, string SelectData)
         {
             try
             {
@@ -135,9 +134,11 @@ namespace kisa_gcs_system.Services
 
                 List<AnomalyDetectionAPI> predictionList = _dronePredict.Find(filter)
                     .Project<AnomalyDetectionAPI>(projection)
+                    .Sort(Builders<AnomalyDetectionAPI>.Sort.Descending("PredictTime"))
                     .ToList();
 
                 Console.WriteLine(predictionList.Count);
+                
                 return predictionList;
             }
             catch (Exception ex)

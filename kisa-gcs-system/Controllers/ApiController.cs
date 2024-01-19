@@ -185,7 +185,6 @@ public class DroneController : ControllerBase
                 {
                     SelectData,
                     predictPage = anomalyDetectionApi,
-   
                 };
                 return Ok(response);
             }

@@ -5,7 +5,7 @@ public class AnomalyDetectionAPI
     [BsonId]
     [BsonRepresentation(BsonType.String)] // MongoDB의 ObjectId를 문자열로 표현
     public string? _id { get; set; }
-    public DateTime? PredictTime { get; set; }
+    public DateTime PredictTime { get; set; }
     public string? DroneId { get; set; }
     public string? FlightId { get; set; }
     public SensorData? SensorData { get; set; }
@@ -73,4 +73,14 @@ public class PredictData
     public double vibration_x_VIBRATION_PREDICT { get; set; }
     public double vibration_y_VIBRATION_PREDICT { get; set; }
     public double vibration_z_VIBRATION_PREDICT { get; set; }
+}
+
+public class PredictionResponseFormat
+{
+    public DateTime PredictTime { get; set; }
+    public string DroneId { get; set; }
+    public string FlightId { get; set; }
+    public List<double> SelectData { get; set; }
+    public List<double> PredictData { get; set; }
+    public SensorData SensorData { get; set; }
 }
