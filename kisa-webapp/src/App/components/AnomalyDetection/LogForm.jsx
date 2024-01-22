@@ -85,7 +85,7 @@ export const LogForm = (props) => {
                 setFlights(data['flights'])
             } else {
                 console.error('요청 실패');
-                setFlights([])
+                setFlights(['기간을 선택해 주세요.'])
             }
         } catch (error) {
             console.error('요청 중 오류 발생', error);
@@ -117,7 +117,7 @@ export const LogForm = (props) => {
                 setFlights(data['flights'])
             } else {
                 console.error('요청 실패');
-                setFlights([])
+                setFlights(['비행 기록이 없습니다.'])
             }
         } catch (error) {
             console.error('요청 중 오류 발생', error);
@@ -149,7 +149,7 @@ export const LogForm = (props) => {
                 setFlights(data['flights'])
             } else {
                 console.error('요청 실패');
-                setFlights([])
+                setFlights(['비행 기록이 없습니다.'])
             }
         } catch (error) {
             console.error('요청 중 오류 발생', error);
