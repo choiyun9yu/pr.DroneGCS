@@ -38,7 +38,7 @@ public class SensorData
     public double vy_GLOBAL_POSITION_INT { get; set; }
     public double x_LOCAL_POSITION_NED { get; set; }
     public double vx_LOCAL_POSITION_NED { get; set; }
-    public double vy_LOVAL_POSITION_NED { get; set; }
+    public double vy_LOCAL_POSITION_NED { get; set; }
     public double nav_pitch_NAV_CONTROLLER_OUTPUT { get; set; }
     public double nav_bearing_NAV_CONTROLLER_OUTPUT { get; set; }
     public double servo3_raw_SERVO_OUTPUT_RAW { get; set; }
@@ -46,7 +46,7 @@ public class SensorData
     public double groundspeed_VFR_HUD { get; set; }
     public double airspeed_VFR_HUD { get; set; }
     public double press_abs_SCALED_PRESSURE { get; set; }
-    public double Vservo_POSER_STATUS { get; set; }
+    public double Vservo_POWER_STATUS { get; set; }
     public double voltages1_BATTERY_STATUS { get; set; }
     public double chancount_RC_CHANNELS { get; set; }
     public double chan12_raw_RC_CHANNELS { get; set; }

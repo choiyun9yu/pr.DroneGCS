@@ -70,8 +70,16 @@ namespace kisa_gcs_system.Services
                     .Exclude(d => d._id);
                 FilterDefinition<AnomalyDetectionAPI> filter =
                     Builders<AnomalyDetectionAPI>.Filter.Eq("DroneId", droneId);
+                
+                SortDefinition<AnomalyDetectionAPI> sort = 
+                    Builders<AnomalyDetectionAPI>.Sort.Descending(api => api.PredictTime);
+                
                 AnomalyDetectionAPI anomalyDetectionApi =
-                    _dronePredict.Find(filter).Project<AnomalyDetectionAPI>(projection).FirstOrDefault();
+                    _dronePredict
+                        .Find(filter)
+                        .Sort(sort)
+                        .Project<AnomalyDetectionAPI>(projection)
+                        .FirstOrDefault();
                 return anomalyDetectionApi;
             }
             catch (Exception ex)
