@@ -4,17 +4,21 @@ import { ColorThema } from '../ProejctThema';
 
 export const PredictionForm = (props) => {
     const [drones, setDrones] = useState([]);
-    const [flights, setFlights] = useState([]);
-    const [formData, setFormData] = useState({
-        DroneId: '1',
+    const [flights, setFlights] = useState(['기간을 선택해 주세요.']);
+    const [droneIdData, setDroneIdData] = useState({
+        DroneId: '1'
     });
+    const [periodFromData, setPeriodFromData] = useState({});
+    const [periodToData, setPeriodToData] = useState({});
 
     const dependent_var = DataMap.dependent_var;
 
-    const handleSelectChange = async (e) => {
+    const handleDroneIdChange = async (e) => {
+        // 이벤트에서 name, value 추출
         const {name, value} = e.target;
 
-        await setFormData({
+        // Form 데이터 업데이트 (비동기로 처리)
+        await setDroneIdData({
             [name]: value,
         });
 
@@ -22,6 +26,8 @@ export const PredictionForm = (props) => {
         try {
             const Body = new FormData();
             Body.append([name], value);
+            Body.append('periodFrom', periodFromData["periodFrom"]);
+            Body.append('periodTo', periodToData["periodTo"]);
 
             const response = await fetch('http://localhost:5000/api/getid', {
                 method: 'POST',
@@ -34,6 +40,71 @@ export const PredictionForm = (props) => {
                 setFlights(data['flights'])
             } else {
                 console.error('요청 실패');
+                setFlights([])
+            }
+        } catch (error) {
+            console.error('요청 중 오류 발생', error);
+        }
+    }
+
+    const handleperiodFromChange = async (e) => {
+        const {name, value} = e.target;
+        console.log(`event${name}:${value}`)
+        await setPeriodFromData({
+            [name]: value,
+        });
+
+        // POST 요청
+        try {
+            const Body = new FormData();
+            Body.append([name], value);
+            Body.append('DroneId', droneIdData["DroneId"]);
+            Body.append('periodTo', periodToData["periodTo"]);
+
+            const response = await fetch('http://localhost:5000/api/getid', {
+                method: 'POST',
+                body: Body,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // console.log('요청 성공');
+                setFlights(data['flights'])
+            } else {
+                console.error('요청 실패');
+                setFlights([])
+            }
+        } catch (error) {
+            console.error('요청 중 오류 발생', error);
+        }
+    }
+
+    const handleperiodToChange = async (e) => {
+        const {name, value} = e.target;
+        console.log(`event ${name}:${value}`)
+        await setPeriodToData({
+            [name]: value,
+        });
+
+        // POST 요청
+        try {
+            const Body = new FormData();
+            Body.append([name], value);
+            Body.append('DroneId', droneIdData["DroneId"]);
+            Body.append('periodFrom', periodFromData["periodFrom"]);
+
+            const response = await fetch('http://localhost:5000/api/getid', {
+                method: 'POST',
+                body: Body,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // console.log('요청 성공');
+                setFlights(data['flights'])
+            } else {
+                console.error('요청 실패');
+                setFlights([])
             }
         } catch (error) {
             console.error('요청 중 오류 발생', error);
@@ -124,7 +195,9 @@ export const PredictionForm = (props) => {
             // POST 요청
             try {
                 const Body = new FormData();
-                Body.append('DroneId', formData["DroneId"]);
+                Body.append('DroneId', droneIdData["DroneId"]);
+                Body.append('periodFrom', periodFromData["periodFrom"]);
+                Body.append('periodTo', periodToData["periodTo"]);
 
                 const response = await fetch('http://localhost:5000/api/getid', {
                     method: 'POST',
@@ -144,7 +217,7 @@ export const PredictionForm = (props) => {
         }
         fetchData();
 
-        fetchPost();
+        // fetchPost();
     }, []);
 
     return (
@@ -158,16 +231,9 @@ export const PredictionForm = (props) => {
             >
                 <div className="flex flex-col mr-5">
                     <span className="mb-5">✓ 드론 선택</span>
-                    <select className="h-[30px] w-[175px] px-2 rounded text-gray-500 " name={'DroneId'} onChange={handleSelectChange}>
+                    <select className="h-[30px] w-[175px] px-2 rounded text-gray-500 " name={'DroneId'}
+                            onChange={handleDroneIdChange}>
                         {drones.map((item, index) => (
-                            <option value={item} key={index}>{item}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="flex flex-col mr-5">
-                    <span className="mb-5">✓ 비행 로그 선택</span>
-                    <select className="h-[30px] w-[175px] px-2 rounded text-gray-500 " name={'FlightId'}>
-                        {flights.map((item, index) => (
                             <option value={item} key={index}>{item}</option>
                         ))}
                     </select>
@@ -179,14 +245,24 @@ export const PredictionForm = (props) => {
                             className=" h-[30px] w-[175px] px-2 rounded text-gray-500"
                             name={'periodFrom'}
                             type={'date'}
+                            onChange={handleperiodFromChange}
                         ></input>
                         <span className="mr-3 ml-3"> ㅡ </span>
                         <input
                             className="h-[30px] w-[175px] px-2 rounded text-gray-500 "
                             name={'periodTo'}
                             type={'date'}
+                            onChange={handleperiodToChange}
                         ></input>
                     </div>
+                </div>
+                <div className="flex flex-col mr-5">
+                    <span className="mb-5">✓ 비행 로그 선택</span>
+                    <select className="h-[30px] w-[175px] px-2 rounded text-gray-500 " name={'FlightId'}>
+                        {flights.map((item, index) => (
+                            <option value={item} key={index}>{item}</option>
+                        ))}
+                    </select>
                 </div>
                 <div className="flex flex-col mr-5">
                     <span className="mb-5">✓ 부품 선택</span>

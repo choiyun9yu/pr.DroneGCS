@@ -36,22 +36,28 @@ namespace kisa_gcs_system.Services
             }
         }
 
-        public List<string> GetFlightIdsByDroneIds(string DroneId)
+        public List<string> GetFlightIds(string droneId, string periodFrom, string periodTo)
         {
             try
             {
-                var filter = Builders<AnomalyDetectionAPI>.Filter.Eq("DroneId", DroneId);
-        
-                var distinctFlightIds = _dronePredict.Find(filter)
+                var filter = Builders<AnomalyDetectionAPI>.Filter.And(
+                    Builders<AnomalyDetectionAPI>.Filter.Eq(api => api.DroneId, droneId),
+                    Builders<AnomalyDetectionAPI>.Filter.Gte(api => api.PredictTime, DateTime.Parse(periodFrom)),
+                    Builders<AnomalyDetectionAPI>.Filter.Lte(api => api.PredictTime, DateTime.Parse(periodTo))
+                );
+
+                var distinctFlightIds = _dronePredict
+                    .Find(filter)
                     .Project(api => api.FlightId)
                     .ToList()
                     .Distinct()
                     .ToList();
+
                 return distinctFlightIds;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while fetching drone data from MongoDB.");
+                _logger.LogError(ex, "MongoDB에서 드론 데이터를 가져오는 중에 오류가 발생했습니다.");
                 throw;
             }
         }
@@ -75,8 +81,7 @@ namespace kisa_gcs_system.Services
             }
         }
 
-        public List<AnomalyDetectionAPI> GetLogDataByForm(string DroneId, string FlightId, string periodFrom,
-            string periodTo)
+        public List<AnomalyDetectionAPI> GetLogDataByForm(string DroneId, string FlightId, string periodFrom, string periodTo)
         {
             try
             {

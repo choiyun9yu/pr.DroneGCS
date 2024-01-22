@@ -45,10 +45,12 @@ public class DroneController : ControllerBase
     {
         IFormCollection form = Request.Form;
         string? DroneId = form["DroneId"];
+        string? periodFrom = form["periodFrom"];
+        string? periodTo = form["periodTo"];
         try
         {
-            List<String> flights = _apiService.GetFlightIdsByDroneIds(DroneId);
-
+            List<String> flights = _apiService.GetFlightIds(DroneId, periodFrom, periodTo);
+            Console.WriteLine($"received droneId:{DroneId}, periodFrom:{periodFrom}, periodTo:{periodTo}");
             var JsonObject = new
             {
                 flights
