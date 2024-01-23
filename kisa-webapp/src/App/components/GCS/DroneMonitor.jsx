@@ -9,10 +9,33 @@ import {DataMap} from "../DataMap";
 import {DroneContext, SignalRProvider} from "../GCS/SignalRContainder";
 
 export const DroneMonitor = () => {
+    const {droneMessage} = useContext(DroneContext)
+    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
+
     const [gcsMode, setGcsMode] = useOutletContext();
     const [swapMap, setSwapMap] = useState(false);
     const [isLeftPanel, setIsLeftPanel ] = useState(true);
     const [isRightPanel, setIsRightPanel] = useState(true);
+    const [isWayPointBtn, setIsWayPointBtn] = useState(false);
+    const [isLocalMarker, setIsLocalMarker] = useState(false);
+    const [isMissionBtn, setIsMissionBtn] = useState(false);
+
+    const [localLat, setLocalLat] = useState();
+    const [localLon, setLocalLon] = useState();
+
+    const handleIsLocalMarker = () => {
+        setIsLocalMarker(!isLocalMarker)
+    }
+
+    const handleIsMissionBtn = () => {
+        setIsMissionBtn(!isMissionBtn)
+    }
+
+    const handleCurrentPoint = () => {
+        setLocalLat(droneState.DroneStt.Lat)
+        setLocalLon(droneState.DroneStt.Lon)
+    }
+
     const [center, setCenter] = useState({
         lat: -35.3632623,
         lng: 149.1652378
@@ -28,6 +51,10 @@ export const DroneMonitor = () => {
 
     const handleIsRightPanel = () => {
         setIsRightPanel(!isRightPanel)
+    }
+
+    const handleIsWayPointBtn = () => {
+        setIsWayPointBtn(!isWayPointBtn)
     }
 
     return (
@@ -48,8 +75,15 @@ export const DroneMonitor = () => {
                            handleIsLeftPanel={handleIsLeftPanel}
                            isRightPanel={isRightPanel}
                            handleIsRightPanel={handleIsRightPanel}
+                           handleIsWayPointBtn={handleIsWayPointBtn}
                            center={center}
                            setCenter={setCenter}
+                           isLocalMarker={isLocalMarker}
+                           setIsLocalMarker={setIsLocalMarker}
+                           setLocalLat={setLocalLat}
+                           setLocalLon={setLocalLon}
+                           isMissionBtn={isMissionBtn}
+                           handleIsMissionBtn={handleIsMissionBtn}
                 />
             </div>
                 {gcsMode === 'flight' && isRightPanel ? (
@@ -59,7 +93,17 @@ export const DroneMonitor = () => {
                         swapMap={swapMap}
                         center={center}
                     />) : null}
-                {gcsMode === 'mission' ? <MissionMode /> : null}
+                {gcsMode === 'mission' ?
+                    <MissionMode
+                        isWayPoint={isWayPointBtn}
+                        isLocalMarker={isLocalMarker}
+                        handleIsLocalMarker={handleIsLocalMarker}
+                        localLat={localLat}
+                        localLon={localLon}
+                        handleCurrentPoint={handleCurrentPoint}
+                        isMissionBtn={isMissionBtn}
+                        handleIsMissionBtn={handleIsMissionBtn}
+                    /> : null}
                 {gcsMode === 'video' ? <VideoMode /> : null}
         </div>
     );

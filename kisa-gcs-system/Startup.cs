@@ -1,4 +1,5 @@
 global using System;
+global using System.Text;
 global using System.Threading;
 global using System.Net;
 global using System.Net.Sockets;
@@ -41,7 +42,8 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-        services.AddScoped<ApiService>();
+        services.AddScoped<AnomalyDetectionApiService>();
+        services.AddScoped<GcsApiService>();
         services.AddCors(options => 
         {
             options.AddPolicy("CorsPolicy", builder =>

@@ -6,22 +6,154 @@ namespace kisa_gcs_service.Controllers;
 [ApiController] // 이 특성을 사용하면 컨트롤러 클래스를 간소하게 정이할 수 있음, 별도의 설정없이도 컨트롤러가 API 엔드포인트 동작을 하게 됨
 [EnableCors("CorsPolicy")]            
 [Route("/api")]                        
-public class DroneController : ControllerBase  
+public class ApiController : ControllerBase  
 {
-    private readonly ApiService _apiService; 
+    private readonly AnomalyDetectionApiService _anomalyDetectionApiService;
+    private readonly GcsApiService _gcsApiService;
 
-    public DroneController(ApiService apiService)  
+    public ApiController(AnomalyDetectionApiService anomalyDetectionApiService, GcsApiService gcsApiService)  
     {
-        _apiService = apiService; 
+        _anomalyDetectionApiService = anomalyDetectionApiService;
+        _gcsApiService = gcsApiService;
     }
 
+    [HttpPost("createmission")]
+    public IActionResult PostGenerateMission()
+    {
+        IFormCollection form = Request.Form;
+        string? StartPoint = form["StartPoint"];
+        string? TargetPoint = form["TargetPoint"];
+        string? FlightAlt = form["FlightAlt"];
+        
+        string? TransitPoint1 = form["TransitPoint1"];
+        string? TransitPoint2 = form["TransitPoint2"];
+        string? TransitPoint3 = form["TransitPoint3"];
+        string? TransitPoint4 = form["TransitPoint4"];
+        string? TransitPoint5 = form["TransitPoint5"];
+        string? TransitPoint6 = form["TransitPoint6"];
+        string? TransitPoint7 = form["TransitPoint7"];
+        string? TransitPoint8 = form["TransitPoint8"];
+        string? TransitPoint9 = form["TransitPoint9"];
+
+        List<string> TransitPointsList = new List<string>
+        { 
+            form["TransitPoint1"], 
+            form["TransitPoint2"],
+            form["TransitPoint3"],
+            form["TransitPoint4"],
+            form["TransitPoint5"],
+            form["TransitPoint6"],
+            form["TransitPoint7"],
+            form["TransitPoint8"],
+            form["TransitPoint9"],
+        };
+        
+        try
+        {
+            _gcsApiService.CreateMission(StartPoint, TargetPoint, FlightAlt, TransitPointsList);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+    
+    [HttpGet("localpoints")]
+    public IActionResult GetMissionLoad()
+    {
+        try
+        {
+            List<string> missionLoadList = _gcsApiService.getMissionLoad();
+
+            var JsonObject = new
+            {
+                missionLoadList
+            };
+        
+            string jsonString = JsonConvert.SerializeObject(JsonObject);
+        
+            if (missionLoadList.Count == 0) { return NotFound(); }
+            return Ok(jsonString);
+        }        
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    [HttpPost("addwaypoint")]
+    public IActionResult PostAddWayPoint()
+    {
+        IFormCollection form = Request.Form;
+     
+        string? LocalName = form["LocalName"];
+        string? LocalLat = form["LocalLat"];
+        string? LocalLon = form["LocalLon"];
+        
+        try
+        {
+            _gcsApiService.AddWayPoint(LocalName, LocalLat, LocalLon);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    [HttpGet("localpoints")]
+    public IActionResult GetLocalPoint()
+    {
+        try
+        {
+            List<string> localPointList = _gcsApiService.getLocalPointList();
+
+            var JsonObject = new
+            {
+                localPointList
+            };
+        
+            string jsonString = JsonConvert.SerializeObject(JsonObject);
+        
+            if (localPointList.Count == 0) { return NotFound(); }
+            return Ok(jsonString);
+        }        
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    [HttpDelete("deletelocalpoint")]
+    public IActionResult DeleteLocalPoint()
+    {
+        IFormCollection form = Request.Form;
+     
+        string? LocalName = form["LocalName"];
+
+        try
+        {
+            _gcsApiService.deleteLocalName(LocalName);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, "서버 에러");
+        }
+    }
 
     [HttpGet("getid")]
     public IActionResult GetDroneId()
     {
         try
         {
-            List<String> drones = _apiService.GetDroneIds();
+            List<String> drones = _anomalyDetectionApiService.GetDroneIds();
 
             var JsonObject = new
             {
@@ -36,7 +168,7 @@ public class DroneController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, "서버 에러");
         }
     }
     
@@ -49,8 +181,7 @@ public class DroneController : ControllerBase
         string? periodTo = form["periodTo"];
         try
         {
-            List<String> flights = _apiService.GetFlightIds(DroneId, periodFrom, periodTo);
-            Console.WriteLine($"received droneId:{DroneId}, periodFrom:{periodFrom}, periodTo:{periodTo}");
+            List<String> flights = _anomalyDetectionApiService.GetFlightIds(DroneId, periodFrom, periodTo);
             var JsonObject = new
             {
                 flights
@@ -64,7 +195,7 @@ public class DroneController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, "서버 에러");
         }
     }
 
@@ -75,8 +206,8 @@ public class DroneController : ControllerBase
         {
             IFormCollection form = Request.Form;
             string? DroneId = form["DroneId"];
-            if (DroneId == null) { return BadRequest("Invalid request data"); }
-            AnomalyDetectionAPI anomalyDetectionApi = _apiService.GetRealtimeByDroneId(DroneId);
+            if (DroneId == null) { return BadRequest("유효하지 않은 요청"); }
+            AnomalyDetectionAPI anomalyDetectionApi = _anomalyDetectionApiService.GetRealtimeByDroneId(DroneId);
 
             if (anomalyDetectionApi != null)
             {
@@ -96,7 +227,7 @@ public class DroneController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "An error occurred while processing your request.");
+            return StatusCode(500, "서버 에러");
         }
     }
     
@@ -113,11 +244,11 @@ public class DroneController : ControllerBase
             string? periodTo = form["periodTo"];
             if (DroneId == null)
             {
-                return BadRequest("Invalid request data");
+                return BadRequest("유효하지 않은 요청");
             }
 
             List<AnomalyDetectionAPI> anomalyDetectionApi =
-                _apiService.GetLogDataByForm(DroneId, FlightId, periodFrom, periodTo);
+                _anomalyDetectionApiService.GetLogDataByForm(DroneId, FlightId, periodFrom, periodTo);
             if (anomalyDetectionApi != null)
             {
                 var response = new
@@ -134,7 +265,7 @@ public class DroneController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "An error occurred while processing your request.");
+            return StatusCode(500, "서버 에러");
         }
     }
 
@@ -151,11 +282,11 @@ public class DroneController : ControllerBase
             string? SelectData = form["SelectData"];
             if (DroneId == null)
             {
-                return BadRequest("Invalid request data");
+                return BadRequest("유효하지 않은 요청");
             }
 
             List<AnomalyDetectionAPI> anomalyDetectionApi =
-                _apiService.GetPredictDataByForm(DroneId, FlightId, periodFrom, periodTo, SelectData);
+                _anomalyDetectionApiService.GetPredictDataByForm(DroneId, FlightId, periodFrom, periodTo, SelectData);
             if (anomalyDetectionApi != null)
             {
                 var response = new
@@ -173,7 +304,7 @@ public class DroneController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "An error occurred while processing your request.");
+            return StatusCode(500, "서버 에러");
         }
     
     }

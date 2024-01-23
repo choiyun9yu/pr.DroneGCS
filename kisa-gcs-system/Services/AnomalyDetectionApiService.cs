@@ -2,14 +2,12 @@ using kisa_gcs_system.Model;
 
 namespace kisa_gcs_system.Services
 {
-    public class ApiService
+    public class AnomalyDetectionApiService
     {
-        private readonly ILogger<ApiService> _logger;
+        private readonly ILogger<AnomalyDetectionApiService> _logger;
         private readonly IMongoCollection<AnomalyDetectionAPI> _dronePredict;
-        private readonly IMongoCollection<AnomalyDetectionAPI> _flightData;
-        private readonly IMongoCollection<AnomalyDetectionAPI> _localPoint;
 
-        public ApiService(ILogger<ApiService> logger, IConfiguration configuration)
+        public AnomalyDetectionApiService(ILogger<AnomalyDetectionApiService> logger, IConfiguration configuration)
         {
             // Looger
             _logger = logger;
@@ -19,7 +17,6 @@ namespace kisa_gcs_system.Services
             var mongoClient = new MongoClient(connectionString);
             var database = mongoClient.GetDatabase("drone");
             _dronePredict = database.GetCollection<AnomalyDetectionAPI>("drone_predict");
-
         }
 
         public List<string> GetDroneIds()
@@ -31,7 +28,7 @@ namespace kisa_gcs_system.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while fetching drone data from MongoDB.");
+                _logger.LogError(ex, "MongoDB에서 드론 데이터를 가져오는 중에 오류가 발생했습니다.");
                 throw;
             }
         }
@@ -61,8 +58,9 @@ namespace kisa_gcs_system.Services
                 throw;
             }
         }
+    
 
-        public AnomalyDetectionAPI GetRealtimeByDroneId(string droneId)
+    public AnomalyDetectionAPI GetRealtimeByDroneId(string droneId)
         {
             try
             {
@@ -84,7 +82,7 @@ namespace kisa_gcs_system.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while fetching drone data from MongoDB.");
+                _logger.LogError(ex, "MongoDB에서 드론 데이터를 가져오는 중에 오류가 발생했습니다.");
                 throw;
             }
         }

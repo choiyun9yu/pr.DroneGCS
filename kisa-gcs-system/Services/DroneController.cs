@@ -201,6 +201,7 @@ public class DroneController : Hub<IDroneHub>
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
             frame = 3,          // default: 0(위도경도고도 전역 좌표계), 3(위도경도 전역, 고도 상대좌표계)
             target_system = 1,
+            param1 = 1
         };
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,

@@ -90,4 +90,6 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
     mode guided
     arm throttle
     takeoff 40
-    guided -35.3621741 149.16511256 100
+    guided -35.3621741 149.16511256 10
+
+    guided -35.3632621 149.1652374 10

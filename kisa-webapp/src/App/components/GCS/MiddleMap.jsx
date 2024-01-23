@@ -14,16 +14,17 @@ export const MiddleMap = (props) => {
     const droneLanded = droneMessage ? droneState.DroneStt.Landed : true;
     const dronePath = droneMessage ? droneState.DroneMission.DroneTrails.q : [];
     const StartingPoint = droneMessage ? droneState.DroneMission.StartingPoint: null;
+
     const TargetPoint = droneMessage ? droneState.DroneMission.TargetPoint: null;
 
     const [isController, setIsController] = useState(true);
     const [isMarker, setIsMarker] = useState(false);
     const [isRtl, setIsRtl] = useState(false);
-
     const [monitorTable, setMonitorTable] = useState(true);
 
     const [makerPosition, setMarkerPosition] = useState({lat:null,lng:null});
     const [currentPosition, setCurrentPosition] = useState({lat:null,lng:null})
+    const [localPoint, setLocalPoint] = useState({lat:null,lng:null});
 
     const redMarkerIcon = {
         url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
@@ -72,6 +73,16 @@ export const MiddleMap = (props) => {
             lat: droneMessage && droneState.DroneStt.Lat,
             lng: droneMessage && droneState.DroneStt.Lon
         })
+
+        if (props.isLocalMarker){
+            props.setLocalLat(event.latLng.lat())
+            props.setLocalLon(event.latLng.lng())
+            setLocalPoint({
+                lat: event.latLng.lat(),
+                lng: event.latLng.lng()
+            })
+        }
+        props.setIsLocalMarker(false)
     };
 
     // 드론 시작점 센터 기능과
@@ -154,6 +165,9 @@ export const MiddleMap = (props) => {
                     {/* 목표 지점 마커 */}
                     <Marker position={TargetPoint} icon={redMarkerIcon} />
 
+                    {/* 로컬 지점 마커 */}
+                    <Marker position={localPoint} icon={yellowMarkerIcon}/>
+
                     {props.gcsMode === 'flight' ?
                         <FlightContents isLeftPanel={props.isLeftPanel}
                                                                   handleIsLeftPanel={props.handleIsLeftPanel}
@@ -180,6 +194,9 @@ export const MiddleMap = (props) => {
                             handleIsRtl={handleIsRtl}
                             monitorTable={monitorTable}
                             setMonitorTable={setMonitorTable}
+                            handleIsWayPointBtn={props.handleIsWayPointBtn}
+                            isMissionBtn={props.isMissionBtn}
+                            handleIsMissionBtn={props.handleIsMissionBtn}
                         /> : null}
                 </GoogleMap>
             </div>
