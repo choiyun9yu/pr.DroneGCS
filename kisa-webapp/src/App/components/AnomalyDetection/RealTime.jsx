@@ -6,7 +6,7 @@ import {RealTimeBoardLeft} from "./RealTimeBoardLeft";
 import {RealTimeBoardRight} from "./RealTimeBoardRight";
 import {RealTimeTable} from "./RealTimeTable";
 import {RealTimeGraph} from "./RealTimeGraph";
-import {DroneContext} from "../GCS/SignalRContainder";
+import {DroneContext} from "../GCS/SignalRContainer";
 
 export const RealTime = () => {
     const [realTimeData, setRealTimeData] = useState({})

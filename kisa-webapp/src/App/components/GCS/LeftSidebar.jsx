@@ -3,7 +3,7 @@ import {useOutletContext} from 'react-router-dom';
 import {ColorThema} from '../ProejctThema';
 import {LeftSideBtn} from '../ProejctBtn';
 import React, {useContext, useEffect, useState} from "react";
-import {DroneContext} from "./SignalRContainder";
+import {DroneContext} from "./SignalRContainer";
 
 export const LeftSidebar = (props) => {
     const [gcsMode, setGcsMode] = useOutletContext();

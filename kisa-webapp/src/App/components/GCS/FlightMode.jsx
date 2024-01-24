@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 
 import { ColorThema } from '../ProejctThema';
-import {DroneContext} from "./SignalRContainder";
+import {DroneContext} from "./SignalRContainer";
 import {MiniMap, Table} from "./MiddleMap";
 import {DroneJoyStick} from "./DroneJoyStick";
 import {ControlJoyStick} from "./ControlJoyStick";
@@ -299,9 +299,9 @@ const MainController = (props) => {
                     Break
                 </button>
 
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`}>
-                    Patrol
-                </button>
+                {/*<button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`}>*/}
+                {/*    Patrol*/}
+                {/*</button>*/}
 
             </div>
         </div>

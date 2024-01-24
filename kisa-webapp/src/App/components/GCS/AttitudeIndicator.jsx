@@ -1,6 +1,6 @@
 import React, {useContext, useMemo} from 'react';
 import styled from 'styled-components';
-import {DroneContext} from "./SignalRContainder";
+import {DroneContext} from "./SignalRContainer";
 
 const GaugeStyleComponent = styled.div`
     background-image: linear-gradient(135deg,

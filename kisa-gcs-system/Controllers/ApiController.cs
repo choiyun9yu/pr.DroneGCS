@@ -24,29 +24,17 @@ public class ApiController : ControllerBase
         string? StartPoint = form["StartPoint"];
         string? TargetPoint = form["TargetPoint"];
         string? FlightAlt = form["FlightAlt"];
-        
-        string? TransitPoint1 = form["TransitPoint1"];
-        string? TransitPoint2 = form["TransitPoint2"];
-        string? TransitPoint3 = form["TransitPoint3"];
-        string? TransitPoint4 = form["TransitPoint4"];
-        string? TransitPoint5 = form["TransitPoint5"];
-        string? TransitPoint6 = form["TransitPoint6"];
-        string? TransitPoint7 = form["TransitPoint7"];
-        string? TransitPoint8 = form["TransitPoint8"];
-        string? TransitPoint9 = form["TransitPoint9"];
 
-        List<string> TransitPointsList = new List<string>
-        { 
-            form["TransitPoint1"], 
-            form["TransitPoint2"],
-            form["TransitPoint3"],
-            form["TransitPoint4"],
-            form["TransitPoint5"],
-            form["TransitPoint6"],
-            form["TransitPoint7"],
-            form["TransitPoint8"],
-            form["TransitPoint9"],
-        };
+        List<string> TransitPointsList = new List<string>();
+        
+        for (int i = 1; i <= 9; i++)
+        {
+            string? transitPoint = form[$"TransitPoint{i}"];
+            if (!string.IsNullOrEmpty(transitPoint))
+            {
+                TransitPointsList.Add(transitPoint);
+            }
+        }
         
         try
         {
@@ -56,34 +44,43 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, "서버 에러");
         }
     }
     
-    [HttpGet("localpoints")]
-    public IActionResult GetMissionLoad()
+    [HttpGet("selectmission")]
+    public IActionResult GetSelectMission()
     {
         try
         {
-            List<string> missionLoadList = _gcsApiService.getMissionLoad();
-
-            var JsonObject = new
-            {
-                missionLoadList
-            };
-        
-            string jsonString = JsonConvert.SerializeObject(JsonObject);
-        
-            if (missionLoadList.Count == 0) { return NotFound(); }
-            return Ok(jsonString);
-        }        
+            return Ok(_gcsApiService.GetAllMissionLoad());
+        }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, "서버 에러");
         }
     }
+    
+    [HttpDelete("deletemissionload")]
+    public IActionResult DeleteMissionLoad()
+    {
+        IFormCollection form = Request.Form;
+     
+        string? MissionName = form["MissionName"];
 
+        try
+        {
+            _gcsApiService.deleteMissionName(MissionName);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, "서버 에러");
+        }
+    }
+    
     [HttpPost("addwaypoint")]
     public IActionResult PostAddWayPoint()
     {
@@ -101,10 +98,10 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, "서버 에러");
         }
     }
-
+    
     [HttpGet("localpoints")]
     public IActionResult GetLocalPoint()
     {
@@ -125,10 +122,10 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, "서버 에러");
         }
     }
-
+    
     [HttpDelete("deletelocalpoint")]
     public IActionResult DeleteLocalPoint()
     {

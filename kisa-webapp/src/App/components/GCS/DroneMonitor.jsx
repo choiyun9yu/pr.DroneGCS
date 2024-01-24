@@ -6,7 +6,7 @@ import { MissionMode } from './MissionMode';
 import { VideoMode } from './VideoMode';
 import {useContext, useState} from "react";
 import {DataMap} from "../DataMap";
-import {DroneContext, SignalRProvider} from "../GCS/SignalRContainder";
+import {DroneContext, SignalRProvider} from "./SignalRContainer";
 
 export const DroneMonitor = () => {
     const {droneMessage} = useContext(DroneContext)

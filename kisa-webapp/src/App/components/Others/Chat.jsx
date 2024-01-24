@@ -1,5 +1,5 @@
 import ChatPage from "./ChatPage";
-import ChatComponent from "../GCS/SignalRContainder";
+import ChatComponent from "../GCS/SignalRContainer";
 
 export const Chat = () => {
     return (

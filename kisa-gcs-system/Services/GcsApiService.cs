@@ -1,4 +1,4 @@
-using kisa_gcs_system.Model;
+using kisa_gcs_system.Interfaces;
 
 namespace kisa_gcs_system.Services;
 
@@ -7,7 +7,8 @@ public class GcsApiService
     private readonly ILogger<GcsApiService> _logger;
     private readonly IMongoCollection<LocalPointAPI> _localPoint;
     private readonly IMongoCollection<MissionLoadAPI> _missionLoad;
-
+    private readonly VincentyCalculator _vincentyCalculator;
+    
     public GcsApiService(ILogger<GcsApiService> logger, IConfiguration configuration)
     {
         // Looger
@@ -19,11 +20,11 @@ public class GcsApiService
         var database = mongoClient.GetDatabase("drone");
         _localPoint = database.GetCollection<LocalPointAPI>("local_point");
         _missionLoad = database.GetCollection<MissionLoadAPI>("mission_load");
+        _vincentyCalculator = new VincentyCalculator();
     }
 
     public void CreateMission(string startPoint, string targetPoint, string flirghtAlt, List<string> transitPointsList)
     {
-
         try
         {
             StringBuilder idBuilder = new StringBuilder();
@@ -32,17 +33,46 @@ public class GcsApiService
                 .AppendJoin("-", transitPointsList.Take(9).Where(point => !string.IsNullOrEmpty(point)))
                 .Append("-")
                 .Append(targetPoint);
-
-            string id = idBuilder.ToString();
-            // Console.WriteLine($"saved {id}");
             
-            float flightDistance = 1.0f;
-            // To Do 
-            // 지점 이름으로 지점 위도와 고도를 조회하는 함수로 시작점과 출발점의 좌표를 얻고,
-            // 그 좌표를 매개변수로 받아서 그 사이 거리를 계산하는 함수에 넣으면 됨
-            // 그리고 그걸 미션 불러 오기에 넘겨주고
-            // 미션 불러오기는 불러온 데이터를 보여주면 됨 
-            // 그리고 미션 불러오기 시작 버튼을 누르면 미션을 생성해서 
+            string id = idBuilder.ToString();
+            
+            List<double> startLocalPoint = getLocalPoint(startPoint);
+            List<double> endLocalPoint = getLocalPoint(targetPoint);
+
+            double flightDistance = 0;
+
+            if (transitPointsList.Count == 0)
+            {
+                flightDistance += _vincentyCalculator.DistanceCalculater(
+                    startLocalPoint[0], startLocalPoint[1], 
+                    endLocalPoint[0], endLocalPoint[1]);   
+            }
+            else
+            {
+                // startPoint에서 각 transitPoint를 거쳐 endPoint까지의 거리를 누적하여 계산
+                for (int i = 0; i < transitPointsList.Count; i++)
+                {
+                    List<double> transitLocalPoint = getLocalPoint(transitPointsList[i]);
+            
+                    // 핸재 경유지에서 다음 경유지 또는 목적지까지의 거리를 계산하여 누적
+                    flightDistance += _vincentyCalculator.DistanceCalculater(
+                        (i == 0) ? startLocalPoint[0] : getLocalPoint(transitPointsList[i - 1])[0],
+                        (i == 0) ? startLocalPoint[1] : getLocalPoint(transitPointsList[i - 1])[1],
+                        transitLocalPoint[0],
+                        transitLocalPoint[1]
+                    );
+            
+                }
+                // 마지막 경유지에서 목적지까지의 거리를 누적하여 계산
+                flightDistance += _vincentyCalculator.DistanceCalculater(
+                    getLocalPoint(transitPointsList.Last())[0],
+                    getLocalPoint(transitPointsList.Last())[1],
+                    endLocalPoint[0],
+                    endLocalPoint[1]
+                );
+            }
+            
+            double takeTime = flightDistance / 600 + 1;
             
             var missionLoad = new MissionLoadAPI
             {
@@ -51,10 +81,13 @@ public class GcsApiService
                 TargetPoint = targetPoint,
                 FlightAlt = int.Parse(flirghtAlt),
                 TransitPoints = transitPointsList,
-                FlightDistance = flightDistance,
-                TakeTime = ((flightDistance * 1000) / 600) + 2  // 이착륙에 1분씩 할당해서 +2, 거리는 km로 저장하니까 미터로 환산해주고 이동 속도 10m/s는 600m/m 이니까 600으로 계산, 걸리는 시간 단위가 분이라서
+                FlightDistance = $"{Math.Round(flightDistance)/1000} km",
+                TakeTime = $"{(int)takeTime}분 {(int)(Math.Round(takeTime,1)%1*60)}초"
             };
-        
+            
+            // Console.WriteLine(missionLoad.FlightDistance);
+            // Console.WriteLine(missionLoad.TakeTime);
+            
             _missionLoad.InsertOne(missionLoad);
         }
         catch (Exception ex)
@@ -63,23 +96,45 @@ public class GcsApiService
             throw;
         }    
     }
+    
+    public object GetAllMissionLoad()
+    {
+        var mission = _missionLoad
+            .Find(Builders<MissionLoadAPI>.Filter.Empty)
+            .ToList();
 
-    public List<string> getMissionLoad()
+        if (mission.Count == 0)
+        {
+            throw new Exception("미션을 찾을 수 없습니다.");
+        }
+
+        // Console.WriteLine(mission);
+        
+        return mission;
+    }
+    
+    public void deleteMissionName(string missionName)
     {
         try
         {
-            var missionLoad = _missionLoad
-                .AsQueryable()
-                .Select(api => api._id)
-                .ToList();
+            var filter = Builders<MissionLoadAPI>.Filter.Eq(api => api._id, missionName);
 
-            return missionLoad;
+            var result = _missionLoad.DeleteOne(filter);
+
+            if (result.DeletedCount == 0)
+            {
+                Console.WriteLine($"LocalName이 '{missionName}'인 문서를 찾지 못했습니다.");
+            }
+            else
+            {
+                Console.WriteLine($"LocalName이 '{missionName}'인 문서를 삭제했습니다.");
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "MongoDB에서 데이터를 가져오는 중에 오류가 발생했습니다.");
+            _logger.LogError(ex, "MongoDB에서 문서를 삭제하는 중에 오류가 발생했습니다.");
             throw;
-        }    
+        }
     }
 
     public void AddWayPoint(string localName, string localLat, string localLon)
@@ -147,5 +202,24 @@ public class GcsApiService
             _logger.LogError(ex, "MongoDB에서 문서를 삭제하는 중에 오류가 발생했습니다.");
             throw;
         }
+    }
+    
+    private List<double>? getLocalPoint(string localName)
+    {
+        try
+        {
+            var localPoint = _localPoint
+                .AsQueryable()
+                .Where(api => api._id == localName)
+                .Select(api => new { api.LocalLat, api.LocalLon })
+                .FirstOrDefault();
+        
+            return new List<double>() { (double)localPoint.LocalLat, (double)localPoint.LocalLon };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "MongoDB에서 데이터를 가져오는 중에 오류가 발생했습니다.");
+            throw;
+        }    
     }
 }

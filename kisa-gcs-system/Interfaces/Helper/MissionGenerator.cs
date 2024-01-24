@@ -90,7 +90,7 @@ public class VincentyCalculator
 
         double distance = b * A * (sigma - deltaSigma);
 
-        return distance;
+        return distance;    // 미터단위로 반환
     }
 
     private double ToRadians(double degree)
