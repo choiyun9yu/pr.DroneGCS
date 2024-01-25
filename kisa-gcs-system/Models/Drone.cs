@@ -1,7 +1,8 @@
 
-using MAVSDK;
+using kisa_gcs_system.Interfaces;
+using kisa_gcs_system.Models.Helper;
 
-namespace kisa_gcs_system.Interfaces;
+namespace kisa_gcs_system.Models;
 
 public class DroneCommunication
 {
@@ -22,7 +23,7 @@ public enum DroneConnectionProtocol
     SERIAL,
 }
 
-public class DroneMessage
+public class Drone
 {
     public string? DroneId;
     public bool? IsOnline;
@@ -103,7 +104,7 @@ public class DroneMission
     public string? MavMission;
     public DateTime? StartTime = null;      // Take Off 기준 
     public DateTime? CompleteTime = null;   // Disarm 기준 
-    public int MissionAlt = 10;         // 주행 고도
+    public int MissionAlt = 10;             // 주행 고도
     public DroneLocation StartingPoint;
     public DroneLocation TargetPoint;
     public FixedSizedQueue<DroneLocation> DroneTrails = new(6000);    // size 가 6000 이면 0.5초에 하나씩 이라서 -> 30분 

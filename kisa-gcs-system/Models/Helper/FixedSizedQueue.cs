@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace kisa_gcs_system.Interfaces;
+namespace kisa_gcs_system.Models.Helper;
 
 // 제한된 크기의 큐 클래스
 public class FixedSizedQueue<T>

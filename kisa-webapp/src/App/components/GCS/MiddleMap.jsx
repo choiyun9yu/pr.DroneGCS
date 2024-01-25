@@ -9,13 +9,15 @@ import {DroneContext} from "./SignalRContainer";
 
 
 export const MiddleMap = (props) => {
-    const { droneMessage, handleDroneTargetMarking } = useContext(DroneContext);
+    const { droneMessage } = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
 
-    const dronePath = droneMessage ? droneState.DroneMission.DroneTrails.q : [];
     const StartingPoint = droneMessage ? droneState.DroneMission.StartingPoint: null;
+    // const TargetPoint = droneMessage ? droneState.DroneMission.TargetPoint: null;
 
-    const TargetPoint = droneMessage ? droneState.DroneMission.TargetPoint: null;
+    const [markerId, setMarkerId] = useState(1);
+    const [targetPoints, setTargetPoints] = useState([]); // {id:1, position:{lat:0,lng:0}}
+    const [pathLine, setPathLine] = useState([]);
 
     const [isController, setIsController] = useState(true);
     const [isMarker, setIsMarker] = useState(false);
@@ -24,6 +26,8 @@ export const MiddleMap = (props) => {
 
     const [makerPosition, setMarkerPosition] = useState({lat:0,lng:0});
     const [currentPosition, setCurrentPosition] = useState({lat:0,lng:0})
+    const dronePath = droneMessage ? droneState.DroneMission.DroneTrails.q : [];
+
     const [localPoint, setLocalPoint] = useState({lat:0,lng:0});
 
     const redMarkerIcon = {
@@ -46,6 +50,13 @@ export const MiddleMap = (props) => {
         setIsMarker(!isMarker)
     }
 
+    const handleMarkerReset = () => {
+        setMarkerId(1);
+        setTargetPoints([]);
+        setPathLine([]);
+        setIsMarker(false);
+    }
+
     const lastPathReset = () => {
         setCurrentPosition(null);
         setMarkerPosition(null);
@@ -62,12 +73,16 @@ export const MiddleMap = (props) => {
 
     const handleMapClick = event => {
         if (isMarker){
+            setTargetPoints([...targetPoints, {id:markerId, position:{lat: event.latLng.lat(),lng: event.latLng.lng()}}])
+            setMarkerId(markerId+1)
+            setPathLine([StartingPoint, ...targetPoints.map(marker => marker.position)])
+
+            console.log(pathLine)
+
             setMarkerPosition({
                 lat: event.latLng.lat(),
                 lng: event.latLng.lng()
             });
-            handleDroneTargetMarking(event.latLng.lat(), event.latLng.lng())
-            setIsMarker(false)
         }
         setCurrentPosition({
             lat: droneMessage && droneState.DroneStt.Lat,
@@ -85,7 +100,10 @@ export const MiddleMap = (props) => {
         props.setIsLocalMarker(false)
     };
 
-    // 드론 시작점 센터 기능과
+    useEffect(() => {
+        setPathLine([StartingPoint, ...targetPoints.map(marker => marker.position)]);
+    }, [targetPoints, StartingPoint])
+
     const handleStartPointCenter = () => {
         props.setCenter({
             lat: droneMessage && droneState.DroneMission.StartingPoint.lat,
@@ -93,7 +111,6 @@ export const MiddleMap = (props) => {
         });
     }
 
-    // 드론 도착점 센터 기능
     const handleTargetPointCenter = () => {
         props.setCenter({
             lat: droneMessage && droneState.DroneMission.TargetPoint.lat,
@@ -116,6 +133,7 @@ export const MiddleMap = (props) => {
     if (!isLoaded) {
         return null; // Google Maps JavaScript API가 로드되지 않았을 때 아무것도 렌더링하지 않음
     }
+
 
     return (
         props.swapMap
@@ -148,19 +166,17 @@ export const MiddleMap = (props) => {
                     </OverlayView>
 
 
-                    {/* 드론이 이동할 경로 */}
-                    <Polyline path={[currentPosition, makerPosition]} options={{ strokeColor: '#000000', strokeWeight: 1 }} />
-
-                    {/* 드론이 이동한 경로 */}
-                    <Polyline path={dronePath} options={{ strokeColor: '#BCBEC0', strokeWeight: 2 }} />
-
-                    {/* 출발 지점 마커 */}
                     <Marker position={StartingPoint} icon={blueMarkerIcon}/>
 
-                    {/* 목표 지점 마커 */}
-                    <Marker position={TargetPoint} icon={redMarkerIcon} />
+                    {targetPoints.map((marker) => (
+                        <Marker key={marker.id} position={marker.position} icon={redMarkerIcon} />
+                    ))}
 
-                    {/* 로컬 지점 마커 */}
+                    <Polyline path={pathLine} options={{ strokeColor: '#FF3333', strokeWeight: 1}}/>
+
+                    <Polyline path={dronePath} options={{ strokeColor: '#BCBEC0', strokeWeight: 2 }} />
+
+                    {/* 지점 추가 마커 */}
                     <Marker position={localPoint} icon={yellowMarkerIcon}/>
 
                     {props.gcsMode === 'flight' ?
@@ -178,6 +194,7 @@ export const MiddleMap = (props) => {
                                                                   lastPathReset={lastPathReset}
                                                                   monitorTable={monitorTable}
                                                                   setMonitorTable={setMonitorTable}
+                                                                  handleMarkerReset={handleMarkerReset}
                         /> : null}
                     {props.gcsMode !== 'flight' ?
                         <MissionContents

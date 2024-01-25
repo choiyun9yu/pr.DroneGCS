@@ -1,6 +1,6 @@
-namespace kisa_gcs_system.Interfaces;
+namespace kisa_gcs_system.Models;
 
-public class JoysticInterface
+public class Joystic
 {
     
 }

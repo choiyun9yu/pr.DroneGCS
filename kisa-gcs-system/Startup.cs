@@ -24,9 +24,9 @@ global using Microsoft.Extensions.DependencyInjection.Extensions;
 global using MongoDB.Bson;
 global using MongoDB.Driver;
 global using MongoDB.Bson.Serialization.Attributes;
-
 using kisa_gcs_system.Interfaces;
 using kisa_gcs_system.Services;
+using kisa_gcs_system.Services.Helper;
 
 namespace kisa_gcs_system;
 
@@ -55,7 +55,7 @@ public class Startup
             });
         });
         services.AddSingleton<MavlinkHandler>();
-        services.AddSingleton<DroneController>();
+        services.AddSingleton<DroneControlService>();
         services.AddSingleton<MavlinkNetty>();
 
         services.AddSignalR();
@@ -78,7 +78,7 @@ public class Startup
         app.UseEndpoints(endpoints => 
         {
             endpoints.MapControllers();
-            endpoints.MapHub<DroneController>("/droneHub");
+            endpoints.MapHub<DroneControlService>("/droneHub");
             endpoints.MapGet("/", async context =>
             {
                 await context.Response.WriteAsync("Hello World!");

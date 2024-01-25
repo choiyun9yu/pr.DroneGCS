@@ -1,6 +1,6 @@
 namespace kisa_gcs_system.Model;
 
-public class AnomalyDetectionAPI
+public class AnomalyDetection
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)] // MongoDB의 ObjectId를 문자열로 표현

@@ -1,6 +1,6 @@
 using MAVSDK;
 
-namespace kisa_gcs_system.Services;
+namespace kisa_gcs_system.Services.Helper;
 
 public class MavlinkDecoder : MessageToMessageDecoder<DatagramPacket>           
 {                                                                              

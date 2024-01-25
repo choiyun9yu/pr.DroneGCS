@@ -5,7 +5,7 @@ namespace kisa_gcs_system.Services
     public class AnomalyDetectionApiService
     {
         private readonly ILogger<AnomalyDetectionApiService> _logger;
-        private readonly IMongoCollection<AnomalyDetectionAPI> _dronePredict;
+        private readonly IMongoCollection<AnomalyDetection> _dronePredict;
 
         public AnomalyDetectionApiService(ILogger<AnomalyDetectionApiService> logger, IConfiguration configuration)
         {
@@ -16,7 +16,7 @@ namespace kisa_gcs_system.Services
             var connectionString = configuration.GetConnectionString("MongoDB");
             var mongoClient = new MongoClient(connectionString);
             var database = mongoClient.GetDatabase("drone");
-            _dronePredict = database.GetCollection<AnomalyDetectionAPI>("drone_predict");
+            _dronePredict = database.GetCollection<AnomalyDetection>("drone_predict");
         }
 
         public List<string> GetDroneIds()
@@ -37,10 +37,10 @@ namespace kisa_gcs_system.Services
         {
             try
             {
-                var filter = Builders<AnomalyDetectionAPI>.Filter.And(
-                    Builders<AnomalyDetectionAPI>.Filter.Eq(api => api.DroneId, droneId),
-                    Builders<AnomalyDetectionAPI>.Filter.Gte(api => api.PredictTime, DateTime.Parse(periodFrom)),
-                    Builders<AnomalyDetectionAPI>.Filter.Lte(api => api.PredictTime, DateTime.Parse(periodTo))
+                var filter = Builders<AnomalyDetection>.Filter.And(
+                    Builders<AnomalyDetection>.Filter.Eq(api => api.DroneId, droneId),
+                    Builders<AnomalyDetection>.Filter.Gte(api => api.PredictTime, DateTime.Parse(periodFrom)),
+                    Builders<AnomalyDetection>.Filter.Lte(api => api.PredictTime, DateTime.Parse(periodTo))
                 );
 
                 var distinctFlightIds = _dronePredict
@@ -60,25 +60,25 @@ namespace kisa_gcs_system.Services
         }
     
 
-    public AnomalyDetectionAPI GetRealtimeByDroneId(string droneId)
+    public AnomalyDetection GetRealtimeByDroneId(string droneId)
         {
             try
             {
-                ProjectionDefinition<AnomalyDetectionAPI> projection = Builders<AnomalyDetectionAPI>.Projection
+                ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
                     .Exclude(d => d._id);
-                FilterDefinition<AnomalyDetectionAPI> filter =
-                    Builders<AnomalyDetectionAPI>.Filter.Eq("DroneId", droneId);
+                FilterDefinition<AnomalyDetection> filter =
+                    Builders<AnomalyDetection>.Filter.Eq("DroneId", droneId);
                 
-                SortDefinition<AnomalyDetectionAPI> sort = 
-                    Builders<AnomalyDetectionAPI>.Sort.Descending(api => api.PredictTime);
+                SortDefinition<AnomalyDetection> sort = 
+                    Builders<AnomalyDetection>.Sort.Descending(api => api.PredictTime);
                 
-                AnomalyDetectionAPI anomalyDetectionApi =
+                AnomalyDetection anomalyDetection =
                     _dronePredict
                         .Find(filter)
                         .Sort(sort)
-                        .Project<AnomalyDetectionAPI>(projection)
+                        .Project<AnomalyDetection>(projection)
                         .FirstOrDefault();
-                return anomalyDetectionApi;
+                return anomalyDetection;
             }
             catch (Exception ex)
             {
@@ -87,23 +87,23 @@ namespace kisa_gcs_system.Services
             }
         }
 
-        public List<AnomalyDetectionAPI> GetLogDataByForm(string DroneId, string FlightId, string periodFrom, string periodTo)
+        public List<AnomalyDetection> GetLogDataByForm(string DroneId, string FlightId, string periodFrom, string periodTo)
         {
             try
             {
-                ProjectionDefinition<AnomalyDetectionAPI> projection = Builders<AnomalyDetectionAPI>.Projection
+                ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
                     .Exclude(d => d._id);
 
-                FilterDefinition<AnomalyDetectionAPI> filter = Builders<AnomalyDetectionAPI>.Filter.And(
-                    Builders<AnomalyDetectionAPI>.Filter.Eq("DroneId", DroneId),
-                    Builders<AnomalyDetectionAPI>.Filter.Eq("FlightId", FlightId),
-                    Builders<AnomalyDetectionAPI>.Filter.Gte("PredictTime", DateTime.Parse(periodFrom)),
-                    Builders<AnomalyDetectionAPI>.Filter.Lte("PredictTime", DateTime.Parse(periodTo))
+                FilterDefinition<AnomalyDetection> filter = Builders<AnomalyDetection>.Filter.And(
+                    Builders<AnomalyDetection>.Filter.Eq("DroneId", DroneId),
+                    Builders<AnomalyDetection>.Filter.Eq("FlightId", FlightId),
+                    Builders<AnomalyDetection>.Filter.Gte("PredictTime", DateTime.Parse(periodFrom)),
+                    Builders<AnomalyDetection>.Filter.Lte("PredictTime", DateTime.Parse(periodTo))
                 );
 
-                List<AnomalyDetectionAPI> logdataList = _dronePredict.Find(filter)
-                    .Project<AnomalyDetectionAPI>(projection)
-                    .Sort(Builders<AnomalyDetectionAPI>.Sort.Descending("PredictTime")) // PredictTime을 기준으로 내림차순 정렬
+                List<AnomalyDetection> logdataList = _dronePredict.Find(filter)
+                    .Project<AnomalyDetection>(projection)
+                    .Sort(Builders<AnomalyDetection>.Sort.Descending("PredictTime")) // PredictTime을 기준으로 내림차순 정렬
                     .ToList();
 
                 return logdataList;
@@ -115,23 +115,23 @@ namespace kisa_gcs_system.Services
             }
         }
 
-        public List<AnomalyDetectionAPI> GetPredictDataByForm(string DroneId, string FlightId, string periodFrom, string periodTo, string SelectData)
+        public List<AnomalyDetection> GetPredictDataByForm(string DroneId, string FlightId, string periodFrom, string periodTo, string SelectData)
         {
             try
             {
-                ProjectionDefinition<AnomalyDetectionAPI> projection = Builders<AnomalyDetectionAPI>.Projection
+                ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
                     .Exclude(d => d._id);
 
-                FilterDefinition<AnomalyDetectionAPI> filter = Builders<AnomalyDetectionAPI>.Filter.And(
-                    Builders<AnomalyDetectionAPI>.Filter.Eq("DroneId", DroneId),
-                    Builders<AnomalyDetectionAPI>.Filter.Eq("FlightId", FlightId),
-                    Builders<AnomalyDetectionAPI>.Filter.Gte("PredictTime", DateTime.Parse(periodFrom)),
-                    Builders<AnomalyDetectionAPI>.Filter.Lte("PredictTime", DateTime.Parse(periodTo))
+                FilterDefinition<AnomalyDetection> filter = Builders<AnomalyDetection>.Filter.And(
+                    Builders<AnomalyDetection>.Filter.Eq("DroneId", DroneId),
+                    Builders<AnomalyDetection>.Filter.Eq("FlightId", FlightId),
+                    Builders<AnomalyDetection>.Filter.Gte("PredictTime", DateTime.Parse(periodFrom)),
+                    Builders<AnomalyDetection>.Filter.Lte("PredictTime", DateTime.Parse(periodTo))
                 );
 
-                List<AnomalyDetectionAPI> predictionList = _dronePredict.Find(filter)
-                    .Project<AnomalyDetectionAPI>(projection)
-                    .Sort(Builders<AnomalyDetectionAPI>.Sort.Descending("PredictTime"))
+                List<AnomalyDetection> predictionList = _dronePredict.Find(filter)
+                    .Project<AnomalyDetection>(projection)
+                    .Sort(Builders<AnomalyDetection>.Sort.Descending("PredictTime"))
                     .ToList();
                 
                 return predictionList;

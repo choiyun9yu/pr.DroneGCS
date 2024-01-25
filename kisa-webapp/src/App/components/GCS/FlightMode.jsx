@@ -204,6 +204,7 @@ export const FlightContents = (props) => {
                  handleIndicator={handleIndicator}
                  isMarker={props.isMarker}
                  handleIsMarker={props.handleIsMarker}
+                 handleMarkerReset={props.handleMarkerReset}
             />
 
             <Table middleTable={props.middleTable} monitorTable={props.monitorTable} setMonitorTable={props.setMonitorTable}/>
@@ -213,7 +214,8 @@ export const FlightContents = (props) => {
                 ? <MainController isController={props.isController}
                                   handleIsController={props.handleIsController}
                                   handleIsRtl={props.handleIsRtl}
-                                  lastPathReset={props.lastPathReset}/>
+                                  lastPathReset={props.lastPathReset}
+                                  handleMarkerReset={props.handleMarkerReset}/>
                 : <button onClick={props.handleIsController} className={`absolute bottom-0 w-10 h-7 rounded-t-md bg-[#1D1D41] hover:bg-gray-300`}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" style={{ transform: 'rotate(270deg)' }} className="w-6 h-5 mx-auto mt-0.5 hover:text-[#1D1D41]">
                         <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
@@ -223,101 +225,14 @@ export const FlightContents = (props) => {
     );
 }
 
-const MainController = (props) => {
-    const {
-        handleDroneFlightCommand,
-        handleDroneFlightMode,
-        handleDroneMovetoTarget,
-        handleDroneMovetoBase
-    } = useContext(DroneContext);
-
-    const handleMoveBtn = () => {
-        handleDroneFlightMode(4)
-        handleDroneMovetoTarget()
-    }
-
-    const handleArmBtn = () => {
-        handleDroneFlightMode(4)
-        handleDroneFlightCommand(0)
-    }
-
-    const handleTakeoffBtn = () => {
-        handleDroneFlightCommand(2)
-        props.lastPathReset();
-    }
-
-    const handelReturnBtn = () => {
-        handleDroneFlightMode(4)
-        handleDroneMovetoBase()
-    }
-
-    return (
-        <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]`}>
-            <div className={`flex flex-col mt-0.5 mx-2`}>
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleArmBtn()}>
-                    Arm
-                </button>
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleTakeoffBtn()}>
-                    Take Off
-                </button>
-
-                <button className={`w-20 h-10 mb-10 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(3)}>
-                    Land
-                </button>
-
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(1)}>
-                    Dis-Arm
-                </button>
-            </div>
-
-            <div
-                className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl ${ColorThema.Secondary4}`}>
-                <span
-                    className={`flex justify-center w-[40px] mb-3 rounded-md border border-[#6359E9] text-sm text-[#6359E9]`}>드론</span>
-                <DroneJoyStick/>
-            </div>
-            <button onClick={props.handleIsController} className={`absolute bottom-0 w-5 h-5 rounded-t-md bg-white hover:bg-gray-300`}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1D1D41" style={{ transform: 'rotate(90deg)' }} className="w-5 h-4 mx-auto mt-0.5 hover:text-white">
-                    <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
-                </svg>
-            </button>
-            <div className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl ${ColorThema.Secondary4}`}>
-                <span className={`flex justify-center w-[40px] mb-3 rounded-md border border-[#6359E9] text-sm text-[#6359E9]`}>제어</span>
-                <ControlJoyStick/>
-            </div>
-
-            <div className={`flex flex-col mt-0.5 mx-2`}>
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleMoveBtn()}>
-                    Go To
-                </button>
-
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handelReturnBtn()}>
-                    Return
-                </button>
-
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightMode(17)}>
-                    Break
-                </button>
-
-                {/*<button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`}>*/}
-                {/*    Patrol*/}
-                {/*</button>*/}
-
-            </div>
-        </div>
-    );
-}
-
 const Btn = (props) => {
+    const {droneMessage, handleDroneFlightMode, handleDroneFlightCommand, handleMissionAlt} = useContext(DroneContext);
+    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
+
     const [isSensorArea, setIsSensorArea] = useState(false);
     const [isLogArea, setIsLogArea] = useState(false);
     const [isMissionAlt, setIsMissionAlt] = useState(false);
     const [isXTen, setIsXTen] = useState(false)
-    const {droneMessage, handleDroneFlightMode, handleDroneFlightCommand, handleMissionAlt} = useContext(DroneContext);
-    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
-    const handleMonitorTable = props.handleMonitorTable;
-    const handleIndicator = props.handleIndicator;
-    const handleIsMarker = props.handleIsMarker;
 
     const handleSensorArea = () => {
         setIsSensorArea(!isSensorArea);
@@ -332,7 +247,6 @@ const Btn = (props) => {
     }
 
     const handleMissionAltUpBtn = () => {
-
         if (droneMessage !== null){
             handleMissionAlt(droneState.DroneMission.MissionAlt + (isXTen?10:1))
         }
@@ -361,8 +275,6 @@ const Btn = (props) => {
             </div>
         ));
     };
-
-
 
     return (
         <>
@@ -486,7 +398,7 @@ const Btn = (props) => {
             </button>
 
             {props.isMarker
-                ? (<button onClick={handleIsMarker}
+                ? (<button onClick={props.handleIsMarker}
                            className={`absolute top-[145px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-[#6359E9] shadow-sm shadow-[#BBBBBB]`}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                         <path fillRule="evenodd"
@@ -494,7 +406,7 @@ const Btn = (props) => {
                               clipRule="evenodd"/>
                     </svg>
                 </button>)
-                : (<button onClick={handleIsMarker}
+                : (<button onClick={props.handleIsMarker}
                            className={`absolute top-[145px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                         <path fillRule="evenodd"
@@ -504,8 +416,21 @@ const Btn = (props) => {
                 </button>)
             }
 
-            <button onClick={handleIsMissionAlt}
+            <button onClick={props.handleMarkerReset}
                     className={`absolute top-[195px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path fillRule="evenodd"
+                          d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+                          clipRule="evenodd"/>
+                    <g stroke="darkred" strokeWidth="2">
+                        <line x1="2" y1="2" x2="23" y2="21"/>
+                    </g>
+                </svg>
+
+            </button>
+
+            <button onClick={handleIsMissionAlt}
+                    className={`absolute top-[245px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path fillRule="evenodd"
                           d="M3.792 2.938A49.069 49.069 0 0 1 12 2.25c2.797 0 5.54.236 8.209.688a1.857 1.857 0 0 1 1.541 1.836v1.044a3 3 0 0 1-.879 2.121l-6.182 6.182a1.5 1.5 0 0 0-.439 1.061v2.927a3 3 0 0 1-1.658 2.684l-1.757.878A.75.75 0 0 1 9.75 21v-5.818a1.5 1.5 0 0 0-.44-1.06L3.13 7.938a3 3 0 0 1-.879-2.121V4.774c0-.897.64-1.683 1.542-1.836Z"
@@ -618,7 +543,7 @@ const Btn = (props) => {
                 </svg>
             </button>
 
-            <button onClick={handleMonitorTable}
+            <button onClick={props.handleMonitorTable}
                     className={`absolute top-[160px] right-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path
@@ -626,7 +551,7 @@ const Btn = (props) => {
                 </svg>
             </button>
 
-            <button onClick={handleIndicator}
+            <button onClick={props.handleIndicator}
                     className={`absolute top-[210px] right-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200 shadow-sm shadow-[#BBBBBB]`}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path
@@ -634,5 +559,90 @@ const Btn = (props) => {
                 </svg>
             </button>
         </>
+    );
+}
+
+const MainController = (props) => {
+    const {
+        handleDroneFlightCommand,
+        handleDroneFlightMode,
+        handleDroneMovetoTarget,
+        handleDroneMovetoBase
+    } = useContext(DroneContext);
+
+    const handleMoveBtn = () => {
+        handleDroneFlightMode(4);
+        handleDroneMovetoTarget();
+    }
+
+    const handleArmBtn = () => {
+        handleDroneFlightMode(4);
+        handleDroneFlightCommand(0);
+    }
+
+    const handleTakeoffBtn = () => {
+        handleDroneFlightCommand(2);
+        props.lastPathReset();
+    }
+
+    const handelReturnBtn = () => {
+        handleDroneFlightMode(4);
+        handleDroneMovetoBase();
+    }
+
+    return (
+        <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]`}>
+            <div className={`flex flex-col mt-0.5 mx-2`}>
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleArmBtn()}>
+                    Arm
+                </button>
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleTakeoffBtn()}>
+                    Take Off
+                </button>
+
+                <button className={`w-20 h-10 mb-10 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(3)}>
+                    Land
+                </button>
+
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightCommand(1)}>
+                    Dis-Arm
+                </button>
+            </div>
+
+            <div
+                className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl ${ColorThema.Secondary4}`}>
+                <span
+                    className={`flex justify-center w-[40px] mb-3 rounded-md border border-[#6359E9] text-sm text-[#6359E9]`}>드론</span>
+                <DroneJoyStick/>
+            </div>
+            <button onClick={props.handleIsController} className={`absolute bottom-0 w-5 h-5 rounded-t-md bg-white hover:bg-gray-300`}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1D1D41" style={{ transform: 'rotate(90deg)' }} className="w-5 h-4 mx-auto mt-0.5 hover:text-white">
+                    <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
+                </svg>
+            </button>
+            <div className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl ${ColorThema.Secondary4}`}>
+                <span className={`flex justify-center w-[40px] mb-3 rounded-md border border-[#6359E9] text-sm text-[#6359E9]`}>제어</span>
+                <ControlJoyStick/>
+            </div>
+
+            <div className={`flex flex-col mt-0.5 mx-2`}>
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleMoveBtn()}>
+                    Go To
+                </button>
+
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handelReturnBtn()}>
+                    Return
+                </button>
+
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightMode(17)}>
+                    Break
+                </button>
+
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`}>
+                    Patrol
+                </button>
+
+            </div>
+        </div>
     );
 }

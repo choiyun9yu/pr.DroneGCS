@@ -1,32 +1,4 @@
-namespace kisa_gcs_system.Interfaces;
-
-
-/*
- * 드론 미션 타입 a, b, c, d (지금 1과 3은 가능)
- *  - 타입 a: 드론이 날아가서 타겟 지점에 착륙하는 미션
- *  - 타입 b: 드론이 특정 포인트를 경유하고 마지막 경유 지점에 착륙하는 미션 
- *  - 타입 c: 드론이 해당 지점 까지 날아갔다가 돌아오는 미션
- *  - 타입 d: 드론이 특정 포인트를 경유하고 돌아오는 미션 
- */
-
-public partial class MissionItem
-{
-    public double LatitudeDeg { get; set; }
-    public double LongitudeDeg { get; set; }
-    public float RelativeAltitudeM { get; set; }
-    public float Speed { get; set; }
-    // public bool IsFlyThrough { get; set; }
-    // public float GimbalPitchDeg { get; set; }
-    // public float YawDeg { get; set; }
-    public float AcceptanceRadiusM { get; set; }
-    public float LoiterTimeS { get; set; }
-}
-
-public class MissionGenerator
-{
-    
-}
-
+namespace kisa_gcs_system.Services.Helper;
 
 public class VincentyCalculator
 {

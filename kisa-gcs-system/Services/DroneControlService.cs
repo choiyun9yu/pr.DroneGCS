@@ -1,7 +1,8 @@
-using MAVSDK;
-
 using kisa_gcs_system.Interfaces;
-using static kisa_gcs_system.Interfaces.ArrowButton;
+using kisa_gcs_system.Models;
+using kisa_gcs_system.Services.Helper;
+using MAVSDK;
+using static kisa_gcs_system.Models.ArrowButton;
 
 namespace kisa_gcs_system.Services;
 
@@ -19,9 +20,9 @@ namespace kisa_gcs_system.Services;
  * SIGNATURE: 메세지의 서명 (보통은 생략)
  */
 
-public class DroneController : Hub<IDroneHub>
+public class DroneControlService : Hub<IDroneHub>
 {
-    private readonly IHubContext<DroneController> _hubContext;
+    private readonly IHubContext<DroneControlService> _hubContext;
     private readonly MAVLink.MavlinkParse _parser = new();
     private readonly MavlinkMapper _mapper = new();
     
@@ -33,7 +34,7 @@ public class DroneController : Hub<IDroneHub>
     private static int yawIncrement = 50;
     // private static int SpeedIncrement = 50;
     
-    public DroneController(IHubContext<DroneController> hubContext)
+    public DroneControlService(IHubContext<DroneControlService> hubContext)
     {
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
     }
@@ -71,7 +72,6 @@ public class DroneController : Hub<IDroneHub>
     // 비행 모드 변경 메소드 (Auto ~ RTL)
     public async Task HandleDroneFlightMode(CustomMode flightMode)
     {
-        // Console.WriteLine($"Acting HandleDroneFlightMode : {flightMode}");
         // MAVLink 프로토콜에서 사용되는 메시지 및 명령 생성
         var commandBody = new MAVLink.mavlink_set_mode_t()
         { 
@@ -168,6 +168,13 @@ public class DroneController : Hub<IDroneHub>
     }
     
     // 미션 부여하기 
+    public async Task HandleMissionMarking(string startPoint, List<string> transitPoints, string targetPoint)
+    {
+        
+    }
+
+
+    // 조이스틱 미션 부여하기 
     public async Task HandleDroneStartingMarking(double lat, double lng)
     {
         _mapper.setStartingPoint(lat, lng);
@@ -232,8 +239,6 @@ public class DroneController : Hub<IDroneHub>
             commandBody));
         await SetCommandAsync(msg);
     }
-
-    // TO DO: 드론 조이스틱 만들기 
     
     /*
      * throttle(상승하강): 상승 (상) (상)   하강 (하) (하)

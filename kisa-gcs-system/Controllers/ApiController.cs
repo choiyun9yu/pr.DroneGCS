@@ -204,15 +204,15 @@ public class ApiController : ControllerBase
             IFormCollection form = Request.Form;
             string? DroneId = form["DroneId"];
             if (DroneId == null) { return BadRequest("유효하지 않은 요청"); }
-            AnomalyDetectionAPI anomalyDetectionApi = _anomalyDetectionApiService.GetRealtimeByDroneId(DroneId);
+            AnomalyDetection anomalyDetection = _anomalyDetectionApiService.GetRealtimeByDroneId(DroneId);
 
-            if (anomalyDetectionApi != null)
+            if (anomalyDetection != null)
             {
                 var response = new 
                 {
                     DroneId,
-                    anomalyDetectionApi.PredictData,  
-                    anomalyDetectionApi.SensorData,
+                    anomalyDetection.PredictData,  
+                    anomalyDetection.SensorData,
                 };
                 return Ok(response);
             }
@@ -244,7 +244,7 @@ public class ApiController : ControllerBase
                 return BadRequest("유효하지 않은 요청");
             }
 
-            List<AnomalyDetectionAPI> anomalyDetectionApi =
+            List<AnomalyDetection> anomalyDetectionApi =
                 _anomalyDetectionApiService.GetLogDataByForm(DroneId, FlightId, periodFrom, periodTo);
             if (anomalyDetectionApi != null)
             {
@@ -282,7 +282,7 @@ public class ApiController : ControllerBase
                 return BadRequest("유효하지 않은 요청");
             }
 
-            List<AnomalyDetectionAPI> anomalyDetectionApi =
+            List<AnomalyDetection> anomalyDetectionApi =
                 _anomalyDetectionApiService.GetPredictDataByForm(DroneId, FlightId, periodFrom, periodTo, SelectData);
             if (anomalyDetectionApi != null)
             {

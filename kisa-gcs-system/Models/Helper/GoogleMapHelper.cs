@@ -1,7 +1,6 @@
 using System.Web;
-using Microsoft.AspNetCore.Identity;
 
-namespace kisa_gcs_system.Interfaces;
+namespace kisa_gcs_system.Models.Helper;
 
 // Google Maps API에서 반환된 고도 및 위치 정보를 나타내는 클래스 
 public class GoogleWaypoint
