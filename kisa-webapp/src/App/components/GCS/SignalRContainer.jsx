@@ -67,23 +67,14 @@ export const SignalRProvider = ({ children }) => {
     const handleDroneFlightCommand = flightCommand => {
         connection.current.invoke('HandleDroneFlightCommand', flightCommand)
     }
-    const handleDroneJoystick = arrow => {
-        connection.current.invoke('HandleDroneJoystick', arrow)
-    }
-    const handleControlJoystick = arrow => {
-        connection.current.invoke('HandleControlJoystick', arrow)
-    }
-    const handleCameraJoystick = arrow => {
-        connection.current.invoke('HandleCameraJoystick', arrow)
-    }
-    const handleCameraCommand = command => {
-        connection.current.invoke('HandleCameraCommand', command)
-    }
     const handleDroneStartingMarking = (lat, lng) => {
         connection.current.invoke('HandleDroneStartingMarking', lat, lng)
     }
     const handleDroneTargetMarking = (lat, lng) => {
         connection.current.invoke('HandleDroneTargetMarking', lat, lng)
+    }
+    const handleMissionAlt = (missionAlt) => {
+        connection.current.invoke('HandleMissionAlt', missionAlt)
     }
     const handleDroneMovetoTarget = () => {
         connection.current.invoke('HandleDroneMoveToTarget')
@@ -91,8 +82,17 @@ export const SignalRProvider = ({ children }) => {
     const handleDroneMovetoBase = () => {
         connection.current.invoke('HandleDroneMoveToBase')
     }
-    const handleMissionAlt = (missionAlt) => {
-        connection.current.invoke('HandleMissionAlt', missionAlt)
+    const handleDroneJoystick = arrow => {
+        connection.current.invoke('HandleDroneJoystick', arrow)
+    }
+    const handleControlJoystick = arrow => {
+        connection.current.invoke('HandleControlJoystick', arrow)
+    }
+    const handleCameraCommand = command => {
+        connection.current.invoke('HandleCameraCommand', command)
+    }
+    const handleCameraJoystick = arrow => {
+        connection.current.invoke('HandleCameraJoystick', arrow)
     }
 
     return (

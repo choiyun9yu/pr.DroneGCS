@@ -195,7 +195,7 @@ export const FlightContents = (props) => {
 
     return (
         <div id='map-contents' className={`flex justify-center w-full h-full`}>
-            <Btn isLeftPanel={props.isLeftPanel}
+            <FlightBtn isLeftPanel={props.isLeftPanel}
                  handleIsLeftPanel={props.handleIsLeftPanel}
                  handleSwapMap={props.handleSwapMap}
                  isRightPanel={props.isRightPanel}
@@ -225,7 +225,7 @@ export const FlightContents = (props) => {
     );
 }
 
-const Btn = (props) => {
+const FlightBtn = (props) => {
     const {droneMessage, handleDroneFlightMode, handleDroneFlightCommand, handleMissionAlt} = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
 

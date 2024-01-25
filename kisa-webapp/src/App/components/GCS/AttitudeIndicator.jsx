@@ -1,4 +1,4 @@
-import React, {useContext, useMemo} from 'react';
+import React, {useContext} from 'react';
 import styled from 'styled-components';
 import {DroneContext} from "./SignalRContainer";
 
@@ -25,8 +25,10 @@ export const AttitudeIndicator = (props) => {
         return <div />;
     }
 
-    const roll = (droneState.DroneStt.ROLL_ATTITUDE || 0) * (180/Math.PI);
-    const pitch = (droneState.DroneStt.PITCH_ATTITUDE || 0) * (180/Math.PI);
+    // const roll = (droneState.DroneStt.ROLL_ATTITUDE || 0) * (180/Math.PI);
+    // const pitch = (droneState.DroneStt.PITCH_ATTITUDE || 0) * (180/Math.PI);
+    const roll = (droneState.SensorData.roll_ATTITUDE || 0) * (180/Math.PI);
+    const pitch = (droneState.SensorData.pitch_ATTITUDE || 0) * (180/Math.PI);
 
     const r1 = (0.8 * SIZE) / 2;
     const r2 = (0.9 * SIZE) / 2;

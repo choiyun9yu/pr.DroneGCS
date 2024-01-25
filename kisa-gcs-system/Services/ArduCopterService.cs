@@ -20,9 +20,9 @@ namespace kisa_gcs_system.Services;
  * SIGNATURE: 메세지의 서명 (보통은 생략)
  */
 
-public class DroneControlService : Hub<IDroneHub>
+public class ArduCopterService : Hub<IDroneHub>
 {
-    private readonly IHubContext<DroneControlService> _hubContext;
+    private readonly IHubContext<ArduCopterService> _hubContext;
     private readonly MAVLink.MavlinkParse _parser = new();
     private readonly MavlinkMapper _mapper = new();
     
@@ -34,7 +34,7 @@ public class DroneControlService : Hub<IDroneHub>
     private static int yawIncrement = 50;
     // private static int SpeedIncrement = 50;
     
-    public DroneControlService(IHubContext<DroneControlService> hubContext)
+    public ArduCopterService(IHubContext<ArduCopterService> hubContext)
     {
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
     }

@@ -55,7 +55,7 @@ public class Startup
             });
         });
         services.AddSingleton<MavlinkHandler>();
-        services.AddSingleton<DroneControlService>();
+        services.AddSingleton<ArduCopterService>();
         services.AddSingleton<MavlinkNetty>();
 
         services.AddSignalR();
@@ -78,7 +78,7 @@ public class Startup
         app.UseEndpoints(endpoints => 
         {
             endpoints.MapControllers();
-            endpoints.MapHub<DroneControlService>("/droneHub");
+            endpoints.MapHub<ArduCopterService>("/droneHub");
             endpoints.MapGet("/", async context =>
             {
                 await context.Response.WriteAsync("Hello World!");

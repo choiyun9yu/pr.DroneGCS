@@ -10,7 +10,7 @@ public class MavlinkNetty
   private readonly MavlinkHandler _handler;
   // private readonly MavlinkEncoder _encoder;
   
-  public MavlinkNetty(DroneControlService controlService)  
+  public MavlinkNetty(ArduCopterService controlService)  
   {
     _decoder = new MavlinkDecoder();
     _handler = new MavlinkHandler(controlService);

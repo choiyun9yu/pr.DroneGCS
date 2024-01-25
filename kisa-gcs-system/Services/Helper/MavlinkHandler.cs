@@ -7,11 +7,11 @@ namespace kisa_gcs_system.Services.Helper;
 public class MavlinkHandler : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage>
 {
     private IChannelHandlerContext? _context;
-    private DroneControlService _controlService;
+    private ArduCopterService _controlService;
     private DroneConnectionProtocol _protocol = DroneConnectionProtocol.UDP;
     private IPEndPoint? _droneAddress;
 
-    public MavlinkHandler(DroneControlService controlService)
+    public MavlinkHandler(ArduCopterService controlService)
     {
         _controlService = controlService ?? throw new ArgumentNullException(nameof(controlService));
     }
