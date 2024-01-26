@@ -159,7 +159,7 @@ public partial class MAVLink
         new message_info(147, "BATTERY_STATUS", 154, 36, 54, typeof( mavlink_battery_status_t )),
         new message_info(148, "AUTOPILOT_VERSION", 178, 60, 78, typeof( mavlink_autopilot_version_t )),
         new message_info(149, "LANDING_TARGET", 200, 30, 60, typeof( mavlink_landing_target_t )),
-        new message_info(150, "SENSOR_OFFSETS", 134, 42, 42, typeof( mavlink_sensor_offsets_t )),
+        new message_info(150, "SENSOR_OFFSETS", 134, 42, 42, typeof( mavlink_sensor_offsets_t )),   // 나중에 받아야할 데이터
         new message_info(151, "SET_MAG_OFFSETS", 219, 8, 8, typeof( mavlink_set_mag_offsets_t )),
         new message_info(152, "MEMINFO", 208, 4, 8, typeof( mavlink_meminfo_t )),
         new message_info(153, "AP_ADC", 188, 12, 12, typeof( mavlink_ap_adc_t )),

@@ -10,13 +10,13 @@ import {MissionContents} from "./MissionMode";
 import {VideoContent, VideoContents} from "./VideoMode";
 
 export const MiddleMap = (props) => {
-    const { droneMessage } = useContext(DroneContext);
+    const { droneMessage, handleDroneStartMarking } = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
 
-    const StartingPoint = droneMessage ? droneState.DroneMission.StartingPoint: null;
-
+    const startPoint = droneMessage ? droneState.DroneMission.StartPoint: null;
     const [markerId, setMarkerId] = useState(1);
-    const [targetPoints, setTargetPoints] = useState([]); // {id:1, position:{lat:0,lng:0}}
+    const targetPoints = props.targetPoints;
+    const setTargetPoints = props.setTargetPoints;
     const [pathLine, setPathLine] = useState([]);
 
     const [isController, setIsController] = useState(true);
@@ -70,16 +70,17 @@ export const MiddleMap = (props) => {
     const handleIsRtl = () => {
         setIsRtl(!isRtl);
         setPathLine([{
-            lat: droneMessage && droneState.DroneMission.StartingPoint.lat,
-            lng: droneMessage && droneState.DroneMission.StartingPoint.lng
-        }, StartingPoint])
+            lat: droneMessage && droneState.DroneMission.StartPoint.lat,
+            lng: droneMessage && droneState.DroneMission.StartPoint.lng
+        }, startPoint])
     }
 
     const handleMapClick = event => {
         if (isMarker){
             setTargetPoints([...targetPoints, {id:markerId, position:{lat: event.latLng.lat(),lng: event.latLng.lng()}}])
             setMarkerId(markerId+1)
-            setPathLine([StartingPoint, ...targetPoints.map(marker => marker.position)])
+            setPathLine([startPoint, ...targetPoints.map(marker => marker.position)])
+            handleDroneStartMarking(droneState.DroneStt.Lat, droneState.DroneStt.Lon)
         }
 
         if (props.isLocalMarker){
@@ -94,13 +95,13 @@ export const MiddleMap = (props) => {
     };
 
     useEffect(() => {
-        setPathLine([StartingPoint, ...targetPoints.map(marker => marker.position)]);
-    }, [targetPoints, StartingPoint])
+        setPathLine([startPoint, ...targetPoints.map(marker => marker.position)]);
+    }, [targetPoints, startPoint])
 
     const handleStartPointCenter = () => {
         props.setCenter({
-            lat: droneMessage && droneState.DroneMission.StartingPoint.lat,
-            lng: droneMessage && droneState.DroneMission.StartingPoint.lng
+            lat: droneMessage && droneState.DroneMission.StartPoint.lat,
+            lng: droneMessage && droneState.DroneMission.StartPoint.lng
         });
     }
 
@@ -158,12 +159,15 @@ export const MiddleMap = (props) => {
                         />
                     </OverlayView>
 
-                    <Marker position={{
-                        lat: droneMessage && droneState.DroneStt.Lat,
-                        lng: droneMessage && droneState.DroneStt.Lon
-                    }} icon={yellowMarkerIcon}/>
+                    { isRtl
+                        ? <Marker position={{
+                            lat: droneMessage && droneState.DroneStt.Lat,
+                            lng: droneMessage && droneState.DroneStt.Lon
+                        }} icon={yellowMarkerIcon}/>
+                        : null
+                    }
 
-                    <Marker position={StartingPoint} icon={blueMarkerIcon}/>
+                    <Marker position={startPoint} icon={blueMarkerIcon}/>
 
                     {targetPoints.map((marker) => (
                         <Marker key={marker.id} position={marker.position} icon={redMarkerIcon} />
@@ -192,7 +196,8 @@ export const MiddleMap = (props) => {
                             lastPathReset={lastPathReset}
                             monitorTable={monitorTable}
                             setMonitorTable={setMonitorTable}
-                            handleMarkerReset={handleMarkerReset}/>
+                            handleMarkerReset={handleMarkerReset}
+                            targetPoints= {targetPoints}/>
                         : null}
                     {props.gcsMode === 'mission'
                         ? <MissionContents
@@ -241,11 +246,11 @@ export const Table = (props) => {
 
     let droneState;
 
-    // let averageSpped;
-    //
-    // let totalDistance;
-    // let remainDistance;
-    // let elapsedDistance;
+    let averageSpped;
+
+    let totalDistance;
+    let remainDistance;
+    let elapsedDistance;
 
     let startTime;
     let completeTime;
@@ -259,9 +264,9 @@ export const Table = (props) => {
     if (droneMessage !== null) {
         droneState = droneMessage['droneMessage'];
 
-        // totalDistance = (droneState.DroneMission.TotalDistance);
-        // remainDistance = (droneState.DroneMission.RemainDistance);
-        // elapsedDistance = (totalDistance - remainDistance).toFixed(3);
+        totalDistance = (droneState.DroneMission.TotalDistance);
+        remainDistance = (droneState.DroneMission.RemainDistance);
+        elapsedDistance = (totalDistance - remainDistance).toFixed(3);
 
         startTime = droneState.DroneMission.StartTime
             ? new Date(droneState.DroneMission.StartTime).getTime()
@@ -279,7 +284,7 @@ export const Table = (props) => {
             formattedTakeTime = formatTime(takeTime);
         }
 
-        // averageSpped = takeTime > 0 ? elapsedDistance / (takeTime / 1000) : 0;
+        averageSpped = takeTime > 0 ? elapsedDistance / (takeTime / 1000) : 0;
 
         // console.log(averageSpped)
 
@@ -307,28 +312,25 @@ export const Table = (props) => {
                         <tbody>
                         <tr>
                             <th className={`px-2`}>전체 이동거리</th>
-                            {/*<td className={`px-2`}> {droneMessage && (totalDistance / 1000).toFixed(3)} km</td>*/}
-                            <td className={`px-2`}> {} km</td>
+                            <td className={`px-2`}> {droneMessage && (totalDistance / 1000).toFixed(3)} km</td>
+                            {/*<td className={`px-2`}> {} km</td>*/}
                         </tr>
                         <tr>
                             <th className={`px-2`}>잔여 이동거리</th>
-                            {/*<td className={`px-2`}> {droneMessage && (remainDistance / 1000).toFixed(3)} km</td>*/}
-                            <td className={`px-2`}> {} km</td>
+                            <td className={`px-2`}> {droneMessage && (remainDistance / 1000).toFixed(3)} km</td>
                         </tr>
                         <tr>
                             <th className={`px-2`}>현재 비행거리</th>
-                            {/*<td className={`px-2`}> {droneMessage && (elapsedDistance / 1000).toFixed(3)} km</td>*/}
-                            <td className={`px-2`}> {} km</td>
+                            <td className={`px-2`}> {droneMessage && (elapsedDistance / 1000).toFixed(3)} km</td>
                         </tr>
 
                         <tr>
                             <th className={`px-2`}>현재 이동속력</th>
-                            <td className={`px-2`}>{droneMessage && (droneState.DroneStt.Speed <= 0.020 ? 0 : droneState.DroneStt.Speed).toFixed(3)} m/s</td>
+                            <td className={`px-2`}>{droneMessage && (droneState.DroneStt.Speed).toFixed(3)} m/s</td>
                         </tr>
                         <tr>
                             <th className={`px-2`}>평균 이동속도</th>
-                            {/*<td className={`px-2`}>{((averageSpped > 0) ? averageSpped : 0).toFixed(3)} m/s</td>*/}
-                            <td className={`px-2`}>{} m/s</td>
+                            <td className={`px-2`}>{((averageSpped > 0) ? averageSpped : 0).toFixed(3)} m/s</td>
                         </tr>
                         <tr>
                             <th className={`px-2`}>이륙 시작시간</th>

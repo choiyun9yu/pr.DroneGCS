@@ -55,7 +55,7 @@ public class GcsApiService
                 {
                     List<double> transitLocalPoint = getLocalPoint(transitPointsList[i]);
             
-                    // 핸재 경유지에서 다음 경유지 또는 목적지까지의 거리를 계산하여 누적
+                    // 현재 경유지에서 다음 경유지 또는 목적지까지의 거리를 계산하여 누적
                     flightDistance += _vincentyCalculator.DistanceCalculater(
                         (i == 0) ? startLocalPoint[0] : getLocalPoint(transitPointsList[i - 1])[0],
                         (i == 0) ? startLocalPoint[1] : getLocalPoint(transitPointsList[i - 1])[1],

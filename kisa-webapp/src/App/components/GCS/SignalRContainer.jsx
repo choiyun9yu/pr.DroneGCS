@@ -5,6 +5,7 @@ export const DroneContext = React.createContext({})
 
 export const SignalRProvider = ({ children }) => {
     const [droneMessage, setDroneMessage] = useState(null)
+    const [droneState, setDroneState] = useState(null)
     const connection = useRef();
 
     // SignalR 연결 설정
@@ -49,6 +50,7 @@ export const SignalRProvider = ({ children }) => {
         *      예를 들어, 채팅 애플리케이션에서 새로운 메시지가 도착했을 때 클라이언트에서 특정 동작을 수행하도록 등록
         *      따라서 서버에서 클라이언트로부터 오는 메시지나 이벤트를 처리하기 위해 사용
         */
+
         connectionObj.on('droneMessage', (msg) => {
             const droneMessage = JSON.parse(msg);
             setDroneMessage(old => ({...old, droneMessage}));
@@ -67,8 +69,8 @@ export const SignalRProvider = ({ children }) => {
     const handleDroneFlightCommand = flightCommand => {
         connection.current.invoke('HandleDroneFlightCommand', flightCommand)
     }
-    const handleDroneStartingMarking = (lat, lng) => {
-        connection.current.invoke('HandleDroneStartingMarking', lat, lng)
+    const handleDroneStartMarking = (lat, lng) => {
+        connection.current.invoke('HandleDroneStartMarking', lat, lng)
     }
     const handleDroneTargetMarking = (lat, lng) => {
         connection.current.invoke('HandleDroneTargetMarking', lat, lng)
@@ -107,7 +109,7 @@ export const SignalRProvider = ({ children }) => {
             handleDroneTargetMarking,
             handleDroneMovetoTarget,
             handleDroneMovetoBase,
-            handleDroneStartingMarking,
+            handleDroneStartMarking,
             handleMissionAlt
         }}>
             {children}

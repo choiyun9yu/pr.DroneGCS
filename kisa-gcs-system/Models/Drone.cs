@@ -26,15 +26,14 @@ public enum DroneConnectionProtocol
 public class Drone
 {
     public string? DroneId;
-    public bool? IsOnline;
     public List<MavlinkLog> DroneLogger = new ();
-    public double[]? WayPointsDistance = [];
+    public bool? IsOnline = true;
+    public string? ControlStt = "auto";
     public DroneStt? DroneStt = new DroneStt();
-    public DroneCamera? DroneCamera = new DroneCamera();
-    public DroneMission? DroneMission = new DroneMission();
-    public CommunicationLink? CommunicationLink = new CommunicationLink();
     public SensorData? SensorData = new SensorData();
-    // public bool? HasDeliverPlan = false;
+    public DroneMission? DroneMission = new DroneMission();
+    public DroneCamera? DroneCamera = new DroneCamera();
+    public CommunicationLink? CommunicationLink = new CommunicationLink();
 }
 
 public struct MavlinkLog
@@ -56,20 +55,11 @@ public class DroneStt
     public double Lon = 0.0;
     public double? Alt = 0.0;
     public double? GlobalAlt = 0.0;
-    // public double? terrain_alt = 0.0;
     public double? Head = 0.0;
     public double? Speed = 0.0;
-    public double? ROLL_ATTITUDE = 0.0;
-    public double? PITCH_ATTITUDE = 0.0;
-    public double? YAW_ATTITUDE = 0.0;
     public char? HoverStt = ' ';
     public double? HODP = 0.0;
     public CustomMode?  FlightMode = 0;
-    // public bool Landed = true;
-    public double? SatCount = 0.0;
-    public double? MabSysStt = 0.0;
-    public SensorStt SensorStt = new SensorStt();
-    public Mavlinkinfo Mavlinkinfo = new Mavlinkinfo();
 }
 
 public class SensorStt
@@ -101,15 +91,18 @@ public class DroneCamera
 
 public class DroneMission
 {
-    public string? MavMission;
+    public bool IsTargetAlt = false;
+    public int CurrentMission;
+    public bool IsLanded = true;
+    public DroneLocation StartPoint;
+    public DroneLocation TargetPoint;
+    public int MissionAlt = 10;             // 주행 고도
+    // public int MissionSpeed = 10;
+    public double? TotalDistance = 0.0;
+    public double? RemainDistance = 0.0;
+    public FixedSizedQueue<DroneLocation> DroneTrails = new(600);    // size 가 600 이면 0.5초에 하나씩 이라서 1초 씩 300개 -> 5분 
     public DateTime? StartTime = null;      // Take Off 기준 
     public DateTime? CompleteTime = null;   // Disarm 기준 
-    public int MissionAlt = 10;             // 주행 고도
-    public DroneLocation StartingPoint;
-    public DroneLocation TargetPoint;
-    public FixedSizedQueue<DroneLocation> DroneTrails = new(6000);    // size 가 6000 이면 0.5초에 하나씩 이라서 -> 30분 
-    public double? RemainDistance = 0.0;
-    public double? TotalDistance = 0.0;
 }
 
 public struct DroneLocation   
@@ -118,7 +111,6 @@ public struct DroneLocation
     public double lng;
     public double global_frame_alt;
     public double terrain_alt;          // 글로벌 고도에서 상대 고도를 빼면 지형 고도를 알 수 있다. API로 받아오는게 더 정확하지만 API 사용료가 너무 많이 나온다.
-    // public double relative_alt;
 }
 
 public class CommunicationLink

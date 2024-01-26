@@ -63,7 +63,7 @@ const RightSideTop = () => {
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>고도 (m)</th>
                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.Alt}</td>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>제어권</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && null}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.ControlStt}</td>
                 </tr>
                 </tbody>
             </table>
@@ -215,7 +215,8 @@ export const FlightContents = (props) => {
                                   handleIsController={props.handleIsController}
                                   handleIsRtl={props.handleIsRtl}
                                   lastPathReset={props.lastPathReset}
-                                  handleMarkerReset={props.handleMarkerReset}/>
+                                  handleMarkerReset={props.handleMarkerReset}
+                                  targetPoints= {props.targetPoints}/>
                 : <button onClick={props.handleIsController} className={`absolute bottom-0 w-10 h-7 rounded-t-md bg-[#1D1D41] hover:bg-gray-300`}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" style={{ transform: 'rotate(270deg)' }} className="w-6 h-5 mx-auto mt-0.5 hover:text-[#1D1D41]">
                         <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
@@ -563,6 +564,19 @@ const FlightBtn = (props) => {
 }
 
 const MainController = (props) => {
+    const { droneMessage, handleDroneTargetMarking } = useContext(DroneContext);
+    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
+    const startPoints = droneMessage ? droneState.DroneMission.StartPoint: null;
+    const targetPoints = props.targetPoints
+
+    function waitTwoSecond(callback) {
+        setTimeout(callback, 2000);
+    }
+
+    function waitTenSecond(callback) {
+        setTimeout(callback, 10000);
+    }
+
     const {
         handleDroneFlightCommand,
         handleDroneFlightMode,
@@ -571,9 +585,15 @@ const MainController = (props) => {
     } = useContext(DroneContext);
 
     const handleMoveBtn = () => {
-        handleDroneFlightMode(4);
+        // handleDroneFlightMode(4);
+        handleDroneTargetMarking(
+            targetPoints[0].position.lat,
+            targetPoints[0].position.lng
+        );
         handleDroneMovetoTarget();
     }
+
+
 
     const handleArmBtn = () => {
         handleDroneFlightMode(4);
@@ -582,13 +602,15 @@ const MainController = (props) => {
 
     const handleTakeoffBtn = () => {
         handleDroneFlightCommand(2);
-        props.lastPathReset();
+        // props.lastPathReset();
     }
 
     const handelReturnBtn = () => {
         handleDroneFlightMode(4);
         handleDroneMovetoBase();
     }
+
+
 
     return (
         <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]`}>

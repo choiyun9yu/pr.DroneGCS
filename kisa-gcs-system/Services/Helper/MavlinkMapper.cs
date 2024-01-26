@@ -16,24 +16,28 @@ public class MavlinkMapper
   
   public async void GcsMapping(object data)
   {
-    if (data is MAVLink.mavlink_mission_item_reached_t missionreached)
-    {
-      Console.WriteLine(missionreached);
-    }
-
+    // if (data is MAVLink.mavlink_mission_item_reached_t missionreached)
+    // {
+    //   Console.WriteLine($"도달 여부 : {missionreached}");
+    // }
     if (data is MAVLink.mavlink_heartbeat_t heartbeat)
     {
       // Console.WriteLine("base_mode: "+$"{(uint)heartbeat.base_mode}");
       // Console.WriteLine("custom_mode: "+$"{(CustomMode)heartbeat.custom_mode}");
       _drone.DroneStt.FlightMode = (CustomMode)heartbeat.custom_mode;
+      
+      // if (heartbeat.system_status == 3) // standby
+      // {
+      //   _drone.DroneMission.IsLanded = true;
+      // }
+      // if (heartbeat.system_status == 4) // active
+      // {
+      //   _drone.DroneMission.IsLanded = false;
+      // }
     }
     if (data is MAVLink.mavlink_attitude_t attitude)
     {
       // Console.WriteLine(attitude);
-      _drone.DroneStt.ROLL_ATTITUDE = attitude.roll;
-      _drone.DroneStt.PITCH_ATTITUDE = attitude.pitch;
-      _drone.DroneStt.YAW_ATTITUDE = attitude.yaw;
-
     }
     if (data is MAVLink.mavlink_global_position_int_t globalPositionInt)
     {
@@ -51,9 +55,16 @@ public class MavlinkMapper
                                                       globalPositionInt.vy * globalPositionInt.vy +
                                                       globalPositionInt.vz * globalPositionInt.vz) / 100f;
 
-      
-      
-      
+      if (Math.Abs(relative_alt - _drone.DroneMission.MissionAlt) < 0.3)
+      {
+        _drone.DroneMission.IsTargetAlt = true;
+      }
+
+      if (Math.Abs(relative_alt - _drone.DroneMission.MissionAlt) > 0.3)
+      {
+        _drone.DroneMission.IsTargetAlt = false;
+      }
+
       if (DateTime.Now.Subtract(_lastAddedTrails).Milliseconds > 500)
       {
         UpdateDroneTrails(lat, lon, relative_alt, global_alt, true);
@@ -81,7 +92,7 @@ public class MavlinkMapper
     // }
     // if (data is MAVLink.mavlink_mission_current_t missionCurrent)
     // {
-    //   Console.WriteLine(missionCurrent);
+    //   Console.WriteLine($"seq: {missionCurrent.seq}, total: {missionCurrent.total}, mission_state: {missionCurrent.mission_state}, mission_mode: {missionCurrent.mission_mode}" );
     // }
     if (data is MAVLink.mavlink_vfr_hud_t vfrHud)
     {
@@ -380,18 +391,18 @@ public class MavlinkMapper
 
   public void HandleMissionStart()
   {
-    _drone.DroneMission.StartTime = DateTime.Now;
+    setStartTime();
     _drone.DroneMission.CompleteTime = null;
     _drone.DroneMission.DroneTrails = new FixedSizedQueue<DroneLocation>(600); // 0.5 초에 1개 씩이니까 약 3분 정도 경로 저장 
-    // setStartingPoint();
-    // _droneMessage.DroneMission.TotalDistance = _haversineCalculator.Haversine(_droneMessage.DroneMission.StartingPoint.lat, _droneMessage.DroneMission.StartingPoint.lng,
+    // setStartPoint();
+    // _droneMessage.DroneMission.TotalDistance = _haversineCalculator.Haversine(_droneMessage.DroneMission.StartPoint.lat, _droneMessage.DroneMission.StartPoint.lng,
     //                                                                         _droneMessage.DroneMission.TargetPoint.lat, _droneMessage.DroneMission.TargetPoint.lng);
   }
   
   public void HandleMissionComplete()
   {
-    _drone.DroneMission.CompleteTime = DateTime.Now;
-    // _droneMessage.DroneMission.StartingPoint = new();
+    setCompleteTime();
+    // _droneMessage.DroneMission.StartPoint = new();
     // _droneMessage.DroneMission.TargetPoint = new();
   }
   
@@ -427,14 +438,14 @@ public class MavlinkMapper
     return (double)_drone.DroneStt.Alt;
   }
 
-  public double getStartingPointLat()
+  public double getStartPointLat()
   {
-    return _drone.DroneMission.StartingPoint.lat;
+    return _drone.DroneMission.StartPoint.lat;
   }
   
-  public double getStartingPointLng()
+  public double getStartPointLng()
   {
-    return _drone.DroneMission.StartingPoint.lng;
+    return _drone.DroneMission.StartPoint.lng;
   }
   
   public double getTargetPointLat()
@@ -458,17 +469,17 @@ public class MavlinkMapper
     // Console.WriteLine($"set mission alt: {missionAlt}");
   }
 
-  public async Task setStartingPoint()
+  public async Task setStartPoint()
   {
-    _drone.DroneMission.StartingPoint = new DroneLocation{
+    _drone.DroneMission.StartPoint = new DroneLocation{
       lat= _drone.DroneStt.Lat,
       lng= _drone.DroneStt.Lon
     };
   }
 
-  public async Task setStartingPoint(double lat, double lng)
+  public async Task setStartPoint(double lat, double lng)
   {
-    _drone.DroneMission.StartingPoint = new DroneLocation{
+    _drone.DroneMission.StartPoint = new DroneLocation{
       lat= lat,
       lng= lng
     };
@@ -476,7 +487,7 @@ public class MavlinkMapper
 
   public async Task setTargetPoint(double lat, double lng)
   {
-    setStartingPoint();
+    // setStartPoint();
     _drone.DroneMission.TargetPoint = new DroneLocation
     {
       lat = lat,
@@ -484,15 +495,15 @@ public class MavlinkMapper
     };  
     
     _drone.DroneMission.TotalDistance = _vincentyCalculator.DistanceCalculater(
-      _drone.DroneMission.StartingPoint.lat, _drone.DroneMission.StartingPoint.lng, lat, lng);
+      _drone.DroneMission.StartPoint.lat, _drone.DroneMission.StartPoint.lng, lat, lng);
     
     // List<float> path_terrain_alt = await _googleMapHelper.FetchElevations(
-    //   _droneMessage.DroneMission.StartingPoint.lat, _droneMessage.DroneMission.StartingPoint.lng, 
+    //   _droneMessage.DroneMission.StartPoint.lat, _droneMessage.DroneMission.StartPoint.lng, 
     //   lat, lng, 10);
     
     // sample 300, api 요청이 많으면 Google Maps API 요금이 올라감 (매달 200 달러 까지만 무료), 2018년 6월 11일 부터 API 키를 발급 받으려면 결제 계정이 필수적으로 필요
     // List<GoogleWaypoint> path_terrain_alt = await _googleMapHelper.FetchElevations(
-    // _droneMessage.DroneMission.StartingPoint.lat, _droneMessage.DroneMission.StartingPoint.lng, 
+    // _droneMessage.DroneMission.StartPoint.lat, _droneMessage.DroneMission.StartPoint.lng, 
     // lat, lng, 10);
     // Console.Write("path: ");
     // path_terrain_alt.ForEach(path_num => Console.Write($"{path_num.Elevation}, "));
@@ -501,5 +512,34 @@ public class MavlinkMapper
     // double path_terrain_min_alt = path_terrain_alt.Min();
     // path_terrain_alt.ForEach(path_num => Console.Write($"[{path_num.Location.Lat}, {path_num.Location.Lng}, {path_num.Elevation}], "));
   }
-  
+
+  public async Task setStartTime()
+  {
+    _drone.DroneMission.StartTime = DateTime.Now;
+  }
+
+  public async Task setCompleteTime()
+  {
+    _drone.DroneMission.CompleteTime = DateTime.Now;
+  }
+
+  public async Task setTotalDistance(double totalDistance)
+  {
+    _drone.DroneMission.TotalDistance = totalDistance;
+  }
+
+  public async Task setIsTargetAlt(bool stt)
+  {
+    _drone.DroneMission.IsTargetAlt = stt;
+  }
+
+  public async Task setCurrentMission(int seq)
+  {
+    _drone.DroneMission.CurrentMission = seq;
+  }
+
+  public async Task setIsLanded(bool stt)
+  {
+    _drone.DroneMission.IsLanded = stt;
+  }
 }

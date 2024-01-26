@@ -34,6 +34,8 @@ public class ArduCopterService : Hub<IDroneHub>
     private static int yawIncrement = 50;
     // private static int SpeedIncrement = 50;
     
+    private VincentyCalculator _vincentyCalculator = new();
+    
     public ArduCopterService(IHubContext<ArduCopterService> hubContext)
     {
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
@@ -173,11 +175,10 @@ public class ArduCopterService : Hub<IDroneHub>
         
     }
 
-
     // 조이스틱 미션 부여하기 
-    public async Task HandleDroneStartingMarking(double lat, double lng)
+    public async Task HandleDroneStartMarking(double lat, double lng)
     {
-        _mapper.setStartingPoint(lat, lng);
+        _mapper.setStartPoint(lat, lng);
     }
 
     public async Task HandleDroneTargetMarking(double lat, double lng)
@@ -194,32 +195,50 @@ public class ArduCopterService : Hub<IDroneHub>
     {
         double lat = _mapper.getTargetPointLat();
         double lng = _mapper.getTargetPointLng();
-        int alt = _mapper.getMissionAlt();
+        double flightDistance = 0;
         
-        // 좌표로 이동 명령
+        // 단일 목적지 인 경우 
+        flightDistance += _vincentyCalculator.DistanceCalculater(
+            _mapper.getStartPointLat(),
+            _mapper.getStartPointLng(),
+            lat, lng);
+        _mapper.setTotalDistance(flightDistance);
+
+        createMission(lat, lng);
+        
+        // To Do 
+        // 경유지 유무에 따라 여기서 미션 생성도 변화를 주고,
+        // 전체 거리 계산도 변화를 줘야한다.
+
+    }
+
+    public async Task createMission(double lat, double lng)
+    {
+        int alt = _mapper.getMissionAlt();
         var commandBody = new MAVLink.mavlink_mission_item_int_t()
         {
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
             x = (int)Math.Round(lat * 10000000),
             y = (int)Math.Round(lng * 10000000),
             z = alt,             // (int)Math.Round(alt),
-            autocontinue = 1,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
-            current = 2,        // 현재 웨이포인트 번호
-            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
+            autocontinue = 0,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
+            current = 2,        // 현재 웨이포인트 번호, (To Do, WayPoint 번호를 바꿔가면서 해봐야겠다. )
+            // mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,  // 미션 타입도 한번 알아보자.TO DO
+            mission_type = 0,  // 미션 타입도 한번 알아보자.TO DO
             frame = 3,          // default: 0(위도경도고도 전역 좌표계), 3(위도경도 전역, 고도 상대좌표계)
             target_system = 1,
-            param1 = 1
+            // param1 = 1
         };
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,
             commandBody));
         await SetCommandAsync(msg);
     }
-    
+
     public async Task HandleDroneMoveToBase()
     {
-        double lat = _mapper.getStartingPointLat();
-        double lng = _mapper.getStartingPointLng();
+        double lat = _mapper.getStartPointLat();
+        double lng = _mapper.getStartPointLng();
         int alt = _mapper.getMissionAlt();
         
         var commandBody = new MAVLink.mavlink_mission_item_int_t()
@@ -230,7 +249,7 @@ public class ArduCopterService : Hub<IDroneHub>
             z = alt,            // (int)Math.Round(alt),
             autocontinue = 1,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
             current = 2,        // 현재 웨이포인트 번호
-            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
+            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
             frame = 3,          // default: 0(위도경도고도 전역 좌표계), 3(위도경도 전역, 고도 상대좌표계)
             target_system = 1,
         };

@@ -11,7 +11,7 @@ public interface IDroneHub
     Task HandleMissionAlt(int missionAlt);
     Task HandleMissionMarking(string startPoint, List<string> transitPoints, string targetPoint);
     
-    Task HandleDroneStartingMarking(double lat, double lng);
+    Task HandleDroneStartMarking(double lat, double lng);
     Task HandleDroneTargetMarking(double lat, double lng);
     Task HandleDroneMoveToTarget(double lat, double lng);
     Task HandleDroneMoveToBase(double lat, double lng);

@@ -19,7 +19,7 @@ export const DroneMonitor = () => {
     const [isWayPointBtn, setIsWayPointBtn] = useState(false);
     const [isLocalMarker, setIsLocalMarker] = useState(false);
     const [isMissionBtn, setIsMissionBtn] = useState(false);
-
+    const [targetPoints, setTargetPoints] = useState([]); // {id:1, position:{lat:0,lng:0}}
     const [localLat, setLocalLat] = useState();
     const [localLon, setLocalLon] = useState();
 
@@ -84,6 +84,8 @@ export const DroneMonitor = () => {
                            setLocalLon={setLocalLon}
                            isMissionBtn={isMissionBtn}
                            handleIsMissionBtn={handleIsMissionBtn}
+                           targetPoints={targetPoints}
+                           setTargetPoints={setTargetPoints}
                 />
             </div>
                 {gcsMode === 'flight' && isRightPanel ? (
