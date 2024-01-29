@@ -214,7 +214,7 @@ export const FlightContents = (props) => {
                 ? <MainController isController={props.isController}
                                   handleIsController={props.handleIsController}
                                   handleIsRtl={props.handleIsRtl}
-                                  lastPathReset={props.lastPathReset}
+                                  // lastPathReset={props.lastPathReset}
                                   handleMarkerReset={props.handleMarkerReset}
                                   targetPoints= {props.targetPoints}/>
                 : <button onClick={props.handleIsController} className={`absolute bottom-0 w-10 h-7 rounded-t-md bg-[#1D1D41] hover:bg-gray-300`}>
@@ -564,7 +564,7 @@ const FlightBtn = (props) => {
 }
 
 const MainController = (props) => {
-    const { droneMessage, handleDroneTargetMarking } = useContext(DroneContext);
+    const { droneMessage, handleDroneTargetMarking, handleDroneTransitMarking } = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
     const startPoints = droneMessage ? droneState.DroneMission.StartPoint: null;
     const targetPoints = props.targetPoints
@@ -585,15 +585,21 @@ const MainController = (props) => {
     } = useContext(DroneContext);
 
     const handleMoveBtn = () => {
-        // handleDroneFlightMode(4);
+        handleDroneFlightMode(4);
         handleDroneTargetMarking(
-            targetPoints[0].position.lat,
-            targetPoints[0].position.lng
+            targetPoints[targetPoints.length -1].position.lat,
+            targetPoints[targetPoints.length -1].position.lng
         );
+        const transitPoinstList = [];
+        const transitList = targetPoints.slice(0,targetPoints.length -1)
+        transitList.map((obj)=> {
+            transitPoinstList.push(obj.position)
+        })
+
+        handleDroneTransitMarking(transitPoinstList)
+
         handleDroneMovetoTarget();
     }
-
-
 
     const handleArmBtn = () => {
         handleDroneFlightMode(4);

@@ -16,5 +16,4 @@ public class MissionLoadAPI
     public List<string> TransitPoints { get; set; }
     public string? FlightDistance { get; set; }
     public string? TakeTime { get; set; }
-
 }

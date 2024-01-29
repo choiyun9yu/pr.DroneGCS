@@ -95,6 +95,7 @@ public class DroneMission
     public int CurrentMission;
     public bool IsLanded = true;
     public DroneLocation StartPoint;
+    public List<DroneLocation> TransitPoint;
     public DroneLocation TargetPoint;
     public int MissionAlt = 10;             // 주행 고도
     // public int MissionSpeed = 10;
@@ -103,6 +104,12 @@ public class DroneMission
     public FixedSizedQueue<DroneLocation> DroneTrails = new(600);    // size 가 600 이면 0.5초에 하나씩 이라서 1초 씩 300개 -> 5분 
     public DateTime? StartTime = null;      // Take Off 기준 
     public DateTime? CompleteTime = null;   // Disarm 기준 
+}
+
+public struct TransitItem
+{
+    public int id { get; set; }
+    public DroneLocation position { get; set; }
 }
 
 public struct DroneLocation   

@@ -53,7 +53,6 @@ public class ApiController : ControllerBase
     {
         try
         {
-            // 여기서 내려줄 때 좌표까지 같이 내려주면 좋을 듯 
             return Ok(_gcsApiService.GetAllMissionLoad());
         }
         catch (Exception e)

@@ -75,6 +75,19 @@ public class GcsApiService
             
             double takeTime = flightDistance / 600 + 1;
             
+            // LocalPointAPI _startPoint =
+            //     _localPoint.Find(Builders<LocalPointAPI>.Filter.Eq("_id", startPoint)).FirstOrDefault();
+            // LocalPointAPI _targetPoint = _localPoint.Find(Builders<LocalPointAPI>.Filter.Eq("_id", targetPoint)).FirstOrDefault();;
+            // List<LocalPointAPI> _transitPointsList = null;
+            // foreach (string obj in transitPointsList)
+            // {
+            //     LocalPointAPI selectPoint = _localPoint.Find(Builders<LocalPointAPI>.Filter.Eq("_id", obj)).FirstOrDefault();
+            //     if (selectPoint != null)
+            //     {
+            //         _transitPointsList.Add(selectPoint);
+            //     }
+            // }
+
             var missionLoad = new MissionLoadAPI
             {
                 _id = id,
@@ -98,9 +111,9 @@ public class GcsApiService
         }    
     }
     
-    public object GetAllMissionLoad()
+    public List<MissionLoadAPI> GetAllMissionLoad()
     {
-        var mission = _missionLoad
+        List<MissionLoadAPI> mission = _missionLoad
             .Find(Builders<MissionLoadAPI>.Filter.Empty)
             .ToList();
 

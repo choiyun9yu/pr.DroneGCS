@@ -130,8 +130,6 @@ public class MavlinkMapper
     // if (data is MAVLink.mavlink_gps_raw_int_t gpsRawInt)
     // {
     //   Console.WriteLine($"lat:{gpsRawInt.lat}, lon:{gpsRawInt.lon}");
-    //   _droneMessage.DroneStt.Lat = gpsRawInt.lat * 1.0 / 10000000;
-    //   _droneMessage.DroneStt.Lon = gpsRawInt.lon * 1.0 / 10000000;
     // }
     // if (data is MAVLink.mavlink_system_time_t systemTime)
     // {
@@ -447,7 +445,22 @@ public class MavlinkMapper
   {
     return _drone.DroneMission.StartPoint.lng;
   }
+
+  public List<DroneLocation> getTransitPoint()
+  {
+    return _drone.DroneMission.TransitPoint;
+  }
+
+  public double getCurrentLat()
+  {
+    return _drone.DroneStt.Lat;
+  }
   
+  public double getCurrentLon()
+  {
+    return _drone.DroneStt.Lon;
+  }
+
   public double getTargetPointLat()
   {
     return _drone.DroneMission.TargetPoint.lat;
@@ -461,6 +474,12 @@ public class MavlinkMapper
   public int getMissionAlt()
   {
     return _drone.DroneMission.MissionAlt;
+  }
+  
+
+  public double getRemainDistance()
+  {
+    return (double)_drone.DroneMission.RemainDistance;
   }
 
   public async Task setMissionAlt(int missionAlt)
@@ -483,6 +502,11 @@ public class MavlinkMapper
       lat= lat,
       lng= lng
     };
+  }
+
+  public async Task setTransitPoint(List<DroneLocation> transitPoinst)
+  {
+    _drone.DroneMission.TransitPoint = transitPoinst;
   }
 
   public async Task setTargetPoint(double lat, double lng)

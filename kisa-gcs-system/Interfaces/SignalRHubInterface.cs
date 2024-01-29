@@ -13,6 +13,7 @@ public interface IDroneHub
     
     Task HandleDroneStartMarking(double lat, double lng);
     Task HandleDroneTargetMarking(double lat, double lng);
+    Task HandleDroneTransitMarking(object transitList);
     Task HandleDroneMoveToTarget(double lat, double lng);
     Task HandleDroneMoveToBase(double lat, double lng);
     

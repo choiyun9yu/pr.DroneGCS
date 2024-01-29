@@ -10,7 +10,7 @@ import {MissionContents} from "./MissionMode";
 import {VideoContent, VideoContents} from "./VideoMode";
 
 export const MiddleMap = (props) => {
-    const { droneMessage, handleDroneStartMarking } = useContext(DroneContext);
+    const { droneMessage, handleDroneStartMarking} = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
 
     const startPoint = droneMessage ? droneState.DroneMission.StartPoint: null;
@@ -63,9 +63,9 @@ export const MiddleMap = (props) => {
         setIsMarker(false);
     }
 
-    const lastPathReset = () => {
-        setTargetPoints([])
-    }
+    // const lastPathReset = () => {
+    //     setTargetPoints([])
+    // }
 
     const handleIsRtl = () => {
         setIsRtl(!isRtl);
@@ -193,7 +193,7 @@ export const MiddleMap = (props) => {
                             isMarker={isMarker}
                             handleIsMarker={handleIsMarker}
                             handleIsRtl={handleIsRtl}
-                            lastPathReset={lastPathReset}
+                            // lastPathReset={lastPathReset}
                             monitorTable={monitorTable}
                             setMonitorTable={setMonitorTable}
                             handleMarkerReset={handleMarkerReset}
@@ -205,7 +205,7 @@ export const MiddleMap = (props) => {
                            handleCurrentCenter={handleCurrentCenter}
                            handleStartPointCenter={handleStartPointCenter}
                            handleTargetPointCenter={handleTargetPointCenter}
-                           lastPathReset={lastPathReset}
+                           // lastPathReset={lastPathReset}
                            handleIsRtl={handleIsRtl}
                            monitorTable={monitorTable}
                            setMonitorTable={setMonitorTable}
@@ -240,7 +240,6 @@ export const MiniMap = (props) => {
 }
 
 export const Table = (props) => {
-    const haversine = require('haversine');
     const { droneMessage } = useContext(DroneContext);
     const monitorTable = props.monitorTable;
 

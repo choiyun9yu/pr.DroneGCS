@@ -13062,7 +13062,7 @@ public partial class MAVLink
             /// <summary>Waypoint ID (sequence number). Starts at zero. Increases monotonically for each waypoint, no gaps in the sequence (0,1,2,3,4).   </summary>
         [Units("")]
         [Description("Waypoint ID (sequence number). Starts at zero. Increases monotonically for each waypoint, no gaps in the sequence (0,1,2,3,4).")]
-        public  ushort seq;
+        public  int seq;
             /// <summary>The scheduled action for the waypoint. MAV_CMD  </summary>
         [Units("")]
         [Description("The scheduled action for the waypoint.")]
@@ -13091,7 +13091,6 @@ public partial class MAVLink
         [Units("")]
         [Description("Mission type.")]
         public  /*MAV_MISSION_TYPE*/byte mission_type;
-    
     };
 
     

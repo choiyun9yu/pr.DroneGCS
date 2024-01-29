@@ -1,7 +1,10 @@
+using System.Collections;
+using System.Text.Json;
 using kisa_gcs_system.Interfaces;
 using kisa_gcs_system.Models;
 using kisa_gcs_system.Services.Helper;
 using MAVSDK;
+
 using static kisa_gcs_system.Models.ArrowButton;
 
 namespace kisa_gcs_system.Services;
@@ -186,6 +189,50 @@ public class ArduCopterService : Hub<IDroneHub>
         _mapper.setTargetPoint(lat, lng);
     }
 
+    public async Task HandleDroneTransitMarking(object transitList)
+    {
+        if (transitList is JsonElement jsonElement)
+        {
+            List<DroneLocation> transitPoints = new List<DroneLocation>();
+
+            // JsonElement이면서 배열
+            foreach (JsonElement arrayElement in jsonElement.EnumerateArray())
+            {
+                DroneLocation location = ParseDroneLocation(arrayElement);
+                transitPoints.Add(location);
+            }
+
+            _mapper.setTransitPoint(transitPoints);
+        }
+    }
+
+    private DroneLocation ParseDroneLocation(JsonElement jsonElement)
+    {
+        DroneLocation location = new DroneLocation();
+
+        if (jsonElement.TryGetProperty("lat", out var latElement) && latElement.ValueKind == JsonValueKind.Number)
+        {
+            location.lat = latElement.GetDouble();
+        }
+
+        if (jsonElement.TryGetProperty("lng", out var lngElement) && lngElement.ValueKind == JsonValueKind.Number)
+        {
+            location.lng = lngElement.GetDouble();
+        }
+
+        if (jsonElement.TryGetProperty("global_frame_alt", out var globalFrameAltElement) && globalFrameAltElement.ValueKind == JsonValueKind.Number)
+        {
+            location.global_frame_alt = globalFrameAltElement.GetDouble();
+        }
+
+        if (jsonElement.TryGetProperty("terrain_alt", out var terrainAltElement) && terrainAltElement.ValueKind == JsonValueKind.Number)
+        {
+            location.terrain_alt = terrainAltElement.GetDouble();
+        }
+
+        return location;
+    }
+
     public async Task HandleMissionAlt(int missionalt)
     {
         _mapper.setMissionAlt(missionalt);
@@ -193,44 +240,50 @@ public class ArduCopterService : Hub<IDroneHub>
 
     public async Task HandleDroneMoveToTarget()
     {
+        
+        
         double lat = _mapper.getTargetPointLat();
+        List<DroneLocation> transit = _mapper.getTransitPoint();
         double lng = _mapper.getTargetPointLng();
+        float alt = _mapper.getMissionAlt();
+
         double flightDistance = 0;
         
-        // 단일 목적지 인 경우 
         flightDistance += _vincentyCalculator.DistanceCalculater(
             _mapper.getStartPointLat(),
             _mapper.getStartPointLng(),
             lat, lng);
         _mapper.setTotalDistance(flightDistance);
-
-        createMission(lat, lng);
         
-        // To Do 
-        // 경유지 유무에 따라 여기서 미션 생성도 변화를 주고,
-        // 전체 거리 계산도 변화를 줘야한다.
+        
+        foreach (DroneLocation location in transit)
+        {
+            sendMission(location.lat, location.lng, alt);
+            Thread.Sleep(1000);
+            while (_vincentyCalculator.DistanceCalculater(location.lat, location.lng, 
+                       _mapper.getCurrentLat(), _mapper.getCurrentLon()) > 1) { }
+            Console.WriteLine("Arrival");
+        }
 
+        sendMission(lat, lng, alt);
     }
 
-    public async Task createMission(double lat, double lng)
+    public async Task sendMission(double lat, double lng, float alt)
     {
-        int alt = _mapper.getMissionAlt();
-        var commandBody = new MAVLink.mavlink_mission_item_int_t()
+        var commandBody = new MAVLink.mavlink_mission_item_t()
         {
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
-            x = (int)Math.Round(lat * 10000000),
-            y = (int)Math.Round(lng * 10000000),
-            z = alt,             // (int)Math.Round(alt),
-            autocontinue = 0,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
-            current = 2,        // 현재 웨이포인트 번호, (To Do, WayPoint 번호를 바꿔가면서 해봐야겠다. )
-            // mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,  // 미션 타입도 한번 알아보자.TO DO
-            mission_type = 0,  // 미션 타입도 한번 알아보자.TO DO
+            x = (float)lat,
+            y = (float)lng,
+            z = alt,            
+            autocontinue = 1,   
+            current = 2,        // 2로 해야 움직임 (이유 모르겠음..) 
+            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
             frame = 3,          // default: 0(위도경도고도 전역 좌표계), 3(위도경도 전역, 고도 상대좌표계)
             target_system = 1,
-            // param1 = 1
         };
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,
+            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
             commandBody));
         await SetCommandAsync(msg);
     }
@@ -239,22 +292,24 @@ public class ArduCopterService : Hub<IDroneHub>
     {
         double lat = _mapper.getStartPointLat();
         double lng = _mapper.getStartPointLng();
-        int alt = _mapper.getMissionAlt();
+        float alt = _mapper.getMissionAlt();
         
-        var commandBody = new MAVLink.mavlink_mission_item_int_t()
+        var commandBody = new MAVLink.mavlink_mission_item_t()
         {
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
-            x = (int)Math.Round(lat * 10000000),
-            y = (int)Math.Round(lng * 10000000),
-            z = alt,            // (int)Math.Round(alt),
-            autocontinue = 1,   // 다음 웨이포인트로 이동하기 전에 현재 웨이 포인트를 완료해야 하는지 여부 (1: 완료, 0: 완료안해도됨) 
+            // x = (int)Math.Round(lat * 10000000),
+            // y = (int)Math.Round(lng * 10000000),
+            x = (float)lat,
+            y = (float)lng,
+            z = alt,            
+            autocontinue = 0,   
             current = 2,        // 현재 웨이포인트 번호
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
             frame = 3,          // default: 0(위도경도고도 전역 좌표계), 3(위도경도 전역, 고도 상대좌표계)
             target_system = 1,
         };
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,
+            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
             commandBody));
         await SetCommandAsync(msg);
     }
