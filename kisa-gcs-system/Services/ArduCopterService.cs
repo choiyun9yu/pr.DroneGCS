@@ -38,6 +38,8 @@ public class ArduCopterService : Hub<IDroneHub>
     // private static int SpeedIncrement = 50;
     
     private VincentyCalculator _vincentyCalculator = new();
+
+    private CancellationTokenSource _cancellationTokenSource;
     
     public ArduCopterService(IHubContext<ArduCopterService> hubContext)
     {
@@ -73,7 +75,12 @@ public class ArduCopterService : Hub<IDroneHub>
         string droneMessage = _mapper.ObjectToJson();
         await _hubContext.Clients.All.SendAsync("droneMessage", droneMessage);
     }
-    
+
+    public async Task HandleDroneContorlStt(string controlStt)
+    {
+        _mapper.setControlStt(controlStt);
+    }
+
     // 비행 모드 변경 메소드 (Auto ~ RTL)
     public async Task HandleDroneFlightMode(CustomMode flightMode)
     {
@@ -240,32 +247,101 @@ public class ArduCopterService : Hub<IDroneHub>
 
     public async Task HandleDroneMoveToTarget()
     {
+        _cancellationTokenSource = new CancellationTokenSource();
         
-        
+        _mapper.setControlStt("auto");
         double lat = _mapper.getTargetPointLat();
         List<DroneLocation> transit = _mapper.getTransitPoint();
         double lng = _mapper.getTargetPointLng();
         float alt = _mapper.getMissionAlt();
-
+        int count = 0;
+        
+        HandleDroneFlightMode(CustomMode.GUIDED);
+        
+        HandleDroneFlightCommand(DroneFlightCommand.ARM);
+        Thread.Sleep(1000);
+        
+        HandleDroneFlightCommand(DroneFlightCommand.TAKEOFF);
+        
         double flightDistance = 0;
+        _mapper.setCurrentDistance(0);
         
-        flightDistance += _vincentyCalculator.DistanceCalculater(
-            _mapper.getStartPointLat(),
-            _mapper.getStartPointLng(),
-            lat, lng);
-        _mapper.setTotalDistance(flightDistance);
+        if (transit.Count == 0)
+        {
+            flightDistance += _vincentyCalculator.DistanceCalculater(
+                _mapper.getStartPointLat(),
+                _mapper.getStartPointLng(),
+                lat, lng);
+            _mapper.setTotalDistance(flightDistance);
+        }
+        else
+        {
+            for (int i = 0; i < transit.Count; i++)
+            {
+                flightDistance += _vincentyCalculator.DistanceCalculater(
+                    (i == 0) ? _mapper.getStartPointLat() : transit[i - 1].lat,
+                    (i == 0) ? _mapper.getStartPointLng() : transit[i - 1].lng,
+                    transit[i].lat, transit[i].lng
+                );
+            }
+            flightDistance += _vincentyCalculator.DistanceCalculater(
+                transit.Last().lat, transit.Last().lng, lat, lng
+            );
+            _mapper.setTotalDistance(flightDistance);
+        }
+        Thread.Sleep(1000);
         
+        while (_mapper.getRelativeAlt() < _mapper.getMissionAlt() - 0.1) { }
+        Console.WriteLine("Mission Alt Reached");
         
         foreach (DroneLocation location in transit)
         {
-            sendMission(location.lat, location.lng, alt);
+            count += 1;
+            await sendMission(location.lat, location.lng, alt);
             Thread.Sleep(1000);
-            while (_vincentyCalculator.DistanceCalculater(location.lat, location.lng, 
-                       _mapper.getCurrentLat(), _mapper.getCurrentLon()) > 1) { }
-            Console.WriteLine("Arrival");
+            while (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
+                       location.lat, location.lng) > 1.5)
+            {
+                // 비동기적으로 키 입력 확인
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
+                    if (keyInfo.Key == ConsoleKey.Q)
+                    {
+                        Console.WriteLine("반복문 중단");
+                        HandleDroneFlightMode(CustomMode.BRAKE);
+                        return; // 메서드를 빠져나가서 종료
+                    }
+                }
+                
+            }
+            Console.WriteLine($"Transit{count} Arrival");
         }
+        await sendMission(lat, lng, alt);
+        Thread.Sleep(1000);
+        while (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
+                   lat, lng) > 1.5)
+        {
+            // 비동기적으로 키 입력 확인
+            if (Console.KeyAvailable)
+            {
+                ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
+                if (keyInfo.Key == ConsoleKey.Q)
+                {
+                    Console.WriteLine("반복문 중단");
+                    HandleDroneFlightMode(CustomMode.BRAKE);
+                    return; // 메서드를 빠져나가서 종료
+                }
+            }
+        }
+        Console.WriteLine("Arrival");
+        
+        HandleDroneFlightCommand(DroneFlightCommand.LAND);
+        
+    }
 
-        sendMission(lat, lng, alt);
+    public void StopDroneMove()
+    {
     }
 
     public async Task sendMission(double lat, double lng, float alt)

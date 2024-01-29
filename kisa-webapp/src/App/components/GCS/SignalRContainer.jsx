@@ -62,7 +62,6 @@ export const SignalRProvider = ({ children }) => {
                 .forEach(handler => {connectionObj.off(handler)})   // 배열에 포함된 각 핸들러에 대해 connectionObj.off(handler)를 호출하여 해당 이벤트 핸들러를 제거
         };
     }, []);
-
     const handleDroneFlightMode = flightMode => {
         connection.current.invoke('HandleDroneFlightMode', flightMode)
     }
@@ -86,6 +85,9 @@ export const SignalRProvider = ({ children }) => {
     }
     const handleDroneMovetoBase = () => {
         connection.current.invoke('HandleDroneMoveToBase')
+    }
+    const stopDroneMove = () => {
+        connection.current.invoke('StopDroneMove')
     }
     const handleDroneJoystick = arrow => {
         connection.current.invoke('HandleDroneJoystick', arrow)
@@ -114,7 +116,8 @@ export const SignalRProvider = ({ children }) => {
             handleDroneTargetMarking,
             handleDroneMovetoTarget,
             handleDroneMovetoBase,
-            handleMissionAlt
+            handleMissionAlt,
+            stopDroneMove
         }}>
             {children}
         </DroneContext.Provider>

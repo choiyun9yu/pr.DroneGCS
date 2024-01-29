@@ -54,19 +54,18 @@ public class MavlinkMapper
       _drone.DroneStt.Speed = (float)Math.Sqrt(globalPositionInt.vx * globalPositionInt.vx +
                                                       globalPositionInt.vy * globalPositionInt.vy +
                                                       globalPositionInt.vz * globalPositionInt.vz) / 100f;
-
-      if (Math.Abs(relative_alt - _drone.DroneMission.MissionAlt) < 0.3)
-      {
-        _drone.DroneMission.IsTargetAlt = true;
-      }
-
-      if (Math.Abs(relative_alt - _drone.DroneMission.MissionAlt) > 0.3)
-      {
-        _drone.DroneMission.IsTargetAlt = false;
-      }
-
       if (DateTime.Now.Subtract(_lastAddedTrails).Milliseconds > 500)
       {
+        if (_drone.DroneMission.DroneTrails.q.Count != 0)
+        {
+          double lastLat = _drone.DroneMission.DroneTrails.q.Last().lat;
+          double lastLng = _drone.DroneMission.DroneTrails.q.Last().lng;
+          if (lastLat != lat && lastLng != lon)
+          {
+            _drone.DroneMission.CurrentDistance += _vincentyCalculator.DistanceCalculater(
+              lastLat, lastLng, lat, lon);   
+          }
+        }
         UpdateDroneTrails(lat, lon, relative_alt, global_alt, true);
       }
     }
@@ -414,8 +413,8 @@ public class MavlinkMapper
       terrain_alt = global_alt - relative_alt,
     });
 
-    _drone.DroneMission.RemainDistance = _vincentyCalculator.DistanceCalculater(lat, lon, _drone.DroneMission.TargetPoint.lat,
-      _drone.DroneMission.TargetPoint.lng);
+    // _drone.DroneMission.RemainDistance = _vincentyCalculator.DistanceCalculater(lat, lon, _drone.DroneMission.TargetPoint.lat,
+    //   _drone.DroneMission.TargetPoint.lng);
     
     _lastAddedTrails = DateTime.Now;
   }
@@ -475,11 +474,10 @@ public class MavlinkMapper
   {
     return _drone.DroneMission.MissionAlt;
   }
-  
 
-  public double getRemainDistance()
+  public string getControlStt()
   {
-    return (double)_drone.DroneMission.RemainDistance;
+    return _drone.ControlStt;
   }
 
   public async Task setMissionAlt(int missionAlt)
@@ -552,18 +550,13 @@ public class MavlinkMapper
     _drone.DroneMission.TotalDistance = totalDistance;
   }
 
-  public async Task setIsTargetAlt(bool stt)
+  public async Task setCurrentDistance(double currentDistance)
   {
-    _drone.DroneMission.IsTargetAlt = stt;
+    _drone.DroneMission.CurrentDistance = currentDistance;
   }
 
-  public async Task setCurrentMission(int seq)
+  public async Task setControlStt(string controlStt)
   {
-    _drone.DroneMission.CurrentMission = seq;
-  }
-
-  public async Task setIsLanded(bool stt)
-  {
-    _drone.DroneMission.IsLanded = stt;
+    _drone.ControlStt = controlStt;
   }
 }

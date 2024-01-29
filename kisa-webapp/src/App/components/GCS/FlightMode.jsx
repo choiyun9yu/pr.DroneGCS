@@ -564,18 +564,14 @@ const FlightBtn = (props) => {
 }
 
 const MainController = (props) => {
-    const { droneMessage, handleDroneTargetMarking, handleDroneTransitMarking } = useContext(DroneContext);
+    const { droneMessage,
+            handleDroneTargetMarking,
+            handleDroneTransitMarking,
+            stopDroneMove
+    } = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
     const startPoints = droneMessage ? droneState.DroneMission.StartPoint: null;
     const targetPoints = props.targetPoints
-
-    function waitTwoSecond(callback) {
-        setTimeout(callback, 2000);
-    }
-
-    function waitTenSecond(callback) {
-        setTimeout(callback, 10000);
-    }
 
     const {
         handleDroneFlightCommand,
@@ -585,7 +581,6 @@ const MainController = (props) => {
     } = useContext(DroneContext);
 
     const handleMoveBtn = () => {
-        handleDroneFlightMode(4);
         handleDroneTargetMarking(
             targetPoints[targetPoints.length -1].position.lat,
             targetPoints[targetPoints.length -1].position.lng
@@ -614,9 +609,13 @@ const MainController = (props) => {
     const handelReturnBtn = () => {
         handleDroneFlightMode(4);
         handleDroneMovetoBase();
+        stopDroneMove();
     }
 
-
+    const handleBreakBtn = () => {
+        handleDroneFlightMode(17);
+        stopDroneMove();
+    }
 
     return (
         <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]`}>
@@ -662,7 +661,7 @@ const MainController = (props) => {
                     Return
                 </button>
 
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleDroneFlightMode(17)}>
+                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleBreakBtn()}>
                     Break
                 </button>
 

@@ -59,8 +59,7 @@ public class GcsApiService
                     flightDistance += _vincentyCalculator.DistanceCalculater(
                         (i == 0) ? startLocalPoint[0] : getLocalPoint(transitPointsList[i - 1])[0],
                         (i == 0) ? startLocalPoint[1] : getLocalPoint(transitPointsList[i - 1])[1],
-                        transitLocalPoint[0],
-                        transitLocalPoint[1]
+                        transitLocalPoint[0], transitLocalPoint[1]
                     );
             
                 }

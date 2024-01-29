@@ -245,7 +245,7 @@ export const Table = (props) => {
 
     let droneState;
 
-    let averageSpped;
+    let averageSpeed;
 
     let totalDistance;
     let remainDistance;
@@ -264,8 +264,10 @@ export const Table = (props) => {
         droneState = droneMessage['droneMessage'];
 
         totalDistance = (droneState.DroneMission.TotalDistance);
-        remainDistance = (droneState.DroneMission.RemainDistance);
-        elapsedDistance = (totalDistance - remainDistance).toFixed(3);
+        elapsedDistance = (droneState.DroneMission.CurrentDistance);
+        remainDistance = totalDistance - elapsedDistance;
+        // remainDistance = (droneState.DroneMission.RemainDistance);
+        // elapsedDistance = (totalDistance - remainDistance).toFixed(3);
 
         startTime = droneState.DroneMission.StartTime
             ? new Date(droneState.DroneMission.StartTime).getTime()
@@ -283,9 +285,9 @@ export const Table = (props) => {
             formattedTakeTime = formatTime(takeTime);
         }
 
-        averageSpped = takeTime > 0 ? elapsedDistance / (takeTime / 1000) : 0;
+        averageSpeed = (takeTime>0) && (elapsedDistance>0) ? elapsedDistance / (takeTime / 1000) : 0;
 
-        // console.log(averageSpped)
+        // console.log(averageSpeed)
 
         formattedStartTime = startTime
             ? new Date(startTime).toLocaleTimeString('en-US', {hour12: false})
@@ -328,8 +330,8 @@ export const Table = (props) => {
                             <td className={`px-2`}>{droneMessage && (droneState.DroneStt.Speed).toFixed(3)} m/s</td>
                         </tr>
                         <tr>
-                            <th className={`px-2`}>평균 이동속도</th>
-                            <td className={`px-2`}>{((averageSpped > 0) ? averageSpped : 0).toFixed(3)} m/s</td>
+                            <th className={`px-2`}>평균 이동속력</th>
+                            <td className={`px-2`}>{((averageSpeed > 0) ? averageSpeed : 0).toFixed(3)} m/s</td>
                         </tr>
                         <tr>
                             <th className={`px-2`}>이륙 시작시간</th>
