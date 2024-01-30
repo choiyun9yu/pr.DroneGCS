@@ -14,10 +14,10 @@ public interface IDroneHub
     Task HandleDroneTransitMarking(object transitList);
     Task HandleDroneMoveToTarget(double lat, double lng);
     Task HandleDroneMoveToBase(double lat, double lng);
-    Task StopDroneMove();
     Task HandleDroneMoveToMission(string startPoint, string targetPoint, List<string> transitPoint, int alt, string totalDistance);
     Task HandleDroneJoystick(ArrowButton arrow);
     Task HandleControlJoystick(ArrowButton arrow);
+    // Task StopDroneMove();
     // Task HandleCameraJoystick(ArrowButton arrow);
     // Task HandleCameraCommand();
 }

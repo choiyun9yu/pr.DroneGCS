@@ -7,14 +7,14 @@ from .mongodb_helper import save_prediction_to_mongodb
 
 async def HubConnection():
     hub_connection = HubConnectionBuilder() \
-        .with_url("ws://localhost:5000/droneHub/") \
-        .configure_logging(logging_level=30) \
-        .with_automatic_reconnect({
-        "type": "raw",
-        "keep_alive_interval": 10,
-        "reconnect_interval": 5,
-        "max_attempts": 10
-    }).build()
+            .with_url("ws://localhost:5000/droneHub/") \
+            .configure_logging(logging_level=30) \
+            .with_automatic_reconnect({
+                "type": "raw",
+                "keep_alive_interval": 10,
+                "reconnect_interval": 5,
+                "max_attempts": 10
+            }).build()
 
     close_event = asyncio.Event()
 
@@ -22,8 +22,9 @@ async def HubConnection():
     hub_connection.on_close(lambda: close_event.set())
     hub_connection.on_reconnect(lambda: print("reconnection in progress"))
     hub_connection.on("droneMessage", lambda data: pipeline(data))
-    hub_connection.start()
+    # hub_connection.on("droneMessage", lambda data: print(data[0]))
 
+    hub_connection.start()
     try:
         await close_event.wait()
     finally:

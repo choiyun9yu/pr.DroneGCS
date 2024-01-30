@@ -92,6 +92,7 @@ public class DroneCamera
 
 public class DroneMission
 {
+    public string FligthId = "None";
     public DroneLocation StartPoint;
     public List<DroneLocation> TransitPoint;
     public DroneLocation TargetPoint;

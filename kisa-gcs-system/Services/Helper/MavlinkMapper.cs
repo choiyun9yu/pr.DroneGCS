@@ -396,11 +396,15 @@ public class MavlinkMapper
     // setStartPoint();
     // _droneMessage.DroneMission.TotalDistance = _haversineCalculator.Haversine(_droneMessage.DroneMission.StartPoint.lat, _droneMessage.DroneMission.StartPoint.lng,
     //                                                                         _droneMessage.DroneMission.TargetPoint.lat, _droneMessage.DroneMission.TargetPoint.lng);
+    DateTime current = DateTime.Now;
+    string flightId = $"{current.Year}{current.Month:D2}{current.Day:D2}{current.Hour:D2}{current.Minute:D2}{current.Second:D2}";
+    _drone.DroneMission.FligthId = $"{flightId}t";
   }
   
   public void HandleMissionComplete()
   {
     setCompleteTime();
+    _drone.DroneMission.FligthId = "None";
     // _droneMessage.DroneMission.StartPoint = new();
     // _droneMessage.DroneMission.TargetPoint = new();
   }

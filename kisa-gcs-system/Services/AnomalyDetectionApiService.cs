@@ -37,10 +37,13 @@ namespace kisa_gcs_system.Services
         {
             try
             {
+                
+                DateTime periodToDate = DateTime.Parse(periodTo).AddDays(2);
+                
                 var filter = Builders<AnomalyDetection>.Filter.And(
                     Builders<AnomalyDetection>.Filter.Eq(api => api.DroneId, droneId),
                     Builders<AnomalyDetection>.Filter.Gte(api => api.PredictTime, DateTime.Parse(periodFrom)),
-                    Builders<AnomalyDetection>.Filter.Lte(api => api.PredictTime, DateTime.Parse(periodTo))
+                    Builders<AnomalyDetection>.Filter.Lte(api => api.PredictTime, periodToDate)
                 );
 
                 var distinctFlightIds = _dronePredict
@@ -94,11 +97,13 @@ namespace kisa_gcs_system.Services
                 ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
                     .Exclude(d => d._id);
 
+                DateTime periodToDate = DateTime.Parse(periodTo).AddDays(2);
+                
                 FilterDefinition<AnomalyDetection> filter = Builders<AnomalyDetection>.Filter.And(
                     Builders<AnomalyDetection>.Filter.Eq("DroneId", DroneId),
                     Builders<AnomalyDetection>.Filter.Eq("FlightId", FlightId),
                     Builders<AnomalyDetection>.Filter.Gte("PredictTime", DateTime.Parse(periodFrom)),
-                    Builders<AnomalyDetection>.Filter.Lte("PredictTime", DateTime.Parse(periodTo))
+                    Builders<AnomalyDetection>.Filter.Lte("PredictTime", periodToDate)
                 );
 
                 List<AnomalyDetection> logdataList = _dronePredict.Find(filter)
@@ -122,11 +127,13 @@ namespace kisa_gcs_system.Services
                 ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
                     .Exclude(d => d._id);
 
+                DateTime periodToDate = DateTime.Parse(periodTo).AddDays(2);
+                
                 FilterDefinition<AnomalyDetection> filter = Builders<AnomalyDetection>.Filter.And(
                     Builders<AnomalyDetection>.Filter.Eq("DroneId", DroneId),
                     Builders<AnomalyDetection>.Filter.Eq("FlightId", FlightId),
                     Builders<AnomalyDetection>.Filter.Gte("PredictTime", DateTime.Parse(periodFrom)),
-                    Builders<AnomalyDetection>.Filter.Lte("PredictTime", DateTime.Parse(periodTo))
+                    Builders<AnomalyDetection>.Filter.Lte("PredictTime", periodToDate)
                 );
 
                 List<AnomalyDetection> predictionList = _dronePredict.Find(filter)

@@ -25,9 +25,9 @@ def save_prediction_to_mongodb(drone_id, flight_id, sensor_data, predict_data):
 
         result = collection.insert_one(data_to_insert)
 
-        if (result.inserted_id is not None):
-            print(data_to_insert)
-        else:
-            print("can't save")
+        # if (result.inserted_id is not None):
+        #     print(data_to_insert)
+        # else:
+        #     print("can't save")
 
         client.close()
