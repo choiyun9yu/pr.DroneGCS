@@ -17,7 +17,7 @@ export const LeftSidebar = (props) => {
 
             <EnrolledDrone setCenter={props.setCenter} />
 
-            <FlightSchedule/>
+            <FlightSchedule flightSchedule={props.flightSchedule}/>
 
         </div>
     );
@@ -62,7 +62,7 @@ const EnrolledDrone = (props) => {
 
                     <div className={`flex items-center w-full`}>
                         {/*<span>{droneMessage.droneMessage.DroneId}</span>*/}
-                        <span className={`text-xs, font-normal`}>{"GA-40:14556"}</span>
+                        <span className={`text-xs, font-normal`}>{"Ardu-6:14556"}</span>
                         <span className={`ml-auto mr-0.5`}>
                             {droneState.IsOnline
                                 ? <div className="w-3 h-3 bg-green-500 rounded-full"></div>
@@ -117,13 +117,76 @@ const EnrolledDrone = (props) => {
     )
 }
 
-const FlightSchedule = () => {
+const FlightSchedule = (props) => {
     return (
         <div className="w-full m-2 items-center">
             <span className="ml-3">• 비행 경로 </span>
-            <div>
-
+            <div className={`flex flex-col m-1 text-sm font-normal`}>
+                <ScheduleComponent
+                    startPoint={props.flightSchedule[0]}
+                    transitList={props.flightSchedule[1]}
+                    targetPoint={props.flightSchedule[2]}
+                />
             </div>
         </div>
     )
+}
+
+const ScheduleComponent = (props) => {
+    const {droneMessage} = useContext(DroneContext);
+    const JSXElements = [];
+    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
+
+    if (props.transitList === undefined){
+        return;
+    }
+    const transitPath = [props.startPoint, ...props.transitList, props.targetPoint];
+    for (let i=0; i<transitPath.length; i++){
+        if (i===0) continue;
+        JSXElements.push(
+            <>
+                {(droneMessage?droneState.DroneMission.PathIndex:0)===i
+                    ? (
+                        <div className={`flex flex-col justify-center m-2  pl-3 py-1 border border-[#6359E9] rounded-md w-[85%] bg-[#6359E9] `} key={i}>
+                            <div>
+                                <span> {transitPath[i - 1]} </span>
+                            </div>
+
+                            <div className={`flex flex-row`}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
+                                     stroke="currentColor" className="w-4 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round"
+                                          d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"/>
+                                </svg>
+
+                                <span className={`ml-1`}> {transitPath[i]} </span>
+                            </div>
+                        </div>
+                    )
+                    : (
+                        <div className={`flex flex-col justify-center m-2  pl-3 py-1 border border-gray-400 rounded-md w-[85%] `} key={i}>
+                            <div>
+                                <span> {transitPath[i - 1]} </span>
+                            </div>
+
+                            <div className={`flex flex-row`}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
+                                     stroke="currentColor" className="w-4 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round"
+                                          d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"/>
+                                </svg>
+
+                                <span className={`ml-1`}> {transitPath[i]} </span>
+                            </div>
+                        </div>
+                    )}
+            </>
+        )
+    }
+
+    return (
+        <div>
+            {JSXElements}
+        </div>
+    );
 }

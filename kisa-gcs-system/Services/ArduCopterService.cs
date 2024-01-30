@@ -281,6 +281,7 @@ public class ArduCopterService : Hub<IDroneHub>
             {
                 List<double>? TransitPoint = _gcsApiService.getLocalPoint(transitPoint[i]);
                 await sendMission(TransitPoint[0], TransitPoint[1], alt);
+                _mapper.setPathIndex(i+1);
                 Thread.Sleep(1000);
                 while (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
                            TransitPoint[0], TransitPoint[1]) > 1.5)
@@ -301,6 +302,7 @@ public class ArduCopterService : Hub<IDroneHub>
             
             List<double>? TargetPoint = _gcsApiService.getLocalPoint(targetPoint);
             await sendMission(TargetPoint[0], TargetPoint[1], alt);
+            _mapper.setPathIndex(transitPoint.Count+1);
             Thread.Sleep(1000);
             while (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
                        TargetPoint[0], TargetPoint[1]) > 1.5)

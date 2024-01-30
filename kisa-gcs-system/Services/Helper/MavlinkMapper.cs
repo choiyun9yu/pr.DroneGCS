@@ -561,4 +561,9 @@ public class MavlinkMapper
   {
     _drone.ControlStt = controlStt;
   }
+
+  public async Task setPathIndex(int i)
+  {
+    _drone.DroneMission.PathIndex = i;
+  }
 }

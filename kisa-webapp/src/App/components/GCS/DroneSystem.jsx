@@ -20,8 +20,7 @@ export const DroneSystem = () => {
     const [isMissionBtn, setIsMissionBtn] = useState(false);
 
     const [targetPoints, setTargetPoints] = useState([]); // {id:1, position:{lat:0,lng:0}}
-    // const [markerId, setMarkerId] = useState(1);
-    // const [pathLine, setPathLine] = useState([]);
+    const [flightSchedule, setFlightSchedule] = useState([]);
 
     const [localLat, setLocalLat] = useState();
     const [localLon, setLocalLon] = useState();
@@ -67,6 +66,7 @@ export const DroneSystem = () => {
                         <LeftSidebar gcsMode={gcsMode}
                                      setGcsMode={setGcsMode}
                                      setCenter={setCenter}
+                                     flightSchedule={flightSchedule}
                         />
                       </div>
                     : null}
@@ -89,6 +89,7 @@ export const DroneSystem = () => {
                            handleIsMissionBtn={handleIsMissionBtn}
                            targetPoints={targetPoints}
                            setTargetPoints={setTargetPoints}
+                           setFlightSchedule={setFlightSchedule}
                 />
             </div>
                 {gcsMode === 'flight' && isRightPanel ? (
@@ -109,6 +110,7 @@ export const DroneSystem = () => {
                         isMissionBtn={isMissionBtn}
                         handleIsMissionBtn={handleIsMissionBtn}
                         setTargetPoints={setTargetPoints}
+                        setFlightSchedule={setFlightSchedule}
                     /> : null}
                 {gcsMode === 'video' ? <VideoMode /> : null}
         </div>

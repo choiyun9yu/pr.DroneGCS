@@ -99,6 +99,7 @@ public class DroneMission
     // public int MissionSpeed = 10;
     public double? TotalDistance = 0.0;
     public double? CurrentDistance = 0;
+    public int? PathIndex = 0;
     // public double? RemainDistance = 0.0;
     public FixedSizedQueue<DroneLocation> DroneTrails = new(600);    // size 가 600 이면 0.5초에 하나씩 이라서 1초 씩 300개 -> 5분 
     public DateTime? StartTime = null;      // Take Off 기준 

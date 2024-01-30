@@ -58,6 +58,7 @@ export const MiddleMap = (props) => {
         props.setTargetPoints([]);
         setPathLine([]);
         setIsMarker(false);
+        props.setFlightSchedule([]);
     }
 
     const handleIsRtl = () => {

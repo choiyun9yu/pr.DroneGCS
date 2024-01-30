@@ -237,10 +237,11 @@ export const MissionMode = (props) => {
                             setSelectFlightAlt(obj.flightAlt)
                             setSelectFlightDistance(obj.flightDistance)
                             setSelectTakeTime(obj.takeTime)
-                            // 여기서 경로와 마커 설정 !
                             handleDroneStartMarking(obj.startLatLng.lat, obj.startLatLng.lng)
                             handleDroneTargetMarking(obj.targetLatLng.lat, obj.targetLatLng.lng)
                             props.setTargetPoints(obj.transitLatLng??{id:0,lat:35.3632621,lng:-149.1652374})
+                            props.setFlightSchedule([obj.startPoint, obj.transitPoints, obj.targetPoint])
+                            props.setFlightSchedule([obj.startPoint, obj.transitPoints, obj.targetPoint])
                         }
                     })
                 } else {
