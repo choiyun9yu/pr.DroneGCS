@@ -6,7 +6,7 @@ import {AltitudeChart} from "./AltitudeChart";
 import {Table} from "./MiddleMap";
 
 export const MissionMode = (props) => {
-    const { handleDroneMovetoMission } = useContext(DroneContext);
+    const { handleDroneMovetoMission, handleDroneStartMarking, handleDroneTargetMarking } = useContext(DroneContext);
     const [missionData, setMissionData] = useState([]);
     const [missionList, setMissionList] = useState([]);
     const [selectMission, setSelectMission] = useState({});
@@ -22,6 +22,7 @@ export const MissionMode = (props) => {
     const [flightAlt, setFlightAlt] = useState(10);
     const [altScale, setAltScale] = useState(1);
     const [checkBtn, setCheckBtn] = useState(false);
+
 
     const handleMissionSelect = (e)=> {
         e.preventDefault();
@@ -236,6 +237,10 @@ export const MissionMode = (props) => {
                             setSelectFlightAlt(obj.flightAlt)
                             setSelectFlightDistance(obj.flightDistance)
                             setSelectTakeTime(obj.takeTime)
+                            // 여기서 경로와 마커 설정 !
+                            handleDroneStartMarking(obj.startLatLng.lat, obj.startLatLng.lng)
+                            handleDroneTargetMarking(obj.targetLatLng.lat, obj.targetLatLng.lng)
+                            props.setTargetPoints(obj.transitLatLng??{id:0,lat:35.3632621,lng:-149.1652374})
                         }
                     })
                 } else {

@@ -120,7 +120,7 @@ const EnrolledDrone = (props) => {
 const FlightSchedule = () => {
     return (
         <div className="w-full m-2 items-center">
-            <span className="ml-3">• 비행 일정 </span>
+            <span className="ml-3">• 비행 경로 </span>
             <div>
 
             </div>

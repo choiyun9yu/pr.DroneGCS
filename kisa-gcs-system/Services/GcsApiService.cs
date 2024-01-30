@@ -37,9 +37,11 @@ public class GcsApiService
             
             List<double> startLocalPoint = getLocalPoint(startPoint);
             List<double> endLocalPoint = getLocalPoint(targetPoint);
+            List<Transit> transitLatLng = new List<Transit>();
 
             double flightDistance = 0;
-
+            int idNum = 0; 
+            
             if (transitPointsList.Count == 0)
             {
                 flightDistance += _vincentyCalculator.DistanceCalculater(
@@ -50,14 +52,23 @@ public class GcsApiService
             {
                 for (int i = 0; i < transitPointsList.Count; i++)
                 {
+                    idNum += 1;
                     List<double> transitLocalPoint = getLocalPoint(transitPointsList[i]);
-                    
+                    transitLatLng.Add(new Transit
+                    {
+
+                        id = idNum ,
+                        position = new LatLng
+                        {
+                            lat = transitLocalPoint[0],
+                            lng = transitLocalPoint[1]
+                        }
+                    });
                     flightDistance += _vincentyCalculator.DistanceCalculater(
                         (i == 0) ? startLocalPoint[0] : getLocalPoint(transitPointsList[i - 1])[0],
                         (i == 0) ? startLocalPoint[1] : getLocalPoint(transitPointsList[i - 1])[1],
                         transitLocalPoint[0], transitLocalPoint[1]
                     );
-            
                 }
                 flightDistance += _vincentyCalculator.DistanceCalculater(
                     getLocalPoint(transitPointsList.Last())[0],
@@ -66,9 +77,19 @@ public class GcsApiService
                     endLocalPoint[1]
                 );
             }
+            idNum += 1;
+            transitLatLng.Add(new Transit
+            {
+                id = idNum,
+                position = new LatLng
+                {
+                    lat = endLocalPoint[0],
+                    lng = endLocalPoint[1]
+                }
+            });
             
             double takeTime = flightDistance / 600 + 0.5;   // 이착륙,가속도 붙는 시간 30초 정도 설정
-
+            
             var missionLoad = new MissionLoadAPI
             {
                 _id = id,
@@ -76,6 +97,17 @@ public class GcsApiService
                 TargetPoint = targetPoint,
                 FlightAlt = int.Parse(flirghtAlt),
                 TransitPoints = transitPointsList,
+                StartLatLng = new LatLng
+                {
+                    lat = startLocalPoint[0],
+                    lng = startLocalPoint[1]
+                },
+                TargetLatLng = new LatLng
+                {
+                    lat = endLocalPoint[0],
+                    lng = endLocalPoint[1]
+                },
+                TransitLatLng = transitLatLng,
                 FlightDistance = $"{Math.Round(flightDistance)/1000} km",
                 TakeTime = $"{(int)takeTime}분 {(int)(Math.Round(takeTime,1)%1*60)}초"
             };

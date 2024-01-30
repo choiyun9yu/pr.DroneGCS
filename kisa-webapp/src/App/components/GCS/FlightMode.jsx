@@ -46,10 +46,10 @@ const RightSideTop = () => {
                 </tr>
 
                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
-                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>GPS 수신</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.GpsStt}</td>
+                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>위성 수신 수</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.SatellitesCount}</td>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>HDOP</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.HODP}</td>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && (droneState.DroneStt.HDOP).toFixed(4)}</td>
                 </tr>
 
                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
@@ -665,9 +665,9 @@ const MainController = (props) => {
                     Brake
                 </button>
 
-                <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`}>
-                    Patrol
-                </button>
+                {/*<button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`}>*/}
+                {/*    Patrol*/}
+                {/*</button>*/}
 
             </div>
         </div>

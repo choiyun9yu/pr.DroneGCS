@@ -6,7 +6,7 @@ import { RegisterPage } from './components/Authentication/RegisterPage';
 import { AppWrapper } from './components/AppWrapper';
 import { AppDashboard } from './route/AppDashboard';
 import { AppGCS } from './route/AppGCS';
-import { DroneMonitor } from './components/GCS/DroneMonitor';
+import { DroneSystem } from './components/GCS/DroneSystem';
 import { AppAnomalyDetection } from './route/AppAnomalyDetection';
 import { Prediction } from './components/AnomalyDetection/Prediction';
 import { AppDeIdentification } from './route/AppDeIdentification';
@@ -31,7 +31,7 @@ export const Main = () => {
                     <Route element={ <SignalRProvider>
                                          <AppGCS />
                                      </SignalRProvider> }>
-                        <Route path="gcs" element={<DroneMonitor />} />
+                        <Route path="gcs" element={<DroneSystem />} />
                     </Route>
 
                     <Route element={<SignalRProvider>

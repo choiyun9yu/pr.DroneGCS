@@ -126,10 +126,12 @@ public class MavlinkMapper
     // {
     //   Console.WriteLine(scaledPressure2);
     // }
-    // if (data is MAVLink.mavlink_gps_raw_int_t gpsRawInt)
-    // {
-    //   Console.WriteLine($"lat:{gpsRawInt.lat}, lon:{gpsRawInt.lon}");
-    // }
+    if (data is MAVLink.mavlink_gps_raw_int_t gpsRawInt)
+    {
+      // Console.WriteLine($"lat:{gpsRawInt.lat}, lon:{gpsRawInt.lon}");
+      _drone.DroneStt.HDOP = gpsRawInt.eph < ushort.MaxValue ? gpsRawInt.eph / 100f : 0;
+      _drone.DroneStt.SatellitesCount = gpsRawInt.satellites_visible;
+    }
     // if (data is MAVLink.mavlink_system_time_t systemTime)
     // {
     //   Console.WriteLine(systemTime);

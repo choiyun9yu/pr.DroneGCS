@@ -5,10 +5,9 @@ import { FlightMode } from './FlightMode';
 import { MissionMode } from './MissionMode';
 import { VideoMode } from './VideoMode';
 import {useContext, useState} from "react";
-import {DataMap} from "../DataMap";
-import {DroneContext, SignalRProvider} from "./SignalRContainer";
+import {DroneContext} from "./SignalRContainer";
 
-export const DroneMonitor = () => {
+export const DroneSystem = () => {
     const {droneMessage} = useContext(DroneContext)
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
 
@@ -19,7 +18,11 @@ export const DroneMonitor = () => {
     const [isWayPointBtn, setIsWayPointBtn] = useState(false);
     const [isLocalMarker, setIsLocalMarker] = useState(false);
     const [isMissionBtn, setIsMissionBtn] = useState(false);
+
     const [targetPoints, setTargetPoints] = useState([]); // {id:1, position:{lat:0,lng:0}}
+    // const [markerId, setMarkerId] = useState(1);
+    // const [pathLine, setPathLine] = useState([]);
+
     const [localLat, setLocalLat] = useState();
     const [localLon, setLocalLon] = useState();
 
@@ -105,6 +108,7 @@ export const DroneMonitor = () => {
                         handleCurrentPoint={handleCurrentPoint}
                         isMissionBtn={isMissionBtn}
                         handleIsMissionBtn={handleIsMissionBtn}
+                        setTargetPoints={setTargetPoints}
                     /> : null}
                 {gcsMode === 'video' ? <VideoMode /> : null}
         </div>

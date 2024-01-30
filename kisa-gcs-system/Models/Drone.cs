@@ -58,7 +58,8 @@ public class DroneStt
     public double? Head = 0.0;
     public double? Speed = 0.0;
     public char? HoverStt = ' ';
-    public double? HODP = 0.0;
+    public double? HDOP = 0.0;
+    public double? SatellitesCount = 0.0;
     public CustomMode?  FlightMode = 0;
 }
 

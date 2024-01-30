@@ -12,17 +12,14 @@ import {VideoContent, VideoContents} from "./VideoMode";
 export const MiddleMap = (props) => {
     const { droneMessage, handleDroneStartMarking} = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
-
     const startPoint = droneMessage ? droneState.DroneMission.StartPoint: null;
-    const [markerId, setMarkerId] = useState(1);
-    const targetPoints = props.targetPoints;
-    const setTargetPoints = props.setTargetPoints;
-    const [pathLine, setPathLine] = useState([]);
-
     const [isController, setIsController] = useState(true);
     const [isMarker, setIsMarker] = useState(false);
     const [isRtl, setIsRtl] = useState(false);
     const [monitorTable, setMonitorTable] = useState(true);
+
+    const [markerId, setMarkerId] = useState(1);
+    const [pathLine, setPathLine] = useState([]);
 
     const dronePath = droneMessage ? droneState.DroneMission.DroneTrails.q : [];
 
@@ -58,14 +55,10 @@ export const MiddleMap = (props) => {
 
     const handleMarkerReset = () => {
         setMarkerId(1);
-        setTargetPoints([]);
+        props.setTargetPoints([]);
         setPathLine([]);
         setIsMarker(false);
     }
-
-    // const lastPathReset = () => {
-    //     setTargetPoints([])
-    // }
 
     const handleIsRtl = () => {
         setIsRtl(!isRtl);
@@ -77,9 +70,9 @@ export const MiddleMap = (props) => {
 
     const handleMapClick = event => {
         if (isMarker){
-            setTargetPoints([...targetPoints, {id:markerId, position:{lat: event.latLng.lat(),lng: event.latLng.lng()}}])
-            setMarkerId(markerId+1)
-            setPathLine([startPoint, ...targetPoints.map(marker => marker.position)])
+            props.setTargetPoints([...props.targetPoints, {id:props.markerId, position:{lat: event.latLng.lat(),lng: event.latLng.lng()}}])
+            setMarkerId(props.markerId+1)
+            setPathLine([startPoint, ...props.targetPoints.map(marker => marker.position)])
             handleDroneStartMarking(droneState.DroneStt.Lat, droneState.DroneStt.Lon)
         }
 
@@ -95,8 +88,8 @@ export const MiddleMap = (props) => {
     };
 
     useEffect(() => {
-        setPathLine([startPoint, ...targetPoints.map(marker => marker.position)]);
-    }, [targetPoints, startPoint])
+        setPathLine([startPoint, ...props.targetPoints.map(marker => marker.position)]);
+    }, [props.targetPoints, startPoint])
 
     const handleStartPointCenter = () => {
         props.setCenter({
@@ -167,9 +160,7 @@ export const MiddleMap = (props) => {
                         : null
                     }
 
-                    <Marker position={startPoint} icon={blueMarkerIcon}/>
-
-                    {targetPoints.map((marker) => (
+                    {props.targetPoints.map((marker) => (
                         <Marker key={marker.id} position={marker.position} icon={redMarkerIcon} />
                     ))}
 
@@ -179,6 +170,9 @@ export const MiddleMap = (props) => {
 
                     {/* 지점 추가 마커 */}
                     <Marker position={localPoint} icon={purpleMarkerIcon}/>
+
+                    <Marker position={startPoint} icon={blueMarkerIcon}/>
+
 
                     {props.gcsMode === 'flight'
                         ? <FlightContents
@@ -197,7 +191,7 @@ export const MiddleMap = (props) => {
                             monitorTable={monitorTable}
                             setMonitorTable={setMonitorTable}
                             handleMarkerReset={handleMarkerReset}
-                            targetPoints= {targetPoints}/>
+                            targetPoints= {props.targetPoints}/>
                         : null}
                     {props.gcsMode === 'mission'
                         ? <MissionContents
@@ -330,7 +324,7 @@ export const Table = (props) => {
                             <td className={`px-2`}>{droneMessage && (droneState.DroneStt.Speed).toFixed(3)} m/s</td>
                         </tr>
                         <tr>
-                            <th className={`px-2`}>평균 이동속력</th>
+                            <th className={`px-2`}>평균 이동속도</th>
                             <td className={`px-2`}>{((averageSpeed > 0) ? averageSpeed : 0).toFixed(3)} m/s</td>
                         </tr>
                         <tr>

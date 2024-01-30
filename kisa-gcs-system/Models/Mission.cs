@@ -14,6 +14,21 @@ public class MissionLoadAPI
     public string? TargetPoint { get; set; }
     public int? FlightAlt { get; set; }
     public List<string> TransitPoints { get; set; }
+    public LatLng StartLatLng { get; set; }
+    public LatLng TargetLatLng { get; set; }
+    public List<Transit> TransitLatLng { get; set; }
     public string? FlightDistance { get; set; }
     public string? TakeTime { get; set; }
+}
+
+public class Transit
+{
+    public int? id { get; set; }
+    public LatLng? position { get; set; }
+}
+
+public class LatLng
+{
+    public double? lat { get; set; }
+    public double? lng { get; set; }
 }
