@@ -5,9 +5,8 @@ import {DroneContext} from "./SignalRContainer";
 import {AltitudeChart} from "./AltitudeChart";
 import {Table} from "./MiddleMap";
 
-
-
 export const MissionMode = (props) => {
+    const { handleDroneMovetoMission } = useContext(DroneContext);
     const [missionData, setMissionData] = useState([]);
     const [missionList, setMissionList] = useState([]);
     const [selectMission, setSelectMission] = useState({});
@@ -56,20 +55,14 @@ export const MissionMode = (props) => {
     };
 
     const handleMissionStart = () => {
-        /*
-         * To Do
-         * SignalRContainer 에 있는 함수들을 활용해서 미션을 전달하는 로직 구현
-         */
-
-        // 스타팅포인트 출발지점으로 설정
-        // 타겟포인트 목표지점으로 설정        
-        // guided 모드로 바꾸고 
-        // arm 시동 걸고
-        // takeoff 비행고도로 띄우고
-        // mission 전달 
-
-        // 미션을 부여할 때 시퀀스 번호 옵션을 주면 될듯 시퀀스 번호는 0번부터 시작
-        // 이부분도 고민인데, 도착했다는걸 어떤 조건으로 파악하고, 도착했으면 랜드
+        console.log()
+        handleDroneMovetoMission(
+            selectStartPoint,
+            selectTargetPoint,
+            selectTransitPoint,
+            selectFlightAlt,
+            selectFlightDistance
+        );
     }
 
     const handleAltUp = () => {

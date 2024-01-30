@@ -28,6 +28,7 @@ public class ArduCopterService : Hub<IDroneHub>
     private readonly IHubContext<ArduCopterService> _hubContext;
     private readonly MAVLink.MavlinkParse _parser = new();
     private readonly MavlinkMapper _mapper = new();
+    private readonly GcsApiService _gcsApiService;
     
     private IChannelHandlerContext? _context;
     
@@ -41,9 +42,10 @@ public class ArduCopterService : Hub<IDroneHub>
 
     private CancellationTokenSource _cancellationTokenSource;
     
-    public ArduCopterService(IHubContext<ArduCopterService> hubContext)
+    public ArduCopterService(IHubContext<ArduCopterService> hubContext, GcsApiService gcsApiService)
     {
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
+        _gcsApiService = gcsApiService;
     }
     
     // 드론 상태 정보 내보내기 
@@ -245,23 +247,104 @@ public class ArduCopterService : Hub<IDroneHub>
         _mapper.setMissionAlt(missionalt);
     }
 
+    public async Task HandleDroneMoveToMission(string startPoint, string targetPoint, List<string> transitPoint, int alt, string totalDistance)
+    {
+        try
+        {
+            List<double>? StartPoint = _gcsApiService.getLocalPoint(startPoint);
+            if (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
+                    StartPoint[0], StartPoint[1]) > 1.5)
+            {
+                throw new Exception("출발 지점이 잘못 입력되었습니다.");
+            }
+
+            string trimmedTotalDistance = totalDistance.Substring(0, totalDistance.Length - 3);
+            string numericPart = new string(trimmedTotalDistance.Where(char.IsDigit).ToArray());
+            double TotalDistance = double.Parse(numericPart);
+
+            _mapper.setControlStt("auto");
+            _mapper.setCurrentDistance(0);
+            _mapper.setMissionAlt(alt);
+            _mapper.setTotalDistance(TotalDistance);
+
+            HandleDroneFlightMode(CustomMode.GUIDED);
+            
+            HandleDroneFlightCommand(DroneFlightCommand.ARM);
+            Thread.Sleep(1000);
+            
+            HandleDroneFlightCommand(DroneFlightCommand.TAKEOFF);
+            Thread.Sleep(1000);
+            while (_mapper.getRelativeAlt() < _mapper.getMissionAlt() - 0.1) { }
+            Console.WriteLine("Mission Alt Reached");
+
+            for (int i = 0; i < transitPoint.Count; i++)
+            {
+                List<double>? TransitPoint = _gcsApiService.getLocalPoint(transitPoint[i]);
+                await sendMission(TransitPoint[0], TransitPoint[1], alt);
+                Thread.Sleep(1000);
+                while (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
+                           TransitPoint[0], TransitPoint[1]) > 1.5)
+                {
+                    if (Console.KeyAvailable)
+                    {
+                        ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
+                        if (keyInfo.Key == ConsoleKey.Q)
+                        {
+                            Console.WriteLine("BRAKE");
+                            HandleDroneFlightMode(CustomMode.BRAKE);
+                            return;
+                        }
+                    }
+                }
+                Console.WriteLine($"Transit{i} Arrival");
+            }
+            
+            List<double>? TargetPoint = _gcsApiService.getLocalPoint(targetPoint);
+            await sendMission(TargetPoint[0], TargetPoint[1], alt);
+            Thread.Sleep(1000);
+            while (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
+                       TargetPoint[0], TargetPoint[1]) > 1.5)
+            {
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
+                    if (keyInfo.Key == ConsoleKey.Q)
+                    {
+                        Console.WriteLine("BRAKE");
+                        HandleDroneFlightMode(CustomMode.BRAKE);
+                        return;
+                    }
+                }
+            }
+            
+            Console.WriteLine("Arrival");
+            
+            HandleDroneFlightCommand(DroneFlightCommand.LAND);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"오류 발생: {e}");
+        }
+
+
+    }
+    
     public async Task HandleDroneMoveToTarget()
     {
-        _cancellationTokenSource = new CancellationTokenSource();
+        _mapper.setControlStt("manual");
         
-        _mapper.setControlStt("auto");
         double lat = _mapper.getTargetPointLat();
         List<DroneLocation> transit = _mapper.getTransitPoint();
         double lng = _mapper.getTargetPointLng();
         float alt = _mapper.getMissionAlt();
         int count = 0;
         
-        HandleDroneFlightMode(CustomMode.GUIDED);
-        
-        HandleDroneFlightCommand(DroneFlightCommand.ARM);
-        Thread.Sleep(1000);
-        
-        HandleDroneFlightCommand(DroneFlightCommand.TAKEOFF);
+        // HandleDroneFlightMode(CustomMode.GUIDED);
+        //
+        // HandleDroneFlightCommand(DroneFlightCommand.ARM);
+        // Thread.Sleep(1000);
+        //
+        // HandleDroneFlightCommand(DroneFlightCommand.TAKEOFF);
         
         double flightDistance = 0;
         _mapper.setCurrentDistance(0);
@@ -289,10 +372,10 @@ public class ArduCopterService : Hub<IDroneHub>
             );
             _mapper.setTotalDistance(flightDistance);
         }
-        Thread.Sleep(1000);
-        
-        while (_mapper.getRelativeAlt() < _mapper.getMissionAlt() - 0.1) { }
-        Console.WriteLine("Mission Alt Reached");
+        // Thread.Sleep(1000);
+        //
+        // while (_mapper.getRelativeAlt() < _mapper.getMissionAlt() - 0.1) { }
+        // Console.WriteLine("Mission Alt Reached");
         
         foreach (DroneLocation location in transit)
         {
@@ -302,7 +385,6 @@ public class ArduCopterService : Hub<IDroneHub>
             while (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
                        location.lat, location.lng) > 1.5)
             {
-                // 비동기적으로 키 입력 확인
                 if (Console.KeyAvailable)
                 {
                     ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
@@ -310,7 +392,7 @@ public class ArduCopterService : Hub<IDroneHub>
                     {
                         Console.WriteLine("반복문 중단");
                         HandleDroneFlightMode(CustomMode.BRAKE);
-                        return; // 메서드를 빠져나가서 종료
+                        return;
                     }
                 }
                 
@@ -322,7 +404,6 @@ public class ArduCopterService : Hub<IDroneHub>
         while (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
                    lat, lng) > 1.5)
         {
-            // 비동기적으로 키 입력 확인
             if (Console.KeyAvailable)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
@@ -330,14 +411,13 @@ public class ArduCopterService : Hub<IDroneHub>
                 {
                     Console.WriteLine("반복문 중단");
                     HandleDroneFlightMode(CustomMode.BRAKE);
-                    return; // 메서드를 빠져나가서 종료
+                    return;
                 }
             }
         }
-        Console.WriteLine("Arrival");
-        
-        HandleDroneFlightCommand(DroneFlightCommand.LAND);
-        
+        // Console.WriteLine("Arrival");
+        // 
+        // HandleDroneFlightCommand(DroneFlightCommand.LAND);
     }
 
     public void StopDroneMove()

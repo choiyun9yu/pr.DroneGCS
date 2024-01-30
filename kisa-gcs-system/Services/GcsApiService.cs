@@ -12,10 +12,8 @@ public class GcsApiService
     
     public GcsApiService(ILogger<GcsApiService> logger, IConfiguration configuration)
     {
-        // Looger
         _logger = logger;
-
-        // MongoDB 연결
+        
         var connectionString = configuration.GetConnectionString("MongoDB");
         var mongoClient = new MongoClient(connectionString);
         var database = mongoClient.GetDatabase("drone");
@@ -50,12 +48,10 @@ public class GcsApiService
             }
             else
             {
-                // startPoint에서 각 transitPoint를 거쳐 endPoint까지의 거리를 누적하여 계산
                 for (int i = 0; i < transitPointsList.Count; i++)
                 {
                     List<double> transitLocalPoint = getLocalPoint(transitPointsList[i]);
-            
-                    // 현재 경유지에서 다음 경유지 또는 목적지까지의 거리를 계산하여 누적
+                    
                     flightDistance += _vincentyCalculator.DistanceCalculater(
                         (i == 0) ? startLocalPoint[0] : getLocalPoint(transitPointsList[i - 1])[0],
                         (i == 0) ? startLocalPoint[1] : getLocalPoint(transitPointsList[i - 1])[1],
@@ -63,7 +59,6 @@ public class GcsApiService
                     );
             
                 }
-                // 마지막 경유지에서 목적지까지의 거리를 누적하여 계산
                 flightDistance += _vincentyCalculator.DistanceCalculater(
                     getLocalPoint(transitPointsList.Last())[0],
                     getLocalPoint(transitPointsList.Last())[1],
@@ -72,20 +67,7 @@ public class GcsApiService
                 );
             }
             
-            double takeTime = flightDistance / 600 + 1;
-            
-            // LocalPointAPI _startPoint =
-            //     _localPoint.Find(Builders<LocalPointAPI>.Filter.Eq("_id", startPoint)).FirstOrDefault();
-            // LocalPointAPI _targetPoint = _localPoint.Find(Builders<LocalPointAPI>.Filter.Eq("_id", targetPoint)).FirstOrDefault();;
-            // List<LocalPointAPI> _transitPointsList = null;
-            // foreach (string obj in transitPointsList)
-            // {
-            //     LocalPointAPI selectPoint = _localPoint.Find(Builders<LocalPointAPI>.Filter.Eq("_id", obj)).FirstOrDefault();
-            //     if (selectPoint != null)
-            //     {
-            //         _transitPointsList.Add(selectPoint);
-            //     }
-            // }
+            double takeTime = flightDistance / 600 + 0.5;   // 이착륙,가속도 붙는 시간 30초 정도 설정
 
             var missionLoad = new MissionLoadAPI
             {
@@ -97,9 +79,6 @@ public class GcsApiService
                 FlightDistance = $"{Math.Round(flightDistance)/1000} km",
                 TakeTime = $"{(int)takeTime}분 {(int)(Math.Round(takeTime,1)%1*60)}초"
             };
-            
-            // Console.WriteLine(missionLoad.FlightDistance);
-            // Console.WriteLine(missionLoad.TakeTime);
             
             _missionLoad.InsertOne(missionLoad);
         }
@@ -120,8 +99,6 @@ public class GcsApiService
         {
             throw new Exception("미션을 찾을 수 없습니다.");
         }
-
-        // Console.WriteLine(mission);
         
         return mission;
     }
@@ -130,6 +107,11 @@ public class GcsApiService
     {
         try
         {
+            if (missionName == "미션을 선택하세요")
+            {
+                throw new Exception("지울 수 없는 미션 입니다.");
+            }
+
             var filter = Builders<MissionLoadAPI>.Filter.Eq(api => api._id, missionName);
 
             var result = _missionLoad.DeleteOne(filter);
@@ -182,8 +164,6 @@ public class GcsApiService
                 .Select(api => api._id)
                 .ToList();
 
-            // Console.WriteLine(string.Join(", ", localPosition));
-
             return localPosition;
         }
         catch (Exception ex)
@@ -216,8 +196,8 @@ public class GcsApiService
             throw;
         }
     }
-    
-    private List<double>? getLocalPoint(string localName)
+
+    public List<double>? getLocalPoint(string localName)
     {
         try
         {

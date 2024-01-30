@@ -86,6 +86,9 @@ export const SignalRProvider = ({ children }) => {
     const handleDroneMovetoBase = () => {
         connection.current.invoke('HandleDroneMoveToBase')
     }
+    const handleDroneMovetoMission = (startPoint, targetPoint, transitPoint, alt, totalDistance) => {
+        connection.current.invoke('HandleDroneMoveToMission', startPoint, targetPoint, transitPoint, alt, totalDistance)
+    }
     const stopDroneMove = () => {
         connection.current.invoke('StopDroneMove')
     }
@@ -117,6 +120,7 @@ export const SignalRProvider = ({ children }) => {
             handleDroneMovetoTarget,
             handleDroneMovetoBase,
             handleMissionAlt,
+            handleDroneMovetoMission,
             stopDroneMove
         }}>
             {children}

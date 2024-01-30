@@ -45,12 +45,12 @@ const RightSideTop = () => {
                     <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.TempC}</td>
                 </tr>
 
-                {/*<tr className={'w-full border-b-2 border-[#4B4B99]'}>*/}
-                {/*    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>GPS 수신</th>*/}
-                {/*    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneStates && droneState.DroneStt.GpsStt}</td>*/}
-                {/*    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>HDOP</th>*/}
-                {/*    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneStates && droneState.DroneStt.HODP}</td>*/}
-                {/*</tr>*/}
+                <tr className={'w-full border-b-2 border-[#4B4B99]'}>
+                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>GPS 수신</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.GpsStt}</td>
+                    <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>HDOP</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.HODP}</td>
+                </tr>
 
                 <tr className={'w-full border-b-2 border-[#4B4B99]'}>
                     <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>위도</th>
@@ -501,9 +501,9 @@ const FlightBtn = (props) => {
                               onClick={() => handleDroneFlightMode(4)}>Guided</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 17
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Break</button>
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Brake</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
-                              onClick={() => handleDroneFlightMode(17)}>Break</button>
+                              onClick={() => handleDroneFlightMode(17)}>Brake</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 9
                     ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359e9]`}>Land</button>
@@ -662,7 +662,7 @@ const MainController = (props) => {
                 </button>
 
                 <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleBreakBtn()}>
-                    Break
+                    Brake
                 </button>
 
                 <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`}>
