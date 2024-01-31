@@ -156,9 +156,9 @@ export const LogForm = (props) => {
         }
     }
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.target);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
         try {
             const response = await fetch('http://localhost:5000/api/logdata', {
                 method: 'POST',

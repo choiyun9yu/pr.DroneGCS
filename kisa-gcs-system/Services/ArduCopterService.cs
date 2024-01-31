@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Text.Json;
 using kisa_gcs_system.Interfaces;
 using kisa_gcs_system.Models;
@@ -26,28 +25,26 @@ namespace kisa_gcs_system.Services;
 public class ArduCopterService : Hub<IDroneHub>
 {
     private readonly IHubContext<ArduCopterService> _hubContext;
-    private readonly MAVLink.MavlinkParse _parser = new();
-    private readonly MavlinkMapper _mapper = new();
-    private readonly GcsApiService _gcsApiService;
-    
     private IChannelHandlerContext? _context;
-    
     private IPEndPoint? _droneAddress;
     
+    private readonly MAVLink.MavlinkParse _parser = new();
+    private readonly MavlinkMapper _mapper = new();
+    
+    private readonly GcsApiService _gcsApiService;
+        
     private static int ThrottleIncrement = 300;
     private static int yawIncrement = 50;
     // private static int SpeedIncrement = 50;
     
     private VincentyCalculator _vincentyCalculator = new();
-
-    private CancellationTokenSource _cancellationTokenSource;
     
     public ArduCopterService(IHubContext<ArduCopterService> hubContext, GcsApiService gcsApiService)
     {
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
         _gcsApiService = gcsApiService;
     }
-    
+
     // 드론 상태 정보 내보내기 
     public async Task HandleMavlinkMessage(MAVLink.MAVLinkMessage msg, IChannelHandlerContext ctx, IPEndPoint droneAddress)
     { 
@@ -64,15 +61,14 @@ public class ArduCopterService : Hub<IDroneHub>
             
             if (text.StartsWith("Disarming motors"))
             {
-                _mapper.HandleMissionComplete();
+                _mapper.CompleteMission();
             }
 
             _mapper.UpdateDroneLogger(text);
         }
         
         object data = msg.data;
-        _mapper.PredictionMapping(data);
-        _mapper.GcsMapping(data);
+        _mapper.UpdateDroneState(data);
         
         string droneMessage = _mapper.ObjectToJson();
         await _hubContext.Clients.All.SendAsync("droneMessage", droneMessage);
@@ -139,7 +135,7 @@ public class ArduCopterService : Hub<IDroneHub>
                 int alt = _mapper.getMissionAlt();
                 if ((_mapper.getRelativeAlt() < 0.5) && (_mapper.getFlightMode() == CustomMode.GUIDED))
                 {
-                    _mapper.HandleMissionStart();
+                    _mapper.StartMission();
                     commandBody = new MAVLink.mavlink_command_long_t()
                     {
                         command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
@@ -236,7 +232,7 @@ public class ArduCopterService : Hub<IDroneHub>
         return location;
     }
 
-    public async Task HandleMissionAlt(int missionalt)
+    public async Task HandleMissionAlt(short missionalt)
     {
         _mapper.setMissionAlt(missionalt);
     }

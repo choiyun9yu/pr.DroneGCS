@@ -27,7 +27,7 @@ const AddNewLink = (props) => {
     return(
         // 드론 추가로 연결하는 버튼 (백엔드 미구현)
         <div className={`m-2 items-center `}>
-            <button onClick={props.handleIsModal} className={`flex flex-row w-full items-center ml-2 px-2 py-1 rounded-md bg-${ColorThema.Secondary3}`}>
+            <button onClick={props.handleIsModal} className={`flex flex-row w-full items-center ml-2 px-2 py-1 rounded-md bg-${ColorThema.Secondary3} hover:bg-${ColorThema.Primary1}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                      stroke="currentColor" className="mr-1 w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round"

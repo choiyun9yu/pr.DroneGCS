@@ -23,16 +23,15 @@ export const MissionMode = (props) => {
     const [altScale, setAltScale] = useState(1);
     const [checkBtn, setCheckBtn] = useState(false);
 
-
     const handleMissionSelect = (e)=> {
         e.preventDefault();
         const { name, value } = e.target;
         setSelectMission(value);
     }
 
-    const handleDeleteMission = async (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.target);
+    const handleDeleteMission = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
 
         try {
             const response = await fetch('http://localhost:5000/api/deletemissionload', {
@@ -97,9 +96,9 @@ export const MissionMode = (props) => {
         }
     }
 
-    const handleCreateMission = async (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.target);
+    const handleCreateMission = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
 
         try {
             const response = await fetch('http://localhost:5000/api/createmission', {
@@ -147,9 +146,9 @@ export const MissionMode = (props) => {
         }
     }
 
-    const handleEnrollPoint = async (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.target);
+    const handleEnrollPoint = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
 
         try {
             const response = await fetch('http://localhost:5000/api/addwaypoint', {
@@ -172,9 +171,9 @@ export const MissionMode = (props) => {
         }
     }
 
-    const handleDeletePoint = async (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.target);
+    const handleDeletePoint = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
 
         try {
             const response = await fetch('http://localhost:5000/api/deletelocalpoint', {
@@ -264,6 +263,7 @@ export const MissionMode = (props) => {
                 <div className="flex m-2 items-center">
                     <span className="text-white rounded-md m-3 font-bold text-medium">• 드론 미션</span>
                 </div>
+
                 {props.isMissionBtn
                     ?(
                         <div className={`m-2 text-white`}>
@@ -318,7 +318,7 @@ export const MissionMode = (props) => {
                             <form id={'missionenroll'} className={`mt-3`}
                                   onSubmit={handleCreateMission}>
                                 <div className={`font-bold`}>
-                                미션 생성 하기
+                                    미션 생성 하기
                                 </div>
 
                                 <div className={`flex flex-col m-2`}>
@@ -326,7 +326,6 @@ export const MissionMode = (props) => {
                                         <span className={`mr-2`}>출발 지점</span>
                                         :
                                         <select
-
                                             className={`flex m-1 w-[170px] h-[23px] text-black px-2`}
                                             name={'StartPoint'}>
                                             {pointsList.map((item, index) => (
@@ -396,7 +395,6 @@ export const MissionMode = (props) => {
                                                 )
                                             }
                                         </div>
-
                                     </div>
 
                                     <div className={`flex justify-end mx-3 mt-2`}>
@@ -452,78 +450,78 @@ export const MissionMode = (props) => {
                                                     <input
                                                         className={`m-1 w-[170px] text-black px-2`}
                                                         name={'LocalLat'}
-                                                    type={'text'}
-                                                    placeholder={'위도를 입력하세요'}>
-                                                </input>
-                                            </div>
+                                                        type={'text'}
+                                                        placeholder={'위도를 입력하세요'}>
+                                                    </input>
+                                                </div>
 
-                                            <div>
-                                                <span>지점 경도 : </span>
-                                                <input
-                                                    className={`m-1 w-[170px] text-black px-2`}
-                                                    name={'LocalLon'}
-                                                    type={'text'}
-                                                    placeholder={'경도를 입력하세요'}>
-                                                </input>
-                                            </div>
-                                        </>
-                                    )
-                                    : (<>
-                                            <div>
-                                                <span>지점 위도 : </span>
-                                                <input
-                                                    className={`m-1 w-[170px] text-black px-2`}
-                                                    name={'LocalLat'}
-                                                    type={'text'}
-                                                    value={`${props.localLat ?? ""}`}
-                                                    placeholder={'위도를 입력하세요'}>
-                                                </input>
-                                            </div>
+                                                <div>
+                                                    <span>지점 경도 : </span>
+                                                    <input
+                                                        className={`m-1 w-[170px] text-black px-2`}
+                                                        name={'LocalLon'}
+                                                        type={'text'}
+                                                        placeholder={'경도를 입력하세요'}>
+                                                    </input>
+                                                </div>
+                                            </>
+                                        )
+                                        : (<>
+                                                <div>
+                                                    <span>지점 위도 : </span>
+                                                    <input
+                                                        className={`m-1 w-[170px] text-black px-2`}
+                                                        name={'LocalLat'}
+                                                        type={'text'}
+                                                        value={`${props.localLat ?? ""}`}
+                                                        placeholder={'위도를 입력하세요'}>
+                                                    </input>
+                                                </div>
 
-                                            <div>
-                                                <span>지점 경도 : </span>
-                                                <input
-                                                    className={`m-1 w-[170px] text-black px-2`}
-                                                    name={'LocalLon'}
-                                                    type={'text'}
-                                                    value={`${props.localLon ?? ""}`}
-                                                    placeholder={'경도를 입력하세요'}>
-                                                </input>
-                                            </div>
-                                        </>
-                                    )
-                                }
-                            </div>
+                                                <div>
+                                                    <span>지점 경도 : </span>
+                                                    <input
+                                                        className={`m-1 w-[170px] text-black px-2`}
+                                                        name={'LocalLon'}
+                                                        type={'text'}
+                                                        value={`${props.localLon ?? ""}`}
+                                                        placeholder={'경도를 입력하세요'}>
+                                                    </input>
+                                                </div>
+                                            </>
+                                        )
+                                    }
+                                </div>
 
-                            <div className={`flex flex-col px-2 mr-2`}>
-                                <div className={`flex flex-row justify-end`}>
-                                    <button
-                                        onClick={handleCurrentPoint}
-                                        className={`flex px-1 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
-                                        현재 위치
-                                    </button>
+                                <div className={`flex flex-col px-2 mr-2`}>
+                                    <div className={`flex flex-row justify-end`}>
+                                        <button
+                                            onClick={handleCurrentPoint} type={`button`}
+                                            className={`flex px-1 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
+                                            현재 위치
+                                        </button>
 
-                                    {props.isLocalMarker
-                                        ? (<button
-                                            onClick={handleIsLocalMarker}
-                                            className={`flex mx-2 px-1 rounded-xl border bg-${ColorThema.Primary1}`}>
-                                            마커 위치
-                                        </button>)
-                                        : (<button
-                                            onClick={handleIsLocalMarker}
-                                            className={`flex mx-2  px-1 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
-                                            마커 위치
-                                        </button>)
+                                        {props.isLocalMarker
+                                            ? (<button
+                                                onClick={handleIsLocalMarker} type={`button`}
+                                                className={`flex mx-2 px-1 rounded-xl border bg-${ColorThema.Primary1}`}>
+                                                마커 위치
+                                            </button>)
+                                            : (<button
+                                                onClick={handleIsLocalMarker} type={`button`}
+                                                className={`flex mx-2  px-1 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
+                                                마커 위치
+                                            </button>)
                                         }
 
                                         {directInput
                                             ? (<button
-                                                onClick={handleDirectInput}
+                                                onClick={handleDirectInput} type={`button`}
                                                 className={`flex px-1 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                                 직접 입력
                                             </button>)
                                             : (<button
-                                                onClick={handleDirectInput}
+                                                onClick={handleDirectInput} type={`button`}
                                                 className={`flex px-1 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                                 직접 입력
                                             </button>)
@@ -532,7 +530,7 @@ export const MissionMode = (props) => {
 
                                     <div className={`flex justify-end mt-2`}>
                                         <button className={`flex px-2 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
-                                        추가
+                                            추가
                                         </button>
                                     </div>
                                 </div>
@@ -595,6 +593,9 @@ const TransitInput = (props) => {
         </div>
     )
 }
+
+
+
 
 export const MissionContents = (props) => {
     const [isCenterBtn, setIsCenterBtn] = useState(false);

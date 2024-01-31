@@ -5,10 +5,8 @@ export const DroneContext = React.createContext({})
 
 export const SignalRProvider = ({ children }) => {
     const [droneMessage, setDroneMessage] = useState(null)
-    const [droneState, setDroneState] = useState(null)
     const connection = useRef();
 
-    // SignalR 연결 설정
     useEffect(() => {
         const connectionObj = new signalR.HubConnectionBuilder()
             .withUrl("http://localhost:5000/droneHub")         // 서버의 Hub URL 설정

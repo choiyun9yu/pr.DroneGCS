@@ -69,20 +69,20 @@ export const MiddleMap = (props) => {
         }, startPoint])
     }
 
-    const handleMapClick = event => {
+    const handleMapClick = e => {
         if (isMarker){
-            props.setTargetPoints([...props.targetPoints, {id:props.markerId, position:{lat: event.latLng.lat(),lng: event.latLng.lng()}}])
+            props.setTargetPoints([...props.targetPoints, {id:props.markerId, position:{lat: e.latLng.lat(),lng: e.latLng.lng()}}])
             setMarkerId(props.markerId+1)
             setPathLine([startPoint, ...props.targetPoints.map(marker => marker.position)])
             handleDroneStartMarking(droneState.DroneStt.Lat, droneState.DroneStt.Lon)
         }
 
         if (props.isLocalMarker){
-            props.setLocalLat(event.latLng.lat())
-            props.setLocalLon(event.latLng.lng())
+            props.setLocalLat(e.latLng.lat())
+            props.setLocalLon(e.latLng.lng())
             setLocalPoint({
-                lat: event.latLng.lat(),
-                lng: event.latLng.lng()
+                lat: e.latLng.lat(),
+                lng: e.latLng.lng()
             })
         }
         props.setIsLocalMarker(false)
@@ -118,8 +118,9 @@ export const MiddleMap = (props) => {
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY
     })
 
+    // Google Maps JavaScript API가 로드되지 않았을 때 아무것도 렌더링하지 않음
     if (!isLoaded) {
-        return null; // Google Maps JavaScript API가 로드되지 않았을 때 아무것도 렌더링하지 않음
+        return null;
     }
 
 
@@ -131,9 +132,9 @@ export const MiddleMap = (props) => {
                     mapContainerClassName={`flex w-full h-full rounded-xl`}
                     center={props.center}
                     zoom={18}
-                    onClick={handleMapClick}> {/* 마우스 클릭 이벤트 핸들러 추가 */}
+                    onClick={handleMapClick}>
 
-                    {/* 드론 마커 */}
+                    {/* 드론 PNG */}
                     <OverlayView
                         position={{ lat: droneMessage && droneState.DroneStt.Lat, lng: droneMessage && droneState.DroneStt.Lon }}
                         mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
@@ -169,16 +170,14 @@ export const MiddleMap = (props) => {
 
                     <Polyline path={dronePath} options={{ strokeColor: '#BCBEC0', strokeWeight: 2 }} />
 
-                    {/* 지점 추가 마커 */}
                     <Marker position={localPoint} icon={purpleMarkerIcon}/>
 
                     <Marker position={startPoint} icon={blueMarkerIcon}/>
 
-
-
                     {props.isModalOpen && (
                         <AddNewLinkModal handleIsModal={props.handleIsModal}/>
                     )}
+
                     {props.gcsMode === 'flight'
                         ? <FlightContents
                             isLeftPanel={props.isLeftPanel}
@@ -198,6 +197,7 @@ export const MiddleMap = (props) => {
                             handleMarkerReset={handleMarkerReset}
                             targetPoints= {props.targetPoints}/>
                         : null}
+
                     {props.gcsMode === 'mission'
                         ? <MissionContents
                            middleTable={props.middleTable}
@@ -212,6 +212,7 @@ export const MiddleMap = (props) => {
                            isMissionBtn={props.isMissionBtn}
                            handleIsMissionBtn={props.handleIsMissionBtn}/>
                         : null}
+
                     {props.gcsMode === 'video'
                         ? <VideoContents
                             middleTable={props.middleTable}
@@ -219,21 +220,83 @@ export const MiddleMap = (props) => {
                             monitorTable={monitorTable}
                             setMonitorTable={setMonitorTable}/>
                         :null}
+
                 </GoogleMap>
             </div>
     );
 };
 
 const AddNewLinkModal = (props) => {
+    // const [connectionType, setConnectionType] = useState();
+    // const [connectionAddress, setConnectionAddress] = useState();
+
+    // const handleConnectionType = (e) => {
+    //     e.preventDefault();
+    //     const { name, value } = e.target;
+    //     setConnectionType(value);
+    // }
+
+    const addLinkModalSelectList = [
+        "Communication Link",
+        "TCP",
+        "UDP",
+        "SERIAL"
+    ]
+
+    const handleNewConnectionBtn = (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+    }
+
+
     return (
-        <div className={`modal fixed top-[35%] left-[35%] w-[400px] h-[200px] rounded-2xl bg-white`}>
-            <div className={`flex flex-row items-start justify-start text-2xl font-bold`}>
-                <div className={`flex items-start justify-start`}>Add New Link Connection</div>
+        <div className={`modal absolute top-[30%] left-[35%] w-[450px] h-[250px] rounded-2xl bg-${ColorThema.Primary1}`}>
+            <div className={`flex flex-row pl-4 py-2 items-start justify-start text-2xl font-bold`}>
+                <div className={`flex items-start justify-start`}>New Link Connection</div>
+
+                <button className={"close flex ml-auto mr-3"} onClick={props.handleIsModal}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
+                         stroke="#4B4B99" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+
             </div>
-            <div className={"flex flex-col px-4 items-center"}>
+            <div className={"flex px-4 items-center "}>
                 <div className={"modla-content"}>
-                    <span className={"close"} onClick={props.handleIsModal}></span>
-                    <p> 모달 내용이 여기에 들어간다.</p>
+                    <form className={`flex-col`}>
+                        <div className={`my-3`}>
+                            <select
+                                className={`ml-2 px-1 w-[400px] h-[35px] rounded border border-gray-700`}
+                                name={`connectionType`}
+                                // onChange={handleConnectionType}
+                            >
+                                {addLinkModalSelectList.map((item, index) => (
+                                    <option value={item} key={index}>{item}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className={``}>
+                            <span> Address </span>
+                            <input
+                                className={`ml-2 p-2 w-[400px] h-[35px] rounded border border-gray-700`}
+                                type={'text'}
+                                name={'connectionAddress'}
+                            >
+
+                            </input>
+                        </div>
+
+                        <div className={`flex mr-2 mt-5`}>
+                            <button
+                                type={'submit'} onClick={handleNewConnectionBtn}
+                                className={`ml-auto py-1 px-4 rounded-md text-lg text-white bg-${ColorThema.Secondary4}`}
+                            >
+                                Add
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -302,8 +365,6 @@ export const Table = (props) => {
         }
 
         averageSpeed = (takeTime>0) && (elapsedDistance>0) ? elapsedDistance / (takeTime / 1000) : 0;
-
-        // console.log(averageSpeed)
 
         formattedStartTime = startTime
             ? new Date(startTime).toLocaleTimeString('en-US', {hour12: false})

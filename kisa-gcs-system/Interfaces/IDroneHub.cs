@@ -1,3 +1,4 @@
+using MAVSDK;
 using kisa_gcs_system.Models;
 
 namespace kisa_gcs_system.Interfaces;
@@ -16,6 +17,6 @@ public interface IDroneHub
     Task HandleDroneMoveToMission(string startPoint, string targetPoint, List<string> transitPoint, int alt, string totalDistance);
     Task HandleDroneJoystick(ArrowButton arrow);
     Task HandleControlJoystick(ArrowButton arrow);
-    // Task HandleCameraJoystick(ArrowButton arrow);
-    // Task HandleCameraCommand();
+    Task HandleCameraJoystick(ArrowButton arrow);
+    Task HandleCameraCommand();
 }

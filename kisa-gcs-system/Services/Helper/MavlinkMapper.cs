@@ -7,372 +7,186 @@ namespace kisa_gcs_system.Services.Helper;
 
 public class MavlinkMapper
 {
-  // constructor가 새로운 연결일 때 동작하면 그때 마다 멤버 초기화 가능? / 지역변수는 직접 초기화 해야한다 
-  private Drone _drone = new();
   private readonly GoogleMapHelper _googleMapHelper = GoogleMapHelper.GetInstace();
-  private DateTime _lastAddedTrails;
-  private VincentyCalculator _vincentyCalculator = new();
-
   
-  public async void GcsMapping(object data)
+  // constructor가 새로운 연결일 때 동작하면 그때 마다 멤버 초기화 가능? / 지역변수는 직접 초기화 해야한다 
+  private DroneState _droneState = new();
+  private VincentyCalculator _vincentyCalculator = new();
+  private DateTime _lastAddedTrails;
+  
+  public async void UpdateDroneState(object data)
   {
-    // if (data is MAVLink.mavlink_mission_item_reached_t missionreached)
-    // {
-    //   Console.WriteLine($"도달 여부 : {missionreached}");
-    // }
     if (data is MAVLink.mavlink_heartbeat_t heartbeat)
     {
-      // Console.WriteLine("base_mode: "+$"{(uint)heartbeat.base_mode}");
-      // Console.WriteLine("custom_mode: "+$"{(CustomMode)heartbeat.custom_mode}");
-      _drone.DroneStt.FlightMode = (CustomMode)heartbeat.custom_mode;
-      
-      // if (heartbeat.system_status == 3) // standby
-      // {
-      //   _drone.DroneMission.IsLanded = true;
-      // }
-      // if (heartbeat.system_status == 4) // active
-      // {
-      //   _drone.DroneMission.IsLanded = false;
-      // }
+      _droneState.DroneStt.FlightMode = (CustomMode)heartbeat.custom_mode;
     }
+    
     if (data is MAVLink.mavlink_attitude_t attitude)
     {
-      // Console.WriteLine(attitude);
+      _droneState.SensorData.roll_ATTITUDE = attitude.roll;
+      _droneState.SensorData.pitch_ATTITUDE = attitude.pitch;
+      _droneState.SensorData.yaw_ATTITUDE = attitude.yaw;
     }
+    
     if (data is MAVLink.mavlink_global_position_int_t globalPositionInt)
     {
-      // Console.WriteLine(globalPositionInt);
       double lat = globalPositionInt.lat * 1.0 / 10000000;
       double lon = globalPositionInt.lon * 1.0 / 10000000;
-      double relative_alt = globalPositionInt.relative_alt * 1.0 / 1000;
-      double global_alt = globalPositionInt.alt * 1.0 / 1000;
+      double relativeAlt = globalPositionInt.relative_alt * 1.0 / 1000;
+      double globalAlt = globalPositionInt.alt * 1.0/ 1000;
       
-      _drone.DroneStt.Lat = lat;
-      _drone.DroneStt.Lon = lon;
-      _drone.DroneStt.Alt = relative_alt;
-      _drone.DroneStt.GlobalAlt = global_alt;
-      _drone.DroneStt.Speed = (float)Math.Sqrt(globalPositionInt.vx * globalPositionInt.vx +
+      _droneState.DroneStt.Lat = lat;
+      _droneState.DroneStt.Lon = lon;
+      _droneState.DroneStt.Alt = relativeAlt;
+      _droneState.DroneStt.GlobalAlt = globalAlt;
+      
+      _droneState.SensorData.vx_GLOBAL_POSITION_INT = globalPositionInt.vx;
+      _droneState.SensorData.vy_GLOBAL_POSITION_INT = globalPositionInt.vy;
+
+      _droneState.DroneStt.Speed = (float)Math.Sqrt(globalPositionInt.vx * globalPositionInt.vx +
                                                       globalPositionInt.vy * globalPositionInt.vy +
                                                       globalPositionInt.vz * globalPositionInt.vz) / 100f;
-      if (DateTime.Now.Subtract(_lastAddedTrails).Milliseconds > 500)
+      
+      // 드론이 비행중이지 않을때 드론 고도 변화, 좌표 변화 받지 않기
+      if (DateTime.Now.Subtract(_lastAddedTrails).Milliseconds > 500 && _droneState.DroneStt.IsLanded == false) 
       {
-        if (_drone.DroneMission.DroneTrails.q.Count != 0)
+        if (_droneState.DroneMission.DroneTrails.q.Count != 0)
         {
-          double lastLat = _drone.DroneMission.DroneTrails.q.Last().lat;
-          double lastLng = _drone.DroneMission.DroneTrails.q.Last().lng;
+          double lastLat = _droneState.DroneMission.DroneTrails.q.Last().lat;
+          double lastLng = _droneState.DroneMission.DroneTrails.q.Last().lng;
           if (lastLat != lat && lastLng != lon)
           {
-            _drone.DroneMission.CurrentDistance += _vincentyCalculator.DistanceCalculater(
+            _droneState.DroneMission.CurrentDistance += _vincentyCalculator.DistanceCalculater(
               lastLat, lastLng, lat, lon);   
           }
         }
-        UpdateDroneTrails(lat, lon, relative_alt, global_alt, true);
+        
+        UpdateDroneTrails(lat, lon, relativeAlt, globalAlt, true);
+
       }
     }
+    
     if (data is MAVLink.mavlink_sys_status_t sysStatus)
     {
-       // gcs
-       // Console.WriteLine($"current_battery:{sysStatus.voltage_battery}");
-       _drone.DroneStt.PowerV = sysStatus.voltage_battery * 1.0 / 1000;
+       _droneState.DroneStt.PowerV = sysStatus.voltage_battery * 1 / 1000;
     }
-    // if (data is MAVLink.mavlink_power_status_t powerStatus)
-    // {
-    //   // gcs
-    //   Console.WriteLine($"Vcc:{powerStatus.Vcc}");
-    //   drone.DroneStt.PowerV = powerStatus.Vcc;
-    // }
-    // if (data is MAVLink.mavlink_meminfo_t meminfo)
-    // {
-    //   Console.WriteLine(meminfo);
-    // }
-    // if (data is MAVLink.mavlink_nav_controller_output_t navControllerOutput)
-    // {
-    //   Console.WriteLine(navControllerOutput);
-    // }
-    // if (data is MAVLink.mavlink_mission_current_t missionCurrent)
-    // {
-    //   Console.WriteLine($"seq: {missionCurrent.seq}, total: {missionCurrent.total}, mission_state: {missionCurrent.mission_state}, mission_mode: {missionCurrent.mission_mode}" );
-    // }
-    if (data is MAVLink.mavlink_vfr_hud_t vfrHud)
-    {
-      // Console.WriteLine(vfrHud.heading);
-      _drone.DroneStt.Head = vfrHud.heading;
-    }
-    // if (data is MAVLink.mavlink_servo_output_raw_t servoOutput)
-    // {
-    //   Console.WriteLine(sensorData);
-    // }
-    // if (data is MAVLink.mavlink_rc_channels_t rcChannels)
-    // {
-    //   Console.WriteLine(rcChannels);
-    // }
-    // if (data is MAVLink.mavlink_raw_imu_t rawImu)
-    // {
-    //   Console.WriteLine(rawImu);
-    // }
-    // if (data is MAVLink.mavlink_scaled_imu2_t scaledImu2)
-    // {
-    //   Console.WriteLine(scaledImu2);
-    // }
-    // if (data is MAVLink.mavlink_scaled_imu3_t scaledImu3)
-    // {
-    //   Console.WriteLine(scaledImu3);
-    // }
-    // if (data is MAVLink.mavlink_scaled_pressure_t scaledPressure)
-    // {
-    //   Console.WriteLine(scaledPressure);
-    // }
-    // if (data is MAVLink.mavlink_scaled_pressure2_t scaledPressure2)
-    // {
-    //   Console.WriteLine(scaledPressure2);
-    // }
-    if (data is MAVLink.mavlink_gps_raw_int_t gpsRawInt)
-    {
-      // Console.WriteLine($"lat:{gpsRawInt.lat}, lon:{gpsRawInt.lon}");
-      _drone.DroneStt.HDOP = gpsRawInt.eph < ushort.MaxValue ? gpsRawInt.eph / 100f : 0;
-      _drone.DroneStt.SatellitesCount = gpsRawInt.satellites_visible;
-    }
-    // if (data is MAVLink.mavlink_system_time_t systemTime)
-    // {
-    //   Console.WriteLine(systemTime);
-    // }
-    // if (data is MAVLink.mavlink_ahrs_t ahrs)
-    // {
-    //   Console.WriteLine(ahrs);
-    // }
-    // if (data is MAVLink.mavlink_simstate_t simstate)
-    // {
-    //   Console.WriteLine(simstate);
-    // }
-    // if (data is MAVLink.mavlink_ahrs2_t ahrs2)
-    // {
-    //   Console.WriteLine(ahrs2);
-    // }
-    // if (data is MAVLink.mavlink_wind_t wind)
-    // {
-    //   Console.WriteLine(wind);
-    // }
-    // if (data is MAVLink.mavlink_terrain_report_t terrainReport)
-    // {
-    //   Console.WriteLine($"lat:{terrainReport.lat}, lon:{terrainReport.lon}");
-    // }
-    // if (data is MAVLink.mavlink_ekf_status_report_t ekfStatusReport)
-    // {
-    //   // gcs
-    //   Console.WriteLine($"alt:{ekfStatusReport.terrain_alt_variance}");
-    // }
-    // if (data is MAVLink.mavlink_local_position_ned_t localPositionNed)
-    // {
-    //   Console.WriteLine(localPositionNed);
-    // }
-    // if (data is MAVLink.mavlink_vibration_t vibration)
-    // {
-    //   Console.WriteLine(vibration);
-    // }
-    if (data is MAVLink.mavlink_battery_status_t batteryStatus)
-    {
-      // Console.WriteLine(batteryStatus);
-      _drone.DroneStt.BatteryStt = batteryStatus.battery_remaining;
-    }
-    // if (data is MAVLink.mavlink_esc_telemetry_1_to_4_t escTelemetry1To4T)
-    // {
-    //   Console.WriteLine(escTelemetry1To4T);
-    // }
-    // if (data is MAVLink.mavlink_esc_telemetry_5_to_8_t escTelemetry5To8T)
-    // {
-    //   Console.WriteLine(escTelemetry5To8T);
-    // }
-    // if (data is MAVLink.mavlink_sensor_offsets_t sensorOffsets)
-    // {
-    //   Console.WriteLine(sensorOffsets);
-    // }
-    if (data is MAVLink.mavlink_highres_imu_t highresImu)
-    {
-      _drone.DroneStt.TempC = highresImu.temperature;
-    }
-  }
-
-  public void PredictionMapping(object data)
-  {
-    // if (data is MAVLink.mavlink_heartbeat_t heartbeat)
-    // {
-    //   Console.WriteLine(heartbeat);
-    // }
-    if (data is MAVLink.mavlink_attitude_t attitude)
-    {
-      // predicton
-      // Console.WriteLine($"roll:{attitude.roll}, pitch:{attitude.pitch}, yaw:{attitude.yaw}");
-      _drone.SensorData.roll_ATTITUDE = attitude.roll;
-      _drone.SensorData.pitch_ATTITUDE = attitude.pitch;
-      _drone.SensorData.yaw_ATTITUDE = attitude.yaw;
-    }
-    if (data is MAVLink.mavlink_global_position_int_t globalPositionInt)
-    {
-      // predicton
-      // Console.WriteLine($"vx:{globalPositionInt.vx}, vy:{globalPositionInt.vy}");
-      _drone.SensorData.vx_GLOBAL_POSITION_INT = globalPositionInt.vx;
-      _drone.SensorData.vy_GLOBAL_POSITION_INT = globalPositionInt.vy;
-    }
-    // if (data is MAVLink.mavlink_sys_status_t sysStatus)
-    // {
-    //   Console.WriteLine(sysStatus);
-    // }
+    
     if (data is MAVLink.mavlink_power_status_t powerStatus)
     {
-      // predicton
-      // Console.WriteLine($"Vservo:{powerStatus.Vservo}");
-      _drone.SensorData.Vservo_POWER_STATUS = powerStatus.Vservo;
+      _droneState.SensorData.Vservo_POWER_STATUS = powerStatus.Vservo;
     }
-    // if (data is MAVLink.mavlink_meminfo_t meminfo)
-    // {
-    //   Console.WriteLine(meminfo);
-    // }
+
     if (data is MAVLink.mavlink_nav_controller_output_t navControllerOutput)
     {
-      // predicton
-      // Console.WriteLine($"nav_pitch:{navControllerOutput.nav_pitch}, nav_bearing:{navControllerOutput.nav_bearing}");
-      _drone.SensorData.nav_pitch_NAV_CONTROLLER_OUTPUT = navControllerOutput.nav_pitch;
-      _drone.SensorData.nav_bearing_NAV_CONTROLLER_OUTPUT = navControllerOutput.nav_bearing;
+      _droneState.SensorData.nav_pitch_NAV_CONTROLLER_OUTPUT = navControllerOutput.nav_pitch;
+      _droneState.SensorData.nav_bearing_NAV_CONTROLLER_OUTPUT = navControllerOutput.nav_bearing;
     }
-    // if (data is MAVLink.mavlink_mission_current_t missionCurrent)
-    // {
-    //   Console.WriteLine(missionCurrent);
-    // }
+
     if (data is MAVLink.mavlink_vfr_hud_t vfrHud)
     {
-      // predicton
-      // Console.WriteLine($"airspeed:{vfrHud.airspeed}, groundspeed:{vfrHud.groundspeed}");
-      _drone.SensorData.airspeed_VFR_HUD = vfrHud.airspeed;
-      _drone.SensorData.groundspeed_VFR_HUD = vfrHud.groundspeed;
+      _droneState.DroneStt.Head = vfrHud.heading;
+      _droneState.SensorData.airspeed_VFR_HUD = vfrHud.airspeed;
+      _droneState.SensorData.groundspeed_VFR_HUD = vfrHud.groundspeed;
     }
+    
     if (data is MAVLink.mavlink_servo_output_raw_t servoOutput)
     {
-      // predicton
-      // Console.WriteLine($"servo3_raw:{servoOutput.servo3_raw}, servo8_raw:{servoOutput.servo8_raw}");
-      _drone.SensorData.servo3_raw_SERVO_OUTPUT_RAW = servoOutput.servo3_raw;
-      _drone.SensorData.servo8_raw_SERVO_OUTPUT_RAW = servoOutput.servo8_raw;
+      _droneState.SensorData.servo3_raw_SERVO_OUTPUT_RAW = servoOutput.servo3_raw;
+      _droneState.SensorData.servo8_raw_SERVO_OUTPUT_RAW = servoOutput.servo8_raw;
     }
+    
     if (data is MAVLink.mavlink_rc_channels_t rcChannels)
     {
-      // predicton
-      // Console.WriteLine($"chancount:{rcChannels.chancount}, chan12_raw:{rcChannels.chan12_raw}, chan13_raw:{rcChannels.chan13_raw}, chan14_raw:{rcChannels.chan14_raw}, chan15_raw:{rcChannels.chan15_raw}, chan16_raw:{rcChannels.chan16_raw}");
-      _drone.SensorData.chancount_RC_CHANNELS = rcChannels.chancount;
-      _drone.SensorData.chan12_raw_RC_CHANNELS = rcChannels.chan12_raw;
-      _drone.SensorData.chan13_raw_RC_CHANNELS = rcChannels.chan13_raw;
-      _drone.SensorData.chan14_raw_RC_CHANNELS = rcChannels.chan14_raw;
-      _drone.SensorData.chan15_raw_RC_CHANNELS = rcChannels.chan15_raw;
-      _drone.SensorData.chan16_raw_RC_CHANNELS = rcChannels.chan16_raw;
+      _droneState.SensorData.chancount_RC_CHANNELS = rcChannels.chancount;
+      _droneState.SensorData.chan12_raw_RC_CHANNELS = rcChannels.chan12_raw;
+      _droneState.SensorData.chan13_raw_RC_CHANNELS = rcChannels.chan13_raw;
+      _droneState.SensorData.chan14_raw_RC_CHANNELS = rcChannels.chan14_raw;
+      _droneState.SensorData.chan15_raw_RC_CHANNELS = rcChannels.chan15_raw;
+      _droneState.SensorData.chan16_raw_RC_CHANNELS = rcChannels.chan16_raw;
     }
+    
     if (data is MAVLink.mavlink_raw_imu_t rawImu)
     {
-      // predicton
-      // Console.WriteLine($"xacc:{rawImu.xacc}, yacc:{rawImu.yacc}, zacc:{rawImu.zacc}");
-      _drone.SensorData.xacc_RAW_IMU = rawImu.xacc;
-      _drone.SensorData.yacc_RAW_IMU = rawImu.yacc;
-      _drone.SensorData.zacc_RAW_IMU = rawImu.zacc;
-      // Console.WriteLine($"xgyro:{rawImu.xgyro}, ygyro:{rawImu.ygyro}, zgyro:{rawImu.zgyro}");
-      _drone.SensorData.xgyro_RAW_IMU = rawImu.xgyro;
-      _drone.SensorData.ygyro_RAW_IMU = rawImu.ygyro;
-      _drone.SensorData.zgyro_RAW_IMU = rawImu.zgyro;
-      // Console.WriteLine($"xmag:{rawImu.xmag}, ymag:{rawImu.ymag}, zmag:{rawImu.zmag}");
-      _drone.SensorData.xmag_RAW_IMU = rawImu.xmag;
-      _drone.SensorData.ymag_RAW_IMU = rawImu.ymag;
-      _drone.SensorData.zmag_RAW_IMU = rawImu.zmag;
+      _droneState.SensorData.xacc_RAW_IMU = rawImu.xacc;
+      _droneState.SensorData.yacc_RAW_IMU = rawImu.yacc;
+      _droneState.SensorData.zacc_RAW_IMU = rawImu.zacc;
+      _droneState.SensorData.xgyro_RAW_IMU = rawImu.xgyro;
+      _droneState.SensorData.ygyro_RAW_IMU = rawImu.ygyro;
+      _droneState.SensorData.zgyro_RAW_IMU = rawImu.zgyro;
+      _droneState.SensorData.xmag_RAW_IMU = rawImu.xmag;
+      _droneState.SensorData.ymag_RAW_IMU = rawImu.ymag;
+      _droneState.SensorData.zmag_RAW_IMU = rawImu.zmag;
     }
-    // if (data is MAVLink.mavlink_scaled_imu2_t scaledImu2)
-    // {
-    //   Console.WriteLine(scaledImu2);
-    // }
-    // if (data is MAVLink.mavlink_scaled_imu3_t scaledImu3)
-    // {
-    //   Console.WriteLine(scaledImu3);
-    // }
+
     if (data is MAVLink.mavlink_scaled_pressure_t scaledPressure)
     {
-      // predicton
-      // Console.WriteLine($"press_abs:{scaledPressure.press_abs}");
-      _drone.SensorData.press_abs_SCALED_PRESSURE = scaledPressure.press_abs;
+      _droneState.SensorData.press_abs_SCALED_PRESSURE = scaledPressure.press_abs;
     }
-    // if (data is MAVLink.mavlink_scaled_pressure2_t scaledPressure2)
-    // {
-    //   Console.WriteLine(scaledPressure2);
-    // }
-    // if (data is MAVLink.mavlink_gps_raw_int_t gpsRawInt)
-    // {
-    //   Console.WriteLine(gpsRawInt);
-    // }
-    // if (data is MAVLink.mavlink_system_time_t systemTime)
-    // {
-    //   Console.WriteLine(systemTime);
-    // }
-    // if (data is MAVLink.mavlink_ahrs_t ahrs)
-    // {
-    //   Console.WriteLine(ahrs);
-    // }
-    // if (data is MAVLink.mavlink_simstate_t simstate)
-    // {
-    //   Console.WriteLine(simstate);
-    // }
-    // if (data is MAVLink.mavlink_ahrs2_t ahrs2)
-    // {
-    //   Console.WriteLine(ahrs2);
-    // }
-    // if (data is MAVLink.mavlink_wind_t wind)
-    // {
-    //   Console.WriteLine(wind);
-    // }
-    // if (data is MAVLink.mavlink_terrain_report_t terrainReport)
-    // {
-    //   Console.WriteLine(terrainReport);
-    // }
-    // if (data is MAVLink.mavlink_ekf_status_report_t ekfStatusReport)
-    // {
-    //   Console.WriteLine(ekfStatusReport);
-    // }
+
+    if (data is MAVLink.mavlink_gps_raw_int_t gpsRawInt)
+    {
+      _droneState.DroneStt.HDOP = gpsRawInt.eph < ushort.MaxValue ? gpsRawInt.eph / 100f : 0;
+      _droneState.DroneStt.SatellitesCount = gpsRawInt.satellites_visible;
+    }
+
     if (data is MAVLink.mavlink_local_position_ned_t localPositionNed)
     {
-      // predicton
-      // Console.WriteLine($"x:{localPositionNed.x}, vx:{localPositionNed.vx}, vy:{localPositionNed.vy}");
-      _drone.SensorData.x_LOCAL_POSITION_NED = localPositionNed.x;
-      _drone.SensorData.vx_LOCAL_POSITION_NED = localPositionNed.vx;
-      _drone.SensorData.vy_LOCAL_POSITION_NED = localPositionNed.vy;
+      _droneState.SensorData.x_LOCAL_POSITION_NED = localPositionNed.x;
+      _droneState.SensorData.vx_LOCAL_POSITION_NED = localPositionNed.vx;
+      _droneState.SensorData.vy_LOCAL_POSITION_NED = localPositionNed.vy;
     }
+    
     if (data is MAVLink.mavlink_vibration_t vibration)
     {
-      // predicton
-      // Console.WriteLine($"vibration_x:{vibration.vibration_x}, vibration_y:{vibration.vibration_y}, vibration_z:{vibration.vibration_z}");
-      _drone.SensorData.vibration_x_VIBRATION = vibration.vibration_x;
-      _drone.SensorData.vibration_y_VIBRATION = vibration.vibration_y;
-      _drone.SensorData.vibration_z_VIBRATION = vibration.vibration_z;
+      _droneState.SensorData.vibration_x_VIBRATION = vibration.vibration_x;
+      _droneState.SensorData.vibration_y_VIBRATION = vibration.vibration_y;
+      _droneState.SensorData.vibration_z_VIBRATION = vibration.vibration_z;    
     }
-    // if (data is MAVLink.mavlink_battery_status_t batteryStatus)
-    // {
-    //   Console.WriteLine(batteryStatus);
-    // }
-    // if (data is MAVLink.mavlink_esc_telemetry_1_to_4_t escTelemetry1To4T)
-    // {
-    //   Console.WriteLine(escTelemetry1To4T);
-    // }
-    // if (data is MAVLink.mavlink_esc_telemetry_5_to_8_t escTelemetry5To8T)
-    // {
-    //   Console.WriteLine(escTelemetry5To8T);
-    // }
+    
+    if (data is MAVLink.mavlink_battery_status_t batteryStatus)
+    {
+      _droneState.DroneStt.BatteryStt = batteryStatus.battery_remaining;
+    }
+    
+    // 미수신 로그
     if (data is MAVLink.mavlink_sensor_offsets_t sensorOffsets)
     {
-      // predicton
-      // Console.WriteLine($"accel_cal_x:{sensorOffsets.accel_cal_x}, accel_cal_y:{sensorOffsets.accel_cal_y}, accel_cal_z:{sensorOffsets.accel_cal_z}");
-      _drone.SensorData.accel_cal_x_SENSOR_OFFSETS = sensorOffsets.accel_cal_x;
-      _drone.SensorData.accel_cal_y_SENSOR_OFFSETS = sensorOffsets.accel_cal_y;
-      _drone.SensorData.accel_cal_z_SENSOR_OFFSETS = sensorOffsets.accel_cal_z;
-      // Console.WriteLine($"mag_ofs_x:{sensorOffsets.mag_ofs_x}, mag_ofs_y:{sensorOffsets.mag_ofs_y}");
-      _drone.SensorData.mag_ofs_x_SENSOR_OFFSETS = sensorOffsets.mag_ofs_x;
-      _drone.SensorData.mag_ofs_y_SENSOR_OFFSETS = sensorOffsets.mag_ofs_y;
+      _droneState.SensorData.accel_cal_x_SENSOR_OFFSETS = sensorOffsets.accel_cal_x;
+      _droneState.SensorData.accel_cal_y_SENSOR_OFFSETS = sensorOffsets.accel_cal_y;
+      _droneState.SensorData.accel_cal_z_SENSOR_OFFSETS = sensorOffsets.accel_cal_z;
+      _droneState.SensorData.mag_ofs_x_SENSOR_OFFSETS = sensorOffsets.mag_ofs_x;
+      _droneState.SensorData.mag_ofs_y_SENSOR_OFFSETS = sensorOffsets.mag_ofs_y;
     }
+    if (data is MAVLink.mavlink_highres_imu_t highresImu)
+    {
+      _droneState.DroneStt.TempC = highresImu.temperature;
+    }
+    if (data is MAVLink.mavlink_mission_item_reached_t missionreached)
+    {
+      Console.WriteLine($"도달 여부 : {missionreached}");
+    }
+    
+    // 미사용 로그 
+    // if (data is MAVLink.mavlink_meminfo_t meminfo){}
+    // if (data is MAVLink.mavlink_mission_current_t missionCurrent){}
+    // if (data is MAVLink.mavlink_scaled_imu2_t scaledImu2){}
+    // if (data is MAVLink.mavlink_scaled_imu3_t scaledImu3){}
+    // if (data is MAVLink.mavlink_scaled_pressure2_t scaledPressure2){}
+    // if (data is MAVLink.mavlink_system_time_t systemTime){}
+    // if (data is MAVLink.mavlink_ahrs_t ahrs){}
+    // if (data is MAVLink.mavlink_simstate_t simstate){}
+    // if (data is MAVLink.mavlink_ahrs2_t ahrs2){}
+    // if (data is MAVLink.mavlink_wind_t wind){}
+    // if (data is MAVLink.mavlink_terrain_report_t terrainReport){}
+    // if (data is MAVLink.mavlink_ekf_status_report_t ekfStatusReport){}
+    // if (data is MAVLink.mavlink_esc_telemetry_1_to_4_t escTelemetry1To4T){}
+    // if (data is MAVLink.mavlink_esc_telemetry_5_to_8_t escTelemetry5To8T){}
+    
   }
   
   public void UpdateDroneLogger(string text)
   {
-    _drone.DroneLogger.Add(
+    _droneState.DroneLogger.Add(
       new MavlinkLog()
       {
         logtime = DateTime.Now,
@@ -381,33 +195,32 @@ public class MavlinkMapper
     );
   }
 
-  public void HandleMissionStart()
+  public void StartMission()
   {
     setStartTime();
-    _drone.DroneMission.CompleteTime = null;
-    _drone.DroneMission.DroneTrails = new FixedSizedQueue<DroneLocation>(600); // 0.5 초에 1개 씩이니까 약 3분 정도 경로 저장 
-    // setStartPoint();
-    // _droneMessage.DroneMission.TotalDistance = _haversineCalculator.Haversine(_droneMessage.DroneMission.StartPoint.lat, _droneMessage.DroneMission.StartPoint.lng,
-    //                                                                         _droneMessage.DroneMission.TargetPoint.lat, _droneMessage.DroneMission.TargetPoint.lng);
+    _droneState.DroneStt.IsLanded = false;
+    _droneState.DroneMission.CompleteTime = null;
+    _droneState.DroneMission.DroneTrails = new FixedSizedQueue<DroneLocation>(600); // 0.5 초에 1개 씩이니까 약 3분 정도 경로 저장 
     DateTime current = DateTime.Now;
     string flightId = $"{current.Year}{current.Month:D2}{current.Day:D2}{current.Hour:D2}{current.Minute:D2}{current.Second:D2}";
-    _drone.DroneMission.FligthId = $"{flightId}t";
+    _droneState.DroneMission.FligthId = $"{flightId}t";
   }
   
-  public void HandleMissionComplete()
+  public void CompleteMission()
   {
     setCompleteTime();
-    _drone.DroneMission.FligthId = "None";
+    _droneState.DroneStt.IsLanded = true;
+    _droneState.DroneMission.FligthId = "None";
   }
   
-  public void UpdateDroneTrails(double lat, double lon, double relative_alt, double global_alt, bool updatedLocation = false)
+  public void UpdateDroneTrails(double lat, double lon, double relativeAlt, double globalAlt, bool updatedLocation = false)
   {
-    _drone.DroneMission.DroneTrails.Enqueue(new DroneLocation
+    _droneState.DroneMission.DroneTrails.Enqueue(new DroneLocation
     {
       lat = lat,
       lng = lon,
-      global_frame_alt = global_alt,
-      terrain_alt = global_alt - relative_alt,
+      global_frame_alt = globalAlt,
+      terrain_alt = globalAlt - relativeAlt,
     });
 
     // _drone.DroneMission.RemainDistance = _vincentyCalculator.DistanceCalculater(lat, lon, _drone.DroneMission.TargetPoint.lat,
@@ -418,82 +231,82 @@ public class MavlinkMapper
 
   public string ObjectToJson() 
   {
-    string droneMessage = JsonConvert.SerializeObject(_drone);
+    string droneMessage = JsonConvert.SerializeObject(_droneState);
     return droneMessage;
   }
 
   public CustomMode? getFlightMode()
   {
-    return _drone.DroneStt.FlightMode;
+    return _droneState.DroneStt.FlightMode;
   }
 
   public double getRelativeAlt()
   {
-    return (double)_drone.DroneStt.Alt;
+    return (double)_droneState.DroneStt.Alt;
   }
 
   public double getStartPointLat()
   {
-    return _drone.DroneMission.StartPoint.lat;
+    return _droneState.DroneMission.StartPoint.lat;
   }
   
   public double getStartPointLng()
   {
-    return _drone.DroneMission.StartPoint.lng;
+    return _droneState.DroneMission.StartPoint.lng;
   }
 
   public List<DroneLocation> getTransitPoint()
   {
-    return _drone.DroneMission.TransitPoint;
+    return _droneState.DroneMission.TransitPoint;
   }
 
   public double getCurrentLat()
   {
-    return _drone.DroneStt.Lat;
+    return _droneState.DroneStt.Lat;
   }
   
   public double getCurrentLon()
   {
-    return _drone.DroneStt.Lon;
+    return _droneState.DroneStt.Lon;
   }
 
   public double getTargetPointLat()
   {
-    return _drone.DroneMission.TargetPoint.lat;
+    return _droneState.DroneMission.TargetPoint.lat;
   }
   
   public double getTargetPointLng()
   {
-    return _drone.DroneMission.TargetPoint.lng;
+    return _droneState.DroneMission.TargetPoint.lng;
   }
 
   public int getMissionAlt()
   {
-    return _drone.DroneMission.MissionAlt;
+    return _droneState.DroneMission.MissionAlt;
   }
 
   public string getControlStt()
   {
-    return _drone.ControlStt;
+    return _droneState.ControlStt;
   }
 
   public async Task setMissionAlt(int missionAlt)
   {
-    _drone.DroneMission.MissionAlt = missionAlt;
+    _droneState.DroneMission.MissionAlt = missionAlt;
     // Console.WriteLine($"set mission alt: {missionAlt}");
   }
 
   public async Task setStartPoint()
   {
-    _drone.DroneMission.StartPoint = new DroneLocation{
-      lat= _drone.DroneStt.Lat,
-      lng= _drone.DroneStt.Lon
+    _droneState.DroneMission.StartPoint = new DroneLocation{
+      lat= _droneState.DroneStt.Lat,
+      lng= _droneState.DroneStt.Lon
     };
   }
 
   public async Task setStartPoint(double lat, double lng)
   {
-    _drone.DroneMission.StartPoint = new DroneLocation{
+    _droneState.DroneMission.StartPoint = new DroneLocation{
       lat= lat,
       lng= lng
     };
@@ -501,20 +314,20 @@ public class MavlinkMapper
 
   public async Task setTransitPoint(List<DroneLocation> transitPoinst)
   {
-    _drone.DroneMission.TransitPoint = transitPoinst;
+    _droneState.DroneMission.TransitPoint = transitPoinst;
   }
 
   public async Task setTargetPoint(double lat, double lng)
   {
     // setStartPoint();
-    _drone.DroneMission.TargetPoint = new DroneLocation
+    _droneState.DroneMission.TargetPoint = new DroneLocation
     {
       lat = lat,
       lng = lng
     };  
     
-    _drone.DroneMission.TotalDistance = _vincentyCalculator.DistanceCalculater(
-      _drone.DroneMission.StartPoint.lat, _drone.DroneMission.StartPoint.lng, lat, lng);
+    _droneState.DroneMission.TotalDistance = _vincentyCalculator.DistanceCalculater(
+      _droneState.DroneMission.StartPoint.lat, _droneState.DroneMission.StartPoint.lng, lat, lng);
     
     // List<float> path_terrain_alt = await _googleMapHelper.FetchElevations(
     //   _droneMessage.DroneMission.StartPoint.lat, _droneMessage.DroneMission.StartPoint.lng, 
@@ -534,37 +347,37 @@ public class MavlinkMapper
 
   public async Task setStartTime()
   {
-    _drone.DroneMission.StartTime = DateTime.Now;
+    _droneState.DroneMission.StartTime = DateTime.Now;
   }
 
   public async Task setCompleteTime()
   {
-    _drone.DroneMission.CompleteTime = DateTime.Now;
+    _droneState.DroneMission.CompleteTime = DateTime.Now;
   }
 
   public async Task setTotalDistance(double totalDistance)
   {
-    _drone.DroneMission.TotalDistance = totalDistance;
+    _droneState.DroneMission.TotalDistance = totalDistance;
   }
 
   public async Task setCurrentDistance(double currentDistance)
   {
-    _drone.DroneMission.CurrentDistance = currentDistance;
+    _droneState.DroneMission.CurrentDistance = currentDistance;
   }
 
   public async Task setControlStt(string controlStt)
   {
-    _drone.ControlStt = controlStt;
+    _droneState.ControlStt = controlStt;
   }
 
   public async Task setPathIndex(int i)
   {
-    _drone.DroneMission.PathIndex = i;
+    _droneState.DroneMission.PathIndex = i;
   }
   
   public void setDroneId(string droneId)
   {
     // 여기서 드론 아이디에 다른 로직이 필요할 듯 
-    _drone.DroneId = droneId;
+    _droneState.DroneId = droneId;
   }
 }

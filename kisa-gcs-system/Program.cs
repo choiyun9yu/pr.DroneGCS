@@ -26,9 +26,8 @@ public static class Program
     
     public static async Task DroneUdpConnection(IHost host, int port)
     {
-        var mavlinkNettyService =
-            (MavlinkNetty)host 
-                .Services.GetService(typeof(MavlinkNetty))!;                
+        var mavlinkNettyService = (MavlinkNetty)host.Services.GetService(typeof(MavlinkNetty))!;                
         await mavlinkNettyService.Bind(port); 
     }
+    
 }

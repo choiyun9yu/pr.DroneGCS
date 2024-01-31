@@ -7,13 +7,13 @@ namespace kisa_gcs_system.Services.Helper;
 public class MavlinkHandler : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage>
 {
     private IChannelHandlerContext? _context;
-    private ArduCopterService _controlService;
+    private ArduCopterService _droneService;
     private DroneConnectionProtocol _protocol = DroneConnectionProtocol.UDP;
     private IPEndPoint? _droneAddress;
 
-    public MavlinkHandler(ArduCopterService controlService)
+    public MavlinkHandler(ArduCopterService droneService)
     {
-        _controlService = controlService ?? throw new ArgumentNullException(nameof(controlService));
+        _droneService = droneService;
     }
     
     protected override async void ChannelRead0(IChannelHandlerContext ctx, MAVLink.MAVLinkMessage msg)
@@ -21,9 +21,10 @@ public class MavlinkHandler : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage
         UpdateDroneAddress(ctx);
         
         // var ep = GetChannelEndpoint(ctx);
+        
         // DroneCommunication link = new (_protocol, ep.Address.MapToIPv4() + ":" + ep.Port);
         
-        await _controlService.HandleMavlinkMessage(msg, ctx, _droneAddress);
+        await _droneService.HandleMavlinkMessage(msg, ctx, _droneAddress);
     }
     
     private void UpdateDroneAddress(IChannelHandlerContext ctx)
