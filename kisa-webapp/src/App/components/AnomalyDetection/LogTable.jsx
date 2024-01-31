@@ -2,6 +2,7 @@ import React from 'react';
 
 import './TableStyles.css';
 import { DataMap } from '../DataMap';
+import {ColorThema} from "../ProejctThema";
 
 export const LogTable = (props) => {
     const tableObj = {
@@ -25,13 +26,13 @@ export const LogTable = (props) => {
     }
 
     return (
-        <div className="flex flex-col h-full overflow-hidden mb-1 border-[#6359E9] border rounded-md justify-start items-center text-center bg-[$1D1D41]">
+        <div className={`flex flex-col h-full overflow-hidden mb-1 border-${ColorThema.Primary1} border rounded-md justify-start items-center text-center bg-${ColorThema.Secondary4}`}>
             <table id="predict-table" className="flex flex-col h-full w-full overflow-auto">
               <thead className="flex flex-col justify-around w-full">
                   <tr className="flex flex-row  text-white font-bold">
                      {tableObj.header.map((item,index) => {
                             return (
-                                <th className="flex flex-col justify-center h-[50px] border-[#6359E9] border-r border-b bg-[#3E3D6D]" key={index}>
+                                <th className={`flex flex-col justify-center h-[50px] border-${ColorThema.Primary1} border-r border-b bg-${ColorThema.Secondary2}`} key={index}>
                                     <span className="flex flex-row justify-center w-[156px]">{item}</span>
                                 </th>
                             );
@@ -40,7 +41,7 @@ export const LogTable = (props) => {
                 </thead>
                 <tbody className="flex flex-col justify-around w-full">
                 {tableObj.data.map((item, index) => (
-                    <tr className={'flex flex-row border-[#6359E9] text-[#AEABD8] text-s'} key={index}>
+                    <tr className={`flex flex-row border-${ColorThema.Primary1} text-${ColorThema.Primary2} text-s`} key={index}>
                         <TableCell key={`DroneId-${index}`} value={item.droneId} />
                         <TableCell key={`PredictTime-${index}`} value={formatDate(item.predictTime)} />
                         <TableCell key={`roll_ATTITUDE-${index}`} value={item.sensorData.roll_ATTITUDE} />
@@ -92,7 +93,7 @@ export const LogTable = (props) => {
 };
 
 const TableCell = ({ value }) => (
-    <td className="flex flex-col justify-center h-[50px] border-b border-[#6359E9] border-r font-normal">
+    <td className={`flex flex-col justify-center h-[50px] border-b border-${ColorThema.Primary1} border-r font-normal`}>
         <span className="flex flex-row justify-center w-[156px] text-xs">{value}</span>
     </td>
 );

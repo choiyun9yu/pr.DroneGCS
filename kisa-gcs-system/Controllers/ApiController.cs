@@ -99,7 +99,7 @@ public class ApiController : ControllerBase
 
         try
         {
-            _gcsApiService.deleteMissionName(MissionName);
+            _gcsApiService.DeleteMissionName(MissionName);
             return Ok();
         }
         catch (Exception e)
@@ -135,7 +135,7 @@ public class ApiController : ControllerBase
     {
         try
         {
-            List<string> localPointList = _gcsApiService.getLocalPointList();
+            List<string> localPointList = _gcsApiService.GetLocalPointList();
 
             var JsonObject = new
             {
@@ -163,7 +163,7 @@ public class ApiController : ControllerBase
 
         try
         {
-            _gcsApiService.deleteLocalName(LocalName);
+            _gcsApiService.DeleteLocalName(LocalName);
             return Ok();
         }
         catch (Exception e)

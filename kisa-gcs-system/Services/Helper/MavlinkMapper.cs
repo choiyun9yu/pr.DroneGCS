@@ -370,13 +370,6 @@ public class MavlinkMapper
     }
   }
   
-
-  public void SetDroneId(string droneId)
-  {
-    // 여기서 드론 아이디에 다른 로직이 필요할 듯 
-    _drone.DroneId = droneId;
-  }
-
   public void UpdateDroneLogger(string text)
   {
     _drone.DroneLogger.Add(
@@ -405,8 +398,6 @@ public class MavlinkMapper
   {
     setCompleteTime();
     _drone.DroneMission.FligthId = "None";
-    // _droneMessage.DroneMission.StartPoint = new();
-    // _droneMessage.DroneMission.TargetPoint = new();
   }
   
   public void UpdateDroneTrails(double lat, double lon, double relative_alt, double global_alt, bool updatedLocation = false)
@@ -569,5 +560,11 @@ public class MavlinkMapper
   public async Task setPathIndex(int i)
   {
     _drone.DroneMission.PathIndex = i;
+  }
+  
+  public void setDroneId(string droneId)
+  {
+    // 여기서 드론 아이디에 다른 로직이 필요할 듯 
+    _drone.DroneId = droneId;
   }
 }

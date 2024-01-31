@@ -260,7 +260,7 @@ export const MissionMode = (props) => {
 
     return (
         <div id="right-sidebar" className="flex flex-col w-[300px]">
-            <div className={`flex flex-col w-full h-full overflow-auto rounded-2xl ${ColorThema.Secondary4}`}>
+            <div className={`flex flex-col w-full h-full overflow-auto rounded-2xl bg-${ColorThema.Secondary4}`}>
                 <div className="flex m-2 items-center">
                     <span className="text-white rounded-md m-3 font-bold text-medium">• 드론 미션</span>
                 </div>
@@ -304,12 +304,12 @@ export const MissionMode = (props) => {
 
                                 <div className={`flex justify-end mx-5 mt-2`}>
                                     <button
-                                        className={`flex mr-2 px-2 rounded-xl border hover:bg-[#6359E9]`}>
+                                        className={`flex mr-2 px-2 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                         제거
                                     </button>
                                     <button
                                         type={'button'} onClick={handleMissionStart}
-                                        className={`flex px-2 rounded-xl border hover:bg-[#6359E9]`}>
+                                        className={`flex px-2 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                         미션 시작
                                     </button>
                                 </div>
@@ -365,7 +365,7 @@ export const MissionMode = (props) => {
 
                                         <div className={`flex`}>
                                             <button type="button" onClick={handleAltUp}
-                                                    className={`flex justify-center ml-2 w-[25px] h-full rounded-lg border hover:bg-[#6359E9]`}>
+                                                    className={`flex justify-center ml-2 w-[25px] h-full rounded-lg border hover:bg-${ColorThema.Primary1}`}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                      strokeWidth={1.5} stroke="currentColor" className="w-4 h-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round"
@@ -373,7 +373,7 @@ export const MissionMode = (props) => {
                                                 </svg>
                                             </button>
                                             <button type="button" onClick={handleAltDown}
-                                                    className={`flex justify-center ml-1 w-[25px] h-full rounded-lg border hover:bg-[#6359E9]`}>
+                                                    className={`flex justify-center ml-1 w-[25px] h-full rounded-lg border hover:bg-${ColorThema.Primary1}`}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                      strokeWidth={1.5} stroke="currentColor" className="w-4 h-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round"
@@ -384,13 +384,13 @@ export const MissionMode = (props) => {
                                             {(altScale === 1)
                                                 ? (
                                                     <button type="button" onClick={handleAltScale}
-                                                            className={`flex justify-center ml-1 w-[40px] h-full px-2 rounded-lg border hover:bg-[#6359E9]`}>
+                                                            className={`flex justify-center ml-1 w-[40px] h-full px-2 rounded-lg border hover:bg-${ColorThema.Primary1}`}>
                                                         x10
                                                     </button>
                                                 )
                                                 : (
                                                     <button type="button" onClick={handleAltScale}
-                                                            className={`flex justify-center ml-1 w-[40px] h-full px-2 rounded-xl border bg-[#6359E9]`}>
+                                                            className={`flex justify-center ml-1 w-[40px] h-full px-2 rounded-xl border bg-${ColorThema.Primary1}`}>
                                                         x10
                                                     </button>
                                                 )
@@ -403,18 +403,18 @@ export const MissionMode = (props) => {
                                         <div className={`flex flex-row mr-3 pl-2 rounded-xl border`}>
                                             경유지
                                             <button type="button" onClick={handleTransitUp}
-                                                    className={`flex px-1 hover:text-[#6359E9]`}>
+                                                    className={`flex px-1 hover:text-${ColorThema.Primary1}`}>
                                                 추가
                                             </button>
                                             |
                                             <button type="button" onClick={handleTransitDown}
-                                                    className={`flex mr-2 pl-1 hover:text-[#6359E9]`}>
+                                                    className={`flex mr-2 pl-1 hover:text-${ColorThema.Primary1}`}>
                                                 삭제
                                             </button>
                                         </div>
 
                                         <button
-                                            className={`flex px-2 rounded-xl border hover:bg-[#6359E9]`}>
+                                            className={`flex px-2 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                             생성
                                         </button>
                                     </div>
@@ -499,19 +499,19 @@ export const MissionMode = (props) => {
                                 <div className={`flex flex-row justify-end`}>
                                     <button
                                         onClick={handleCurrentPoint}
-                                        className={`flex px-1 rounded-xl border hover:bg-[#6359E9]`}>
+                                        className={`flex px-1 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                         현재 위치
                                     </button>
 
                                     {props.isLocalMarker
                                         ? (<button
                                             onClick={handleIsLocalMarker}
-                                            className={`flex mx-2 px-1 rounded-xl border bg-[#6359E9]`}>
+                                            className={`flex mx-2 px-1 rounded-xl border bg-${ColorThema.Primary1}`}>
                                             마커 위치
                                         </button>)
                                         : (<button
                                             onClick={handleIsLocalMarker}
-                                            className={`flex mx-2  px-1 rounded-xl border hover:bg-[#6359E9]`}>
+                                            className={`flex mx-2  px-1 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                             마커 위치
                                         </button>)
                                         }
@@ -519,19 +519,19 @@ export const MissionMode = (props) => {
                                         {directInput
                                             ? (<button
                                                 onClick={handleDirectInput}
-                                                className={`flex px-1 rounded-xl border hover:bg-[#6359E9]`}>
+                                                className={`flex px-1 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                                 직접 입력
                                             </button>)
                                             : (<button
                                                 onClick={handleDirectInput}
-                                                className={`flex px-1 rounded-xl border hover:bg-[#6359E9]`}>
+                                                className={`flex px-1 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                                 직접 입력
                                             </button>)
                                         }
                                     </div>
 
                                     <div className={`flex justify-end mt-2`}>
-                                        <button className={`flex px-2 rounded-xl border hover:bg-[#6359E9]`}>
+                                        <button className={`flex px-2 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                         추가
                                         </button>
                                     </div>
@@ -556,7 +556,7 @@ export const MissionMode = (props) => {
                                     </div>
                                     <div className={`flex items-end ml-3`}>
                                         <button
-                                            className={`flex px-2 mb-0.5 rounded-xl border hover:bg-[#6359E9]`}>
+                                            className={`flex px-2 mb-0.5 rounded-xl border hover:bg-${ColorThema.Primary1}`}>
                                             삭제
                                         </button>
                                     </div>
@@ -664,14 +664,14 @@ export const MissionContents = (props) => {
                         opacity: '70%',
                         background: '#ffff',
                     }}>
-                        <button className={`px-1 w-full rounded border border-gray-700 hover:bg-[#AEABD8]`}
+                        <button className={`px-1 w-full rounded border border-gray-700 hover:bg-${ColorThema.Primary2}`}
                                 onClick={handleCurrentCenter}>
                             Drone
                         </button>
-                        <button className={`px-1 my-1 w-full rounded border border-gray-700 hover:bg-[#AEABD8]`}
+                        <button className={`px-1 my-1 w-full rounded border border-gray-700 hover:bg-${ColorThema.Primary2}`}
                                 onClick={handleStartPointCenter}>
                             Start Point</button>
-                        <button className={`px-1 w-full rounded border border-gray-700 hover:bg-[#AEABD8]`} onClick={handleTargetPointCenter}>
+                        <button className={`px-1 w-full rounded border border-gray-700 hover:bg-${ColorThema.Primary2}`} onClick={handleTargetPointCenter}>
                             Target Point</button>
                     </div>
                 )

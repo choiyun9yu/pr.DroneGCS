@@ -125,8 +125,8 @@ export const MiddleMap = (props) => {
 
     return (
         props.swapMap
-            ? <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}></div>
-            : <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
+            ? <div id='google-map' className={`w-full h-full rounded-2xl bg-${ColorThema.Secondary4}`}></div>
+            : <div id='google-map' className={`w-full h-full rounded-2xl bg-${ColorThema.Secondary4}`}>
                 <GoogleMap
                     mapContainerClassName={`flex w-full h-full rounded-xl`}
                     center={props.center}
@@ -175,6 +175,10 @@ export const MiddleMap = (props) => {
                     <Marker position={startPoint} icon={blueMarkerIcon}/>
 
 
+
+                    {props.isModalOpen && (
+                        <AddNewLinkModal handleIsModal={props.handleIsModal}/>
+                    )}
                     {props.gcsMode === 'flight'
                         ? <FlightContents
                             isLeftPanel={props.isLeftPanel}
@@ -220,11 +224,28 @@ export const MiddleMap = (props) => {
     );
 };
 
+const AddNewLinkModal = (props) => {
+    return (
+        <div className={`modal fixed top-[35%] left-[35%] w-[400px] h-[200px] rounded-2xl bg-white`}>
+            <div className={`flex flex-row items-start justify-start text-2xl font-bold`}>
+                <div className={`flex items-start justify-start`}>Add New Link Connection</div>
+            </div>
+            <div className={"flex flex-col px-4 items-center"}>
+                <div className={"modla-content"}>
+                    <span className={"close"} onClick={props.handleIsModal}></span>
+                    <p> 모달 내용이 여기에 들어간다.</p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export const MiniMap = (props) => {
     return (
         <>
             <GoogleMap mapContainerClassName={`flex w-full h-full`} center={props.center} zoom={15}>
-                <button onClick={props.handleSwapMap} className={`absolute bottom-[10px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
+                <button onClick={props.handleSwapMap}
+                        className={`absolute bottom-[10px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                         <path fillRule="evenodd" d="M15.97 2.47a.75.75 0 011.06 0l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H7.5a.75.75 0 010-1.5h11.69l-3.22-3.22a.75.75 0 010-1.06zm-7.94 9a.75.75 0 010 1.06l-3.22 3.22H16.5a.75.75 0 010 1.5H4.81l3.22 3.22a.75.75 0 11-1.06 1.06l-4.5-4.5a.75.75 0 010-1.06l4.5-4.5a.75.75 0 011.06 0z" clipRule="evenodd" />
                     </svg>
@@ -235,7 +256,7 @@ export const MiniMap = (props) => {
 }
 
 export const Table = (props) => {
-    const { droneMessage } = useContext(DroneContext);
+    const {droneMessage} = useContext(DroneContext);
     const monitorTable = props.monitorTable;
 
     let droneState;

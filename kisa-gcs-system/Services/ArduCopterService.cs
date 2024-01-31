@@ -55,7 +55,7 @@ public class ArduCopterService : Hub<IDroneHub>
         _droneAddress = droneAddress;
         
         string droneId = msg.sysid.ToString();
-        _mapper.SetDroneId(droneId);
+        _mapper.setDroneId(droneId);
         
         if ((MAVLink.MAVLINK_MSG_ID)msg.msgid == MAVLink.MAVLINK_MSG_ID.STATUSTEXT)
         {
@@ -180,14 +180,8 @@ public class ArduCopterService : Hub<IDroneHub>
             Console.WriteLine($"Error handling drone flight command '{flightCommand}': {ex.Message}");
         }
     }
-    
-    // 미션 부여하기 
-    public async Task HandleMissionMarking(string startPoint, List<string> transitPoints, string targetPoint)
-    {
-        
-    }
 
-    // 조이스틱 미션 부여하기 
+    // 미션 부여하기 
     public async Task HandleDroneStartMarking(double lat, double lng)
     {
         _mapper.setStartPoint(lat, lng);
@@ -251,7 +245,7 @@ public class ArduCopterService : Hub<IDroneHub>
     {
         try
         {
-            List<double>? StartPoint = _gcsApiService.getLocalPoint(startPoint);
+            List<double>? StartPoint = _gcsApiService.GetLocalPoint(startPoint);
             if (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
                     StartPoint[0], StartPoint[1]) > 1.5)
             {
@@ -279,7 +273,7 @@ public class ArduCopterService : Hub<IDroneHub>
 
             for (int i = 0; i < transitPoint.Count; i++)
             {
-                List<double>? TransitPoint = _gcsApiService.getLocalPoint(transitPoint[i]);
+                List<double>? TransitPoint = _gcsApiService.GetLocalPoint(transitPoint[i]);
                 await sendMission(TransitPoint[0], TransitPoint[1], alt);
                 _mapper.setPathIndex(i+1);
                 Thread.Sleep(1000);
@@ -300,7 +294,7 @@ public class ArduCopterService : Hub<IDroneHub>
                 Console.WriteLine($"Transit{i} Arrival");
             }
             
-            List<double>? TargetPoint = _gcsApiService.getLocalPoint(targetPoint);
+            List<double>? TargetPoint = _gcsApiService.GetLocalPoint(targetPoint);
             await sendMission(TargetPoint[0], TargetPoint[1], alt);
             _mapper.setPathIndex(transitPoint.Count+1);
             Thread.Sleep(1000);
@@ -421,10 +415,7 @@ public class ArduCopterService : Hub<IDroneHub>
         // 
         // HandleDroneFlightCommand(DroneFlightCommand.LAND);
     }
-
-    public void StopDroneMove()
-    {
-    }
+    
 
     public async Task sendMission(double lat, double lng, float alt)
     {

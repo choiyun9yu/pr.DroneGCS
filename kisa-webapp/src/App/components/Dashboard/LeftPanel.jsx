@@ -9,11 +9,11 @@ export const LeftPanel = () => {
         <div className={`flex-col w-[40%] h-full mr-5`}>
 
             <div className={`flex flex-row w-full h-[24%]`}>
-                <div className={`w-[50%] mr-2.5 rounded-2xl ${ColorThema.Secondary4}`}>
+                <div className={`w-[50%] mr-2.5 rounded-2xl bg-${ColorThema.Secondary4}`}>
                     <div className={`w-full ml-4 items-center `}>
                         <div className={`pt-3 pl-2`}>• 드론 현황</div>
                     </div>
-                    <div className={`flex flex-col justify-between h-[80%] w-full mx-auto text-sm text-[#AEABD8]`}>
+                    <div className={`flex flex-col justify-between h-[80%] w-full mx-auto text-sm text-${ColorThema.Primary2}`}>
                         <div className={`flex mt-5 ml-10 flex-row items-end`}>
                             총 비행횟수<span className={`flex text-white text-2xl px-2`}>37</span>소티
                         </div>
@@ -25,21 +25,21 @@ export const LeftPanel = () => {
                         </div>
                     </div>
                 </div>
-                <div className={`flex flex-col justify-between w-[50%] ml-2.5 rounded-2xl ${ColorThema.Secondary4}`}>
+                <div className={`flex flex-col justify-between w-[50%] ml-2.5 rounded-2xl bg-${ColorThema.Secondary4}`}>
                     <div className={`flex w-full ml-4`}>
                         <div className={`pt-3 pl-2`}>• 장애 진단</div>
                     </div>
-                    <div className={`flex justify-center items-end text-[#AEABD8]`}>
+                    <div className={`flex justify-center items-end text-${ColorThema.Primary2}`}>
                         <span className={`text-white text-4xl px-2`}>376</span> 건
                     </div>
-                    <div className={`flex justify-center items-end mb-7 text-[#AEABD8]`}>
+                    <div className={`flex justify-center items-end mb-7 text-${ColorThema.Primary2}`}>
                         총 로그 수<span className={`flex text-white text-2xl px-2`}>189,653</span>건
                     </div>
                 </div>
             </div>
 
             <div className={`w-full h-[38%] pt-5`}>
-                <div className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
+                <div className={`w-full h-full rounded-2xl bg-${ColorThema.Secondary4}`}>
                     <div className="w-full h-full ml-4 items-center">
                         <div className={`pt-3 pl-2`}>
                             <div className={`flex flex-row`}>
@@ -54,7 +54,7 @@ export const LeftPanel = () => {
             </div>
 
             <div className={`w-full h-[38%] pt-5`}>
-                <div className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
+                <div className={`w-full h-full rounded-2xl bg-${ColorThema.Secondary4}`}>
                     <div className="w-full h-full ml-4">
                         <div className={`flex flex-row items-center pt-3 pl-2`}>
                             <span>• 장애진단 현황</span>

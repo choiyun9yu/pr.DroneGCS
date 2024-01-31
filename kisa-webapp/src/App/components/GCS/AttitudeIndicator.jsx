@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import styled from 'styled-components';
 import {DroneContext} from "./SignalRContainer";
+import {ColorThema} from "../ProejctThema";
 
 const GaugeStyleComponent = styled.div`
     background-image: linear-gradient(135deg,
@@ -46,7 +47,7 @@ export const AttitudeIndicator = (props) => {
         indicator
             ? (
                 <div className={'absolute bottom-14 left-10 flex z-10'}>
-                    <GaugeStyleComponent className={"flex justify-center items-center rounded-3xl border border-[#1D1D41]"}>
+                    <GaugeStyleComponent className={`flex justify-center items-center rounded-3xl border border-${ColorThema.Secondary4}`}>
                         <div className={`p-3`}>
                             <svg width={SIZE} height={SIZE}>
                                 <defs>

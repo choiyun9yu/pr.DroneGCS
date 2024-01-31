@@ -13,7 +13,7 @@ export const MiddlePanel = () => {
         <div className={`flex-col w-[20%] h-full mr-5 `}>
 
             <div className={`w-full pb-5 h-[55%]`}>
-                <div className={`flex w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
+                <div className={`flex w-full h-full rounded-2xl bg-${ColorThema.Secondary4}`}>
                     <div className="w-full mt-1 ml-4 items-center">
                         <div className={`pt-3 pl-2`}>• 비행 일지</div>
                         <div className={`w-full h-full `}>
@@ -24,7 +24,7 @@ export const MiddlePanel = () => {
                 </div>
             </div>
 
-            <div className={`flex w-full h-[45%] rounded-2xl ${ColorThema.Secondary4}`}>
+            <div className={`flex w-full h-[45%] rounded-2xl bg-${ColorThema.Secondary4}`}>
                 <div className="w-full mt-1 ml-4 items-center">
                     <div className={`pt-3 pl-2`}>• 비행 비율</div>
                     <div className={`w-full h-[80%]`}>
@@ -151,10 +151,10 @@ const FlightPieChart = () => {
 export const ChartLegend = () => {
     return(
         <div className={`flex w-[95%] h-[300px] my-5`}>
-            <div className={`flex flex-row w-full h-[10%] justify-center items-center font-normal text-sm border border-[#27264E] rounded-md ${ColorThema.Secondary3}`}>
-                <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#6359e9]`}></div><span>Drone01</span></div>
-                <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#64cff6]`}></div><span>Drone02</span></div>
-                <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#8fe388]`}></div><span>Drone03</span></div>
+            <div className={`flex flex-row w-full h-[10%] justify-center items-center font-normal text-sm border border-${ColorThema.Secondary3} rounded-md bg-${ColorThema.Secondary3}`}>
+                <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-${ColorThema.Semantic1}`}></div><span>Drone01</span></div>
+                <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-${ColorThema.Semantic4}`}></div><span>Drone02</span></div>
+                <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-${ColorThema.Semantic3}`}></div><span>Drone03</span></div>
             </div>
         </div>
     );

@@ -35,8 +35,8 @@ public class GcsApiService
             
             string id = idBuilder.ToString();
             
-            List<double> startLocalPoint = getLocalPoint(startPoint);
-            List<double> endLocalPoint = getLocalPoint(targetPoint);
+            List<double> startLocalPoint = GetLocalPoint(startPoint);
+            List<double> endLocalPoint = GetLocalPoint(targetPoint);
             List<Transit> transitLatLng = new List<Transit>();
 
             double flightDistance = 0;
@@ -53,7 +53,7 @@ public class GcsApiService
                 for (int i = 0; i < transitPointsList.Count; i++)
                 {
                     idNum += 1;
-                    List<double> transitLocalPoint = getLocalPoint(transitPointsList[i]);
+                    List<double> transitLocalPoint = GetLocalPoint(transitPointsList[i]);
                     transitLatLng.Add(new Transit
                     {
 
@@ -65,14 +65,14 @@ public class GcsApiService
                         }
                     });
                     flightDistance += _vincentyCalculator.DistanceCalculater(
-                        (i == 0) ? startLocalPoint[0] : getLocalPoint(transitPointsList[i - 1])[0],
-                        (i == 0) ? startLocalPoint[1] : getLocalPoint(transitPointsList[i - 1])[1],
+                        (i == 0) ? startLocalPoint[0] : GetLocalPoint(transitPointsList[i - 1])[0],
+                        (i == 0) ? startLocalPoint[1] : GetLocalPoint(transitPointsList[i - 1])[1],
                         transitLocalPoint[0], transitLocalPoint[1]
                     );
                 }
                 flightDistance += _vincentyCalculator.DistanceCalculater(
-                    getLocalPoint(transitPointsList.Last())[0],
-                    getLocalPoint(transitPointsList.Last())[1],
+                    GetLocalPoint(transitPointsList.Last())[0],
+                    GetLocalPoint(transitPointsList.Last())[1],
                     endLocalPoint[0],
                     endLocalPoint[1]
                 );
@@ -135,7 +135,7 @@ public class GcsApiService
         return mission;
     }
     
-    public void deleteMissionName(string missionName)
+    public void DeleteMissionName(string missionName)
     {
         try
         {
@@ -187,7 +187,7 @@ public class GcsApiService
         }    
     }
 
-    public List<string> getLocalPointList()
+    public List<string> GetLocalPointList()
     {
         try
         {
@@ -205,7 +205,7 @@ public class GcsApiService
         }    
     }
 
-    public void deleteLocalName(string localName)
+    public void DeleteLocalName(string localName)
     {
         try
         {
@@ -229,7 +229,7 @@ public class GcsApiService
         }
     }
 
-    public List<double>? getLocalPoint(string localName)
+    public List<double>? GetLocalPoint(string localName)
     {
         try
         {

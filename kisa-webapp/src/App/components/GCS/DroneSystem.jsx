@@ -25,6 +25,12 @@ export const DroneSystem = () => {
     const [localLat, setLocalLat] = useState();
     const [localLon, setLocalLon] = useState();
 
+    const [ isModalOpen, setIsModalOpen ] = useState(false);
+
+    const handleIsModal = () => {
+        setIsModalOpen(!isModalOpen)
+    }
+
     const handleIsLocalMarker = () => {
         setIsLocalMarker(!isLocalMarker)
     }
@@ -67,6 +73,7 @@ export const DroneSystem = () => {
                                      setGcsMode={setGcsMode}
                                      setCenter={setCenter}
                                      flightSchedule={flightSchedule}
+                                     handleIsModal={handleIsModal}
                         />
                       </div>
                     : null}
@@ -90,6 +97,8 @@ export const DroneSystem = () => {
                            targetPoints={targetPoints}
                            setTargetPoints={setTargetPoints}
                            setFlightSchedule={setFlightSchedule}
+                           isModalOpen={isModalOpen}
+                           handleIsModal={handleIsModal}
                 />
             </div>
                 {gcsMode === 'flight' && isRightPanel ? (
