@@ -24,6 +24,8 @@ namespace kisa_gcs_system.Services;
 
 public class ArduCopterService : Hub<IDroneHub>
 {
+    private readonly Dictionary<string, DroneState> _droneStateMap = new();
+    
     private readonly IHubContext<ArduCopterService> _hubContext;
     private IChannelHandlerContext? _context;
     private IPEndPoint? _droneAddress;
@@ -245,7 +247,7 @@ public class ArduCopterService : Hub<IDroneHub>
             if (_vincentyCalculator.DistanceCalculater(_mapper.getCurrentLat(), _mapper.getCurrentLon(),
                     StartPoint[0], StartPoint[1]) > 1.5)
             {
-                throw new Exception("출발 지점이 잘못 입력되었습니다.");
+                throw new Exception("Wrong Starting Point");
             }
 
             string trimmedTotalDistance = totalDistance.Substring(0, totalDistance.Length - 3);
@@ -315,7 +317,7 @@ public class ArduCopterService : Hub<IDroneHub>
         }
         catch (Exception e)
         {
-            Console.WriteLine($"오류 발생: {e}");
+            Console.WriteLine($"Error: {e}");
         }
 
 
@@ -382,7 +384,7 @@ public class ArduCopterService : Hub<IDroneHub>
                     ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
                     if (keyInfo.Key == ConsoleKey.Q)
                     {
-                        Console.WriteLine("반복문 중단");
+                        Console.WriteLine("Loop Break");
                         HandleDroneFlightMode(CustomMode.BRAKE);
                         return;
                     }
@@ -401,7 +403,7 @@ public class ArduCopterService : Hub<IDroneHub>
                 ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
                 if (keyInfo.Key == ConsoleKey.Q)
                 {
-                    Console.WriteLine("반복문 중단");
+                    Console.WriteLine("Loop Break");
                     HandleDroneFlightMode(CustomMode.BRAKE);
                     return;
                 }
@@ -590,15 +592,14 @@ public class ArduCopterService : Hub<IDroneHub>
         await SetCommandAsync(msg);
     }
 
+    
     // 카메라 
     public async Task HandleCameraJoystick(ArrowButton arrow)
     {
         Console.WriteLine($"input Camera : {arrow}");
     }
 
-
-
-
+    
     // 공용
     public async Task SetCommandAsync(MAVLink.MAVLinkMessage msg)
     {

@@ -26,7 +26,7 @@ export const SignalRProvider = ({ children }) => {
                 *          예를 들어, 채팅 애플리케이션에서 새로운 메시지를 보낼 때 사용
                 *          따라서 클라이언트에서 서버로 메서드 호출을 위해 사용
                 */
-                // await connectionObj.invoke('GetDroneList')
+                // await connectionObj.invoke('GetDroneList')   To Do
             })
             .catch(error => {
                 console.error('SignalR 연결 실패', error);

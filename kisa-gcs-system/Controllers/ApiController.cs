@@ -41,7 +41,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Post Start Mission Api Server Error");
         }
     }
 
@@ -72,7 +72,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Post Generate Mission Api Server Error");
         }
     }
     
@@ -86,7 +86,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Get Select Mission Api Server Error");
         }
     }
     
@@ -105,7 +105,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Delete Mission Api Server Error");
         }
     }
     
@@ -126,7 +126,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Post Add Local Point Api Server Error");
         }
     }
     
@@ -150,7 +150,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Get Local Points Api Server Error");
         }
     }
     
@@ -169,7 +169,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Delete Local Point Api Server Error");
         }
     }
 
@@ -193,7 +193,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Get Drone Id List Api Server Error");
         }
     }
     
@@ -220,7 +220,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Post Get Flight Id List Api Server Error");
         }
     }
 
@@ -231,7 +231,10 @@ public class ApiController : ControllerBase
         {
             IFormCollection form = Request.Form;
             string? DroneId = form["DroneId"];
-            if (DroneId == null) { return BadRequest("유효하지 않은 요청"); }
+            if (DroneId == null)
+            {
+                return BadRequest("Invalid request: RealTime");
+            }
             AnomalyDetection anomalyDetection = _anomalyDetectionApiService.GetRealtimeByDroneId(DroneId);
 
             if (anomalyDetection != null)
@@ -252,7 +255,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Post Real Time Api Server Error");
         }
     }
     
@@ -269,7 +272,7 @@ public class ApiController : ControllerBase
             string? periodTo = form["periodTo"];
             if (DroneId == null)
             {
-                return BadRequest("유효하지 않은 요청");
+                return BadRequest("Invalid request: LogData");
             }
 
             List<AnomalyDetection> anomalyDetectionApi =
@@ -290,7 +293,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Post Log Data Api Server Error");
         }
     }
 
@@ -307,7 +310,7 @@ public class ApiController : ControllerBase
             string? SelectData = form["SelectData"];
             if (DroneId == null)
             {
-                return BadRequest("유효하지 않은 요청");
+                return BadRequest("Invalid request: Prediction ");
             }
 
             List<AnomalyDetection> anomalyDetectionApi =
@@ -329,7 +332,7 @@ public class ApiController : ControllerBase
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return StatusCode(500, "서버 에러");
+            return StatusCode(500, "Post Prediction Api Server Error");
         }
     
     }

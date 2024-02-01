@@ -56,7 +56,7 @@ public class Startup
         });
         services.AddSingleton<MavlinkHandler>();
         services.AddSingleton<ArduCopterService>();
-        services.AddSingleton<MavlinkNetty>();
+        services.AddSingleton<MavlinkUdpNetty>();
 
         services.AddSignalR();
     }

@@ -28,7 +28,7 @@ namespace kisa_gcs_system.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "MongoDB에서 드론 데이터를 가져오는 중에 오류가 발생했습니다.");
+                _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
                 throw;
             }
         }
@@ -57,7 +57,7 @@ namespace kisa_gcs_system.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "MongoDB에서 드론 데이터를 가져오는 중에 오류가 발생했습니다.");
+                _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
                 throw;
             }
         }
@@ -85,7 +85,7 @@ namespace kisa_gcs_system.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "MongoDB에서 드론 데이터를 가져오는 중에 오류가 발생했습니다.");
+                _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
                 throw;
             }
         }

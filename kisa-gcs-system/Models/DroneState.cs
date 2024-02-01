@@ -1,5 +1,3 @@
-
-using kisa_gcs_system.Interfaces;
 using kisa_gcs_system.Models.Helper;
 
 namespace kisa_gcs_system.Models;
@@ -13,6 +11,17 @@ public class DroneCommunication
     {
         Protocol = protocol;
         Address = address;
+    }
+
+    public DroneConnectionProtocol getProtocol() { return Protocol; }
+    public string getAddress() { return Address; }
+
+    public string getPort()
+    {
+        string[] parts = Address.Split(':');
+        string port = parts.Length > 1 ? parts[1] : "";
+        
+        return port;
     }
 }
 
@@ -59,9 +68,6 @@ public class DroneStt
     public double? HDOP = 0.0;
     public byte? SatellitesCount = 0;
     public CustomMode?  FlightMode = 0;
-    // public double? WayPointNum = 0.0;
-    // public char? LoaderLoad = ' ';
-    // public char? LoaderLock = ' ';
 }
 
 public class SensorStt
@@ -102,7 +108,6 @@ public class DroneMission
     public double? TotalDistance = 0;
     public double? CurrentDistance = 0;
     public int? PathIndex = 0;
-    // public double? RemainDistance = 0.0;
     public FixedSizedQueue<DroneLocation> DroneTrails = new(600);    // size 가 600 이면 0.5초에 하나씩 이라서 1초 씩 300개 -> 5분 
     public DateTime? StartTime = null;      // Take Off 기준 
     public DateTime? CompleteTime = null;   // Disarm 기준 

@@ -116,7 +116,7 @@ public class GcsApiService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "MongoDB에서 드론 데이터를 가져오는 중에 오류가 발생했습니다.");
+            _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
             throw;
         }    
     }
@@ -141,7 +141,7 @@ public class GcsApiService
         {
             if (missionName == "미션을 선택하세요")
             {
-                throw new Exception("지울 수 없는 미션 입니다.");
+                throw new Exception("Can not delete this mission");
             }
 
             var filter = Builders<MissionLoadAPI>.Filter.Eq(api => api._id, missionName);
@@ -150,16 +150,16 @@ public class GcsApiService
 
             if (result.DeletedCount == 0)
             {
-                Console.WriteLine($"LocalName이 '{missionName}'인 문서를 찾지 못했습니다.");
+                Console.WriteLine($"Can not find '{missionName}'");
             }
             else
             {
-                Console.WriteLine($"LocalName이 '{missionName}'인 문서를 삭제했습니다.");
+                Console.WriteLine($"Delete '{missionName}'");
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "MongoDB에서 문서를 삭제하는 중에 오류가 발생했습니다.");
+            _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
             throw;
         }
     }
@@ -182,7 +182,7 @@ public class GcsApiService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "MongoDB에서 드론 데이터를 가져오는 중에 오류가 발생했습니다.");
+            _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
             throw;
         }    
     }
@@ -200,7 +200,7 @@ public class GcsApiService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "MongoDB에서 데이터를 가져오는 중에 오류가 발생했습니다.");
+            _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
             throw;
         }    
     }
@@ -215,16 +215,16 @@ public class GcsApiService
 
             if (result.DeletedCount == 0)
             {
-                Console.WriteLine($"LocalName이 '{localName}'인 문서를 찾지 못했습니다.");
+                Console.WriteLine($"Can not find '{localName}'");
             }
             else
             {
-                Console.WriteLine($"LocalName이 '{localName}'인 문서를 삭제했습니다.");
+                Console.WriteLine($"Delete '{localName}'");
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "MongoDB에서 문서를 삭제하는 중에 오류가 발생했습니다.");
+            _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
             throw;
         }
     }
@@ -243,7 +243,7 @@ public class GcsApiService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "MongoDB에서 데이터를 가져오는 중에 오류가 발생했습니다.");
+            _logger.LogError(ex, "Error: Can not fetching data from MongoDB..");
             throw;
         }    
     }
