@@ -153,7 +153,7 @@ const ScheduleComponent = (props) => {
     for (let i=0; i<transitPath.length; i++){
         if (i===0) continue;
         JSXElements.push(
-            <>
+            <React.Fragment key={i}>
                 {(droneMessage?droneState.DroneMission.PathIndex:0)===i
                     ? (
                         <div className={`flex flex-col justify-center m-2  pl-3 py-1 border border-[#6359E9] rounded-md w-[85%] ${ColorThema.Primary1}`} key={i}>
@@ -189,7 +189,7 @@ const ScheduleComponent = (props) => {
                             </div>
                         </div>
                     )}
-            </>
+            </React.Fragment>
         )
     }
 

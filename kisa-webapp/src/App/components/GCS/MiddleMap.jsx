@@ -246,6 +246,7 @@ const AddNewLinkModal = (props) => {
     const handleNewConnectionBtn = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
+
     }
 
 

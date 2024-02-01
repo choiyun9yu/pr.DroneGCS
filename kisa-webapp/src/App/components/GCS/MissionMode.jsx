@@ -6,7 +6,36 @@ import {AltitudeChart} from "./AltitudeChart";
 import {Table} from "./MiddleMap";
 
 export const MissionMode = (props) => {
+    return (
+        <div id="right-sidebar" className="flex flex-col w-[300px]">
+            <div className={`flex flex-col w-full h-full overflow-auto rounded-2xl ${ColorThema.Secondary4}`}>
+
+                <div className="flex m-2 items-center">
+                    <span className="text-white rounded-md m-3 font-bold text-medium">
+                        • 드론 미션
+                    </span>
+                </div>
+
+                <MissionComponent
+                    isMissionBtn={props.isMissionBtn}
+                    setTargetPoints={props.setTargetPoints}
+                    setFlightSchedule={props.setFlightSchedule}
+                />
+
+                <StationComponent
+                    isWayPoint={props.isWayPoint}
+                    localLat={props.localLat}
+                    localLon={props.localLon}
+                />
+
+            </div>
+        </div>
+    );
+};
+
+const MissionComponent = (props) => {
     const { handleDroneMovetoMission, handleDroneStartMarking, handleDroneTargetMarking } = useContext(DroneContext);
+
     const [missionData, setMissionData] = useState([]);
     const [missionList, setMissionList] = useState([]);
     const [selectMission, setSelectMission] = useState({});
@@ -19,41 +48,14 @@ export const MissionMode = (props) => {
     const [transitCount, setTransitCount] = useState(0);
     const [flightAlt, setFlightAlt] = useState(10);
     const [altScale, setAltScale] = useState(1);
-
     const [pointsList, setPointsList] = useState([]);
-
-    const [checkBtn, setCheckBtn] = useState(false);
+    const [missionCheck, setMissionCheck] = useState(false);
 
     const handleMissionSelect = (e)=> {
         e.preventDefault();
         const { name, value } = e.target;
         setSelectMission(value);
     }
-
-    const handleDeleteMission = async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-
-        try {
-            const response = await fetch('http://localhost:5000/api/deletemissionload', {
-                method: 'DELETE',
-                body: formData,
-            });
-            if (response.ok) {
-                // console.log('요청 성공');
-                setCheckBtn(!checkBtn)
-            } else {
-                console.error('요청 실패');
-            }
-        } catch (error) {
-            console.error('요청 중 오류 발생', error);
-        } finally {
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
-        }
-    };
 
     const handleMissionStart = () => {
         console.log()
@@ -107,8 +109,8 @@ export const MissionMode = (props) => {
                 body: formData,
             });
             if (response.ok) {
-                // console.log('요청 성공');
-                setCheckBtn(!checkBtn)
+                // console.log('create mission 요청 성공');
+                setMissionCheck(!missionCheck)
             } else {
                 console.error('요청 실패');
             }
@@ -122,6 +124,31 @@ export const MissionMode = (props) => {
             // console.log('폼 데이터:', data)
         }
     }
+
+    const handleDeleteMission = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+
+        try {
+            const response = await fetch('http://localhost:5000/api/deletemissionload', {
+                method: 'DELETE',
+                body: formData,
+            });
+            if (response.ok) {
+                // console.log('delete mission 요청 성공');
+                setMissionCheck(!missionCheck)
+            } else {
+                console.error('요청 실패');
+            }
+        } catch (error) {
+            console.error('요청 중 오류 발생', error);
+        } finally {
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+        }
+    };
 
     useEffect(() => {
         const fetchLocalPoints = async () => {
@@ -147,7 +174,7 @@ export const MissionMode = (props) => {
                     method: 'GET',
                 });
                 if (response.ok) {
-                    // console.log("요청 성공");
+                    // console.log("select mission 요청 성공");
                     const data = await response.json();
                     const missionListData = [];
                     data.map(obj => {
@@ -182,205 +209,201 @@ export const MissionMode = (props) => {
 
         fetchMissionLoad()
 
-    }, [selectMission, checkBtn])
-
-    return (
-        <div id="right-sidebar" className="flex flex-col w-[300px]">
-            <div className={`flex flex-col w-full h-full overflow-auto rounded-2xl ${ColorThema.Secondary4}`}>
-                <div className="flex m-2 items-center">
-                    <span className="text-white rounded-md m-3 font-bold text-medium">• 드론 미션</span>
-                </div>
-
-                <MissionComponent
-                    isMissionBtn={props.isMissionBtn}
-
-                />
-                {props.isMissionBtn
-                    ?(
-                        <div className={`m-2 text-white`}>
-                            <form id={'missionload'} onSubmit={handleDeleteMission}>
-                                <div className={`font-bold`}>
-                                    미션 시작 하기
-                                </div>
-                                <div className={`m-2`}>
-                                    <div className={`flex items-center`}>
-                                        <span>미션 선택 : </span>
-                                        <select
-                                            onChange={handleMissionSelect}
-                                            className={`flex m-1 w-[170px] h-[23px] text-black px-2`}
-                                            name={'MissionName'}>
-                                            {missionList.map((item, index) => (
-                                                <option
-                                                    value={item} key={index}>{item}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className={`flex flex-col mx-3 text-gray-400`}>
-                                        <span>출발 지점 : {selectStartPoint}</span>
-                                        <div className={`flex flex-row items-start justify-start`}>
-                                            <div className={`flex w-[95px]`}>경유 지점 :</div>
-
-                                            <div className={`flex w-[87%]`}>{(selectTransitPoint.length === 0)
-                                                ? "없음"
-                                                : selectTransitPoint.join(' - ')}
-                                            </div>
-                                        </div>
-                                        <span>목표 지점 : {selectTargetPoint}</span>
-                                        <span>비행 고도 : {selectFlightAlt} m</span>
-                                        <span>예상 비행 거리 : {selectFlightDistance}</span>
-                                        <span>예상 소요 시간  : {selectTakeTime}</span>
-                                    </div>
-                                </div>
-
-                                <div className={`flex justify-end mx-5 mt-2`}>
-                                    <button
-                                        className={`flex mr-2 px-2 rounded-xl border hover:${ColorThema.Primary1}`}>
-                                        제거
-                                    </button>
-                                    <button
-                                        type={'button'} onClick={handleMissionStart}
-                                        className={`flex px-2 rounded-xl border hover:${ColorThema.Primary1}`}>
-                                        미션 시작
-                                    </button>
-                                </div>
-                            </form>
-
-                            <form id={'missionenroll'} className={`mt-3`}
-                                  onSubmit={handleCreateMission}>
-                                <div className={`font-bold`}>
-                                    미션 생성 하기
-                                </div>
-
-                                <div className={`flex flex-col m-2`}>
-                                    <div className={`flex items-center`}>
-                                        <span className={`mr-2`}>출발 지점</span>
-                                        :
-                                        <select
-                                            className={`flex m-1 w-[170px] h-[23px] text-black px-2`}
-                                            name={'StartPoint'}>
-                                            {pointsList.map((item, index) => (
-                                                <option value={item} key={index}>{item}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <TransitInput transitCount={transitCount} pointsList={pointsList}/>
-
-                                    <div className={`flex items-center`}>
-                                        <span className={`mr-2`}>목표 지점 </span>
-                                        :
-                                        <select
-                                            className={`flex m-1 w-[170px] h-[23px] text-black px-2`}
-                                            name={'TargetPoint'}>
-                                            {pointsList.map((item, index) => (
-                                                <option value={item} key={index}>{item}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className={`flex items-center`}>
-                                        <span className={`mr-2`}>비행 고도
-                                            <span className={`text-sm`}>(m)</span>
-                                        </span>
-                                        :
-                                        <input
-                                            className={`m-1 w-[45px] text-black px-2`}
-                                            name={'FlightAlt'}
-                                            type={'text'}
-                                            value={flightAlt}
-                                            placeholder={'비행 고도를 입력하세요'}
-                                            readOnly>
-                                        </input>
-
-                                        <div className={`flex`}>
-                                            <button type="button" onClick={handleAltUp}
-                                                    className={`flex justify-center ml-2 w-[25px] h-full rounded-lg border hover:${ColorThema.Primary1}`}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                     strokeWidth={1.5} stroke="currentColor" className="w-4 h-6">
-                                                    <path strokeLinecap="round" strokeLinejoin="round"
-                                                          d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
-                                                </svg>
-                                            </button>
-                                            <button type="button" onClick={handleAltDown}
-                                                    className={`flex justify-center ml-1 w-[25px] h-full rounded-lg border hover:${ColorThema.Primary1}`}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                     strokeWidth={1.5} stroke="currentColor" className="w-4 h-6">
-                                                    <path strokeLinecap="round" strokeLinejoin="round"
-                                                          d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
-                                                </svg>
-                                            </button>
-
-                                            {(altScale === 1)
-                                                ? (
-                                                    <button type="button" onClick={handleAltScale}
-                                                            className={`flex justify-center ml-1 w-[40px] h-full px-2 rounded-lg border hover:${ColorThema.Primary1}`}>
-                                                        x10
-                                                    </button>
-                                                )
-                                                : (
-                                                    <button type="button" onClick={handleAltScale}
-                                                            className={`flex justify-center ml-1 w-[40px] h-full px-2 rounded-xl border ${ColorThema.Primary1}`}>
-                                                        x10
-                                                    </button>
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-
-                                    <div className={`flex justify-end mx-3 mt-2`}>
-                                        <div className={`flex flex-row mr-3 pl-2 rounded-xl border`}>
-                                            경유지
-                                            <button type="button" onClick={handleTransitUp}
-                                                    className={`flex px-1 hover:text-[#6359E9]`}>
-                                                추가
-                                            </button>
-                                            |
-                                            <button type="button" onClick={handleTransitDown}
-                                                    className={`flex mr-2 pl-1 hover:text-[#6359E9]`}>
-                                                삭제
-                                            </button>
-                                        </div>
-
-                                        <button
-                                            className={`flex px-2 rounded-xl border hover:${ColorThema.Primary1}`}>
-                                            생성
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    )
-                    : null
-                }
-
-
-                <StationComponent
-                    isWayPoint={props.isWayPoint}
-                    localLat={props.localLat}
-                    localLon={props.localLon}
-                    pointList={pointsList}
-
-                />
-
-            </div>
-        </div>
-    );
-};
-
-
-const MissionComponent = (props) => {
+    }, [selectMission, missionCheck])
 
     return(
         <>
+            {props.isMissionBtn
+                ?(
+                    <div className={`m-2 text-white`}>
+                        <form id={'missionload'} onSubmit={handleDeleteMission}>
+                            <div className={`font-bold`}>
+                                미션 시작 하기
+                            </div>
+                            <div className={`m-2`}>
+                                <div className={`flex items-center`}>
+                                    <span>미션 선택 : </span>
+                                    <select
+                                        onChange={handleMissionSelect}
+                                        className={`flex m-1 w-[170px] h-[23px] text-black px-2`}
+                                        name={'MissionName'}>
+                                        {missionList.map((item, index) => (
+                                            <option
+                                                value={item} key={index}>{item}</option>
+                                        ))}
+                                    </select>
+                                </div>
 
+                                <div className={`flex flex-col mx-3 text-gray-400`}>
+                                    <span>출발 지점 : {selectStartPoint}</span>
+                                    <div className={`flex flex-row items-start justify-start`}>
+                                        <div className={`flex w-[95px]`}>경유 지점 :</div>
+
+                                        <div className={`flex w-[87%]`}>{(selectTransitPoint.length === 0)
+                                            ? "없음"
+                                            : selectTransitPoint.join(' - ')}
+                                        </div>
+                                    </div>
+                                    <span>목표 지점 : {selectTargetPoint}</span>
+                                    <span>비행 고도 : {selectFlightAlt} m</span>
+                                    <span>예상 비행 거리 : {selectFlightDistance}</span>
+                                    <span>예상 소요 시간  : {selectTakeTime}</span>
+                                </div>
+                            </div>
+
+                            <div className={`flex justify-end mx-5 mt-2`}>
+                                <button
+                                    className={`flex mr-2 px-2 rounded-xl border hover:${ColorThema.Primary1}`}>
+                                    제거
+                                </button>
+                                <button
+                                    type={'button'} onClick={handleMissionStart}
+                                    className={`flex px-2 rounded-xl border hover:${ColorThema.Primary1}`}>
+                                    미션 시작
+                                </button>
+                            </div>
+                        </form>
+
+                        <form id={'missionenroll'} className={`mt-3`}
+                              onSubmit={handleCreateMission}>
+                            <div className={`font-bold`}>
+                                미션 생성 하기
+                            </div>
+
+                            <div className={`flex flex-col m-2`}>
+                                <div className={`flex items-center`}>
+                                    <span className={`mr-2`}>출발 지점</span>
+                                    :
+                                    <select
+                                        className={`flex m-1 w-[170px] h-[23px] text-black px-2`}
+                                        name={'StartPoint'}>
+                                        {pointsList.map((item, index) => (
+                                            <option value={item} key={index}>{item}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <TransitInput transitCount={transitCount} pointsList={pointsList}/>
+
+                                <div className={`flex items-center`}>
+                                    <span className={`mr-2`}>목표 지점 </span>
+                                    :
+                                    <select
+                                        className={`flex m-1 w-[170px] h-[23px] text-black px-2`}
+                                        name={'TargetPoint'}>
+                                        {pointsList.map((item, index) => (
+                                            <option value={item} key={index}>{item}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className={`flex items-center`}>
+                                        <span className={`mr-2`}>비행 고도
+                                            <span className={`text-sm`}>(m)</span>
+                                        </span>
+                                    :
+                                    <input
+                                        className={`m-1 w-[45px] text-black px-2`}
+                                        name={'FlightAlt'}
+                                        type={'text'}
+                                        value={flightAlt}
+                                        placeholder={'비행 고도를 입력하세요'}
+                                        readOnly>
+                                    </input>
+
+                                    <div className={`flex`}>
+                                        <button type="button" onClick={handleAltUp}
+                                                className={`flex justify-center ml-2 w-[25px] h-full rounded-lg border hover:${ColorThema.Primary1}`}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                 strokeWidth={1.5} stroke="currentColor" className="w-4 h-6">
+                                                <path strokeLinecap="round" strokeLinejoin="round"
+                                                      d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
+                                            </svg>
+                                        </button>
+                                        <button type="button" onClick={handleAltDown}
+                                                className={`flex justify-center ml-1 w-[25px] h-full rounded-lg border hover:${ColorThema.Primary1}`}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                 strokeWidth={1.5} stroke="currentColor" className="w-4 h-6">
+                                                <path strokeLinecap="round" strokeLinejoin="round"
+                                                      d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
+                                            </svg>
+                                        </button>
+
+                                        {(altScale === 1)
+                                            ? (
+                                                <button type="button" onClick={handleAltScale}
+                                                        className={`flex justify-center ml-1 w-[40px] h-full px-2 rounded-lg border hover:${ColorThema.Primary1}`}>
+                                                    x10
+                                                </button>
+                                            )
+                                            : (
+                                                <button type="button" onClick={handleAltScale}
+                                                        className={`flex justify-center ml-1 w-[40px] h-full px-2 rounded-xl border ${ColorThema.Primary1}`}>
+                                                    x10
+                                                </button>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+
+                                <div className={`flex justify-end mx-3 mt-2`}>
+                                    <div className={`flex flex-row mr-3 pl-2 rounded-xl border`}>
+                                        경유지
+                                        <button type="button" onClick={handleTransitUp}
+                                                className={`flex px-1 hover:text-[#6359E9]`}>
+                                            추가
+                                        </button>
+                                        |
+                                        <button type="button" onClick={handleTransitDown}
+                                                className={`flex mr-2 pl-1 hover:text-[#6359E9]`}>
+                                            삭제
+                                        </button>
+                                    </div>
+
+                                    <button
+                                        className={`flex px-2 rounded-xl border hover:${ColorThema.Primary1}`}>
+                                        생성
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                )
+                : null
+            }
         </>
+    )
+}
+
+const TransitInput = (props) => {
+    const transitElements = [];
+
+    for (let i=0; i < props.transitCount; i++) {
+        transitElements.push(
+            <div className={`flex flex-row items-center`} key={i}>
+                <span>경유지 ({i+1}) : </span>
+                <select
+                    className={`flex m-1 w-[170px] h-[23px] text-black px-2`}
+                    name={`TransitPoint${i+1}`}>
+                    {props.pointsList.map((item, index) => (
+                        <option value={item} key={index}>{item}</option>
+                    ))}
+                </select>
+            </div>
+        )
+    }
+
+    return (
+        <div>
+            {transitElements}
+        </div>
     )
 }
 
 const StationComponent = (props) => {
     const [directInput, setDirectInput] = useState(true);
     const [localCheck, setLocalCheck] = useState(false);
+    const [pointsList, setPointsList] = useState([]);
 
     const handleCurrentPoint = () => {
         props.handleCurrentPoint();
@@ -455,6 +478,28 @@ const StationComponent = (props) => {
             });
         }
     };
+
+    useEffect(() => {
+        const fetchLocalPoints = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/localpoints', {
+                    method: 'GET',
+                });
+                if (response.ok) {
+                    // console.log('요청 성공');
+                    const data = await response.json();
+                    setPointsList(data['localPointList']);
+                } else {
+                    console.error('요청 실패');
+                }
+            } catch (error) {
+                console.error('요청 중 오류 발생', error);
+            }
+        };
+
+        fetchLocalPoints()
+
+    }, [localCheck]);
 
     return (
         <>
@@ -581,7 +626,7 @@ const StationComponent = (props) => {
                                     <select
                                         className={`flex m-1 w-[170px] h-[23px] text-black px-2`}
                                         name={'LocalName'}>
-                                        {props.pointsList??[].map((item, index) => (
+                                        {pointsList.map((item, index) => (
                                             <option
                                                 value={item} key={index}>{item}</option>
                                         ))}
@@ -601,35 +646,6 @@ const StationComponent = (props) => {
         </>
     )
 }
-
-
-const TransitInput = (props) => {
-    const transitElements = [];
-
-    for (let i=0; i < props.transitCount; i++) {
-        transitElements.push(
-            <div className={`flex flex-row items-center`} key={i}>
-                <span>경유지 ({i+1}) : </span>
-                <select
-                    className={`flex m-1 w-[170px] h-[23px] text-black px-2`}
-                    name={`TransitPoint${i+1}`}>
-                    {props.pointsList.map((item, index) => (
-                        <option value={item} key={index}>{item}</option>
-                    ))}
-                </select>
-            </div>
-        )
-    }
-
-    return (
-        <div>
-            {transitElements}
-        </div>
-    )
-}
-
-
-
 
 export const MissionContents = (props) => {
     const [isCenterBtn, setIsCenterBtn] = useState(false);
