@@ -12,7 +12,7 @@ export const LogDataSelect = () => {
 
     return (
         <>
-            <div className={`flex flex-col w-full h-full overflow-clip mx-5 mb-5 p-5 rounded-lg font-normal text-${ColorThema.Primary1} bg-${ColorThema.Secondary4}`}>
+            <div className={`flex flex-col w-full h-full overflow-clip mx-5 mb-5 p-5 rounded-lg font-normal text-$[#6359E9] ${ColorThema.Secondary4}`}>
                 <LogForm dataTransfer={dataTransfer} />
                 <div className="flex h-full mt-8 overflow-hidden">
                     <LogTable tableData={tableData} />

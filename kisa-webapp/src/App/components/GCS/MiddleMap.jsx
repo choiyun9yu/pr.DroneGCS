@@ -126,8 +126,8 @@ export const MiddleMap = (props) => {
 
     return (
         props.swapMap
-            ? <div id='google-map' className={`w-full h-full rounded-2xl bg-${ColorThema.Secondary4}`}></div>
-            : <div id='google-map' className={`w-full h-full rounded-2xl bg-${ColorThema.Secondary4}`}>
+            ? <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}></div>
+            : <div id='google-map' className={`w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
                 <GoogleMap
                     mapContainerClassName={`flex w-full h-full rounded-xl`}
                     center={props.center}
@@ -250,7 +250,7 @@ const AddNewLinkModal = (props) => {
 
 
     return (
-        <div className={`modal absolute top-[30%] left-[35%] w-[450px] h-[250px] rounded-2xl bg-${ColorThema.Primary1}`}>
+        <div className={`modal absolute top-[30%] left-[35%] w-[450px] h-[250px] rounded-2xl ${ColorThema.Primary1}`}>
             <div className={`flex flex-row pl-4 py-2 items-start justify-start text-2xl font-bold`}>
                 <div className={`flex items-start justify-start`}>New Link Connection</div>
 
@@ -291,7 +291,7 @@ const AddNewLinkModal = (props) => {
                         <div className={`flex mr-2 mt-5`}>
                             <button
                                 type={'submit'} onClick={handleNewConnectionBtn}
-                                className={`ml-auto py-1 px-4 rounded-md text-lg text-white bg-${ColorThema.Secondary4}`}
+                                className={`ml-auto py-1 px-4 rounded-md text-lg text-white ${ColorThema.Secondary4}`}
                             >
                                 Add
                             </button>

@@ -221,13 +221,13 @@ export const PredictionForm = (props) => {
     }, []);
 
     return (
-        <div id="predictiondropdown" className={`flex flex-col  w-full p-5 rounded-lg bg-${ColorThema.Secondary2}`}>
+        <div id="predictiondropdown" className={`flex flex-col  w-full p-5 rounded-lg ${ColorThema.Secondary2}`}>
             <span className="mb-5 rounded-md font-bold text-medium text-white">• 부품 및 조회기간 선택</span>
             <form
                 method="POST"
                 action="http://localhost:5050/api/predict"
                 onSubmit={handleSubmit}
-                className={`flex flex-row text-${ColorThema.Primary2}`}
+                className={`flex flex-row text-[#AEABD8]`}
             >
                 <div className="flex flex-col mr-5">
                     <span className="mb-5">✓ 드론 선택</span>
@@ -278,7 +278,7 @@ export const PredictionForm = (props) => {
                     <div className="flex ">
                         <button
                             type="submit"
-                            className={`flex items-center h-[30px] py-1 px-3  rounded border hover:bg-${ColorThema.Primary1} border-${ColorThema.Primary1} text-white bg-${ColorThema.Secondary5}`}
+                            className={`flex items-center h-[30px] py-1 px-3  rounded border hover:${ColorThema.Primary1} border-[#6359E9] text-white ${ColorThema.Secondary5}`}
                         >
                             조회
                         </button>

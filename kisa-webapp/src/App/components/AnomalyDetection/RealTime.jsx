@@ -25,7 +25,7 @@ export const RealTime = () => {
     // const graphData = realTimeData.Alt
 
     return (
-            <div id="real-time" className={`flex flex-col w-full h-full mx-5 mb-5 rounded-lg font-normal text-${ColorThema.Secondary1}`}>
+            <div id="real-time" className={`flex flex-col w-full h-full mx-5 mb-5 rounded-lg font-normal text-[#8C89B4]`}>
                 <RealTimeForm dataTransfer={dataTransfer} />
                 <div id="realtime-board" className="flex w-full h-full ">
                     <div className={`flex flex-row w-full h-full `}>

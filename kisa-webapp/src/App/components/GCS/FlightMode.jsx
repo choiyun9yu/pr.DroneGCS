@@ -24,46 +24,46 @@ const RightSideTop = () => {
     const { droneMessage } = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
     return (
-        <div className={`items-start w-full h-1/2 mb-3 rounded-2xl bg-${ColorThema.Secondary4}`}>
+        <div className={`items-start w-full h-1/2 mb-3 rounded-2xl ${ColorThema.Secondary4}`}>
             <div className="flex m-2 items-center">
                 <span className="text-white rounded-md m-3 font-bold text-medium">• 드론 정보</span>
             </div>
             <table id={'gcs-mini-table'}
-                   className={`w-[90%] h-[70%] mx-auto border-t-2 border-l-2 border-${ColorThema.Secondary5} text-white text-sm`}>
+                   className={`w-[90%] h-[70%] mx-auto border-t-2 border-l-2 border-[#4B4B99] text-white text-sm`}>
                 <tbody>
-                <tr className={`w-full border-b-2 border-${ColorThema.Secondary5}`}>
-                    <th className={`w-[23%] border-r-2 border-${ColorThema.Secondary5}`}>드론 ID</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-${ColorThema.Secondary5} bg-${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneId}</td>
-                    <th className={`w-[23%] border-r-2 border-${ColorThema.Secondary5}`}>현재 WP 번호</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-${ColorThema.Secondary5} bg-${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.WayPointNum}</td>
+                <tr className={`w-full border-b-2 border-[#4B4B99]`}>
+                    <th className={`w-[23%] border-r-2 border-[#4B4B99]`}>드론 ID</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneId}</td>
+                    <th className={`w-[23%] border-r-2 border-[#4B4B99]`}>현재 WP 번호</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.WayPointNum}</td>
                 </tr>
 
-                <tr className={`w-full border-b-2 border-${ColorThema.Secondary5}`}>
-                    <th className={`w-[23%] border-r-2 border-${ColorThema.Secondary5}`}>드론 전압 (V)</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-${ColorThema.Secondary5} bg-${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.PowerV}</td>
-                    <th className={`w-[23%] border-r-2 border-${ColorThema.Secondary5}`}>드론 온도 (°C)</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-${ColorThema.Secondary5} bg-${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.TempC}</td>
+                <tr className={`w-full border-b-2 border-[#4B4B99]`}>
+                    <th className={`w-[23%] border-r-2 border-[#4B4B99]`}>드론 전압 (V)</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.PowerV}</td>
+                    <th className={`w-[23%] border-r-2 border-[#4B4B99]`}>드론 온도 (°C)</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.TempC}</td>
                 </tr>
 
-                <tr className={`w-full border-b-2 border-${ColorThema.Secondary5}`}>
-                    <th className={`w-[23%] border-r-2 border-${ColorThema.Secondary5}`}>위성 수신 수</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-${ColorThema.Secondary5} bg-${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.SatellitesCount}</td>
-                    <th className={`w-[23%] border-r-2 border-${ColorThema.Secondary5}`}>HDOP</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-${ColorThema.Secondary5} bg-${ColorThema.Secondary3}`}>{droneMessage && (droneState.DroneStt.HDOP).toFixed(4)}</td>
+                <tr className={`w-full border-b-2 border-[#4B4B99]`}>
+                    <th className={`w-[23%] border-r-2 border-[#4B4B99]`}>위성 수신 수</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.SatellitesCount}</td>
+                    <th className={`w-[23%] border-r-2 border-[#4B4B99]`}>HDOP</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && (droneState.DroneStt.HDOP).toFixed(4)}</td>
                 </tr>
 
-                <tr className={`w-full border-b-2 border-${ColorThema.Secondary5}`}>
-                    <th className={`w-[23%] border-r-2 border-${ColorThema.Secondary5}`}>위도</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-${ColorThema.Secondary5} bg-${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.Lat}</td>
-                    <th className={`w-[23%] border-r-2 border-${ColorThema.Secondary5}`}>경도</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-${ColorThema.Secondary5} bg-${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.Lon}</td>
+                <tr className={`w-full border-b-2 border-[#4B4B99]`}>
+                    <th className={`w-[23%] border-r-2 border-[#4B4B99]`}>위도</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.Lat}</td>
+                    <th className={`w-[23%] border-r-2 border-[#4B4B99]`}>경도</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.Lon}</td>
                 </tr>
 
-                <tr className={`w-full border-b-2 border-${ColorThema.Secondary5}`}>
-                    <th className={`w-[23%] border-r-2 border-${ColorThema.Secondary5}`}>고도 (m)</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-${ColorThema.Secondary5} bg-${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.Alt}</td>
-                    <th className={`w-[23%] border-r-2 border-${ColorThema.Secondary5}`}>제어권</th>
-                    <td className={`w-[27%] pl-3 border-r-2 border-${ColorThema.Secondary5} bg-${ColorThema.Secondary3}`}>{droneMessage && droneState.ControlStt}</td>
+                <tr className={`w-full border-b-2 border-[#4B4B99]`}>
+                    <th className={`w-[23%] border-r-2 border-[#4B4B99]`}>고도 (m)</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.DroneStt.Alt}</td>
+                    <th className={`w-[23%] border-r-2 border-[#4B4B99]`}>제어권</th>
+                    <td className={`w-[27%] pl-3 border-r-2 border-[#4B4B99] ${ColorThema.Secondary3}`}>{droneMessage && droneState.ControlStt}</td>
                 </tr>
                 </tbody>
             </table>
@@ -73,7 +73,7 @@ const RightSideTop = () => {
 
 const RightSideBottom = (props) => {
     return (
-        <div className={`flex items-start w-full h-full rounded-2xl bg-${ColorThema.Secondary4}`}>
+        <div className={`flex items-start w-full h-full rounded-2xl ${ColorThema.Secondary4}`}>
             <div className="flex flex-col w-full h-full m-2">
                 <span className="text-white rounded-md m-3 font-bold text-medium">• 드론 운용</span>
                 <div className={`w-full h-full min-h-[200px] bg-black`}>
@@ -83,7 +83,7 @@ const RightSideBottom = (props) => {
                         />
                         : null}
                 </div>
-                <div className={`flex flex-col w-full h-full text-${ColorThema.Primary2}`}>
+                <div className={`flex flex-col w-full h-full text-[#AEABD8]`}>
                     <div className={`flex flex-row w-full mt-3 justify-center`}>
                         <div className={`w-full`}>
                             <button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 hover:text-gray-300">
@@ -92,13 +92,13 @@ const RightSideBottom = (props) => {
 
                             </button>
                         </div>
-                        <div className={`flex justify-center min-w-[100px] py-0.5 rounded border border-${ColorThema.Primary1} text-sm text-${ColorThema.Primary1} font-semibold`}>카메라 제어</div>
+                        <div className={`flex justify-center min-w-[100px] py-0.5 rounded border border-[#6359E9] text-sm text-[#6359E9] font-semibold`}>카메라 제어</div>
                         <div className={`flex w-full items-center justify-end`}>
                             <button className={`mr-3`}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 hover:text-gray-300">
                                 <path fillRule="evenodd" d="M4.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm6 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clipRule="evenodd" />
                             </svg>
                             </button>
-                            <button className={`mr-3 my-0.5 px-1 rounded border text-sm text-${ColorThema.Secondary4} border-${ColorThema.Primary2} bg-${ColorThema.Primary2} hover:text-gray-300 hover:border-gray-300`}>Follow</button>
+                            <button className={`mr-3 my-0.5 px-1 rounded border text-sm text-[#1D1D41] border-[#AEABD8] ${ColorThema.Primary2} hover:text-gray-300 hover:border-gray-300`}>Follow</button>
                             <button className={`mr-3`}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 hover:text-gray-300">
                                 <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
                                 <path fillRule="evenodd" d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3h-15a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0zm12-1.5a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
@@ -119,15 +119,15 @@ const RightSideBottom = (props) => {
                             </svg>
                             </button>
                             <div className={`flex flex-col h-full mr-5 items-center`}>
-                                <div className={`flex justify-end px-1 rounded border border-${ColorThema.Primary2} text-sm`}>
+                                <div className={`flex justify-end px-1 rounded border border-[#AEABD8] text-sm`}>
                                     zoom</div>
                                 <div className={`flex flex-col h-full justify-between`}>
-                                    <button className={`flex justify-center items-center m-2 w-5 h-5 rounded-full bg-${ColorThema.Primary2} text-gray-800 hover:bg-gray-300`}>
+                                    <button className={`flex justify-center items-center m-2 w-5 h-5 rounded-full ${ColorThema.Primary2} text-gray-800 hover:bg-gray-300`}>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                             <path fillRule="evenodd" d="M12 5.25a.75.75 0 01.75.75v5.25H18a.75.75 0 010 1.5h-5.25V18a.75.75 0 01-1.5 0v-5.25H6a.75.75 0 010-1.5h5.25V6a.75.75 0 01.75-.75z" clipRule="evenodd" />
                                         </svg>
                                     </button>
-                                    <button className={`flex justify-center items-center m-2 w-5 h-5 rounded-full bg-${ColorThema.Primary2} text-gray-800 hover:bg-gray-300`}>
+                                    <button className={`flex justify-center items-center m-2 w-5 h-5 rounded-full ${ColorThema.Primary2} text-gray-800 hover:bg-gray-300`}>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                             <path fillRule="evenodd" d="M5.25 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5H6a.75.75 0 01-.75-.75z" clipRule="evenodd" />
                                         </svg>
@@ -142,15 +142,15 @@ const RightSideBottom = (props) => {
 
                         <div className={`flex w-full h-full items-center`}>
                             <div className={`flex flex-col h-full ml-5 items-center`}>
-                                <div className={`flex flex-col justify-end px-1 rounded border border-${ColorThema.Primary2} text-sm`}>
+                                <div className={`flex flex-col justify-end px-1 rounded border border-[#AEABD8] text-sm`}>
                                     focus</div>
                                 <div className={`flex flex-col h-full justify-between`}>
-                                    <button className={`flex justify-center items-center m-2 w-5 h-5 rounded-full bg-${ColorThema.Primary2} text-gray-800 hover:bg-gray-300`}>
+                                    <button className={`flex justify-center items-center m-2 w-5 h-5 rounded-full ${ColorThema.Primary2} text-gray-800 hover:bg-gray-300`}>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                             <path fillRule="evenodd" d="M12 5.25a.75.75 0 01.75.75v5.25H18a.75.75 0 010 1.5h-5.25V18a.75.75 0 01-1.5 0v-5.25H6a.75.75 0 010-1.5h5.25V6a.75.75 0 01.75-.75z" clipRule="evenodd" />
                                         </svg>
                                     </button>
-                                    <button className={`flex justify-center items-center m-2 w-5 h-5 rounded-full bg-${ColorThema.Primary2} text-gray-800 hover:bg-gray-300`}>
+                                    <button className={`flex justify-center items-center m-2 w-5 h-5 rounded-full ${ColorThema.Primary2} text-gray-800 hover:bg-gray-300`}>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                             <path fillRule="evenodd" d="M5.25 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5H6a.75.75 0 01-.75-.75z" clipRule="evenodd" />
                                         </svg>
@@ -217,8 +217,8 @@ export const FlightContents = (props) => {
                                   // lastPathReset={props.lastPathReset}
                                   handleMarkerReset={props.handleMarkerReset}
                                   targetPoints= {props.targetPoints}/>
-                : <button onClick={props.handleIsController} className={`absolute bottom-0 w-10 h-7 rounded-t-md bg-${ColorThema.Secondary4} hover:bg-gray-300`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" style={{ transform: 'rotate(270deg)' }} className={`w-6 h-5 mx-auto mt-0.5 hover:text-${ColorThema.Secondary4}`}>
+                : <button onClick={props.handleIsController} className={`absolute bottom-0 w-10 h-7 rounded-t-md ${ColorThema.Secondary4} hover:bg-gray-300`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" style={{ transform: 'rotate(270deg)' }} className={`w-6 h-5 mx-auto mt-0.5 hover:text-[#1D1D41]`}>
                         <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
                     </svg>
                   </button>}
@@ -400,7 +400,7 @@ const FlightBtn = (props) => {
 
             {props.isMarker
                 ? (<button onClick={props.handleIsMarker}
-                           className={`absolute top-[145px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-${ColorThema.Primary1} shadow-sm shadow-[#BBBBBB]`}>
+                           className={`absolute top-[145px] left-[10px] flex justify-center items-center w-[40px] h-[40px] ${ColorThema.Primary1} shadow-sm shadow-[#BBBBBB]`}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                         <path fillRule="evenodd"
                               d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
@@ -459,7 +459,7 @@ const FlightBtn = (props) => {
                         </button>
                     </div>
                     {isXTen
-                        ? <button className={`w-[30px] h-[36px] mr-1 rounded-xl border text-xs bg-${ColorThema.Primary2}`}
+                        ? <button className={`w-[30px] h-[36px] mr-1 rounded-xl border text-xs ${ColorThema.Primary2}`}
                                   onClick={handleIsXten}>x10</button>
                         : <button className={`w-[30px] h-[36px] mr-1 rounded-xl border text-xs`}
                                   onClick={handleIsXten}>x10</button>}
@@ -471,47 +471,47 @@ const FlightBtn = (props) => {
             <div className={`flex h-[30px] z-10 ml-[200px] mt-[10px]`}>
 
                 {droneMessage && droneState.DroneStt.FlightMode === 3
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-${ColorThema.Primary1}`}>Auto</button>
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white ${ColorThema.Primary1}`}>Auto</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(3)}>Auto</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 0
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-${ColorThema.Primary1}`}>Stabilize</button>
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white ${ColorThema.Primary1}`}>Stabilize</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(0)}>Stabilize</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 5
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-${ColorThema.Primary1}`}>Loiter</button>
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white ${ColorThema.Primary1}`}>Loiter</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(5)}>Loiter</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 16
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-${ColorThema.Primary1}`}>PosHold</button>
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white ${ColorThema.Primary1}`}>PosHold</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(16)}>PosHold</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 2
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-${ColorThema.Primary1}`}>AltHold</button>
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white ${ColorThema.Primary1}`}>AltHold</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(2)}>AltHold</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 4
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-${ColorThema.Primary1}`}>Guided</button>
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white ${ColorThema.Primary1}`}>Guided</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(4)}>Guided</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 17
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-${ColorThema.Primary1}`}>Brake</button>
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white ${ColorThema.Primary1}`}>Brake</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(17)}>Brake</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 9
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-${ColorThema.Primary1}`}>Land</button>
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white ${ColorThema.Primary1}`}>Land</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightCommand(3)}>Land</button>
                 }
                 {droneMessage && droneState.DroneStt.FlightMode === 6
-                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white bg-${ColorThema.Primary1}`}>RTL</button>
+                    ? <button className={`px-2 py-1 mr-0.5 rounded-md text-white ${ColorThema.Primary1}`}>RTL</button>
                     : <button className={`px-2 py-1 mr-0.5 rounded-md text-white control_btn`}
                               onClick={() => handleDroneFlightMode(6)}>RTL</button>
                 }
@@ -618,7 +618,7 @@ const MainController = (props) => {
     }
 
     return (
-        <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-${ColorThema.Primary2}`}>
+        <div id='main-controller' className={`absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]`}>
             <div className={`flex flex-col mt-0.5 mx-2`}>
                 <button className={`w-20 h-10 mb-1.5 rounded-xl control_btn`} onClick={() => handleArmBtn()}>
                     Arm
@@ -637,9 +637,9 @@ const MainController = (props) => {
             </div>
 
             <div
-                className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl bg-${ColorThema.Secondary4}`}>
+                className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl ${ColorThema.Secondary4}`}>
                 <span
-                    className={`flex justify-center w-[40px] mb-3 rounded-md border border-${ColorThema.Primary1} text-sm text-${ColorThema.Primary1}`}>드론</span>
+                    className={`flex justify-center w-[40px] mb-3 rounded-md border border-[#6359E9] text-sm text-[#6359E9]`}>드론</span>
                 <DroneJoyStick/>
             </div>
             <button onClick={props.handleIsController} className={`absolute bottom-0 w-5 h-5 rounded-t-md bg-white hover:bg-gray-300`}>
@@ -647,8 +647,8 @@ const MainController = (props) => {
                     <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
                 </svg>
             </button>
-            <div className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl bg-${ColorThema.Secondary4}`}>
-                <span className={`flex justify-center w-[40px] mb-3 rounded-md border border-${ColorThema.Primary1} text-sm text-${ColorThema.Primary1}`}>제어</span>
+            <div className={`flex flex-col justify-center items-center h-full rounded-t-3xl w-[200px] shadow-2xl ${ColorThema.Secondary4}`}>
+                <span className={`flex justify-center w-[40px] mb-3 rounded-md border border-[#6359E9] text-sm text-[#6359E9]`}>제어</span>
                 <ControlJoyStick/>
             </div>
 

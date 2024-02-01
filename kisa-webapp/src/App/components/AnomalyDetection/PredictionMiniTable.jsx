@@ -26,14 +26,14 @@ export const PredictionMiniTable = (props) => {
     }
 
     return (
-        <div className={`flex flex-col h-full overflow-hidden border-${ColorThema.Primary1} border rounded-md justify-start items-center text-center bg-${ColorThema.Secondary4}`}>
+        <div className={`flex flex-col h-full overflow-hidden border-[#6359E9] border rounded-md justify-start items-center text-center ${ColorThema.Secondary4}`}>
             <table id="predict-table" className="flex flex-col w-full h-full overflow-auto">
                 {/* <table className="flex flex-col overflow-auto border-[#6359E9] border rounded-md  justify-start items-center text-center bg-[$1D1D41"> */}
                 <thead className="flex flex-col justify-around w-full">
                     <tr className="flex flex-row  text-white font-bold">
                         {minitableObj.header.map((item, index) => {
                             return (
-                                <th className={`flex flex-col justify-center h-[50px] border-${ColorThema.Primary1} border-r border-b bg-${ColorThema.Secondary2}`} key={index}>
+                                <th className={`flex flex-col justify-center h-[50px] border-[#6359E9] border-r border-b ${ColorThema.Secondary2}`} key={index}>
                                     <span className="flex flex-row justify-center w-[156px]">{item}</span>
                                 </th>
                             );
@@ -42,7 +42,7 @@ export const PredictionMiniTable = (props) => {
                 </thead>
                 <tbody className="flex flex-col justify-around w-full">
                 {minitableObj.data.map((item, index) => (
-                    <tr className={`flex flex-row border-${ColorThema.Primary1} text-${ColorThema.Primary2} text-s`} key={index}>
+                    <tr className={`flex flex-row border-[#6359E9] text-[#AEABD8] text-s`} key={index}>
                         <TableCell key={`PredictData-${index}`} value={item.PredictData} />
                         <TableCell key={`SelectData-${index}`} value={item.SelectData} />
                         <TableCell key={`DroneId-${index}`} value={item.DroneId} />
@@ -96,7 +96,7 @@ export const PredictionMiniTable = (props) => {
 };
 
 const TableCell = ({ value }) => (
-    <td className={`flex flex-col justify-center h-[50px] border-b border-${ColorThema.Primary1} border-r font-normal`}>
+    <td className={`flex flex-col justify-center h-[50px] border-b border-[#6359E9] border-r font-normal`}>
         <span className="flex flex-row justify-center w-[156px] text-xs">{value}</span>
     </td>
 );

@@ -10,7 +10,7 @@ export const LeftSidebar = (props) => {
 
     return (
         <div
-            className={`flex flex-col items-start w-full h-full rounded-2xl font-bold text-medium text-gray-200 bg-${ColorThema.Secondary4}`}>
+            className={`flex flex-col items-start w-full h-full rounded-2xl font-bold text-medium text-gray-200 ${ColorThema.Secondary4}`}>
             <LeftSideBtn gcsMode={gcsMode} setGcsMode={setGcsMode}/>
 
             <AddNewLink handleIsModal={props.handleIsModal}/>
@@ -27,7 +27,7 @@ const AddNewLink = (props) => {
     return(
         // 드론 추가로 연결하는 버튼 (백엔드 미구현)
         <div className={`m-2 items-center `}>
-            <button onClick={props.handleIsModal} className={`flex flex-row w-full items-center ml-2 px-2 py-1 rounded-md bg-${ColorThema.Secondary3} hover:bg-${ColorThema.Primary1}`}>
+            <button onClick={props.handleIsModal} className={`flex flex-row w-full items-center ml-2 px-2 py-1 rounded-md ${ColorThema.Secondary3} hover:${ColorThema.Primary1}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                      stroke="currentColor" className="mr-1 w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round"
@@ -64,7 +64,7 @@ const EnrolledDrone = (props) => {
             <span className="ml-3">• 등록 드론 </span>
             {droneState && droneState.DroneId !== '' && (
                 <button
-                    className={`flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[55px] rounded bg-${ColorThema.Primary1}`}
+                    className={`flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[55px] rounded ${ColorThema.Primary1}`}
                     onClick={handleCurrentCenter}>
 
                     {/* 드론이 등록되었을 때 보여질 내용 */}
@@ -156,7 +156,7 @@ const ScheduleComponent = (props) => {
             <>
                 {(droneMessage?droneState.DroneMission.PathIndex:0)===i
                     ? (
-                        <div className={`flex flex-col justify-center m-2  pl-3 py-1 border border-${ColorThema.Primary1} rounded-md w-[85%] bg-${ColorThema.Primary1}`} key={i}>
+                        <div className={`flex flex-col justify-center m-2  pl-3 py-1 border border-[#6359E9] rounded-md w-[85%] ${ColorThema.Primary1}`} key={i}>
                             <div>
                                 <span> {transitPath[i - 1]} </span>
                             </div>

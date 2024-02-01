@@ -47,7 +47,7 @@ export const AttitudeIndicator = (props) => {
         indicator
             ? (
                 <div className={'absolute bottom-14 left-10 flex z-10'}>
-                    <GaugeStyleComponent className={`flex justify-center items-center rounded-3xl border border-${ColorThema.Secondary4}`}>
+                    <GaugeStyleComponent className={`flex justify-center items-center rounded-3xl border border-[#1D1D41]`}>
                         <div className={`p-3`}>
                             <svg width={SIZE} height={SIZE}>
                                 <defs>

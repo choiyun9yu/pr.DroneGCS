@@ -7,7 +7,7 @@ import { LeftSideIcon } from './ProejctIcon';
 export const MenuBtn = ({ toggle }) => {
     return (
         <button onClick={toggle}
-            className={`flex items-center w-[40px] h-[40px]  hover:bg-${ColorThema.Primary1} rounded-md mt-5 text-white bg-${ColorThema.Secondary3}`}>
+            className={`flex items-center w-[40px] h-[40px] rounded-md mt-5 text-white ${ColorThema.Secondary3} hover:${ColorThema.Primary1}`}>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -39,12 +39,12 @@ export const LeftSideBtn = (props) => {
         <>
             <div id="left-sidebar-btn-box" className="flex justify-between m-4 ">
                 {props.gcsMode === 'flight' ? (
-                    <button className={`m-1 p-1 rounded-md  text-gray-300 bg-${ColorThema.Primary1}`}>
+                    <button className={`m-1 p-1 rounded-md  text-gray-300 ${ColorThema.Primary1}`}>
                         {LeftSideIcon.flight}
                     </button>
                 ) : (
                     <button
-                        className={`m-1 p-1 rounded-md  text-white  hover:text-gray-300  bg-${ColorThema.Secondary3} hover:bg-${ColorThema.Primary1} `}
+                        className={`m-1 p-1 rounded-md  text-white  hover:text-gray-300  ${ColorThema.Secondary3} hover:${ColorThema.Primary1} `}
                         onClick={handleFlight}
                     >
                         {LeftSideIcon.flight}
@@ -52,12 +52,12 @@ export const LeftSideBtn = (props) => {
                 )}
 
                 {props.gcsMode === 'mission' ? (
-                    <button className={`m-1 p-1 rounded-md  text-gray-300 bg-${ColorThema.Primary1}`}>
+                    <button className={`m-1 p-1 rounded-md  text-gray-300 ${ColorThema.Primary1}`}>
                         {LeftSideIcon.mission}
                     </button>
                 ) : (
                     <button
-                        className={`m-1 p-1 rounded-md  text-white  hover:text-gray-300  bg-${ColorThema.Secondary3} hover:bg-${ColorThema.Primary1} `}
+                        className={`m-1 p-1 rounded-md  text-white  hover:text-gray-300  ${ColorThema.Secondary3} hover:${ColorThema.Primary1} `}
                         onClick={handleMission}
                     >
                         {LeftSideIcon.mission}
@@ -65,12 +65,12 @@ export const LeftSideBtn = (props) => {
                 )}
 
                 {props.gcsMode === 'video' ? (
-                    <button className={`m-1 p-1 rounded-md  text-gray-300 bg-${ColorThema.Primary1}`}>
+                    <button className={`m-1 p-1 rounded-md  text-gray-300 ${ColorThema.Primary1}`}>
                         {LeftSideIcon.video}
                     </button>
                 ) : (
                     <button
-                        className={`m-1 p-1 rounded-md  text-white  hover:text-gray-300  bg-${ColorThema.Secondary3} hover:bg-${ColorThema.Primary1} `}
+                        className={`m-1 p-1 rounded-md  text-white  hover:text-gray-300  ${ColorThema.Secondary3} hover:${ColorThema.Primary1} `}
                         onClick={handleVideo}
                     >
                         {LeftSideIcon.video}

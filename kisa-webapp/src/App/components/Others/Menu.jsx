@@ -50,10 +50,10 @@ export const Menu = () => {
 
     return (
         <>
-            <motion.div animate={controls} className={`flex flex-col justify-between rounded-r-3xl shadow-xl shadow-black bg-${ColorThema.Secondary4}`}>
+            <motion.div animate={controls} className={`flex flex-col justify-between rounded-r-3xl shadow-xl shadow-black ${ColorThema.Secondary4}`}>
                 <div className="flex flex-col mt-5 ml-5">
                     <button onClick={isOpen ? showLess : showMore}
-                            className={`flex items-center w-[48px] h-[40px] rounded-md mt-5 text-white bg-[#333353] hover:bg-${ColorThema.Primary1}`}>
+                            className={`flex items-center w-[48px] h-[40px] rounded-md mt-5 text-white bg-[#333353] hover:${ColorThema.Primary1}`}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -72,7 +72,7 @@ export const Menu = () => {
                     </motion.div>
                     <motion.ul>
                         {MenuIcon.mainMenu.map((item, index) => (
-                            <li className={`flex items-center mr-3 h-[40px] rounded-md mt-7 text-white bg-[#333353] hover:bg-${ColorThema.Primary1}`} key={index}>
+                            <li className={`flex items-center mr-3 h-[40px] rounded-md mt-7 text-white bg-[#333353] hover:${ColorThema.Primary1}`} key={index}>
                                 <a href={item.link} className="mx-3">{item.icon}</a>
                                 <motion.a animate={controlText} href={item.link} className="text-sm">
                                     {isOpen
@@ -88,7 +88,7 @@ export const Menu = () => {
 
                 <div className="flex flex-col mt-5 ml-5 mb-40">
                     <ul>
-                        <li className={`flex items-center mr-3 h-[40px] rounded-md mt-7 text-white bg-[#333353] hover:bg-${ColorThema.Primary1}`}>
+                        <li className={`flex items-center mr-3 h-[40px] rounded-md mt-7 text-white bg-[#333353] hover:${ColorThema.Primary1}`}>
                             <button className="mx-3">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +113,7 @@ export const Menu = () => {
                         </li>
 
                         {MenuIcon.menuFooter.map((item, index) => (
-                            <li className={`flex items-center mr-3 h-[40px] rounded-md mt-7 text-white bg-[#333353] hover:bg-${ColorThema.Primary1}`} key={index}>
+                            <li className={`flex items-center mr-3 h-[40px] rounded-md mt-7 text-white bg-[#333353] hover:${ColorThema.Primary1}`} key={index}>
                                 <a href={item.link} className="mx-3">{item.icon}</a>
                                 <motion.a animate={controlText} href={item.link} className="text-sm">
                                     {isOpen

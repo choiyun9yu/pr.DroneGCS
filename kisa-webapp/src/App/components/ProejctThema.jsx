@@ -11,15 +11,15 @@ export const GradientBackground = styled.div`
 `;
 
 export const ColorThema = {
-    Primary1: '[#6359E9]',
-    Primary2: '[#AEABD8]',
-    Secondary1: '[#8C89B4]',
-    Secondary2: '[#3E3D6D]',
-    Secondary3: '[#27264E]',
-    Secondary4: '[#1D1D41]',
-    Secondary5: '[#4B4B99]',
-    Semantic1: '[#6359E9]',
-    Semantic2: '[#FF1053]',
-    Semantic3: '[#8FE388]',
-    Semantic4: '[#64CFF6]',
+    Primary1: 'bg-[#6359E9]',
+    Primary2: 'bg-[#AEABD8]',
+    Secondary1: 'bg-[#8C89B4]',
+    Secondary2: 'bg-[#3E3D6D]',
+    Secondary3: 'bg-[#27264E]',
+    Secondary4: 'bg-[#1D1D41]',
+    Secondary5: 'bg-[#4B4B99]',
+    Semantic1: 'bg-[#6359E9]',
+    Semantic2: 'bg-[#FF1053]',
+    Semantic3: 'bg-[#8FE388]',
+    Semantic4: 'bg-[#64CFF6]',
 };

@@ -7,7 +7,7 @@ export const PredictionGraph = (props) => {
 
     return (
         <div id="predictionresultselect" className="flex w-full mt-5 mb-5">
-            <div id="predictiondropdown" className={`flex flex-col w-full p-5 rounded-lg bg-${ColorThema.Secondary2}`}>
+            <div id="predictiondropdown" className={`flex flex-col w-full p-5 rounded-lg ${ColorThema.Secondary2}`}>
                 <span className="mb-5 rounded-md font-bold text-medium text-white">• 로그 예측 모델 결과 조회</span>
                 <div id="loggraph" className="flex">
                     <ResponsiveContainer width="98%" height={150}>
