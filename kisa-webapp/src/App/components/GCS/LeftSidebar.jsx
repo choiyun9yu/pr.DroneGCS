@@ -70,8 +70,7 @@ const EnrolledDrone = (props) => {
                     {/* 드론이 등록되었을 때 보여질 내용 */}
 
                     <div className={`flex items-center w-full`}>
-                        {/*<span>{droneMessage.droneMessage.DroneId}</span>*/}
-                        <span className={`text-xs, font-normal`}>{"Ardu-6:14556"}</span>
+                        <span>{droneMessage.droneMessage.DroneId}</span>
                         <span className={`ml-auto mr-0.5`}>
                             {droneState.IsOnline
                                 ? <div className="w-3 h-3 bg-green-500 rounded-full"></div>

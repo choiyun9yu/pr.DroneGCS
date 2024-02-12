@@ -26,6 +26,9 @@ export const MissionMode = (props) => {
                     isWayPoint={props.isWayPoint}
                     localLat={props.localLat}
                     localLon={props.localLon}
+                    handleCurrentPoint={props.handleCurrentPoint}
+                    handleIsLocalMarker={props.handleIsLocalMarker}
+                    isLocalMarker={props.isLocalMarker}
                 />
 
             </div>

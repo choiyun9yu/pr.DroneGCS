@@ -14,7 +14,7 @@ namespace kisa_gcs_system.Services;
  * INC FLAGS: MAVLINK 호환 플래그, 이해할 수 없는 플래그를 가진 패킷은 버려진다. 보통은 0x00 이다.
  * CMP FLAGS: MAVLINK 비호환 플래그, 이해할 수 없는 플래그를 가진 패킷도 처리된다. 비표준 구현체등에 사용도리 수 있다. 보통 0x00이다.
  * SEQ: 메세지의 시퀀스 번호
- * SYS ID: 송신자의 시스템 ID, 용도나 구현체에 따라서 임의로 지정 / 시뮬레이터에서는 인스턴스를 다르게 설정해도 SYS ID가 모두 1이라서 다른 구분 방법 필요
+ * SYS ID: 송신자의 시스템 ID, 용도나 구현체에 따라서 임의로 지정 <- 드론 식별자로 사용
  * COMP ID: 송신자의 컴포넌트 ID, 용도나 구현체에 따라서 임의로 지정
  * MSG ID: 3바이트로 구성된 메시지 ID, 메시지의 의미 나타냄
  * PAYLOAD: 메세지의 실제 데이터 (최대 255 바이트)
@@ -24,14 +24,14 @@ namespace kisa_gcs_system.Services;
 
 public class ArduCopterService : Hub<IDroneHub>
 {
-    private readonly Dictionary<string, DroneState> _droneStateMap = new();
+    // private readonly Dictionary<string, DroneState> _droneStateMap;
     
     private readonly IHubContext<ArduCopterService> _hubContext;
     private IChannelHandlerContext? _context;
-    private IPEndPoint? _droneAddress;
+    // private IPEndPoint? _droneAddress;
     
     private readonly MAVLink.MavlinkParse _parser = new();
-    private readonly MavlinkMapper _mapper = new();
+    private MavlinkMapper _mapper;
     
     private readonly GcsApiService _gcsApiService;
         
@@ -40,7 +40,31 @@ public class ArduCopterService : Hub<IDroneHub>
     // private static int SpeedIncrement = 50;
     
     private VincentyCalculator _vincentyCalculator = new();
-    
+
+
+    private DroneState NewDrone(string droneId, IPEndPoint droneAddress)
+    {
+        DroneState droneState = new DroneState(droneId, droneAddress);
+        _droneStateMap.Add(droneId, droneState);
+        _mapper = new(droneId, droneAddress);
+        return droneState;
+    }
+
+    // public async Task GetDroneList()
+    // {
+    //     var drones = this._getDroneList().Select(droneState =>
+    //     {
+    //         return droneState.ToDummyStruct();
+    //     });
+    //     await this.Clients.Caller.DroneStateUpdate(drones);
+    // }
+
+
+    private IEnumerable<DroneState> _getDroneList()
+    {
+        return _droneStateMap.Values;
+    }
+
     public ArduCopterService(IHubContext<ArduCopterService> hubContext, GcsApiService gcsApiService)
     {
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
@@ -48,13 +72,13 @@ public class ArduCopterService : Hub<IDroneHub>
     }
 
     // 드론 상태 정보 내보내기 
-    public async Task HandleMavlinkMessage(MAVLink.MAVLinkMessage msg, IChannelHandlerContext ctx, IPEndPoint droneAddress)
+    public async Task HandleMavlinkMessage(MAVLink.MAVLinkMessage msg, IChannelHandlerContext ctx, IPEndPoint droneAddress, string droneId)
     { 
         _context = ctx; 
         _droneAddress = droneAddress;
         
-        string droneId = msg.sysid.ToString();
-        _mapper.setDroneId(droneId);
+        // string droneId = msg.sysid.ToString();
+        // _mapper.setDroneId(droneId);
         
         if ((MAVLink.MAVLINK_MSG_ID)msg.msgid == MAVLink.MAVLINK_MSG_ID.STATUSTEXT)
         {
@@ -628,9 +652,4 @@ public class ArduCopterService : Hub<IDroneHub>
         return new DatagramPacket(encodeMsg, _droneAddress);
     }
     
-    public async Task DisconnectAsync()
-    {
-        if (_context == null) return;
-        await _context.DisconnectAsync();
-    }
 }

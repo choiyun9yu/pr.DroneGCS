@@ -9,6 +9,7 @@ public class MavlinkUdpNetty
   private IChannel? _bootstrapChannel; 
   
   private readonly MavlinkDecoder _decoder;
+  private readonly MavlinkEncoder _encoder;
   private readonly MavlinkHandler _handler;
   private int _port;
 
@@ -29,6 +30,7 @@ public class MavlinkUdpNetty
         {
           var pipeline = channel.Pipeline; 
           pipeline.AddLast("Mavlink Decoder", _decoder);
+          pipeline.AddLast("Mavlink Encoder", _encoder);
           pipeline.AddLast("Mavlink Handler", _handler);
         }
       ));

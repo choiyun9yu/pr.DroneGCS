@@ -5,12 +5,12 @@ using MAVSDK;
 
 namespace kisa_gcs_system.Services.Helper;
 
-public class MavlinkMapper
+public class MavlinkMapper(string droneId, IPEndPoint droneAddress)
 {
   private readonly GoogleMapHelper _googleMapHelper = GoogleMapHelper.GetInstace();
   
-  // constructor가 새로운 연결일 때 동작하면 그때 마다 멤버 초기화 가능? / 지역변수는 직접 초기화 해야한다 
-  private DroneState _droneState = new();
+  // constructor가 새로운 연결일 때 동작하면 그때 마다 멤버 초기화 가능? -> 지역변수는 직접 초기화 해야한다 
+  private DroneState _droneState = new(droneId, droneAddress);
   private VincentyCalculator _vincentyCalculator = new();
   private DateTime _lastAddedTrails;
   
@@ -377,7 +377,6 @@ public class MavlinkMapper
   
   public void setDroneId(string droneId)
   {
-    // 여기서 드론 아이디에 다른 로직이 필요할 듯 
     _droneState.DroneId = droneId;
   }
 }

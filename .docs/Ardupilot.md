@@ -4,12 +4,14 @@
 - [Running](https://ardupilot.org/dev/docs/sim-on-hardware.html)
 - [Using](https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html)
 
+
 ## 1. SITL 개요
 SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같은 Linux 머신 위에서 빌드 및 테스트 해볼수 있는 시뮬레이션 프로그램이다. SITL을 이용하면 Hardware에 종속되지 않고 Vehicle specific 코드를 테스트 할 수 있고, Physical 하지 않은 function들을 안전하게 테스트하고 디버깅할 수 있다. 즉, 실제 드론이 없어도 Ardupilot을 빌드하고 실행되는 모습을 볼 수 있으므로 편리하다.
 ![img.png](../kisa-gcs-system/data/img.png)
 
 - ArduCopter에서 TCP로 MAVProxy로 주고 
 - MavProxy에서 UDP로 개발 GCS로 넘겨주는 프로세스 
+
 
 ## 2. SITL 설치
 
@@ -39,7 +41,7 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
     % cd Tools/autotest
     % ./sim_vehicle.py --console --map -v ArduCopter
     
-    $ ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f hexa --out 127.0.0.1:14556
+    % ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f hexa --out 127.0.0.1:14556
 
     // MAVLink 통신 사용
     % python sim_vehicle.py --console --map -v ArduCopter -f hexa --out 127.0.0.1:14556   // -f hexa는 6개의 모터를 가진 드론 의미, --out 127.0.0.1:14556은 시뮬레이션 데이터를 출력하는 주소
@@ -49,7 +51,6 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
     % python sim_vehicle.py -v ArduCopter -f hexa -I 1 --out 127.0.0.1:14551
     % python sim_vehicle.py -v ArduCopter -f hexa -I 2 --out 127.0.0.1:14552
 
-    
 
 ## 3. STL 사용
 
@@ -85,7 +86,6 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
     > param set RC1_MAX 1900
 
     단축키 alt + g [36.377 127.385] enter
-
 
     mode guided
     arm throttle

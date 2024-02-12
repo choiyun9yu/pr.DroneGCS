@@ -32,9 +32,10 @@ public enum DroneConnectionProtocol
     SERIAL,
 }
 
-public class DroneState
+public class DroneState(string droneId, IPEndPoint droneAddress)
 {
-    public string? DroneId;
+    public string? DroneId = droneId;
+    public IPEndPoint DroneAdress = droneAddress;
     public List<MavlinkLog> DroneLogger = new ();
     public bool? IsOnline = true;
     public string? ControlStt = "auto";
