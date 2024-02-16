@@ -24,6 +24,7 @@ namespace kisa_gcs_system.Services;
 
 public class ArduCopterService : Hub<IDroneHub>
 {
+    private readonly IDictionary<string, string> _connectionIds = new Dictionary<string, string>();
     private readonly Dictionary<string, DroneState> _droneStateMap = new();
     
     private readonly IHubContext<ArduCopterService> _hubContext;
@@ -73,7 +74,63 @@ public class ArduCopterService : Hub<IDroneHub>
         _mapper.UpdateDroneState(data);
         
         string droneMessage = _mapper.ObjectToJson();
-        await _hubContext.Clients.All.SendAsync("droneMessage", droneMessage);
+        
+        /* All 대신에 그룹으로 묶어서 특정 클라이언트에게 전송 가능 
+         * 특정 클라이언트에게 메시지를 보내기 위해서는 해당 클라이언트의 연결 ID를 사용하여 메시지를 보내야 한다.
+         * SignalR은 연결 ID를 통해 각 클라이언트를 구분한다.
+         * 따라서 특정 클라이언트에게 메시지를 보내려면 그 클라잉너트의 연결 ID를 알아야 한다.
+         *
+         * SignalR에서는 클라이언트가 연결되면 해당 클라이언트의 연결 ID를 알려주는 메커니즘이 있다.
+         * 일반적으로 클라이언트가 연결되면 연결 ID를 서버로 보내고 서버에서는 해당 연결 ID를 기록해준다.
+         * 
+         */
+        // await _hubContext.Clients.All.SendAsync("droneMessage", droneMessage);
+        await _hubContext.Clients.Group("React").SendAsync("droneMessage", droneMessage);
+        // await _hubContext.Clients.Group("Python").SendAsync("droneMessage", droneMessage);
+    }
+
+    // 클라이언트가 연결될 때, 연결 ID를 기록해두는 메서드 ( 클라이언트가 연결될 때마다 수행 ) 웹은 새로고침할때마다 ConnectionId 바뀜 
+    public override async Task<Task> OnConnectedAsync()
+    {
+        var connectionId = Context.ConnectionId;
+        
+        // if (!_connectionIds.ContainsKey(connectionId))
+        // {
+        //     await Groups.AddToGroupAsync(connectionId, "Python");
+        // }
+        
+        await Groups.AddToGroupAsync(connectionId, "Python");
+        
+        return base.OnConnectedAsync();
+    }
+    
+    public async Task SendClientType()
+    {
+        var connectionId = Context.ConnectionId;
+        
+        // 새로 연결되면 모두 Python 그룹에 우선 포함시키고, 리액트 연결인 경우 파이썬 그룹에서 제거하고 리액트 그룹으로 재등록 하는 방법 사용
+        await Groups.RemoveFromGroupAsync(connectionId, "Python");
+        
+        await Groups.AddToGroupAsync(connectionId, "React");
+    }
+    
+    
+    // 특정 그룹에게 메시지 보내는 메서드 
+    public async Task SendMessageToClientGroup(string clientType, string message)
+    {
+        // 해당 클라이언트 종류의 그룹에 속한 모든 클라이언트에게 메시지 보내기 
+        await _hubContext.Clients.Group(clientType).SendAsync("sendMessage", message);
+    }
+
+    // 특정 클라이언트에게 메시지를 보내는 메서드
+    public async Task SendMessageToClient(string connectionId, string message)
+    {
+        // connectionId 유효성 검사 추가 필요
+        if (string.IsNullOrEmpty(connectionId))
+        {
+            throw new ArgumentNullException(nameof(connectionId));
+        }
+        await _hubContext.Clients.Client(connectionId).SendAsync("droneMessage", message);
     }
 
     public async Task HandleDroneContorlStt(string controlStt)
