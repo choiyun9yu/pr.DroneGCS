@@ -24,12 +24,15 @@ namespace kisa_gcs_system.Services;
 
 public class ArduCopterService : Hub<IDroneHub>
 {
-    private readonly IDictionary<string, string> _connectionIds = new Dictionary<string, string>();
-    private readonly Dictionary<string, DroneState> _droneStateMap = new();
-    
     private readonly IHubContext<ArduCopterService> _hubContext;
     private IChannelHandlerContext? _context;
+    
+    private readonly Dictionary<string, DroneState> _droneStateMap = new();
+    private DroneState _droneInstance;
+    
     private IPEndPoint? _droneAddress;
+    // private string _droneId;
+    // private DroneConnectionProtocol _protocol;
     
     private readonly MAVLink.MavlinkParse _parser = new();
     private readonly MavlinkMapper _mapper = new();
@@ -46,13 +49,34 @@ public class ArduCopterService : Hub<IDroneHub>
     {
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
         _gcsApiService = gcsApiService;
+        _droneStateMap["0"] = new DroneState();
     }
 
+    // 드론 목록 내보내기
+    public async Task GetDroneList()
+    {
+        string[] droneids = _droneStateMap.Keys.ToArray();
+        string json = JsonConvert.SerializeObject(droneids);
+        await _hubContext.Clients.Group("React").SendAsync("droneList", json);
+    }
+    
     // 드론 상태 정보 내보내기 
     public async Task HandleMavlinkMessage(MAVLink.MAVLinkMessage msg, IChannelHandlerContext ctx, IPEndPoint droneAddress)
     { 
         _context = ctx; 
         _droneAddress = droneAddress;
+        
+        if (!_droneStateMap.ContainsKey("1"))
+        {
+            _droneStateMap["1"] = new DroneState();
+            Console.WriteLine($"Add New Drone: {"1"}, IPEnd:{droneAddress}");
+            _droneInstance = _droneStateMap["1"];
+        }
+        else
+        {
+            _droneInstance = _droneStateMap["1"];
+        }
+
         
         string droneId = msg.sysid.ToString();
         _mapper.setDroneId(droneId);
@@ -75,29 +99,25 @@ public class ArduCopterService : Hub<IDroneHub>
         
         string droneMessage = _mapper.ObjectToJson();
         
-        /* All 대신에 그룹으로 묶어서 특정 클라이언트에게 전송 가능 
-         * 특정 클라이언트에게 메시지를 보내기 위해서는 해당 클라이언트의 연결 ID를 사용하여 메시지를 보내야 한다.
-         * SignalR은 연결 ID를 통해 각 클라이언트를 구분한다.
-         * 따라서 특정 클라이언트에게 메시지를 보내려면 그 클라잉너트의 연결 ID를 알아야 한다.
-         *
-         * SignalR에서는 클라이언트가 연결되면 해당 클라이언트의 연결 ID를 알려주는 메커니즘이 있다.
-         * 일반적으로 클라이언트가 연결되면 연결 ID를 서버로 보내고 서버에서는 해당 연결 ID를 기록해준다.
-         * 
-         */
-        // await _hubContext.Clients.All.SendAsync("droneMessage", droneMessage);
-        await _hubContext.Clients.Group("React").SendAsync("droneMessage", droneMessage);
+        await _hubContext.Clients.All.SendAsync("droneMessage", droneMessage);
         // await _hubContext.Clients.Group("Python").SendAsync("droneMessage", droneMessage);
+        // await _hubContext.Clients.Group("React").SendAsync("droneMessage", droneMessage);   
     }
-
+    
+    /* All 대신에 그룹으로 묶어서 특정 클라이언트에게 전송 가능
+     * 특정 클라이언트에게 메시지를 보내기 위해서는 해당 클라이언트의 연결 ID를 사용하여 메시지를 보내야 한다.
+     * SignalR은 연결 ID를 통해 각 클라이언트를 구분한다.
+     * 따라서 특정 클라이언트에게 메시지를 보내려면 그 클라잉너트의 연결 ID를 알아야 한다.
+     *
+     * SignalR에서는 클라이언트가 연결되면 해당 클라이언트의 연결 ID를 알려주는 메커니즘이 있다.
+     * 일반적으로 클라이언트가 연결되면 연결 ID를 서버로 보내고 서버에서는 해당 연결 ID를 기록해준다.
+     * (웹 앱은 새로고침하면 그때마다 새로운 연결 ID가 할당된다.)
+     */
+    
     // 클라이언트가 연결될 때, 연결 ID를 기록해두는 메서드 ( 클라이언트가 연결될 때마다 수행 ) 웹은 새로고침할때마다 ConnectionId 바뀜 
     public override async Task<Task> OnConnectedAsync()
     {
         var connectionId = Context.ConnectionId;
-        
-        // if (!_connectionIds.ContainsKey(connectionId))
-        // {
-        //     await Groups.AddToGroupAsync(connectionId, "Python");
-        // }
         
         await Groups.AddToGroupAsync(connectionId, "Python");
         
@@ -116,22 +136,22 @@ public class ArduCopterService : Hub<IDroneHub>
     
     
     // 특정 그룹에게 메시지 보내는 메서드 
-    public async Task SendMessageToClientGroup(string clientType, string message)
-    {
-        // 해당 클라이언트 종류의 그룹에 속한 모든 클라이언트에게 메시지 보내기 
-        await _hubContext.Clients.Group(clientType).SendAsync("sendMessage", message);
-    }
+    // public async Task SendMessageToClientGroup(string clientType, string message)
+    // {
+    //     // 해당 클라이언트 종류의 그룹에 속한 모든 클라이언트에게 메시지 보내기 
+    //     await _hubContext.Clients.Group(clientType).SendAsync("sendMessage", message);
+    // }
 
     // 특정 클라이언트에게 메시지를 보내는 메서드
-    public async Task SendMessageToClient(string connectionId, string message)
-    {
-        // connectionId 유효성 검사 추가 필요
-        if (string.IsNullOrEmpty(connectionId))
-        {
-            throw new ArgumentNullException(nameof(connectionId));
-        }
-        await _hubContext.Clients.Client(connectionId).SendAsync("droneMessage", message);
-    }
+    // public async Task SendMessageToClient(string connectionId, string message)
+    // {
+    //     // connectionId 유효성 검사 추가 필요
+    //     if (string.IsNullOrEmpty(connectionId))
+    //     {
+    //         throw new ArgumentNullException(nameof(connectionId));
+    //     }
+    //     await _hubContext.Clients.Client(connectionId).SendAsync("droneMessage", message);
+    // }
 
     public async Task HandleDroneContorlStt(string controlStt)
     {

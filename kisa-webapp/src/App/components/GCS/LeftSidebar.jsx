@@ -49,10 +49,12 @@ const AddNewLinkModal = (props) => {
 }
 
 const EnrolledDrone = (props) => {
-    const {droneMessage} = useContext(DroneContext);
+    const {droneList, selectedDrone, setSelectedDrone, droneMessage} = useContext(DroneContext);
     const droneState = droneMessage ? droneMessage['droneMessage'] : null;
 
-    const handleCurrentCenter= () => {
+    const handleSelectDrone = (droneId) => {
+        setSelectedDrone(droneId);
+
         props.setCenter({
             lat: droneMessage && droneState.DroneStt.Lat,
             lng: droneMessage && droneState.DroneStt.Lon
@@ -62,66 +64,90 @@ const EnrolledDrone = (props) => {
     return (
         <div className="w-full m-2 items-center">
             <span className="ml-3">• 등록 드론 </span>
-            {droneState && droneState.DroneId !== '' && (
-                <button
-                    className={`flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[55px] rounded ${ColorThema.Primary1}`}
-                    onClick={handleCurrentCenter}>
 
-                    {/* 드론이 등록되었을 때 보여질 내용 */}
+                {droneList.map((droneId) => {
+                    return (
+                        selectedDrone === droneId
+                            ?
+                            <button key={droneId}
+                                    className={`flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[35px] rounded ${ColorThema.Primary1}`}
+                                    onClick={() => handleSelectDrone(droneId)}>
+                                <div className={`flex items-center w-full`}>
+                                    <span className={`text-xs, font-normal`}>{droneId}</span>
+                                </div>
+                            </button>
+                            :
+                            <button key={droneId}
+                                    className={`flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[35px] rounded ${ColorThema.Secondary3}`}
+                                    onClick={() => handleSelectDrone(droneId)}>
+                                <div className={`flex items-center w-full`}>
+                                    <span className={`text-xs, font-normal`}>{droneId}</span>
+                                </div>
+                            </button>
+                    )
+                })
+                }
 
-                    <div className={`flex items-center w-full`}>
-                        {/*<span>{droneMessage.droneMessage.DroneId}</span>*/}
-                        <span className={`text-xs, font-normal`}>{"Ardu-6:14556"}</span>
-                        <span className={`ml-auto mr-0.5`}>
-                            {droneState.IsOnline
-                                ? <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                                : <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                            }
-                        </span>
-                    </div>
+            {/*{droneState && droneState.DroneId !== '' && (*/}
+            {/*    <button*/}
+            {/*        className={`flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[55px] rounded ${ColorThema.Primary1}`}*/}
+            {/*        onClick={handleSelectDrone}>*/}
 
-                    <div className="flex items-center w-full">
+            {/*        /!* 드론이 등록되었을 때 보여질 내용 *!/*/}
 
-                        <span className="flex text-gray-300 text-xs">
-                            {droneState.MissionStt}
-                        </span>
+            {/*        <div className={`flex items-center w-full`}>*/}
+            {/*            /!*<span>{droneMessage.droneMessage.DroneId}</span>*!/*/}
+            {/*            <span className={`text-xs, font-normal`}>{"Ardu-6:14556"}</span>*/}
+            {/*            <span className={`ml-auto mr-0.5`}>*/}
+            {/*                {droneState.IsOnline*/}
+            {/*                    ? <div className="w-3 h-3 bg-green-500 rounded-full"></div>*/}
+            {/*                    : <div className="w-3 h-3 bg-red-500 rounded-full"></div>*/}
+            {/*                }*/}
+            {/*            </span>*/}
+            {/*        </div>*/}
 
-                        <div className={`flex ml-auto`}>
-                             <span className="text-gray-300 text-xs mr-0.5 mt-0.5">
-                                {droneState.DroneStt.BatteryStt}
-                            </span>
-                            {droneState.DroneStt.BatteryStt >= 80
-                                ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                       fill="lightgreen" className="w-6 h-5">
-                                    <path fillRule="evenodd"
-                                          d="M3.75 6.75a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-.037c.856-.174 1.5-.93 1.5-1.838v-2.25c0-.907-.644-1.664-1.5-1.837V9.75a3 3 0 0 0-3-3h-15Zm15 1.5a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-15a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5h15ZM4.5 9.75a.75.75 0 0 0-.75.75V15c0 .414.336.75.75.75H18a.75.75 0 0 0 .75-.75v-4.5a.75.75 0 0 0-.75-.75H4.5Z"
-                                          clipRule="evenodd"/>
-                                </svg>
-                                : (droneState.DroneStt.BatteryStt < 80 && droneMessage.droneMessage.DroneStt.BatteryStt > 20
-                                        ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                               fill="orange" className="w-6 h-5">
-                                            <path
-                                                d="M4.5 9.75a.75.75 0 0 0-.75.75V15c0 .414.336.75.75.75h6.75A.75.75 0 0 0 12 15v-4.5a.75.75 0 0 0-.75-.75H4.5Z"/>
-                                            <path fillRule="evenodd"
-                                                  d="M3.75 6.75a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-.037c.856-.174 1.5-.93 1.5-1.838v-2.25c0-.907-.644-1.664-1.5-1.837V9.75a3 3 0 0 0-3-3h-15Zm15 1.5a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-15a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5h15Z"
-                                                  clipRule="evenodd"/>
-                                        </svg>
-                                        : (droneState.DroneStt.BatteryStt <= 20
-                                                ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                       fill="red" className="w-6 h-5">
-                                                    <path fillRule="evenodd"
-                                                          d="M.75 9.75a3 3 0 0 1 3-3h15a3 3 0 0 1 3 3v.038c.856.173 1.5.93 1.5 1.837v2.25c0 .907-.644 1.664-1.5 1.838v.037a3 3 0 0 1-3 3h-15a3 3 0 0 1-3-3v-6Zm19.5 0a1.5 1.5 0 0 0-1.5-1.5h-15a1.5 1.5 0 0 0-1.5 1.5v6a1.5 1.5 0 0 0 1.5 1.5h15a1.5 1.5 0 0 0 1.5-1.5v-6Z"
-                                                          clipRule="evenodd"/>
-                                                </svg>
-                                                : null
-                                        )
-                                )
-                            }
-                        </div>
+            {/*        <div className="flex items-center w-full">*/}
 
-                    </div>
-                </button>
-            )}
+            {/*            <span className="flex text-gray-300 text-xs">*/}
+            {/*                {droneState.MissionStt}*/}
+            {/*            </span>*/}
+
+            {/*            <div className={`flex ml-auto`}>*/}
+            {/*                 <span className="text-gray-300 text-xs mr-0.5 mt-0.5">*/}
+            {/*                    {droneState.DroneStt.BatteryStt}*/}
+            {/*                </span>*/}
+            {/*                {droneState.DroneStt.BatteryStt >= 80*/}
+            {/*                    ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"*/}
+            {/*                           fill="lightgreen" className="w-6 h-5">*/}
+            {/*                        <path fillRule="evenodd"*/}
+            {/*                              d="M3.75 6.75a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-.037c.856-.174 1.5-.93 1.5-1.838v-2.25c0-.907-.644-1.664-1.5-1.837V9.75a3 3 0 0 0-3-3h-15Zm15 1.5a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-15a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5h15ZM4.5 9.75a.75.75 0 0 0-.75.75V15c0 .414.336.75.75.75H18a.75.75 0 0 0 .75-.75v-4.5a.75.75 0 0 0-.75-.75H4.5Z"*/}
+            {/*                              clipRule="evenodd"/>*/}
+            {/*                    </svg>*/}
+            {/*                    : (droneState.DroneStt.BatteryStt < 80 && droneMessage.droneMessage.DroneStt.BatteryStt > 20*/}
+            {/*                            ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"*/}
+            {/*                                   fill="orange" className="w-6 h-5">*/}
+            {/*                                <path*/}
+            {/*                                    d="M4.5 9.75a.75.75 0 0 0-.75.75V15c0 .414.336.75.75.75h6.75A.75.75 0 0 0 12 15v-4.5a.75.75 0 0 0-.75-.75H4.5Z"/>*/}
+            {/*                                <path fillRule="evenodd"*/}
+            {/*                                      d="M3.75 6.75a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-.037c.856-.174 1.5-.93 1.5-1.838v-2.25c0-.907-.644-1.664-1.5-1.837V9.75a3 3 0 0 0-3-3h-15Zm15 1.5a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-15a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5h15Z"*/}
+            {/*                                      clipRule="evenodd"/>*/}
+            {/*                            </svg>*/}
+            {/*                            : (droneState.DroneStt.BatteryStt <= 20*/}
+            {/*                                    ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"*/}
+            {/*                                           fill="red" className="w-6 h-5">*/}
+            {/*                                        <path fillRule="evenodd"*/}
+            {/*                                              d="M.75 9.75a3 3 0 0 1 3-3h15a3 3 0 0 1 3 3v.038c.856.173 1.5.93 1.5 1.837v2.25c0 .907-.644 1.664-1.5 1.838v.037a3 3 0 0 1-3 3h-15a3 3 0 0 1-3-3v-6Zm19.5 0a1.5 1.5 0 0 0-1.5-1.5h-15a1.5 1.5 0 0 0-1.5 1.5v6a1.5 1.5 0 0 0 1.5 1.5h15a1.5 1.5 0 0 0 1.5-1.5v-6Z"*/}
+            {/*                                              clipRule="evenodd"/>*/}
+            {/*                                    </svg>*/}
+            {/*                                    : null*/}
+            {/*                            )*/}
+            {/*                    )*/}
+            {/*                }*/}
+            {/*            </div>*/}
+
+            {/*        </div>*/}
+            {/*    </button>*/}
+            {/*)}*/}
         </div>
     )
 }

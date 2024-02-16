@@ -19,11 +19,9 @@ async def HubConnection():
     close_event = asyncio.Event()
 
     hub_connection.on_open(lambda: print("connection opened and handshake received ready to send messages"))
-    hub_connection.on_close(lambda: close_event.set())
-    hub_connection.on_reconnect(lambda: print("reconnection in progress"))
     hub_connection.on("droneMessage", lambda data: pipeline(data))
-    # hub_connection.on("droneMessage", lambda data: print(data[0]))
-
+    hub_connection.on_reconnect(lambda: print("reconnection in progress"))
+    hub_connection.on_close(lambda: close_event.set())
     hub_connection.start()
     try:
         await close_event.wait()

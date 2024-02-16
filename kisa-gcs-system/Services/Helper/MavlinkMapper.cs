@@ -14,6 +14,8 @@ public class MavlinkMapper
   private VincentyCalculator _vincentyCalculator = new();
   private DateTime _lastAddedTrails;
   
+  // public async void UpdateDroneState(object data)
+  
   public async void UpdateDroneState(object data)
   {
     if (data is MAVLink.mavlink_heartbeat_t heartbeat)

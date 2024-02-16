@@ -4,6 +4,8 @@ import * as signalR from '@microsoft/signalr';
 export const DroneContext = React.createContext({})
 
 export const SignalRProvider = ({ children }) => {
+    const [droneList, setDroneList] = useState([]);
+    const [selectedDrone, setSelectedDrone] = useState();
     const [droneMessage, setDroneMessage] = useState(null)
     const connection = useRef();
 
@@ -15,18 +17,19 @@ export const SignalRProvider = ({ children }) => {
         // useRef로 생성한 connection.current에 연결 객체 할당
         connection.current = connectionObj
 
+        connectionObj.on("droneList", (json) => {
+            const list = JSON.parse(json);
+            setDroneList(list);
+        });
+
         // 연결 시작
         connectionObj
             .start()
             .then(async () => {
                 console.log('SignalR 연결 성공');
-                /*
-                * .invoke: 클라이언트에서 서버로 특정한 Hub 메서드를 호출하는 데 사용
-                *          클라이언트에서 서버로 데이터를 전송하거나 서버에서 특정 작업을 수행하도록 요청할 때 사용
-                *          예를 들어, 채팅 애플리케이션에서 새로운 메시지를 보낼 때 사용
-                *          따라서 클라이언트에서 서버로 메서드 호출을 위해 사용
-                */
-                // await connectionObj.invoke('GetDroneList')   To Do
+                // 연결 성공 후 클라이언트 종류를 서버에 전달, 클라이언트 정류를 서버에 명시적으로 전달하려면 클라이언트 연결 시 사용자 정의 데이터를 전송해야한다. 일만적으로 사용자 정의 데이터는 연결을 시작할 때 connection 의 start 메서드로 전송된다.
+                await connectionObj.send('SendClientType');
+                await connectionObj.invoke('GetDroneList');
             })
             .catch(error => {
                 console.error('SignalR 연결 실패', error);
@@ -42,12 +45,6 @@ export const SignalRProvider = ({ children }) => {
         // useRef로 생성한 connection을 통해 위에서 생성한 연결 객체 넘겨 받음
         const connectionObj = connection.current
         if (!connectionObj) return
-        /*
-        * .on: 서버에서 클라이언트로부터 메시지를 받을 때 사용
-        *      특정 이벤트에 대한 핸들러를 등록하여, 서버에서 해당 이벤트가 발생하면 클라이언트에서 특정 작업을 수행 가능
-        *      예를 들어, 채팅 애플리케이션에서 새로운 메시지가 도착했을 때 클라이언트에서 특정 동작을 수행하도록 등록
-        *      따라서 서버에서 클라이언트로부터 오는 메시지나 이벤트를 처리하기 위해 사용
-        */
 
         connectionObj.on('droneMessage', (msg) => {
             const droneMessage = JSON.parse(msg);
@@ -59,6 +56,21 @@ export const SignalRProvider = ({ children }) => {
                 .forEach(handler => {connectionObj.off(handler)})   // 배열에 포함된 각 핸들러에 대해 connectionObj.off(handler)를 호출하여 해당 이벤트 핸들러를 제거
         };
     }, []);
+
+    /*
+     * .invoke: 클라이언트에서 서버로 특정한 Hub 메서드를 호출하는 데 사용
+     *          클라이언트에서 서버로 데이터를 전송하거나 서버에서 특정 작업을 수행하도록 요청할 때 사용
+     *          예를 들어, 채팅 애플리케이션에서 새로운 메시지를 보낼 때 사용
+     *          따라서 클라이언트에서 서버로 메서드 호출을 위해 사용
+     */
+
+    /*
+     * .on: 서버에서 클라이언트로부터 메시지를 받을 때 사용
+     *      특정 이벤트에 대한 핸들러를 등록하여, 서버에서 해당 이벤트가 발생하면 클라이언트에서 특정 작업을 수행 가능
+     *      예를 들어, 채팅 애플리케이션에서 새로운 메시지가 도착했을 때 클라이언트에서 특정 동작을 수행하도록 등록
+     *      따라서 서버에서 클라이언트로부터 오는 메시지나 이벤트를 처리하기 위해 사용
+     */
+
     const handleDroneFlightMode = flightMode => {
         connection.current.invoke('HandleDroneFlightMode', flightMode)
     }
@@ -104,6 +116,9 @@ export const SignalRProvider = ({ children }) => {
 
     return (
         <DroneContext.Provider value={{
+            droneList,
+            selectedDrone,
+            setSelectedDrone,
             droneMessage,
             handleDroneFlightMode,
             handleDroneFlightCommand,
