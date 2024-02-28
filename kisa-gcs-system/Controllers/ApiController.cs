@@ -1,4 +1,4 @@
-using kisa_gcs_system.Model;
+using kisa_gcs_system.Models;
 using kisa_gcs_system.Services;
 
 namespace kisa_gcs_service.Controllers;
@@ -10,13 +10,13 @@ public class ApiController : ControllerBase
 {
     private readonly AnomalyDetectionApiService _anomalyDetectionApiService;
     private readonly GcsApiService _gcsApiService;
-    private readonly ArduCopterService _arduCopterService;
+    private readonly DroneControlService _droneControlService;
 
-    public ApiController(AnomalyDetectionApiService anomalyDetectionApiService, GcsApiService gcsApiService, ArduCopterService arduCopterService)  
+    public ApiController(AnomalyDetectionApiService anomalyDetectionApiService, GcsApiService gcsApiService, DroneControlService droneControlService)  
     {
         _anomalyDetectionApiService = anomalyDetectionApiService;
         _gcsApiService = gcsApiService;
-        _arduCopterService = arduCopterService;
+        _droneControlService = droneControlService;
     }
 
     // 외부에서 명령을 내리고 싶은 경우 사용 (예상 경로 표시는 react 랑 gcs 로직 새로 짜서 추가해야함)
@@ -32,7 +32,7 @@ public class ApiController : ControllerBase
         int alt = int.Parse(form["alt"]);
         string? totalDistance = form["totalDistance"];
         
-        _arduCopterService.HandleDroneMoveToMission(startPoint, targetPoint, transitList, alt, totalDistance);
+        _droneControlService.HandleDroneMoveToMission(startPoint, targetPoint, transitList, alt, totalDistance);
         
         try
         {

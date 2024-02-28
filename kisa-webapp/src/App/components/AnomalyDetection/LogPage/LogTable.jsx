@@ -1,8 +1,8 @@
 import React from 'react';
 
-import './TableStyles.css';
-import { DataMap } from '../DataMap';
-import {ColorThema} from "../ProejctThema";
+import '../TableStyles.css';
+import { DataMap } from '../../DataMap';
+import {ColorThema} from "../../ProejctThema";
 
 export const LogTable = (props) => {
     const tableObj = {

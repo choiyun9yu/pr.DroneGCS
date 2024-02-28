@@ -2,47 +2,17 @@ using kisa_gcs_system.Models.Helper;
 
 namespace kisa_gcs_system.Models;
 
-public class DroneCommunication
+public class DroneState(string droneId)
 {
-    private DroneConnectionProtocol Protocol;
-    private string Address;
-
-    public DroneCommunication(DroneConnectionProtocol protocol, string address)
-    {
-        Protocol = protocol;
-        Address = address;
-    }
-
-    public DroneConnectionProtocol getProtocol() { return Protocol; }
-    public string getAddress() { return Address; }
-
-    public string getPort()
-    {
-        string[] parts = Address.Split(':');
-        string port = parts.Length > 1 ? parts[1] : "";
-        
-        return port;
-    }
-}
-
-public enum DroneConnectionProtocol
-{
-    UDP,
-    TCP,
-    SERIAL,
-}
-
-public class DroneState
-{
-    public string? DroneId;
-    public List<MavlinkLog> DroneLogger = new ();
+    public string? DroneId = droneId;
+    public string FlightId = "None";
     public bool? IsOnline = true;
+    public bool IsLanded = true;
     public string? ControlStt = "auto";
     public DroneStt? DroneStt = new DroneStt();
     public SensorData? SensorData = new SensorData();
     public DroneMission? DroneMission = new DroneMission();
     public DroneCamera? DroneCamera = new DroneCamera();
-    public CommunicationLink? CommunicationLink = new CommunicationLink();
 }
 
 public struct MavlinkLog
@@ -53,7 +23,7 @@ public struct MavlinkLog
 
 public class DroneStt
 {
-    public bool IsLanded = true;
+    public List<MavlinkLog> DroneLogger = new ();
     public float? PowerV = 0;
     public sbyte? BatteryStt = 0;
     public char? GpsStt = ' ';
@@ -62,6 +32,8 @@ public class DroneStt
     public double Lon = 0.0;
     public double? Alt = 0.0;
     public double? GlobalAlt = 0.0;
+    public double? Roll = 0.0;
+    public double? Pitch = 0.0;
     public short? Head = 0;
     public float? Speed = 0;
     public char? HoverStt = ' ';
@@ -69,24 +41,6 @@ public class DroneStt
     public byte? SatellitesCount = 0;
     public CustomMode?  FlightMode = 0;
 }
-
-public class SensorStt
-{
-    public string? Name;
-    public bool? Enabled;
-    public bool? Present;
-    public bool? Health;
-}
-
-public class Mavlinkinfo
-{
-    public string? FrameType;
-    public string? Ros;
-    public string? FC_HARDWAR;
-    public string? Autopilot;
-    public string? CommunicationOut;
-}
-
 
 public class DroneCamera
 {
@@ -99,9 +53,8 @@ public class DroneCamera
 
 public class DroneMission
 {
-    public string FligthId = "None";
     public DroneLocation StartPoint;
-    public List<DroneLocation> TransitPoint;
+    public List<DroneLocation> TransitPoint = new();
     public DroneLocation TargetPoint;
     public int MissionAlt = 10;             // 주행 고도
     // public int MissionSpeed = 10;
@@ -109,14 +62,9 @@ public class DroneMission
     public double? CurrentDistance = 0;
     public int? PathIndex = 0;
     public FixedSizedQueue<DroneLocation> DroneTrails = new(600);    // size 가 600 이면 0.5초에 하나씩 이라서 1초 씩 300개 -> 5분 
+    public DateTime LastAddedTrails;
     public DateTime? StartTime = null;      // Take Off 기준 
     public DateTime? CompleteTime = null;   // Disarm 기준 
-}
-
-public struct TransitItem
-{
-    public int id { get; set; }
-    public DroneLocation position { get; set; }
 }
 
 public struct DroneLocation   
@@ -125,13 +73,6 @@ public struct DroneLocation
     public double lng;
     public double global_frame_alt;
     public double terrain_alt;          // 글로벌 고도에서 상대 고도를 빼면 지형 고도를 알 수 있다. API로 받아오는게 더 정확하지만 API 사용료가 너무 많이 나온다.
-}
-
-public class CommunicationLink
-{
-    public double? ConnectionProtocol;
-    public double? MessageProtocol;
-    public string? Address;
 }
 
 public class SensorData

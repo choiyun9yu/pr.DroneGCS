@@ -1,9 +1,6 @@
 namespace kisa_gcs_system.Models;
 
-public class Joystic
-{
-    
-}
+public class Joystic;
 
 public enum CustomMode : int
 {

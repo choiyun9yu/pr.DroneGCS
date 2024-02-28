@@ -1,33 +1,46 @@
-import {useOutletContext} from 'react-router-dom';
-
-import {ColorThema} from '../ProejctThema';
-import {LeftSideBtn} from '../ProejctBtn';
-import React, {useContext, useEffect, useState} from "react";
-import {DroneContext} from "./SignalRContainer";
+import React, { useCallback, useContext } from 'react'
+import { useOutletContext } from 'react-router-dom'
+import { DroneContext } from './SignalRContainer'
+import { LeftSideBtn } from '../GCS/components/GcsBtn'
 
 export const LeftSidebar = (props) => {
-    const [gcsMode, setGcsMode] = useOutletContext();
+    const [gcsMode, setGcsMode] = useOutletContext()
+
+    const handleFlightMode = useCallback(() => {
+        setGcsMode('flight')
+    })
+    const handleMissionMode = useCallback(() => {
+        setGcsMode('mission')
+    })
+    const handleVideoMode = useCallback(() => {
+        setGcsMode('video')
+    })
 
     return (
-        <div
-            className={`flex flex-col items-start w-full h-full rounded-2xl font-bold text-medium text-gray-200 ${ColorThema.Secondary4}`}>
-            <LeftSideBtn gcsMode={gcsMode} setGcsMode={setGcsMode}/>
+        <div className={'flex flex-col items-start w-full h-full rounded-2xl font-bold text-medium text-gray-200 bg-[#1D1D41]'}>
+            <LeftSideBtn
+                gcsMode={gcsMode}
+                handleFlightMode={handleFlightMode}
+                handleMissionMode={handleMissionMode}
+                handleVideoMode={handleVideoMode}
+            />
 
-            <AddNewLink handleIsModal={props.handleIsModal}/>
+            {/*<AddNewLink toggleAddNewLinkModal={props.toggleAddNewLinkModal}/>*/}
 
-            <EnrolledDrone setCenter={props.setCenter} />
+            <EnrolledDrone setCenter={props.setCenter}/>
 
             <FlightSchedule flightSchedule={props.flightSchedule}/>
-
         </div>
-    );
-};
+    )
+}
 
 const AddNewLink = (props) => {
-    return(
-        // 드론 추가로 연결하는 버튼 (백엔드 미구현)
-        <div className={`m-2 items-center `}>
-            <button onClick={props.handleIsModal} className={`flex flex-row w-full items-center ml-2 px-2 py-1 rounded-md ${ColorThema.Secondary3} hover:${ColorThema.Primary1}`}>
+    return (
+        <div className={'m-2 items-center'}>
+            <button
+                className={'flex w-full items-center ml-2 px-2 py-1 rounded-md bg-[#27264E] hover:bg-[#6359E9]'}
+                onClick={props.toggleAddNewLinkModal}
+            >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                      stroke="currentColor" className="mr-1 w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round"
@@ -39,115 +52,120 @@ const AddNewLink = (props) => {
     )
 }
 
-const AddNewLinkModal = (props) => {
-    return(
-      <div>
+export const NewLinkModal = (props) => {
 
-      </div>
+    const addLinkModalSelectList = [
+        'Communication Link',
+        'TCP',
+        'UDP',
+        'SERIAL'
+    ]
 
-    );
+    const handleNewConnectionBtn = (e) => {
+        e.preventDefault()
+        const formData = new FormData(e.target)
+
+    }
+
+    return (
+        <div className={'modal absolute top-[30%] left-[37%] w-[450px] h-[250px] z-50 rounded-2xl text-black bg-[#6359E9]'}>
+            <div className={'flex flex-row pl-4 py-2 items-start justify-start text-2xl font-bold'}>
+                <div className={'flex items-start justify-start'}>New Link Connection</div>
+
+                <button className={'close flex ml-auto mr-3'} onClick={props.toggleAddNewLinkModal}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
+                         stroke="#4B4B99" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+
+            </div>
+            <div className={'flex px-4 items-center '}>
+                <div className={'modla-content'}>
+                    <form className={'flex-col'}>
+                        <div className={'my-3'}>
+                            <select
+                                className={'ml-2 px-1 w-[400px] h-[35px] rounded border border-gray-700'}
+                                name={'connectionType'}
+                                // onChange={handleConnectionType}
+                            >
+                                {addLinkModalSelectList.map((item, index) => (
+                                    <option value={item} key={index}>{item}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className={''}>
+                            <span> Address </span>
+                            <input
+                                className={'ml-2 p-2 w-[400px] h-[35px] rounded border border-gray-700'}
+                                type={'text'}
+                                name={'connectionAddress'}
+                            />
+                        </div>
+
+                        <div className={'flex mr-2 mt-5'}>
+                            <button
+                                type={'submit'} onClick={handleNewConnectionBtn}
+                                className={'ml-auto py-1 px-4 rounded-md text-lg text-white bg-[#1D1D41]'}
+                            >
+                                Add
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 const EnrolledDrone = (props) => {
-    const {droneList, selectedDrone, setSelectedDrone, droneMessage} = useContext(DroneContext);
-    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
+    const { droneMessage, droneList, selectedDrone, setSelectedDrone, handleSelectedDrone } = useContext(DroneContext)
 
     const handleSelectDrone = (droneId) => {
-        setSelectedDrone(droneId);
-
+        setSelectedDrone(droneId)
+        handleSelectedDrone(droneId)
         props.setCenter({
-            lat: droneMessage && droneState.DroneStt.Lat,
-            lng: droneMessage && droneState.DroneStt.Lon
-        });
+            lat: droneMessage && droneMessage.DroneStt.Lat,
+            lng: droneMessage && droneMessage.DroneStt.Lon
+        })
     }
 
     return (
         <div className="w-full m-2 items-center">
             <span className="ml-3">• 등록 드론 </span>
-
-                {droneList.map((droneId) => {
+            { droneList
+                ? droneList.map((droneId) => {
                     return (
                         selectedDrone === droneId
                             ?
-                            <button key={droneId}
-                                    className={`flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[35px] rounded ${ColorThema.Primary1}`}
-                                    onClick={() => handleSelectDrone(droneId)}>
-                                <div className={`flex items-center w-full`}>
-                                    <span className={`text-xs, font-normal`}>{droneId}</span>
+                            <button
+                                className={'flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[35px] rounded bg-[#6359E9]'}
+                                onClick={() => handleSelectDrone(droneId)} key={droneId}
+                            >
+
+                                <div className={'flex items-center w-full'}>
+                                    <span className={'text-xs, font-normal'}>{droneId}</span>
                                 </div>
+
+
                             </button>
                             :
-                            <button key={droneId}
-                                    className={`flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[35px] rounded ${ColorThema.Secondary3}`}
-                                    onClick={() => handleSelectDrone(droneId)}>
-                                <div className={`flex items-center w-full`}>
-                                    <span className={`text-xs, font-normal`}>{droneId}</span>
+                            <button
+                                className={'flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[35px] rounded bg-[#27264E]'}
+                                key={droneId} onClick={() => handleSelectDrone(droneId)}
+                            >
+
+                                <div className={'flex items-center w-full'}>
+                                    <span className={'text-xs, font-normal'}>{droneId}</span>
                                 </div>
+
+
                             </button>
                     )
                 })
-                }
-
-            {/*{droneState && droneState.DroneId !== '' && (*/}
-            {/*    <button*/}
-            {/*        className={`flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[55px] rounded ${ColorThema.Primary1}`}*/}
-            {/*        onClick={handleSelectDrone}>*/}
-
-            {/*        /!* 드론이 등록되었을 때 보여질 내용 *!/*/}
-
-            {/*        <div className={`flex items-center w-full`}>*/}
-            {/*            /!*<span>{droneMessage.droneMessage.DroneId}</span>*!/*/}
-            {/*            <span className={`text-xs, font-normal`}>{"Ardu-6:14556"}</span>*/}
-            {/*            <span className={`ml-auto mr-0.5`}>*/}
-            {/*                {droneState.IsOnline*/}
-            {/*                    ? <div className="w-3 h-3 bg-green-500 rounded-full"></div>*/}
-            {/*                    : <div className="w-3 h-3 bg-red-500 rounded-full"></div>*/}
-            {/*                }*/}
-            {/*            </span>*/}
-            {/*        </div>*/}
-
-            {/*        <div className="flex items-center w-full">*/}
-
-            {/*            <span className="flex text-gray-300 text-xs">*/}
-            {/*                {droneState.MissionStt}*/}
-            {/*            </span>*/}
-
-            {/*            <div className={`flex ml-auto`}>*/}
-            {/*                 <span className="text-gray-300 text-xs mr-0.5 mt-0.5">*/}
-            {/*                    {droneState.DroneStt.BatteryStt}*/}
-            {/*                </span>*/}
-            {/*                {droneState.DroneStt.BatteryStt >= 80*/}
-            {/*                    ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"*/}
-            {/*                           fill="lightgreen" className="w-6 h-5">*/}
-            {/*                        <path fillRule="evenodd"*/}
-            {/*                              d="M3.75 6.75a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-.037c.856-.174 1.5-.93 1.5-1.838v-2.25c0-.907-.644-1.664-1.5-1.837V9.75a3 3 0 0 0-3-3h-15Zm15 1.5a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-15a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5h15ZM4.5 9.75a.75.75 0 0 0-.75.75V15c0 .414.336.75.75.75H18a.75.75 0 0 0 .75-.75v-4.5a.75.75 0 0 0-.75-.75H4.5Z"*/}
-            {/*                              clipRule="evenodd"/>*/}
-            {/*                    </svg>*/}
-            {/*                    : (droneState.DroneStt.BatteryStt < 80 && droneMessage.droneMessage.DroneStt.BatteryStt > 20*/}
-            {/*                            ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"*/}
-            {/*                                   fill="orange" className="w-6 h-5">*/}
-            {/*                                <path*/}
-            {/*                                    d="M4.5 9.75a.75.75 0 0 0-.75.75V15c0 .414.336.75.75.75h6.75A.75.75 0 0 0 12 15v-4.5a.75.75 0 0 0-.75-.75H4.5Z"/>*/}
-            {/*                                <path fillRule="evenodd"*/}
-            {/*                                      d="M3.75 6.75a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-.037c.856-.174 1.5-.93 1.5-1.838v-2.25c0-.907-.644-1.664-1.5-1.837V9.75a3 3 0 0 0-3-3h-15Zm15 1.5a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-15a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5h15Z"*/}
-            {/*                                      clipRule="evenodd"/>*/}
-            {/*                            </svg>*/}
-            {/*                            : (droneState.DroneStt.BatteryStt <= 20*/}
-            {/*                                    ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"*/}
-            {/*                                           fill="red" className="w-6 h-5">*/}
-            {/*                                        <path fillRule="evenodd"*/}
-            {/*                                              d="M.75 9.75a3 3 0 0 1 3-3h15a3 3 0 0 1 3 3v.038c.856.173 1.5.93 1.5 1.837v2.25c0 .907-.644 1.664-1.5 1.838v.037a3 3 0 0 1-3 3h-15a3 3 0 0 1-3-3v-6Zm19.5 0a1.5 1.5 0 0 0-1.5-1.5h-15a1.5 1.5 0 0 0-1.5 1.5v6a1.5 1.5 0 0 0 1.5 1.5h15a1.5 1.5 0 0 0 1.5-1.5v-6Z"*/}
-            {/*                                              clipRule="evenodd"/>*/}
-            {/*                                    </svg>*/}
-            {/*                                    : null*/}
-            {/*                            )*/}
-            {/*                    )*/}
-            {/*                }*/}
-            {/*            </div>*/}
-
-            {/*        </div>*/}
-            {/*    </button>*/}
-            {/*)}*/}
+                : null
+            }
         </div>
     )
 }
@@ -156,7 +174,7 @@ const FlightSchedule = (props) => {
     return (
         <div className="w-full m-2 items-center">
             <span className="ml-3">• 비행 경로 </span>
-            <div className={`flex flex-col m-1 text-sm font-normal`}>
+            <div className={'flex flex-col m-1 text-sm font-normal'}>
                 <ScheduleComponent
                     startPoint={props.flightSchedule[0]}
                     transitList={props.flightSchedule[1]}
@@ -168,60 +186,60 @@ const FlightSchedule = (props) => {
 }
 
 const ScheduleComponent = (props) => {
-    const {droneMessage} = useContext(DroneContext);
-    const JSXElements = [];
-    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
+    const { droneMessage } = useContext(DroneContext)
+    const JSXElements = []
 
-    if (props.transitList === undefined){
-        return;
-    }
-    const transitPath = [props.startPoint, ...props.transitList, props.targetPoint];
-    for (let i=0; i<transitPath.length; i++){
-        if (i===0) continue;
+    if (props.transitList === undefined) return
+
+    const transitPath = [props.startPoint, ...props.transitList, props.targetPoint]
+
+    for (let i=0; i<transitPath.length; i++) {
+
+        if (i===0) continue
+
         JSXElements.push(
             <React.Fragment key={i}>
-                {(droneMessage?droneState.DroneMission.PathIndex:0)===i
-                    ? (
-                        <div className={`flex flex-col justify-center m-2  pl-3 py-1 border border-[#6359E9] rounded-md w-[85%] ${ColorThema.Primary1}`} key={i}>
+                {(droneMessage?droneMessage.DroneMission.PathIndex:0)===i
+                    ?
+                    <div className={'flex flex-col justify-center m-2  pl-3 py-1 border border-[#6359E9] rounded-md w-[85%] bg-[#6359E9]'} key={i}>
+                        <div>
+                            <span> {transitPath[i - 1]} </span>
+                        </div>
+
+                        <div className={'flex flex-row'}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
+                                 stroke="currentColor" className="w-4 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round"
+                                      d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"/>
+                            </svg>
+
+                            <span className={'ml-1'}> {transitPath[i]} </span>
+                        </div>
+
+                    </div>
+                    :
+                    <div>
+                        <div className={'flex flex-col justify-center m-2  pl-3 py-1 border border-gray-400 rounded-md w-[85%]'} key={i}>
                             <div>
                                 <span> {transitPath[i - 1]} </span>
                             </div>
 
-                            <div className={`flex flex-row`}>
+                            <div className={'flex flex-row'}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                                      stroke="currentColor" className="w-4 h-5">
                                     <path strokeLinecap="round" strokeLinejoin="round"
                                           d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"/>
                                 </svg>
 
-                                <span className={`ml-1`}> {transitPath[i]} </span>
+                                <span className={'ml-1'}> {transitPath[i]} </span>
                             </div>
                         </div>
-                    )
-                    : (
-                        <div className={`flex flex-col justify-center m-2  pl-3 py-1 border border-gray-400 rounded-md w-[85%] `} key={i}>
-                            <div>
-                                <span> {transitPath[i - 1]} </span>
-                            </div>
-
-                            <div className={`flex flex-row`}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
-                                     stroke="currentColor" className="w-4 h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round"
-                                          d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"/>
-                                </svg>
-
-                                <span className={`ml-1`}> {transitPath[i]} </span>
-                            </div>
-                        </div>
-                    )}
+                    </div>
+                }
             </React.Fragment>
         )
     }
 
-    return (
-        <div>
-            {JSXElements}
-        </div>
-    );
+    return <div>{JSXElements}</div>
+
 }

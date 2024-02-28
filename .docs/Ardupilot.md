@@ -44,6 +44,7 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
     // MAVLink 통신 사용
     % python sim_vehicle.py --console --map -v ArduCopter -f hexa --out 127.0.0.1:14556   // -f hexa는 6개의 모터를 가진 드론 의미, --out 127.0.0.1:14556은 시뮬레이션 데이터를 출력하는 주소
     % python sim_vehicle.py -v ArduCopter -f hexa --out 127.0.0.1:14556
+    % python sim_vehicle.py -v ArduCopter -I 0 -n 3 --auto-sysid --out=udp:127.0.0.1:14556
 
     % python sim_vehicle.py -v ArduCopter -f hexa -I 0 --out 127.0.0.1:14550
     % python sim_vehicle.py -v ArduCopter -f hexa -I 1 --out 127.0.0.1:14551

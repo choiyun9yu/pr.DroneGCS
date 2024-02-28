@@ -2,31 +2,72 @@ using MAVSDK;
 
 namespace kisa_gcs_system.Services.Helper;
 
-public class MavlinkDecoder : MessageToMessageDecoder<DatagramPacket>           
-{                                                                              
-  private readonly MAVLink.MavlinkParse _parser = new();   
-  
-  protected override void Decode(IChannelHandlerContext ctx, DatagramPacket input, List<object?> output) 
-  {
-    ctx.Channel.GetAttribute(                                               
-        AttributeKey<IPEndPoint>.ValueOf("SenderAddress")).Set((IPEndPoint)input.Sender);
+public class MavlinkTcpDecoder : ByteToMessageDecoder
+{
+  private readonly MAVLink.MavlinkParse _parser = new();
     
-    var decoded = Decode(input);
-    output.Add(decoded);    
+  protected override void Decode(IChannelHandlerContext context, IByteBuffer input, List<object> output)
+  {
+    var decoded = Decode(context, input);
+    if (decoded != null)
+    {
+      output.Add(decoded);
+    }
   }
-  
-  protected MAVLink.MAVLinkMessage? Decode(DatagramPacket input) 
+
+  protected virtual object? Decode(IChannelHandlerContext ctx, IByteBuffer input)
+  {
+    var stream = new ReadOnlyByteBufferStream(input, false);
+    try
+    {
+      return _parser.ReadPacket(stream);
+    }
+    catch (Exception e)
+    {
+      Console.Error.WriteLine(e.Message);
+      return null;
+    }
+  }
+}
+
+public class MavlinkUdpDecoder : MessageToMessageDecoder<DatagramPacket>
+{
+  private readonly MAVLink.MavlinkParse _parser = new();
+
+  protected override void Decode(IChannelHandlerContext ctx, DatagramPacket input, List<object?> output)
+  {
+    ctx.Channel.GetAttribute(AttributeKey<IPEndPoint>
+        .ValueOf("SenderAddress"))
+      .Set((IPEndPoint)input.Sender);
+
+    var decoded = Decode(input);
+    // Console.WriteLine(decoded);
+    output.Add(decoded);
+  }
+
+  protected MAVLink.MAVLinkMessage? Decode(DatagramPacket input)
   {
     var stream = new ReadOnlyByteBufferStream(input.Content, false);
     try
     {
-      return _parser.ReadPacket(stream);                                                      
+      return _parser.ReadPacket(stream);
     }
     catch (Exception e)
     {
-      Console.Error.WriteLine(e.Message);                                                     
+      Console.Error.WriteLine(e.Message);
       return null;
     }
   }
-  
+
+  // public class OutputMessage
+  // {
+  //     public int Port { get; set; }
+  //     private MAVLink.MAVLinkMessage Message { get; set; }
+  //
+  //     public OutputMessage(int port, MAVLink.MAVLinkMessage decoded)
+  //     {
+  //         Port = port;
+  //         Message = decoded;
+  //     }
+  // }
 }

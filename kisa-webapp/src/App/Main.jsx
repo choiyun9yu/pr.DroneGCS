@@ -5,16 +5,16 @@ import { LoginPage } from './components/Authentication/LoginPage';
 import { RegisterPage } from './components/Authentication/RegisterPage';
 import { AppWrapper } from './components/AppWrapper';
 import { AppDashboard } from './route/AppDashboard';
-import { AppGCS } from './route/AppGCS';
 import { DroneSystem } from './components/GCS/DroneSystem';
 import { AppAnomalyDetection } from './route/AppAnomalyDetection';
-import { Prediction } from './components/AnomalyDetection/Prediction';
+import { Prediction } from './components/AnomalyDetection/PredictionPage/Prediction';
 import { AppDeIdentification } from './route/AppDeIdentification';
 import { VideoProcessing } from './components/DeIdentification/VideoProcessing';
 import {Chat} from "./components/Others/Chat";
 import {ProjectDocuments} from "./components/Others/ProjectDocuments";
-import {SignalRProvider} from "./components/GCS/SignalRContainer";
 import {ChatRProvider} from "./components/Others/SignalRChat";
+import { AppGCS } from './route/AppGCS';
+import {SignalRProvider} from "./components/GCS/SignalRContainer";
 
 export const Main = () => {
     return (

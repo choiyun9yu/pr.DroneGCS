@@ -1,127 +1,115 @@
-import { useOutletContext } from 'react-router-dom';
-import { LeftSidebar } from './LeftSidebar';
-import { MiddleMap } from './MiddleMap';
-import { FlightMode } from './FlightMode';
-import { MissionMode } from './MissionMode';
-import { VideoMode } from './VideoMode';
-import {useContext, useState} from "react";
-import {DroneContext} from "./SignalRContainer";
+import { useContext, useReducer, useState } from 'react'
+import { useOutletContext } from 'react-router-dom'
+
+import { VideoMode } from '../GCS/VideoMode/VideoMode'
+import { MissionMode } from '../GCS/MissionMode/MissionMode'
+import { FlightMode } from '../GCS/FlightMode/FlightMode'
+import { LeftSidebar } from './LeftSidebar'
+import { MiddleMap } from './MiddleMap'
+import { DroneContext } from './SignalRContainer'
 
 export const DroneSystem = () => {
-    const {droneMessage} = useContext(DroneContext)
-    const droneState = droneMessage ? droneMessage['droneMessage'] : null;
+    const { droneMessage } = useContext(DroneContext)
 
-    const [gcsMode, setGcsMode] = useOutletContext();
-    const [swapMap, setSwapMap] = useState(false);
-    const [isLeftPanel, setIsLeftPanel ] = useState(true);
-    const [isRightPanel, setIsRightPanel] = useState(true);
-    const [isWayPointBtn, setIsWayPointBtn] = useState(false);
-    const [isLocalMarker, setIsLocalMarker] = useState(false);
-    const [isMissionBtn, setIsMissionBtn] = useState(false);
+    const [gcsMode] = useOutletContext()
 
-    const [targetPoints, setTargetPoints] = useState([]); // {id:1, position:{lat:0,lng:0}}
-    const [flightSchedule, setFlightSchedule] = useState([]);
-
-    const [localLat, setLocalLat] = useState();
-    const [localLon, setLocalLon] = useState();
-
-    const [ isModalOpen, setIsModalOpen ] = useState(false);
-
-    const handleIsModal = () => {
-        setIsModalOpen(!isModalOpen)
-    }
-
-    const handleIsLocalMarker = () => {
-        setIsLocalMarker(!isLocalMarker)
-    }
-
-    const handleIsMissionBtn = () => {
-        setIsMissionBtn(!isMissionBtn)
-    }
-
-    const handleCurrentPoint = () => {
-        setLocalLat(droneState.DroneStt.Lat)
-        setLocalLon(droneState.DroneStt.Lon)
-    }
+    const [lefPanel, toggleLeftPanel] = useReducer(
+        leftPanel => !leftPanel, true
+    )
+    const [rightPanel, toggleRightPanel] = useReducer(
+        rightPanel => !rightPanel, true
+    )
+    const [swapMap, toggleSwapMap] = useReducer(
+        swapMap => !swapMap, false
+    )
+    const [addNewLinkModal, toggleAddNewLinkModal] = useReducer(
+        addNewLinkModal => !addNewLinkModal, false
+    )
+    const [isMissionBtn, toggleMissionBtn] = useReducer(
+        isMissionBtn => !isMissionBtn, false
+    )
+    const [stationMarker, toggleStationMarker] = useReducer(
+        stationMarker => !stationMarker, false
+    )
+    const [isStationBtn, toggleStationBtn] = useReducer(
+        isStationBtn => !isStationBtn, false
+    )
 
     const [center, setCenter] = useState({
         lat: -35.3632623,
         lng: 149.1652378
-    });
+    })
 
-    const handleSwapMap = () => {
-        setSwapMap(!swapMap)
+    const [targetPoints, setTargetPoints] = useState([]) // {id:1, position:{lat:0, lng:0}}
+    const [flightSchedule, setFlightSchedule] = useState([])
+
+    const [stationLat, setStationLat] = useState()
+    const [stationLon, setStationLon] = useState()
+
+    const handleCurrentPoint = () => {
+        setStationLat(droneMessage.DroneStt.Lat)
+        setStationLon(droneMessage.DroneStt.Lon)
     }
 
-    const handleIsLeftPanel = () => {
-        setIsLeftPanel(!isLeftPanel)
-    }
+    return(
+        <div className={'flex w-full h-full p-3 overflow-hidden'}>
+            { lefPanel &&
+                <div id={'left-sidebar'} className={'w-[180px]'}>
+                    <LeftSidebar
+                      toggleAddNewLinkModal={toggleAddNewLinkModal}
+                      setCenter={setCenter}
+                      flightSchedule={flightSchedule}
+                    />
+                </div>
+            }
 
-    const handleIsRightPanel = () => {
-        setIsRightPanel(!isRightPanel)
-    }
-
-    const handleIsWayPointBtn = () => {
-        setIsWayPointBtn(!isWayPointBtn)
-    }
-
-    return (
-        <div className="flex flex-row w-full h-full p-3 overflow-hidden">
-                { isLeftPanel
-                    ? <div id="left-sidebar" className="w-[180px]">
-                        <LeftSidebar gcsMode={gcsMode}
-                                     setGcsMode={setGcsMode}
-                                     setCenter={setCenter}
-                                     flightSchedule={flightSchedule}
-                                     handleIsModal={handleIsModal}
-                        />
-                      </div>
-                    : null}
-            <div id="middle-map" className="flex-grow m-3">
-                <MiddleMap gcsMode={gcsMode}
-                           swapMap={swapMap}
-                           handleSwapMap={handleSwapMap}
-                           isLeftPanel={isLeftPanel}
-                           handleIsLeftPanel={handleIsLeftPanel}
-                           isRightPanel={isRightPanel}
-                           handleIsRightPanel={handleIsRightPanel}
-                           handleIsWayPointBtn={handleIsWayPointBtn}
-                           center={center}
-                           setCenter={setCenter}
-                           isLocalMarker={isLocalMarker}
-                           setIsLocalMarker={setIsLocalMarker}
-                           setLocalLat={setLocalLat}
-                           setLocalLon={setLocalLon}
-                           isMissionBtn={isMissionBtn}
-                           handleIsMissionBtn={handleIsMissionBtn}
-                           targetPoints={targetPoints}
-                           setTargetPoints={setTargetPoints}
-                           setFlightSchedule={setFlightSchedule}
-                           isModalOpen={isModalOpen}
-                           handleIsModal={handleIsModal}
+            <div id={'middle-map'} className={'flex-grow m-3'}>
+                <MiddleMap
+                    gcsMode={gcsMode}
+                    addNewLinkModal={addNewLinkModal}
+                    toggleAddNewLinkModal={toggleAddNewLinkModal}
+                    center={center}
+                    setCenter={setCenter}
+                    swapMap={swapMap}
+                    toggleSwapMap={toggleSwapMap}
+                    lefPanel={lefPanel}
+                    toggleLeftPanel={toggleLeftPanel}
+                    rightPanel={rightPanel}
+                    toggleRightPanel={toggleRightPanel}
+                    stationMarker={stationMarker}
+                    toggleStationMarker={toggleStationMarker}
+                    setStationLat={setStationLat}
+                    setStationLon={setStationLon}
+                    targetPoints={targetPoints}
+                    setTargetPoints={setTargetPoints}
+                    setFlightSchedule={setFlightSchedule}
+                    toggleMissionBtn={toggleMissionBtn}
+                    toggleStationBtn={toggleStationBtn}
                 />
             </div>
-                {gcsMode === 'flight' && isRightPanel ? (
-                    <FlightMode
-                        handleSwapMap={handleSwapMap}
-                        handleIsRightPanel={handleIsRightPanel}
-                        swapMap={swapMap}
+
+            { rightPanel &&
+                <div id={'right-sidebar'} className={''}>
+                    {gcsMode === 'flight' && <FlightMode
                         center={center}
-                    />) : null}
-                {gcsMode === 'mission' ?
-                    <MissionMode
-                        isWayPoint={isWayPointBtn}
-                        isLocalMarker={isLocalMarker}
-                        handleIsLocalMarker={handleIsLocalMarker}
-                        localLat={localLat}
-                        localLon={localLon}
-                        handleCurrentPoint={handleCurrentPoint}
+                        swapMap={swapMap}
+                        toggleSwapMap={toggleSwapMap}
+                    />}
+                    {gcsMode === 'mission' && <MissionMode
                         isMissionBtn={isMissionBtn}
-                        handleIsMissionBtn={handleIsMissionBtn}
+                        isStationBtn={isStationBtn}
+                        stationLat={stationLat}
+                        stationLon={stationLon}
+                        stationMarker={stationMarker}
+                        toggleStationMarker={toggleStationMarker}
                         setTargetPoints={setTargetPoints}
                         setFlightSchedule={setFlightSchedule}
-                    /> : null}
-                {gcsMode === 'video' ? <VideoMode /> : null}
+                        handleCurrentPoint={handleCurrentPoint}
+                    />}
+                    {gcsMode === 'video' && <VideoMode/>}
+                </div>
+            }
+
         </div>
-    );
-};
+    )
+}

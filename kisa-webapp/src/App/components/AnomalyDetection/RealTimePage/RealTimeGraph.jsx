@@ -1,12 +1,12 @@
 import React, {useContext} from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import {ColorThema} from "../ProejctThema";
-import {DroneContext} from "../GCS/SignalRContainer";
+import {ColorThema} from "../../ProejctThema";
+import {DroneContext} from "../../GCS/SignalRContainer";
 
 export const RealTimeGraph = (props) => {
     // console.log(props.graphData)
     const {droneMessage} = useContext(DroneContext);
-    const data = droneMessage ? droneMessage['droneMessage']['DroneMission']['DroneTrails']['q'] : null;
+    const data = droneMessage ? droneMessage['DroneMission']['DroneTrails']['q'] : null;
     if (!data) {
 
         return (

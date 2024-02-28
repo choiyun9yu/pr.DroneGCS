@@ -1,13 +1,13 @@
 import React, {useContext, useState} from 'react';
 
-import {DataMap} from "../DataMap";
+import {DataMap} from "../../DataMap";
 import {RealTimeForm} from './RealTimeForm';
 import {RealTimeBoardLeft} from "./RealTimeBoardLeft";
 import {RealTimeBoardRight} from "./RealTimeBoardRight";
 import {RealTimeTable} from "./RealTimeTable";
 import {RealTimeGraph} from "./RealTimeGraph";
-import {DroneContext} from "../GCS/SignalRContainer";
-import {ColorThema} from "../ProejctThema";
+import {DroneContext} from "../../GCS/SignalRContainer";
+import {ColorThema} from "../../ProejctThema";
 
 export const RealTime = () => {
     const [realTimeData, setRealTimeData] = useState({})

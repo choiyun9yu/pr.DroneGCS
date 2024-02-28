@@ -1,4 +1,4 @@
-namespace kisa_gcs_system.Model;
+namespace kisa_gcs_system.Models;
 
 public class AnomalyDetection
 {
@@ -8,11 +8,12 @@ public class AnomalyDetection
     public DateTime PredictTime { get; set; }
     public string? DroneId { get; set; }
     public string? FlightId { get; set; }
-    public SensorData? SensorData { get; set; }
+    public SensorData2? SensorData { get; set; }
     public PredictData? PredictData { get; set; }
+    public WarningData? WarningData { get; set; }
 }
 
-public class SensorData
+public class SensorData2
 {
     public double roll_ATTITUDE { get; set; }
     public double pitch_ATTITUDE { get; set; }
@@ -73,6 +74,26 @@ public class PredictData
     public double vibration_x_VIBRATION_PREDICT { get; set; }
     public double vibration_y_VIBRATION_PREDICT { get; set; }
     public double vibration_z_VIBRATION_PREDICT { get; set; }
+}
+
+public class WarningData
+{
+    public int warning_count { get; set; }
+    public bool roll_ATTITUDE_WARNING { get; set; }
+    public bool pitch_ATTITUDE_WARNING { get; set; }
+    public bool yaw_ATTITUDE_WARNING { get; set; }
+    public bool xacc_RAW_IMU_WARNING { get; set; }
+    public bool yacc_RAW_IMU_WARNING { get; set; }
+    public bool zacc_RAW_IMU_WARNING { get; set; }
+    public bool xgyro_RAW_IMU_WARNING { get; set; }
+    public bool ygyro_RAW_IMU_WARNING { get; set; }
+    public bool zgyro_RAW_IMU_WARNING { get; set; }
+    public bool xmag_RAW_IMU_WARNING { get; set; }
+    public bool ymag_RAW_IMU_WARNING { get; set; }
+    public bool zmag_RAW_IMU_WARNING { get; set; }
+    public bool vibration_x_VIBRATION_WARNING { get; set; }
+    public bool vibration_y_VIBRATION_WARNING { get; set; }
+    public bool vibration_z_VIBRATION_WARNING { get; set; }
 }
 
 public class PredictionResponseFormat

@@ -1,153 +1,152 @@
-using kisa_gcs_system.Model;
+using kisa_gcs_system.Models;
 
-namespace kisa_gcs_system.Services
+namespace kisa_gcs_system.Services;
+
+public class AnomalyDetectionApiService
 {
-    public class AnomalyDetectionApiService
+    private readonly ILogger<AnomalyDetectionApiService> _logger;
+    private readonly IMongoCollection<AnomalyDetection> _dronePredict;
+
+    public AnomalyDetectionApiService(ILogger<AnomalyDetectionApiService> logger, IConfiguration configuration)
     {
-        private readonly ILogger<AnomalyDetectionApiService> _logger;
-        private readonly IMongoCollection<AnomalyDetection> _dronePredict;
+        // Looger
+        _logger = logger;
 
-        public AnomalyDetectionApiService(ILogger<AnomalyDetectionApiService> logger, IConfiguration configuration)
+        // MongoDB 연결
+        var connectionString = configuration.GetConnectionString("MongoDB");
+        var mongoClient = new MongoClient(connectionString);
+        var database = mongoClient.GetDatabase("drone");
+        _dronePredict = database.GetCollection<AnomalyDetection>("drone_predict");
+    }
+
+    public List<string> GetDroneIds()
+    {
+        try
         {
-            // Looger
-            _logger = logger;
-
-            // MongoDB 연결
-            var connectionString = configuration.GetConnectionString("MongoDB");
-            var mongoClient = new MongoClient(connectionString);
-            var database = mongoClient.GetDatabase("drone");
-            _dronePredict = database.GetCollection<AnomalyDetection>("drone_predict");
+            var distinctiDroneIds = _dronePredict.Distinct<string>("DroneId", new BsonDocument()).ToList();
+            return distinctiDroneIds;
         }
-
-        public List<string> GetDroneIds()
+        catch (Exception ex)
         {
-            try
-            {
-                var distinctiDroneIds = _dronePredict.Distinct<string>("DroneId", new BsonDocument()).ToList();
-                return distinctiDroneIds;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
-                throw;
-            }
+            _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
+            throw;
         }
+    }
 
-        public List<string> GetFlightIds(string droneId, string periodFrom, string periodTo)
+    public List<string> GetFlightIds(string droneId, string periodFrom, string periodTo)
+    {
+        try
         {
-            try
-            {
-                
-                DateTime periodToDate = DateTime.Parse(periodTo).AddDays(2);
-                
-                var filter = Builders<AnomalyDetection>.Filter.And(
-                    Builders<AnomalyDetection>.Filter.Eq(api => api.DroneId, droneId),
-                    Builders<AnomalyDetection>.Filter.Gte(api => api.PredictTime, DateTime.Parse(periodFrom)),
-                    Builders<AnomalyDetection>.Filter.Lte(api => api.PredictTime, periodToDate)
-                );
+            
+            DateTime periodToDate = DateTime.Parse(periodTo).AddDays(2);
+            
+            var filter = Builders<AnomalyDetection>.Filter.And(
+                Builders<AnomalyDetection>.Filter.Eq(api => api.DroneId, droneId),
+                Builders<AnomalyDetection>.Filter.Gte(api => api.PredictTime, DateTime.Parse(periodFrom)),
+                Builders<AnomalyDetection>.Filter.Lte(api => api.PredictTime, periodToDate)
+            );
 
-                var distinctFlightIds = _dronePredict
+            var distinctFlightIds = _dronePredict
+                .Find(filter)
+                .Project(api => api.FlightId)
+                .ToList()
+                .Distinct()
+                .ToList();
+
+            return distinctFlightIds;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
+            throw;
+        }
+    }
+
+
+public AnomalyDetection GetRealtimeByDroneId(string droneId)
+    {
+        try
+        {
+            ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
+                .Exclude(d => d._id);
+            FilterDefinition<AnomalyDetection> filter =
+                Builders<AnomalyDetection>.Filter.Eq("DroneId", droneId);
+            
+            SortDefinition<AnomalyDetection> sort = 
+                Builders<AnomalyDetection>.Sort.Descending(api => api.PredictTime);
+            
+            AnomalyDetection anomalyDetection =
+                _dronePredict
                     .Find(filter)
-                    .Project(api => api.FlightId)
-                    .ToList()
-                    .Distinct()
-                    .ToList();
-
-                return distinctFlightIds;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
-                throw;
-            }
-        }
-    
-
-    public AnomalyDetection GetRealtimeByDroneId(string droneId)
-        {
-            try
-            {
-                ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
-                    .Exclude(d => d._id);
-                FilterDefinition<AnomalyDetection> filter =
-                    Builders<AnomalyDetection>.Filter.Eq("DroneId", droneId);
-                
-                SortDefinition<AnomalyDetection> sort = 
-                    Builders<AnomalyDetection>.Sort.Descending(api => api.PredictTime);
-                
-                AnomalyDetection anomalyDetection =
-                    _dronePredict
-                        .Find(filter)
-                        .Sort(sort)
-                        .Project<AnomalyDetection>(projection)
-                        .FirstOrDefault();
-                return anomalyDetection;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
-                throw;
-            }
-        }
-
-        public List<AnomalyDetection> GetLogDataByForm(string DroneId, string FlightId, string periodFrom, string periodTo)
-        {
-            try
-            {
-                ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
-                    .Exclude(d => d._id);
-
-                DateTime periodToDate = DateTime.Parse(periodTo).AddDays(2);
-                
-                FilterDefinition<AnomalyDetection> filter = Builders<AnomalyDetection>.Filter.And(
-                    Builders<AnomalyDetection>.Filter.Eq("DroneId", DroneId),
-                    Builders<AnomalyDetection>.Filter.Eq("FlightId", FlightId),
-                    Builders<AnomalyDetection>.Filter.Gte("PredictTime", DateTime.Parse(periodFrom)),
-                    Builders<AnomalyDetection>.Filter.Lte("PredictTime", periodToDate)
-                );
-
-                List<AnomalyDetection> logdataList = _dronePredict.Find(filter)
+                    .Sort(sort)
                     .Project<AnomalyDetection>(projection)
-                    .Sort(Builders<AnomalyDetection>.Sort.Descending("PredictTime")) // PredictTime을 기준으로 내림차순 정렬
-                    .ToList();
-
-                return logdataList;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
+                    .FirstOrDefault();
+            return anomalyDetection;
         }
-
-        public List<AnomalyDetection> GetPredictDataByForm(string DroneId, string FlightId, string periodFrom, string periodTo, string SelectData)
+        catch (Exception ex)
         {
-            try
-            {
-                ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
-                    .Exclude(d => d._id);
+            _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
+            throw;
+        }
+    }
 
-                DateTime periodToDate = DateTime.Parse(periodTo).AddDays(2);
-                
-                FilterDefinition<AnomalyDetection> filter = Builders<AnomalyDetection>.Filter.And(
-                    Builders<AnomalyDetection>.Filter.Eq("DroneId", DroneId),
-                    Builders<AnomalyDetection>.Filter.Eq("FlightId", FlightId),
-                    Builders<AnomalyDetection>.Filter.Gte("PredictTime", DateTime.Parse(periodFrom)),
-                    Builders<AnomalyDetection>.Filter.Lte("PredictTime", periodToDate)
-                );
+    public List<AnomalyDetection> GetLogDataByForm(string DroneId, string FlightId, string periodFrom, string periodTo)
+    {
+        try
+        {
+            ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
+                .Exclude(d => d._id);
 
-                List<AnomalyDetection> predictionList = _dronePredict.Find(filter)
-                    .Project<AnomalyDetection>(projection)
-                    .Sort(Builders<AnomalyDetection>.Sort.Descending("PredictTime"))
-                    .ToList();
-                
-                return predictionList;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
+            DateTime periodToDate = DateTime.Parse(periodTo).AddDays(2);
+            
+            FilterDefinition<AnomalyDetection> filter = Builders<AnomalyDetection>.Filter.And(
+                Builders<AnomalyDetection>.Filter.Eq("DroneId", DroneId),
+                Builders<AnomalyDetection>.Filter.Eq("FlightId", FlightId),
+                Builders<AnomalyDetection>.Filter.Gte("PredictTime", DateTime.Parse(periodFrom)),
+                Builders<AnomalyDetection>.Filter.Lte("PredictTime", periodToDate)
+            );
+
+            List<AnomalyDetection> logdataList = _dronePredict.Find(filter)
+                .Project<AnomalyDetection>(projection)
+                .Sort(Builders<AnomalyDetection>.Sort.Descending("PredictTime")) // PredictTime을 기준으로 내림차순 정렬
+                .ToList();
+
+            return logdataList;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    public List<AnomalyDetection> GetPredictDataByForm(string DroneId, string FlightId, string periodFrom, string periodTo, string SelectData)
+    {
+        try
+        {
+            ProjectionDefinition<AnomalyDetection> projection = Builders<AnomalyDetection>.Projection
+                .Exclude(d => d._id);
+
+            DateTime periodToDate = DateTime.Parse(periodTo).AddDays(2);
+            
+            FilterDefinition<AnomalyDetection> filter = Builders<AnomalyDetection>.Filter.And(
+                Builders<AnomalyDetection>.Filter.Eq("DroneId", DroneId),
+                Builders<AnomalyDetection>.Filter.Eq("FlightId", FlightId),
+                Builders<AnomalyDetection>.Filter.Gte("PredictTime", DateTime.Parse(periodFrom)),
+                Builders<AnomalyDetection>.Filter.Lte("PredictTime", periodToDate)
+            );
+
+            List<AnomalyDetection> predictionList = _dronePredict.Find(filter)
+                .Project<AnomalyDetection>(projection)
+                .Sort(Builders<AnomalyDetection>.Sort.Descending("PredictTime"))
+                .ToList();
+            
+            return predictionList;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
         }
     }
 }

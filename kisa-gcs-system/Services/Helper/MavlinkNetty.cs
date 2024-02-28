@@ -7,15 +7,10 @@ public class MavlinkUdpNetty
   private readonly MultithreadEventLoopGroup _bossGroup = new (2); 
   private readonly Bootstrap _bootstrap;    
   private IChannel? _bootstrapChannel; 
-  
-  private readonly MavlinkDecoder _decoder;
-  private readonly MavlinkHandler _handler;
   private int _port;
-
-  public MavlinkUdpNetty(ArduCopterService controlService)
+  
+  public MavlinkUdpNetty(DroneControlService droneControlService)
   {
-    _decoder = new MavlinkDecoder();
-    _handler = new MavlinkHandler(controlService);
       
     _bootstrap = new Bootstrap();   
     _bootstrap            
@@ -28,8 +23,8 @@ public class MavlinkUdpNetty
       .Handler(new ActionChannelInitializer<IChannel>(channel => 
         {
           var pipeline = channel.Pipeline; 
-          pipeline.AddLast("Mavlink Decoder", _decoder);
-          pipeline.AddLast("Mavlink Handler", _handler);
+          pipeline.AddFirst("Mavlink Decoder", new MavlinkUdpDecoder());
+          pipeline.AddLast("Mavlink Handler", new MavlinkHandler(droneControlService));
         }
       ));
   }
@@ -37,7 +32,7 @@ public class MavlinkUdpNetty
   public async Task Bind(int port)
   {
     _port = port;
-    _bootstrapChannel = await _bootstrap.BindAsync(port);
+    _bootstrapChannel = await _bootstrap.BindAsync(_port);
     Console.WriteLine("Started UDP server for Mavlink: " + _port);
   }
   
@@ -51,14 +46,40 @@ public class MavlinkUdpNetty
 
 public class MavlinkTcpNetty
 {
-  private readonly MultithreadEventLoopGroup _bossGroup = new (2); 
-  private readonly Bootstrap _bootstrap;    
-  private IChannel? _bootstrapChannel; 
-  
+  private readonly MultithreadEventLoopGroup _bossGroup = new(2);
+  private readonly Bootstrap _bootstrap;
+  private IChannel? _bootstrapChannel;
+  private int _port;
 
-  public MavlinkTcpNetty(ArduCopterService controlService)
+  public MavlinkTcpNetty(DroneControlService droneControlService)
   {
-    
+    _bootstrap = new Bootstrap();
+    _bootstrap
+      .Group(_bossGroup)
+      .ChannelFactory(() =>
+      {
+        var channel = new SocketDatagramChannel(AddressFamily.InterNetwork);
+        return channel;
+      })
+      .Handler(new ActionChannelInitializer<IChannel>(channel =>
+      {
+        var pipeline = channel.Pipeline; 
+        pipeline.AddFirst("Mavlink Decoder", new MavlinkTcpDecoder());
+        pipeline.AddLast("Mavlink Handler", new MavlinkHandler(droneControlService));
+      }));
   }
-  
+    
+  public async Task Bind(int port)
+  {
+    _port = port;
+    _bootstrapChannel = await _bootstrap.BindAsync(_port);
+    Console.WriteLine("Open TCP Channel for Mavlink: " + _port);
+  }
+    
+  public async Task Close()
+  {
+    Console.WriteLine("Close UDP Server for Mavlink " + _port);
+    await _bootstrapChannel.CloseAsync();
+  }
+    
 }
