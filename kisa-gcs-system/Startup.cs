@@ -54,11 +54,8 @@ public class Startup
                     .AllowCredentials();
             });
         });
-        
         services.AddSingleton<MavlinkUdpNetty>();
-        services.AddSingleton<MavlinkHandler>();
         services.AddSingleton<DroneControlService>();
-
         services.AddSignalR();
     }
 

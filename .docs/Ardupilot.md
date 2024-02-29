@@ -94,3 +94,28 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
     guided -35.3621741 149.16511256 10
 
     guided -35.3621740 149.16511255 10
+
+
+### 4-0. 파라미터 초기화
+
+    % sim_vehicle.py -w
+
+### 4-1. 드론 시작 위치 조정 
+ardupilot/Tools/autotest/localpoints.txt 파일에서 좌표를 입력하고 (위도.소수점8번째자리까지,경도,절대고도,머리방향) -L 옵션으로 실행하면 된다.
+
+    % python sim_vehicle.py -L ETRI -v ArduCopter
+
+### 4-2. 드론 주변 장치 추가
+[가상 짐벌 추가](https://ardupilot.org/dev/docs/adding_simulated_devices.html#adding-simulated-devices)
+
+가상 짐벌 추가는 우선 시뮬레이터를 실행하고 
+
+    MAV> param set MNT1_TYPE 1
+    MAV> param set SERVO6_FUNCTION 6
+    MAV> param set SERVO7_FUNCTION 8
+
+종료 후 재시작할 때 -M 플래그 추가 
+
+    % python sim_vehicle.py -L ETRI -v ArduCopter -M --out=udp:127.0.0.1:14556
+
+GIMBAL_DEVICE_ATTITUDE_STATUS 메시지는 전송되는데 GIMBAL_CONTROL 는 전송해주지 않음

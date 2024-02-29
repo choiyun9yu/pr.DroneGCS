@@ -187,8 +187,8 @@ public partial class MAVLink
         new message_info(176, "RALLY_FETCH_POINT", 234, 3, 3, typeof( mavlink_rally_fetch_point_t )),
         new message_info(177, "COMPASSMOT_STATUS", 240, 20, 20, typeof( mavlink_compassmot_status_t )),
         new message_info(178, "AHRS2", 47, 24, 24, typeof( mavlink_ahrs2_t )),
-        new message_info(179, "CAMERA_STATUS", 189, 29, 29, typeof( mavlink_camera_status_t )),
-        new message_info(180, "CAMERA_FEEDBACK", 52, 45, 47, typeof( mavlink_camera_feedback_t )),
+        new message_info(179, "CAMERA_STATUS", 189, 29, 29, typeof( mavlink_camera_status_t )),     // 카메라 상태 보고 (카메라가 켜져있는지, 저장장치의 여유 공간이 있는지 등의 정보)
+        new message_info(180, "CAMERA_FEEDBACK", 52, 45, 47, typeof( mavlink_camera_feedback_t )),  // 카메라 피드백 정보 (카메라가 이미지를 캡처했는지, 저장되었는지 등의 정보) 
         new message_info(181, "BATTERY2", 174, 4, 4, typeof( mavlink_battery2_t )),
         new message_info(182, "AHRS3", 229, 40, 40, typeof( mavlink_ahrs3_t )),
         new message_info(183, "AUTOPILOT_VERSION_REQUEST", 85, 2, 2, typeof( mavlink_autopilot_version_request_t )),
@@ -200,9 +200,9 @@ public partial class MAVLink
         new message_info(193, "EKF_STATUS_REPORT", 71, 22, 26, typeof( mavlink_ekf_status_report_t )),
         new message_info(194, "PID_TUNING", 98, 25, 33, typeof( mavlink_pid_tuning_t )),
         new message_info(195, "DEEPSTALL", 120, 37, 37, typeof( mavlink_deepstall_t )),
-        new message_info(200, "GIMBAL_REPORT", 134, 42, 42, typeof( mavlink_gimbal_report_t )),
-        new message_info(201, "GIMBAL_CONTROL", 205, 14, 14, typeof( mavlink_gimbal_control_t )),
-        new message_info(214, "GIMBAL_TORQUE_CMD_REPORT", 69, 8, 8, typeof( mavlink_gimbal_torque_cmd_report_t )),
+        new message_info(200, "GIMBAL_REPORT", 134, 42, 42, typeof( mavlink_gimbal_report_t )),     // 짐벌 상태 보고 (짐벌의 각도와 속도, 상태 드의 정보)
+        new message_info(201, "GIMBAL_CONTROL", 205, 14, 14, typeof( mavlink_gimbal_control_t )),   // 짐벌 제어 (원격에서 짐벌의 각도와 속도를 조정하고 제어할 때 사용)
+        new message_info(214, "GIMBAL_TORQUE_CMD_REPORT", 69, 8, 8, typeof( mavlink_gimbal_torque_cmd_report_t )),  // 짐벌의 토크 명령 보고 ( 짐벌에 적용된 토크와 관련됭 정보)
         new message_info(215, "GOPRO_HEARTBEAT", 101, 3, 3, typeof( mavlink_gopro_heartbeat_t )),
         new message_info(216, "GOPRO_GET_REQUEST", 50, 3, 3, typeof( mavlink_gopro_get_request_t )),
         new message_info(217, "GOPRO_GET_RESPONSE", 202, 6, 6, typeof( mavlink_gopro_get_response_t )),
@@ -9376,12 +9376,12 @@ public partial class MAVLink
     {
         public mavlink_gimbal_control_t(float demanded_rate_x,float demanded_rate_y,float demanded_rate_z,byte target_system,byte target_component) 
         {
-              this.demanded_rate_x = demanded_rate_x;
-              this.demanded_rate_y = demanded_rate_y;
+              this.demanded_rate_x = demanded_rate_x;   // 드론이 x 축을 따라 어떤 속도로 회전하도록 요구하는 값 
+              this.demanded_rate_y = demanded_rate_y;   // 드론이 y 축을 어떤 속도로 변경하도록 요구하는 값
               this.demanded_rate_z = demanded_rate_z;
               this.target_system = target_system;
               this.target_component = target_component;
-            
+              
         }
         /// <summary>Demanded angular rate X.  [rad/s] </summary>
         [Units("[rad/s]")]
@@ -10750,7 +10750,6 @@ public partial class MAVLink
               this.custom_mode = custom_mode;
               this.target_system = target_system;
               this.base_mode = base_mode;
-            
         }
         /// <summary>The new autopilot-specific mode. This field can be ignored by an autopilot.   </summary>
         [Units("")]
@@ -19717,10 +19716,10 @@ public partial class MAVLink
         public mavlink_gimbal_manager_set_pitchyaw_t(/*GIMBAL_MANAGER_FLAGS*/uint flags,float pitch,float yaw,float pitch_rate,float yaw_rate,byte target_system,byte target_component,byte gimbal_device_id) 
         {
               this.flags = flags;
-              this.pitch = pitch;
-              this.yaw = yaw;
-              this.pitch_rate = pitch_rate;
-              this.yaw_rate = yaw_rate;
+              this.pitch = pitch;   // 위아래 끄덕끄덕
+              this.yaw = yaw;       // 좌우 도리도리 
+              this.pitch_rate = pitch_rate; // 위아래 회전 속도 
+              this.yaw_rate = yaw_rate;     // 좌우 회전 속도 
               this.target_system = target_system;
               this.target_component = target_component;
               this.gimbal_device_id = gimbal_device_id;

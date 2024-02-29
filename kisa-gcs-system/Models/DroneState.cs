@@ -44,6 +44,7 @@ public class DroneStt
 
 public class DroneCamera
 {
+    public byte? GimbalId;
     public char? FWD_CAM_STATE;
     public string? CameraIp;
     public string? CameraUrl1;

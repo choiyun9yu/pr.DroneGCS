@@ -230,7 +230,7 @@ const MissionComponent = (props) => {
             <div className={'flex flex-row items-start justify-start'}>
               <div className={'flex w-[80px]'}>경유 지점 :</div>
 
-              <div className={'flex w-[97%]'}>{(selectTransitPoint.length === 0)
+              <div className={'flex w-[72.5%]'}>{(selectTransitPoint.length === 0)
                 ? '없음'
                 : selectTransitPoint.join(' - ')}
               </div>
@@ -260,7 +260,7 @@ const MissionComponent = (props) => {
 
         <div className={'flex flex-col m-2'}>
           <div className={'flex items-center'}>
-            <span className={'mr-2'}>출발 지점</span>
+            <span className={'mr-2'}>출발지점</span>
               :
             <select
               className={'flex m-1 w-[170px] h-[23px] text-black px-2'}
@@ -274,7 +274,7 @@ const MissionComponent = (props) => {
           <TransitInput transitCount={transitCount} pointsList={pointsList}/>
 
           <div className={'flex items-center'}>
-            <span className={'mr-2'}>목표 지점 </span>
+            <span className={'mr-2'}>목표지점 </span>
               :
             <select
               className={'flex m-1 w-[170px] h-[23px] text-black px-2'}
@@ -286,7 +286,7 @@ const MissionComponent = (props) => {
           </div>
 
           <div className={'flex items-center'}>
-            <span className={'mr-2'}>비행 고도
+            <span className={'mr-2'}>비행고도
               <span className={'text-sm'}>(m)</span>
             </span>
               :
@@ -597,10 +597,10 @@ const StationComponent = (props) => {
         <div className={'font-bold'}>
             지점 삭제 하기
         </div>
-        <div className={'flex flex-row justify-end px-2 m-2'}>
+        <div className={'flex flex-row justify-end px-2 my-2 mr-2'}>
           <div>
             <select
-              className={'flex m-1 w-[170px] h-[23px] text-black px-2'}
+              className={'flex m-1 w-[175px] h-[23px] text-black px-2'}
               name={'LocalName'}>
               {pointsList.map((item, index) => (
                 <option

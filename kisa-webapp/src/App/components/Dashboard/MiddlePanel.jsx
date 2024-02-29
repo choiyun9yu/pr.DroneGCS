@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Cell, Pie, PieChart, ResponsiveContainer} from "recharts";
 import Calendar from "react-calendar";
 import moment from "moment";
@@ -38,21 +38,20 @@ export const MiddlePanel = () => {
 };
 
 const FlightCalendar = () => {
-    const [value, onChange] = useState(new Date());
+    const [value, setValue] = useState(new Date());
+    // const [currentYear, setCurrentYear] = useState(value.getFullYear);
+    const [currentMonth, setCurrentMont] = useState(value.getMonth + 1);
 
-    // const [mark, setMark] = useState([]);
-    // const { data } = useQuery(
-    //     ["logData", Month],
-    //     async () => {
-    //         const result;
-    //         return result.data
-    //     },
-    //     {
-    //         onSuccess: (data) => {
-    //             setMark(data);  // ["2022-02-02", "2022-02-02", "2022-02-10"] 형태로 가져옴
-    //         }
-    //     }
-    // )
+    const onChange = (newValue) => {
+        setValue(newValue);
+        // setCurrentYear(newValue.getFullYear);
+        setCurrentMont(newValue.getMonth() + 1);
+    }
+
+    useEffect(() => {
+        // console.log(currentYear)
+        // console.log(currentMonth)
+    }, [currentMonth])
 
     const markDrone1 = ["2023-10-01", "2023-10-04", "2023-10-10"];
     const markDrone2 = ["2023-10-03", "2023-10-04", "2023-10-15"];

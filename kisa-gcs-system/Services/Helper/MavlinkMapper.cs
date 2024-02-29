@@ -150,6 +150,22 @@ public class MavlinkMapper
         {
           _droneState.DroneStt.BatteryStt = batteryStatus.battery_remaining;
         }
+        if (data is MAVLink.mavlink_mission_current_t missionCurrent)
+        {
+          // Console.WriteLine($"시퀀스 번호({missionCurrent.seq}) 미션 수({missionCurrent.total}) 미션 상태{missionCurrent.mission_state}");
+          /*
+           * seq: 현재 활성화된 미션 항목의 시퀀스 번호(index)를 나타냄
+           * total: 전체 미션 항목의 수를 나타냄
+           * mission_state: 미션의 상태를 나타내는 열거형 값, 미션 수행중인지, 일시 중지 중인지, 완료된 상태인지 등을 나타냄
+           * mission_mode: 현재 미션의 모드를 나타내는 열거형 값, 자동 모드, 로컬 모드, 전역 모드 등이 있을 수 있음
+           */
+        }
+        if (data is MAVLink.mavlink_gimbal_device_attitude_status_t gimbalstatus)
+        {
+          _droneState.DroneCamera.GimbalId = gimbalstatus.gimbal_device_id;
+          // Console.WriteLine($"w:{gimbalstatus.q[0]}, x:{gimbalstatus.q[1]}, y:{gimbalstatus.q[2]}, z:{gimbalstatus.q[3]},");
+        }
+
         
         // 미수신 로그
         if (data is MAVLink.mavlink_sensor_offsets_t sensorOffsets)
@@ -171,7 +187,6 @@ public class MavlinkMapper
         
         // 미사용 로그 
         // if (data is MAVLink.mavlink_meminfo_t meminfo){}
-        // if (data is MAVLink.mavlink_mission_current_t missionCurrent){}
         // if (data is MAVLink.mavlink_scaled_imu2_t scaledImu2){}
         // if (data is MAVLink.mavlink_scaled_imu3_t scaledImu3){}
         // if (data is MAVLink.mavlink_scaled_pressure2_t scaledPressure2){}

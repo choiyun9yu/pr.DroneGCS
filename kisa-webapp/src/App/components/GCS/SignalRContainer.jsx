@@ -3,6 +3,7 @@ import * as signalR from '@microsoft/signalr'
 
 export const DroneContext = createContext({})
 // python sim_vehicle.py -v ArduCopter -I 0 -n 3 --auto-sysid --out=udp:127.0.0.1:14556
+// python sim_vehicle.py -L ETRI -v ArduCopter --out=udp:127.0.0.1:14556
 export const SignalRProvider = ({ children }) => {
     const [droneList, setDroneList] = useState([])
     const [selectedDrone, setSelectedDrone] = useState('1')

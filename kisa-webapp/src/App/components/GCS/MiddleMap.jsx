@@ -37,10 +37,6 @@ export const MiddleMap = (props) => {
         url: 'https://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
     }
 
-    const orangeMarkerIcon = {
-        url: 'https://maps.google.com/mapfiles/ms/icons/orange-dot.png',
-    }
-
     const purpleMarkerIcon = {
         url: 'https://maps.google.com/mapfiles/ms/icons/purple-dot.png',
     }
@@ -221,18 +217,47 @@ export const MiddleMap = (props) => {
 };
 
 export const MiniMap = (props) => {
+    const { droneMessage } = useContext(DroneContext)
+
     return (
         <>
-            <GoogleMap mapContainerClassName={`flex w-full h-full`} center={props.center} zoom={15}>
-                <button onClick={props.handleSwapMap}
-                        className={`absolute bottom-[10px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                        <path fillRule="evenodd" d="M15.97 2.47a.75.75 0 011.06 0l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H7.5a.75.75 0 010-1.5h11.69l-3.22-3.22a.75.75 0 010-1.06zm-7.94 9a.75.75 0 010 1.06l-3.22 3.22H16.5a.75.75 0 010 1.5H4.81l3.22 3.22a.75.75 0 11-1.06 1.06l-4.5-4.5a.75.75 0 010-1.06l4.5-4.5a.75.75 0 011.06 0z" clipRule="evenodd" />
+            <GoogleMap
+                mapContainerClassName={'flex w-full h-full'}
+                center={props.center}
+                zoom={15}
+            >
+
+                <OverlayView
+                    position={{ lat: droneMessage && droneMessage.DroneStt.Lat, lng: droneMessage && droneMessage.DroneStt.Lon }}
+                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                    getPixelPositionOffset={(width, height) => ({
+                        x: -(width / 2),
+                        y: -(height / 2),
+                    })}
+                >
+                    <div
+                        style={{
+                            width: '50px',
+                            height: '68px',
+                            backgroundImage: `url(${process.env.PUBLIC_URL}/Drone.png)`,
+                            backgroundSize: 'contain',
+                            transform: `translate(-50%, -50%) rotate(${droneMessage && droneMessage.DroneStt.Head}deg)`,
+                        }}
+                    />
+                </OverlayView>
+
+                <button
+                    className={'absolute bottom-[25px] left-[10px] flex justify-center items-center w-[40px] h-[40px] bg-white hover:bg-gray-200'}
+                    onClick={props.toggleSwapMap}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gray" className="w-6 h-6">
+                        <path fillRule="evenodd"
+                              d="M15.97 2.47a.75.75 0 011.06 0l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H7.5a.75.75 0 010-1.5h11.69l-3.22-3.22a.75.75 0 010-1.06zm-7.94 9a.75.75 0 010 1.06l-3.22 3.22H16.5a.75.75 0 010 1.5H4.81l3.22 3.22a.75.75 0 11-1.06 1.06l-4.5-4.5a.75.75 0 010-1.06l4.5-4.5a.75.75 0 011.06 0z" clipRule="evenodd" />
                     </svg>
                 </button>
             </GoogleMap>
         </>
-    );
+    )
 }
 
 export const FlightInfoTable = () => {

@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+import {DroneContext} from "../SignalRContainer";
 
 const circle = {
   width: '150px',
@@ -66,10 +67,11 @@ const btnRight = {
         'rgba(46.116092428565025, 43.2159436494112, 117.27387472987175, 1) 35%)',
 }
 export const CameraJoyStick = () => {
+  const { handleCameraJoystick } = useContext(DroneContext);
   return (
     <div style={circle} className={`flex h-full justify-center items-center w-full mx-auto shadow-2xl ${circle}`}>
       <div style={controllerCol} className={'flex flex-col justify-between items-center'}>
-        <button style={btnUp} className='flex justify-center items-center m-1.5 pb-1'>
+        <button style={btnUp} className='flex justify-center items-center m-1.5 pb-1' onClick={() => handleCameraJoystick(0)}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
             style={{ transform: 'rotate(270deg)' }} className="w-5 h-5 hover:text-white">
             <path fillRule="evenodd"
@@ -77,7 +79,7 @@ export const CameraJoyStick = () => {
               clipRule="evenodd"/>
           </svg>
         </button>
-        <button style={btnDown} className='flex justify-center items-center m-1.5 pt-1'>
+        <button style={btnDown} className='flex justify-center items-center m-1.5 pt-1' onClick={() => handleCameraJoystick(1)}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
             style={{ transform: 'rotate(90deg)' }} className="w-5 h-5 hover:text-white">
             <path fillRule="evenodd"
@@ -87,7 +89,7 @@ export const CameraJoyStick = () => {
         </button>
       </div>
       <div style={controllerRow} className={'flex flex-row justify-between items-center'}>
-        <button style={btnLeft} className='flex justify-center items-center m-1.5 pr-1'>
+        <button style={btnLeft} className='flex justify-center items-center m-1.5 pr-1' onClick={() => handleCameraJoystick(2)}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
             style={{ transform: 'rotate(180deg)' }} className="w-5 h-5 hover:text-white">
             <path fillRule="evenodd"
@@ -95,7 +97,7 @@ export const CameraJoyStick = () => {
               clipRule="evenodd"/>
           </svg>
         </button>
-        <button style={btnRight} className='flex items-center justify-center m-1.5 pl-1'>
+        <button style={btnRight} className='flex items-center justify-center m-1.5 pl-1' onClick={() => handleCameraJoystick(3)}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
             className="w-5 h-5 hover:text-white">
             <path fillRule="evenodd"
