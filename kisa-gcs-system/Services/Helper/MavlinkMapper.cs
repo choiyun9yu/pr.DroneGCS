@@ -160,12 +160,6 @@ public class MavlinkMapper
            * mission_mode: 현재 미션의 모드를 나타내는 열거형 값, 자동 모드, 로컬 모드, 전역 모드 등이 있을 수 있음
            */
         }
-        if (data is MAVLink.mavlink_gimbal_device_attitude_status_t gimbalstatus)
-        {
-          _droneState.DroneCamera.GimbalId = gimbalstatus.gimbal_device_id;
-          // Console.WriteLine($"w:{gimbalstatus.q[0]}, x:{gimbalstatus.q[1]}, y:{gimbalstatus.q[2]}, z:{gimbalstatus.q[3]},");
-        }
-
         
         // 미수신 로그
         if (data is MAVLink.mavlink_sensor_offsets_t sensorOffsets)
@@ -186,6 +180,11 @@ public class MavlinkMapper
         }
         
         // 미사용 로그 
+        // if (data is MAVLink.mavlink_gimbal_device_attitude_status_t gimbalstatus)
+        // {
+        //   _droneState.DroneCamera.GimbalId = gimbalstatus.gimbal_device_id;
+        //   Console.WriteLine($"w:{gimbalstatus.q[0]}, x:{gimbalstatus.q[1]}, y:{gimbalstatus.q[2]}, z:{gimbalstatus.q[3]},");
+        // }
         // if (data is MAVLink.mavlink_meminfo_t meminfo){}
         // if (data is MAVLink.mavlink_scaled_imu2_t scaledImu2){}
         // if (data is MAVLink.mavlink_scaled_imu3_t scaledImu3){}

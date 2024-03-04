@@ -12,7 +12,6 @@ public class DroneState(string droneId)
     public DroneStt? DroneStt = new DroneStt();
     public SensorData? SensorData = new SensorData();
     public DroneMission? DroneMission = new DroneMission();
-    public DroneCamera? DroneCamera = new DroneCamera();
 }
 
 public struct MavlinkLog
@@ -40,16 +39,6 @@ public class DroneStt
     public double? HDOP = 0.0;
     public byte? SatellitesCount = 0;
     public CustomMode?  FlightMode = 0;
-}
-
-public class DroneCamera
-{
-    public byte? GimbalId;
-    public char? FWD_CAM_STATE;
-    public string? CameraIp;
-    public string? CameraUrl1;
-    public string? CameraUrl2;
-    public string? CameraProtocolType;
 }
 
 public class DroneMission

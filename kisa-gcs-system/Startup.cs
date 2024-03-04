@@ -28,6 +28,9 @@ using kisa_gcs_system.Interfaces;
 using kisa_gcs_system.Services;
 using kisa_gcs_system.Services.Helper;
 
+// python sim_vehicle.py -v ArduCopter -I 0 -n 3 --auto-sysid --out=udp:127.0.0.1:14556
+// python sim_vehicle.py -L ETRI -v ArduCopter -M --out=udp:127.0.0.1:14556
+
 namespace kisa_gcs_system;
 
 public class Startup
