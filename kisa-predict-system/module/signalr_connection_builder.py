@@ -48,4 +48,8 @@ def pipeline(data):
 
         df = dict_to_df([sensor_data])
         predict_data, warning_data = predict(df)
+
+        # if warning_data['warning_count'] >= 10:
+            # 여기서 gRPC 로 GCS 한테 어떤 드론에서 장애가 감지되었는지 알려주면 된다.
+
         save_prediction_to_mongodb(drone_id, flight_id, sensor_data, predict_data, warning_data, predict_time)

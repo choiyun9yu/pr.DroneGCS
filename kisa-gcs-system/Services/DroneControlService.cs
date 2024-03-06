@@ -198,7 +198,7 @@ public class DroneControlService : IDroneControlService
             MAVLink.MAVLINK_MSG_ID.SET_MODE, commandBody));
          
         // 생성된 MAVLink 메시지를 이용하여 드론에 비행 모드 변경 명령을 비동기적으로 전송 
-        await SetCommandAsync(msg);
+        await SendCommandAsync(msg);
      }
 
     // 비행 명령 메소드 (Arm ~ Land)
@@ -275,7 +275,7 @@ public class DroneControlService : IDroneControlService
                     MAVLink.MAVLINK_MSG_ID.SET_MODE,
                     setModeMsg));
             
-            await SetCommandAsync(msg); 
+            await SendCommandAsync(msg); 
         }
         catch (Exception ex)
         {
@@ -426,7 +426,7 @@ public class DroneControlService : IDroneControlService
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
             commandBody));
-        await SetCommandAsync(msg);
+        await SendCommandAsync(msg);
     }
     
     public async Task HandleDroneMoveToTarget()
@@ -506,183 +506,183 @@ public class DroneControlService : IDroneControlService
         }
     }
 
-    public async Task HandleDroneMoveToMission(string startPoint, string targetPoint, List<string> transitPoint, int alt, string totalDistance)
-    {
-        Console.WriteLine("ARM!!!!");
-        MAVLink.mavlink_command_long_t? armCommand = new MAVLink.mavlink_command_long_t
-        {
-            target_system = byte.Parse(_selectedDrone),
-            command = (ushort)MAVLink.MAV_CMD.COMPONENT_ARM_DISARM,
-            param1 = 1 // arm
-        };
-        var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-            MAVLink.MAVLINK_MSG_ID.COMMAND_LONG,
-            armCommand));
-        await SetCommandAsync(msg); 
-        Thread.Sleep(1000);
-        
-        Console.WriteLine("Take Off!!!!");
-        MAVLink.mavlink_command_long_t? takeoffCommand = new MAVLink.mavlink_command_long_t
-        {
-            target_system = byte.Parse(_selectedDrone),
-            command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
-            param7 = 10,        // z(m), 드론의 이륙 높이(미터) 
-            param3 = 5,         // ascend rate (m/s), 이륙 중에 드론이 수직으로 상승하는 속도
-            param1 = 0,         // pitch(rad), 드론의 전방 기울기 각도 
-            param4 = 0,         // yaw(rad), 드론의 회전을 나타내는 각도
-            param5 = 0,         // x, 드론의 이륙 위치 x
-            param6 = 0,         // y, 드론의 이륙 위치 y
-        };
-        var msg1 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-            MAVLink.MAVLINK_MSG_ID.COMMAND_LONG,
-            takeoffCommand));
-        await SetCommandAsync(msg1); 
-        Thread.Sleep(5000);
-        
-        Console.WriteLine("A Point!!!!");
-        MAVLink.mavlink_mission_item_t? commandBodyA = new MAVLink.mavlink_mission_item_t
-        {
-            seq = 0,
-            target_system = byte.Parse(_selectedDrone),
-            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
-            frame = 3,         
-            command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
-            current = 2,        // 2로 해야 움직임 (이유 모르겠음..)
-            x = (float)36.38324551,
-            y = (float)127.36622289,
-            z = 10,           
-            autocontinue = 1,   
-        };
-        var msg2 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
-            commandBodyA));
-        await SetCommandAsync(msg2);
-        await Task.Delay(2000);
-
-        Console.WriteLine("B Point!!!!");
-        MAVLink.mavlink_mission_item_t? commandBodyB = new MAVLink.mavlink_mission_item_t
-        {
-            seq = 1,
-            target_system = byte.Parse(_selectedDrone),
-            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
-            frame = 3,         
-            command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
-            current = 2,        // 2로 해야 움직임 (이유 모르겠음..)
-            x = (float)36.38654494,
-            y = (float)127.37244562,
-            z = 10,           
-            autocontinue = 1,   
-        };
-        var msg3 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
-            commandBodyB));
-        await SetCommandAsync(msg3);
-
-        Console.WriteLine("LAND!!!!");
-        MAVLink.mavlink_set_mode_t landCommand = new MAVLink.mavlink_set_mode_t()
-        {
-            target_system = byte.Parse(_selectedDrone),
-            base_mode = 1,
-            custom_mode = (byte)CustomMode.LAND,       
-        };
-        var msg4 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-            MAVLink.MAVLINK_MSG_ID.SET_MODE,
-            landCommand));
-        await SetCommandAsync(msg4);
-    }
-
-
     // public async Task HandleDroneMoveToMission(string startPoint, string targetPoint, List<string> transitPoint, int alt, string totalDistance)
     // {
-    //     try
+    //     Console.WriteLine("ARM!!!!");
+    //     MAVLink.mavlink_command_long_t? armCommand = new MAVLink.mavlink_command_long_t
     //     {
-    //         List<double>? StartPoint = _gcsApiService.GetLocalPoint(startPoint);
-    //         if (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
-    //                 StartPoint[0], StartPoint[1]) > 1.5)
-    //         {
-    //             throw new Exception("Wrong Starting Point");
-    //         }
-    //
-    //         string trimmedTotalDistance = totalDistance.Substring(0, totalDistance.Length - 3);
-    //         string numericPart = new string(trimmedTotalDistance.Where(char.IsDigit).ToArray());
-    //         double TotalDistance = double.Parse(numericPart);
-    //
-    //         _droneInstance.ControlStt = "auto";
-    //         _droneInstance.DroneMission.CurrentDistance = 0;
-    //         _droneInstance.DroneMission.MissionAlt = alt;
-    //         _droneInstance.DroneMission.TotalDistance = TotalDistance;
-    //         _droneInstance.DroneMission.TransitPoint = new List<DroneLocation>();
-    //         
-    //         HandleDroneFlightMode(CustomMode.GUIDED);
-    //         
-    //         HandleDroneFlightCommand(DroneFlightCommand.ARM);
-    //         Thread.Sleep(1000);
-    //         
-    //         HandleDroneFlightCommand(DroneFlightCommand.TAKEOFF);
-    //         Thread.Sleep(1000);
-    //         while ((double)_droneInstance.DroneStt.Alt < _droneInstance.DroneMission.MissionAlt - 0.1) { }
-    //         Console.WriteLine("Mission Alt Reached");
-    //
-    //         for (int i = 0; i < transitPoint.Count; i++)
-    //         {
-    //             List<double>? TransitPoint = _gcsApiService.GetLocalPoint(transitPoint[i]);
-    //             await sendMission(TransitPoint[0], TransitPoint[1], alt);
-    //             _droneInstance.DroneMission.PathIndex = i + 1;
-    //
-    //             _droneInstance.DroneMission.TransitPoint.Add(
-    //                 new DroneLocation
-    //                     {
-    //                         lat = TransitPoint[0],
-    //                         lng = TransitPoint[1]
-    //                     });
-    //             
-    //             Thread.Sleep(1000);
-    //             while (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
-    //                        TransitPoint[0], TransitPoint[1]) > 1.5)
-    //             {
-    //                 if (Console.KeyAvailable)
-    //                 {
-    //                     ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
-    //                     if (keyInfo.Key == ConsoleKey.Q)
-    //                     {
-    //                         Console.WriteLine("BRAKE");
-    //                         HandleDroneFlightMode(CustomMode.BRAKE);
-    //                         return;
-    //                     }
-    //                 }
-    //             }
-    //             Console.WriteLine($"Transit{i} Arrival");
-    //         }
-    //         
-    //         List<double>? TargetPoint = _gcsApiService.GetLocalPoint(targetPoint);
-    //         await sendMission(TargetPoint[0], TargetPoint[1], alt);
-    //         _droneInstance.DroneMission.PathIndex = transitPoint.Count + 1;
-    //         Thread.Sleep(1000);
-    //         while (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
-    //                    TargetPoint[0], TargetPoint[1]) > 1.5)
-    //         {
-    //             if (Console.KeyAvailable)
-    //             {
-    //                 ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
-    //                 if (keyInfo.Key == ConsoleKey.Q)
-    //                 {
-    //                     Console.WriteLine("BRAKE");
-    //                     HandleDroneFlightMode(CustomMode.BRAKE);
-    //                     return;
-    //                 }
-    //             }
-    //         }
-    //         
-    //         Console.WriteLine("Arrival");
-    //         
-    //         HandleDroneFlightCommand(DroneFlightCommand.LAND);
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         Console.WriteLine($"Error: {e}");
-    //     }
+    //         target_system = byte.Parse(_selectedDrone),
+    //         command = (ushort)MAVLink.MAV_CMD.COMPONENT_ARM_DISARM,
+    //         param1 = 1 // arm
+    //     };
+    //     var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+    //         MAVLink.MAVLINK_MSG_ID.COMMAND_LONG,
+    //         armCommand));
+    //     await SendCommandAsync(msg); 
+    //     Thread.Sleep(1000);
     //     
+    //     Console.WriteLine("Take Off!!!!");
+    //     MAVLink.mavlink_command_long_t? takeoffCommand = new MAVLink.mavlink_command_long_t
+    //     {
+    //         target_system = byte.Parse(_selectedDrone),
+    //         command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
+    //         param7 = 10,        // z(m), 드론의 이륙 높이(미터) 
+    //         param3 = 5,         // ascend rate (m/s), 이륙 중에 드론이 수직으로 상승하는 속도
+    //         param1 = 0,         // pitch(rad), 드론의 전방 기울기 각도 
+    //         param4 = 0,         // yaw(rad), 드론의 회전을 나타내는 각도
+    //         param5 = 0,         // x, 드론의 이륙 위치 x
+    //         param6 = 0,         // y, 드론의 이륙 위치 y
+    //     };
+    //     var msg1 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+    //         MAVLink.MAVLINK_MSG_ID.COMMAND_LONG,
+    //         takeoffCommand));
+    //     await SendCommandAsync(msg1); 
+    //     Thread.Sleep(5000);
+    //     
+    //     Console.WriteLine("A Point!!!!");
+    //     MAVLink.mavlink_mission_item_t? commandBodyA = new MAVLink.mavlink_mission_item_t
+    //     {
+    //         seq = 0,
+    //         target_system = byte.Parse(_selectedDrone),
+    //         mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
+    //         frame = 3,         
+    //         command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
+    //         current = 2,        // 2로 해야 움직임 (이유 모르겠음..)
+    //         x = (float)36.38324551,
+    //         y = (float)127.36622289,
+    //         z = 10,           
+    //         autocontinue = 1,   
+    //     };
+    //     var msg2 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+    //         MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
+    //         commandBodyA));
+    //     await SendCommandAsync(msg2);
+    //     await Task.Delay(2000);
+    //
+    //     Console.WriteLine("B Point!!!!");
+    //     MAVLink.mavlink_mission_item_t? commandBodyB = new MAVLink.mavlink_mission_item_t
+    //     {
+    //         seq = 1,
+    //         target_system = byte.Parse(_selectedDrone),
+    //         mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
+    //         frame = 3,         
+    //         command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
+    //         current = 2,        // 2로 해야 움직임 (이유 모르겠음..)
+    //         x = (float)36.38654494,
+    //         y = (float)127.37244562,
+    //         z = 10,           
+    //         autocontinue = 1,   
+    //     };
+    //     var msg3 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+    //         MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
+    //         commandBodyB));
+    //     await SendCommandAsync(msg3);
+    //
+    //     Console.WriteLine("LAND!!!!");
+    //     MAVLink.mavlink_set_mode_t landCommand = new MAVLink.mavlink_set_mode_t()
+    //     {
+    //         target_system = byte.Parse(_selectedDrone),
+    //         base_mode = 1,
+    //         custom_mode = (byte)CustomMode.LAND,       
+    //     };
+    //     var msg4 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+    //         MAVLink.MAVLINK_MSG_ID.SET_MODE,
+    //         landCommand));
+    //     await SendCommandAsync(msg4);
     // }
+
+
+    public async Task HandleDroneMoveToMission(string startPoint, string targetPoint, List<string> transitPoint, int alt, string totalDistance)
+    {
+        try
+        {
+            List<double>? StartPoint = _gcsApiService.GetLocalPoint(startPoint);
+            if (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
+                    StartPoint[0], StartPoint[1]) > 1.5)
+            {
+                throw new Exception("Wrong Starting Point");
+            }
+    
+            string trimmedTotalDistance = totalDistance.Substring(0, totalDistance.Length - 3);
+            string numericPart = new string(trimmedTotalDistance.Where(char.IsDigit).ToArray());
+            double TotalDistance = double.Parse(numericPart);
+    
+            _droneInstance.ControlStt = "auto";
+            _droneInstance.DroneMission.CurrentDistance = 0;
+            _droneInstance.DroneMission.MissionAlt = alt;
+            _droneInstance.DroneMission.TotalDistance = TotalDistance;
+            _droneInstance.DroneMission.TransitPoint = new List<DroneLocation>();
+            
+            HandleDroneFlightMode(CustomMode.GUIDED);
+            
+            HandleDroneFlightCommand(DroneFlightCommand.ARM);
+            Thread.Sleep(1000);
+            
+            HandleDroneFlightCommand(DroneFlightCommand.TAKEOFF);
+            Thread.Sleep(1000);
+            while ((double)_droneInstance.DroneStt.Alt < _droneInstance.DroneMission.MissionAlt - 0.1) { }
+            Console.WriteLine("Mission Alt Reached");
+    
+            for (int i = 0; i < transitPoint.Count; i++)
+            {
+                List<double>? TransitPoint = _gcsApiService.GetLocalPoint(transitPoint[i]);
+                await sendMission(TransitPoint[0], TransitPoint[1], alt);
+                _droneInstance.DroneMission.PathIndex = i + 1;
+    
+                _droneInstance.DroneMission.TransitPoint.Add(
+                    new DroneLocation
+                        {
+                            lat = TransitPoint[0],
+                            lng = TransitPoint[1]
+                        });
+                
+                Thread.Sleep(1000);
+                while (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
+                           TransitPoint[0], TransitPoint[1]) > 1.5)
+                {
+                    if (Console.KeyAvailable)
+                    {
+                        ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
+                        if (keyInfo.Key == ConsoleKey.Q)
+                        {
+                            Console.WriteLine("BRAKE");
+                            HandleDroneFlightMode(CustomMode.BRAKE);
+                            return;
+                        }
+                    }
+                }
+                Console.WriteLine($"Transit{i} Arrival");
+            }
+            
+            List<double>? TargetPoint = _gcsApiService.GetLocalPoint(targetPoint);
+            await sendMission(TargetPoint[0], TargetPoint[1], alt);
+            _droneInstance.DroneMission.PathIndex = transitPoint.Count + 1;
+            Thread.Sleep(1000);
+            while (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
+                       TargetPoint[0], TargetPoint[1]) > 1.5)
+            {
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
+                    if (keyInfo.Key == ConsoleKey.Q)
+                    {
+                        Console.WriteLine("BRAKE");
+                        HandleDroneFlightMode(CustomMode.BRAKE);
+                        return;
+                    }
+                }
+            }
+            
+            Console.WriteLine("Arrival");
+            
+            HandleDroneFlightCommand(DroneFlightCommand.LAND);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error: {e}");
+        }
+        
+    }
 
     public async Task HandleDroneMoveToBase()
     {
@@ -694,8 +694,6 @@ public class DroneControlService : IDroneControlService
         {
             target_system = byte.Parse(_selectedDrone),
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
-            // x = (int)Math.Round(lat * 10000000),
-            // y = (int)Math.Round(lng * 10000000),
             x = (float)lat,
             y = (float)lng,
             z = alt,            
@@ -708,7 +706,7 @@ public class DroneControlService : IDroneControlService
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
             commandBody));
-        await SetCommandAsync(msg);
+        await SendCommandAsync(msg);
     }
     
     // 드론
@@ -764,7 +762,7 @@ public class DroneControlService : IDroneControlService
         }
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
                     MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_OVERRIDE, commandBody));
-        await SetCommandAsync(msg);
+        await SendCommandAsync(msg);
     }
 
     // 제어 
@@ -819,7 +817,7 @@ public class DroneControlService : IDroneControlService
         }
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_OVERRIDE, commandBody));
-        await SetCommandAsync(msg);
+        await SendCommandAsync(msg);
     }
 
     
@@ -851,7 +849,7 @@ public class DroneControlService : IDroneControlService
                     target_component = 1,
                     gimbal_device_id = 1,
                     flags = 0,
-                    pitch = 0.5f,              // 위아래 끄덕끄덕
+                    pitch = 0.5f,               // 위아래 끄덕끄덕
                     yaw = 0,                    // 좌우 도리도리 
                     // pitch_rate = pitch_rate, // 위아래 회전 속도 
                     // yaw_rate = yaw_rate,     // 좌우 회전 속도 
@@ -878,7 +876,9 @@ public class DroneControlService : IDroneControlService
                     gimbal_device_id = 1,
                     flags = 0,
                     pitch = 0,            
-                    yaw = 0.5f,            
+                    yaw = 0.5f,    
+                    // pitch_rate = pitch_rate, // 위아래 회전 속도 
+                    // yaw_rate = yaw_rate,     // 좌우 회전 속도 
                 };
                 break;
             default:
@@ -887,16 +887,19 @@ public class DroneControlService : IDroneControlService
         }
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.GIMBAL_MANAGER_SET_PITCHYAW, commandBody));
-        await SetCommandAsync(msg);
+        await SendCommandAsync(msg);
     }
 
     
-    // 공용
-    public async Task SetCommandAsync(MAVLink.MAVLinkMessage msg)
+    // Encoding
+    public async Task SendCommandAsync(MAVLink.MAVLinkMessage msg)
     {
+        // _context가 null 이거나 Channel이 활성화되지 않았을 경우 드론 통신을 위한 적절한 환경이 설정되어 있지 않다고 판단하고 메소드 중단
         if (_context is null || !_context.Channel.Active) return;
      
-        try {
+        try 
+        {
+            // WriteAndFlushAsync 메서드는 비동기적으로 작동하며, 메시지를 채널에 기록하고 즉시 채널을 플러시하여 즉시 전송한다.
             await _context.Channel.WriteAndFlushAsync(EncodeUdpDroneMessage(msg));
         } catch (Exception e) {
             Console.WriteLine(e.Message);
@@ -909,12 +912,14 @@ public class DroneControlService : IDroneControlService
         {
             // MAVLink 메시지를 MAVLink 2.0 패킷으로 인코딩하여 바이트 배열로 만듬 (Netty 라이브러리의 Unpooled.WrappedBuffer를 사용하여 바이트 배열을 Netty의 버퍼로 래핑)
             var encodeMsg = Unpooled.WrappedBuffer(_parser.GenerateMAVLinkPacket20(
-                (MAVLink.MAVLINK_MSG_ID)msg.msgid,
+                (MAVLink.MAVLINK_MSG_ID)
+                msg.msgid,
                 msg.data,
                 sign: false,
                 msg.sysid,
                 msg.compid,
-                msg.seq));
+                msg.seq)
+            );
 
             // 래핑된 버퍼와 드론 주소를 사용하여 새로운 DatagramPacket을 생성하고 반환, DatagramPacket은 네트워크 패킷을 나타내는 Netty 라이브러리의 클래스
             return new DatagramPacket(encodeMsg, _droneAddress);
