@@ -1,4 +1,4 @@
-from module.signalr_connection_builder import HubConnection
+from signalr_module.signalr_connection_builder import HubConnection
 import asyncio
 
 async def main():

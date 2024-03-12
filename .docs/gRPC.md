@@ -1,76 +1,16 @@
 # gRPC
 
-## 1. What is gRPC?
-- gRPC 는 Google 에서 개발한 오픈소스 RPC 시스템이다.
-- 분산 시스템에서 효율적인 통신을 위한 강력한 도구이다.
-- 클라이언트 및 서버 간의 통신을 간소화하고 성능을 향상시킨다.
+## [Python] Generating client and server code 
 
-### 1-1. RPC(Remote Procedure Calls)
-- 분산 시스템에서 원격으로 프로시저 호출을 수행하는 기술이다.  
-- 이는 마치 로컬 함수 호출처럼 보이지만, 클라이언트와 서버 사이에 네트워크를 통해 이루어진다.
-  - 프로시저: 프로그래밍에서 일련의 작업을 수행하기 위해 사용되는 코드 블록이나 서브 루틴이다.  
-    특정 작업을 수행하기 위한 코드 모음이며 함수와 유사한 개념이지만 조금 다르다.
-
-#### 1-2. HTTP/2 기반 통신 
-- gRPC는 기본적으로 HTTP/2를 사용하며, 이는 단일 연결을 통해 다중 요청 및 응답을 처리할 수 있는 효율적인 프로토콜이다.   
-- 이는 성능 및 효율성을 높이며, TCP 연결 오버헤드를 줄여줍니다. 
-
-### 1-3. Protocol Buffers (ProtoBuf)
-- Protocol Buffers 는 구조화된 데이터를 직렬화하기 위한 구글의 개방형 포멧이다.  
-- 이는 데이터를 효율적으로 표현하고 직렬화 하게 해주며, 다양한 언어 간에 이식성을 제공한다.
-
-### 1-4. 다양한 언어 및 플랫폼 지원 
-- gRPC 는 여러 가지 언어 및 플랫폼에서 사용할 수 있다. 
-- 공식적으로는 C, C++, C#, Java, Python, JS, PHP, Go, Ruby, Objective-C 를 지원한다.
-
-### 1-5. 자동 코드 생성 
-- gRPC 는 Protocol Buffers 를 사용하여 서비스와 메시지를 정의한다. 
-- 이를 통해 클라이언트 및 서버 코드의 생성을 자동화할 수 있다.  
-- 이는 개발자가 서비스 인터페이스에 집중할 수 있도록 돕는다.
-
-### 1-6. 양방향 스트리밍 
-- gRPC 는 양방향 스트리밍을 지원한다.
-- gRPC 는 클라이언트와 서버 간에 데이터를 동시에 송수신할 수 있게 한다.
-- 이는 실시간 통신 및 스트리밍 서비스에 유용하다.
-
-<br>
-
-## 2. Python - C# 
-- 각 언어에는 gRPC 의 클라이언트 및 서버용 라이브러리가 있어 다른 언어로 작성된 클라이언트와 서버가 서로 통신할 수 있다.
-- 이렇게 gRPC 는 서로 다른 언어 간에 효율적인 통신을 지원한다.
-
-### 2-1. 서버 - 클라이언트
-#### 서버
-- 서버는 클라이언트의 요청을 받아들이고 처리한다.
-- 일반적으로 서비스의 구현이 위치하며, 클라이언트 요청에 대한 응답을 생성한다.
-- 서버는 서비스를 호스팅하고, 클라이언트로부터의 요청을 받아들이고 이에 따른 작업을 수행한다.
-
-#### 클라이언트
-- 클라이언트는 서버에 요청을 보내고 응답을 받는다.
-- 일반적으로 클라이언트는 서비스의 사용자 또는 소비자이다.
-- 클라이언트는 서버에 요청을 보내고, 서버의 응답을 받아 필요에 따라 처리한다.
-
-#### 양방향 통신
-- 양방향 통신에서는 클라이언트와 서버 모두 요청을 보내고 응답을 받을 수 있다. 
-- 이런 양방향 통신은 스트리밍 RPC 를 통해 제공된다.
-
-### 2-2. 라이브러리 설치 
-
-    // Python
+    % sudo pip install --upgrade pip
     % pip install grpcio grpcio-tools
 
-    // gRPC C# 클라이언트 
-    % dotnet add package Grpc.Net.Client
-    % dotnet add package Google.Protobuf
-    % dotnet add package Grpc.Tools
+    // .proto 파일 작성
 
-    // gRPC C# 서버 or 양방향
-    % dotnet add package Grpc.AspNetCore
+    % python -m grpc_tools.protoc -I=./protos --python_out=./generation --pyi_out=./generation --grpc_python_out=./generation ./protos/drone.proto
 
-### 2-3. C#이 서버 Python이 클라이언트 
+## [C#] Generating client code
+- .csproj 파일을 설정해주고 protos 디렉토리 안에 .proto 파일을 작성해두면 빌드 시 자동으로 obj 디렉토리에 생성된다.
 
-
-### 2-4. Python이 서버 C#이 클라이언트 
-
-
-### 2-5. 양방향 
+    
+    

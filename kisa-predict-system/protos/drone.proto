@@ -1,0 +1,88 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+package kisa_gcs_system.Services;
+
+service DroneStatusUpdate {
+  rpc UpdateDroneStatus (UpdateDroneStatusPayload) returns (StatusResponse);
+}
+
+message UpdateDroneStatusPayload {
+  repeated GrpcDroneStatus droneStatuses = 1;
+}
+
+message GrpcDroneStatus {
+  string DroneId = 1;
+  string FlightId = 2;
+  bool IsOnline = 3;
+  bool IsLanded = 4;
+  string ControllStt = 5;
+  GrpcDroneStt DroneStt = 6;
+  GrpcSensorData SensorData = 7;
+}
+
+message GrpcDroneStt {
+  float PowerV = 1;
+  sint32 BatteryStt = 2;
+  string GpsStt = 3;
+  double TempC = 4;
+  double Lat = 5;
+  double Lon = 6;
+  double Alt = 7;
+  double GlobalAlt = 8;
+  double Roll = 9;
+  double Pitch = 10;
+  int32 Head = 11;
+  float Speed = 12;
+  string HoverStt = 13;
+  double HDOP = 14;
+  int32 SatellitesCount = 15;
+  int32 FlightMode = 16;
+}
+
+message GrpcSensorData {
+  float roll_ATTITUDE = 1;
+  float pitch_ATTITUDE = 2;
+  float yaw_ATTITUDE = 3;
+  int32 xacc_RAW_IMU = 4;
+  int32 yacc_RAW_IMU = 5;
+  int32 zacc_RAW_IMU = 6;
+  int32 xgyro_RAW_IMU = 7;
+  int32 ygyro_RAW_IMU = 8;
+  int32 zgyro_RAW_IMU = 9;
+  int32 xmag_RAW_IMU = 10;
+  int32 ymag_RAW_IMU = 11;
+  int32 zmag_RAW_IMU = 12;
+  float vibration_x_VIBRATION = 13;
+  float vibration_y_VIBRATION = 14;
+  float vibration_z_VIBRATION = 15;
+  float accel_cal_x_SENSOR_OFFSETS = 16;
+  float accel_cal_y_SENSOR_OFFSETS = 17;
+  float accel_cal_z_SENSOR_OFFSETS = 18;
+  int32 mag_ofs_x_SENSOR_OFFSETS = 19;
+  int32 mag_ofs_y_SENSOR_OFFSETS = 20;
+  int32 vx_GLOBAL_POSITION_INT = 21;
+  int32 vy_GLOBAL_POSITION_INT = 22;
+  float x_LOCAL_POSITION_NED = 23;
+  float vx_LOCAL_POSITION_NED = 24;
+  float vy_LOCAL_POSITION_NED = 25;
+  float nav_pitch_NAV_CONTROLLER_OUTPUT = 26;
+  int32 nav_bearing_NAV_CONTROLLER_OUTPUT = 27;
+  uint32 servo3_raw_SERVO_OUTPUT_RAW = 28;
+  uint32 servo8_raw_SERVO_OUTPUT_RAW = 29;
+  float groundspeed_VFR_HUD = 30;
+  float airspeed_VFR_HUD = 31;
+  float press_abs_SCALED_PRESSURE = 32;
+  uint32 Vservo_POWER_STATUS = 33;
+  double voltages1_BATTERY_STATUS = 34;
+  int32 chancount_RC_CHANNELS = 35;
+  uint32 chan12_raw_RC_CHANNELS = 36;
+  uint32 chan13_raw_RC_CHANNELS = 37;
+  uint32 chan14_raw_RC_CHANNELS = 38;
+  uint32 chan15_raw_RC_CHANNELS = 39;
+  uint32 chan16_raw_RC_CHANNELS = 40;
+}
+
+message StatusResponse {
+  bool success = 1;
+}
+
