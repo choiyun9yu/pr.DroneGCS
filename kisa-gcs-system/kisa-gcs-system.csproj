@@ -25,13 +25,19 @@
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.0" />
-    
-<!--    <PackageReference Include="DotNetty.Transport" Version="0.6.0" /> &lt;!&ndash; 네트워크 전송 계층을 처리하는 기능 제공 &ndash;&gt;-->
-<!--    <PackageReference Include="DotNetty.Handlers" Version="0.6.0" />  &lt;!&ndash; 데이터 핸들링 및 프로토콜 처리를 위한 핸들러 및 유틸리티 클래스 제공 &ndash;&gt;-->
+    <!--gRPC-->
+    <PackageReference Include="Google.Protobuf" Version="3.22.1"/>
+    <PackageReference Include="Grpc.Net.Client" Version="2.52.0"/>
+    <PackageReference Include="Grpc.Tools" Version="2.53.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Properties\launchSettings.json" />
+    <!--gRPC-->
+    <Protobuf Include="protos\drone.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
