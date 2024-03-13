@@ -3,21 +3,16 @@ import logging
 import json
 
 import grpc
-from google.protobuf.json_format import MessageToJson
+from google.protobuf.json_format import MessageToDict
 
 from generation import drone_pb2, drone_pb2_grpc
 
 class Drone(drone_pb2_grpc.DroneStatusUpdateServicer):
     def UpdateDroneStatus(self, request, context):
 
-        json_str = MessageToJson(request)
-        python_dict = json.loads(json_str)["droneStatuses"][0]
+        dict = MessageToDict(request)
 
-        DroneId = python_dict["DroneId"]
-        FlightId = python_dict["FlightId"]
-        SensorData = python_dict["SensorData"]  # 21 개만 넘어오고 있음
-
-        print(SensorData)
+        print(dict)
 
         return drone_pb2.StatusResponse(success=True)
 
