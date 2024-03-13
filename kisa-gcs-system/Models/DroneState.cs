@@ -6,7 +6,7 @@ public class DroneState(string droneId)
 {
     public string? DroneId = droneId;
     public string FlightId = "None";
-    public bool? IsOnline = true;
+    public bool IsOnline = true;
     public bool IsLanded = true;
     public string? ControlStt = "auto";
     public DroneStt? DroneStt = new DroneStt();
@@ -23,9 +23,9 @@ public struct MavlinkLog
 public class DroneStt
 {
     public List<MavlinkLog> DroneLogger = new ();
-    public float? PowerV = 0;
+    public float PowerV = 0;
     public sbyte? BatteryStt = 0;
-    public char? GpsStt = ' ';
+    public string? GpsStt = "";
     public double? TempC = 0.0;
     public double Lat = 0.0;
     public double Lon = 0.0;
@@ -35,10 +35,10 @@ public class DroneStt
     public double? Pitch = 0.0;
     public short? Head = 0;
     public float? Speed = 0;
-    public char? HoverStt = ' ';
+    public string? HoverStt = "";
     public double? HDOP = 0.0;
     public byte? SatellitesCount = 0;
-    public CustomMode?  FlightMode = 0;
+    public CustomMode FlightMode = 0;
 }
 
 public class DroneMission

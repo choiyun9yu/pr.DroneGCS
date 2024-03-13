@@ -40,7 +40,6 @@ public class MavlinkHandler(DroneControlService droneControlService) : SimpleCha
     protected override async void ChannelRead0(IChannelHandlerContext ctx, MAVLink.MAVLinkMessage msg)
     {
         _context = ctx;
-        
         await _droneControlService.HandleMavlinkMessage(ctx, msg);
     }
     

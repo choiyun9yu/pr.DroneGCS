@@ -5,7 +5,7 @@ using kisa_gcs_system.Interfaces;
 using kisa_gcs_system.Models;
 using kisa_gcs_system.Models.Helper;
 using kisa_gcs_system.Services.Helper;
-
+using KisaGcsSystem.Services;
 using static kisa_gcs_system.Models.ArrowButton;
 
 namespace kisa_gcs_system.Services;
@@ -24,7 +24,8 @@ public class DroneControlService : IDroneControlService
     
     private readonly MAVLink.MavlinkParse _parser = new();
     private readonly MavlinkMapper _mapper = new();
-    
+
+    private DroneStatusUpdate.DroneStatusUpdateClient _grpcUpdateService;
     private readonly GcsApiService _gcsApiService;
     private IMongoCollection<Dashboard> _dashboard;
 
@@ -33,36 +34,18 @@ public class DroneControlService : IDroneControlService
     private static int ThrottleIncrement = 300;
     private static int yawIncrement = 50;
     
-    public DroneControlService(IConfiguration configuration, IHubContext<DroneControlService> hubContext, GcsApiService gcsApiService)
+    public DroneControlService(IConfiguration configuration, IHubContext<DroneControlService> hubContext, GcsApiService gcsApiService, GrpcChannel channel) // 여기서 gRPC Channel 을 사용하기 위해서는 GrpcChannel을 DI 컨테이너에 등록해야한다.
     {
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
+
+        _grpcUpdateService = new DroneStatusUpdate.DroneStatusUpdateClient(channel);
+        
         _gcsApiService = gcsApiService;
         
         var connectionString = configuration.GetConnectionString("MongoDB");
         var mongoClient = new MongoClient(connectionString);
         var database = mongoClient.GetDatabase("drone");
         _dashboard = database.GetCollection<Dashboard>("dashboard_info");
-    }
-
-    // 클라이언트가 연결될 때, 연결 ID를 기록해두는 메서드 ( 클라이언트가 연결될 때마다 수행 ) 웹은 새로고침할때마다 ConnectionId 바뀜 
-    public override async Task<Task> OnConnectedAsync()
-    {
-        var connectionId = Context.ConnectionId;
-        
-        await Groups.AddToGroupAsync(connectionId, "Python");
-        
-        return base.OnConnectedAsync();
-    }
-    
-    // 클라이언트에서 타입 받기
-    public async Task SendClientType()
-    {
-        var connectionId = Context.ConnectionId;
-        
-        // 새로 연결되면 모두 Python 그룹에 우선 포함시키고, 리액트 연결인 경우 파이썬 그룹에서 제거하고 리액트 그룹으로 재등록 하는 방법 사용
-        await Groups.RemoveFromGroupAsync(connectionId, "Python");
-        
-        await Groups.AddToGroupAsync(connectionId, "React");
     }
     
     // 드론 목록 내보내기
@@ -71,7 +54,7 @@ public class DroneControlService : IDroneControlService
         string[] droneids = _droneStateMap.Keys.ToArray();
         string json = JsonConvert.SerializeObject(droneids);
         // Console.WriteLine(json);
-        await _hubContext.Clients.Group("React").SendAsync("droneList", json);
+        await _hubContext.Clients.All.SendAsync("droneList", json);
     }
     
     // 드론 선택하기
@@ -115,7 +98,7 @@ public class DroneControlService : IDroneControlService
             
             if (text.StartsWith("Disarming motors")) CompleteMission(_droneId);
 
-            _droneStateMap[_droneId].DroneStt.DroneLogger.Add(
+            _droneStateMap[_droneId].DroneStt?.DroneLogger.Add(
                 new MavlinkLog
                 {
                     logtime = DateTime.Now,
@@ -128,16 +111,10 @@ public class DroneControlService : IDroneControlService
         _mapper.UpdateDroneState(_droneStateMap[_droneId], data);
         
         string forReact = JsonConvert.SerializeObject(_droneStateMap[_selectedDrone]);
-        await _hubContext.Clients.Group("React").SendAsync("droneState", forReact);
+        await _hubContext.Clients.All.SendAsync("droneState", forReact);
 
-        object obj = new
-        {
-            DroneId = _droneId,
-            FlightId = _droneStateMap[_droneId].FlightId,
-            SensorData =_droneStateMap[_droneId].SensorData 
-        };
-        string forPython = JsonConvert.SerializeObject(obj);
-        await _hubContext.Clients.Group("Python").SendAsync("droneState", forPython);
+        await SendDroneStatusToPredict(msg.sysid.ToString(), _droneStateMap[msg.sysid.ToString()]);
+
     }
     
     // IChannelHandlerContext에서 엔드포인트 정보를 가져오는 메서드, IPEndPoint 클래스는 IP 주소와 포트 번호를 나타낸다. 주로 소켓 프로그래밍에서 사용되며 특히 TCP 또는 UDP 통신에서 호스트와 포트를 식별하는데 유용하다.   
@@ -179,7 +156,89 @@ public class DroneControlService : IDroneControlService
             }
         );
     }
-    
+
+    private async Task SendDroneStatusToPredict(string droneId, DroneState droneState)
+    {
+        var payload = new UpdateDroneStatusPayload();
+        var data = new GrpcDroneStatus
+        {
+            DroneId = droneId,
+            FlightId = droneState.FlightId,
+            // IsOnline = droneState.IsOnline,
+            // ControllStt = droneState.ControlStt,
+            // DroneStt = new GrpcDroneStt
+            // {
+            //     PowerV = droneState.DroneStt?.PowerV ?? 0,
+            //     BatteryStt = droneState.DroneStt?.BatteryStt ?? 0,
+            //     GpsStt = droneState.DroneStt?.GpsStt,
+            //     TempC = droneState.DroneStt?.TempC ?? 0,
+            //     Lat = droneState.DroneStt?.Lat ?? 0,
+            //     Lon = droneState.DroneStt?.Lon ?? 0,
+            //     Alt = droneState.DroneStt?.Alt ?? 0,
+            //     GlobalAlt = droneState.DroneStt?.GlobalAlt ?? 0,
+            //     Roll = droneState.DroneStt?.Roll ?? 0,
+            //     Pitch = droneState.DroneStt?.Pitch ?? 0,
+            //     Head = droneState.DroneStt?.Head ?? 0,
+            //     Speed = droneState.DroneStt?.Speed ?? 0,
+            //     HoverStt = droneState.DroneStt?.HoverStt,
+            //     HDOP = droneState.DroneStt?.HDOP ?? 0,
+            //     SatellitesCount = droneState.DroneStt?.SatellitesCount ?? 0,
+            // },
+            SensorData = new GrpcSensorData
+            {
+                RollATTITUDE = droneState.SensorData?.roll_ATTITUDE ?? 0,
+                PitchATTITUDE = droneState.SensorData?.pitch_ATTITUDE ?? 0,
+                YawATTITUDE = droneState.SensorData?.yaw_ATTITUDE ?? 0,
+                XaccRAWIMU = droneState.SensorData?.xacc_RAW_IMU ?? 0,
+                YaccRAWIMU = droneState.SensorData?.yacc_RAW_IMU ?? 0,
+                ZaccRAWIMU = droneState.SensorData?.zacc_RAW_IMU ?? 0,
+                XmagRAWIMU = droneState.SensorData?.xmag_RAW_IMU ?? 0,
+                YmagRAWIMU = droneState.SensorData?.ymag_RAW_IMU ?? 0,
+                ZmagRAWIMU = droneState.SensorData?.zmag_RAW_IMU ?? 0,
+                VibrationXVIBRATION = droneState.SensorData?.vibration_x_VIBRATION ?? 0,
+                VibrationYVIBRATION = droneState.SensorData?.vibration_y_VIBRATION ?? 0,
+                VibrationZVIBRATION = droneState.SensorData?.vibration_z_VIBRATION ?? 0,
+                AccelCalXSENSOROFFSETS = droneState.SensorData?.accel_cal_x_SENSOR_OFFSETS ?? 0,
+                AccelCalYSENSOROFFSETS = droneState.SensorData?.accel_cal_y_SENSOR_OFFSETS ?? 0,
+                AccelCalZSENSOROFFSETS = droneState.SensorData?.accel_cal_z_SENSOR_OFFSETS ?? 0,
+                MagOfsXSENSOROFFSETS = droneState.SensorData?.mag_ofs_x_SENSOR_OFFSETS ?? 0,
+                MagOfsYSENSOROFFSETS = droneState.SensorData?.mag_ofs_y_SENSOR_OFFSETS ?? 0,
+                VxGLOBALPOSITIONINT = droneState.SensorData?.vx_GLOBAL_POSITION_INT ?? 0,
+                VyGLOBALPOSITIONINT = droneState.SensorData?.vy_GLOBAL_POSITION_INT ?? 0,
+                XLOCALPOSITIONNED = droneState.SensorData?.x_LOCAL_POSITION_NED ?? 0,
+                VxLOCALPOSITIONNED = droneState.SensorData?.vx_LOCAL_POSITION_NED ?? 0,
+                VyLOCALPOSITIONNED = droneState.SensorData?.vy_LOCAL_POSITION_NED ?? 0,
+                NavPitchNAVCONTROLLEROUTPUT = droneState.SensorData?.nav_pitch_NAV_CONTROLLER_OUTPUT ?? 0,
+                NavBearingNAVCONTROLLEROUTPUT = droneState.SensorData?.nav_bearing_NAV_CONTROLLER_OUTPUT ?? 0,
+                Servo3RawSERVOOUTPUTRAW = droneState.SensorData?.servo3_raw_SERVO_OUTPUT_RAW ?? 0,
+                Servo8RawSERVOOUTPUTRAW = droneState.SensorData?.servo8_raw_SERVO_OUTPUT_RAW ?? 0,
+                GroundspeedVFRHUD = droneState.SensorData?.groundspeed_VFR_HUD ?? 0,
+                AirspeedVFRHUD = droneState.SensorData?.airspeed_VFR_HUD ?? 0,
+                PressAbsSCALEDPRESSURE = droneState.SensorData?.press_abs_SCALED_PRESSURE ?? 0,
+                VservoPOWERSTATUS = droneState.SensorData?.Vservo_POWER_STATUS ?? 0,
+                Voltages1BATTERYSTATUS = droneState.SensorData?.voltages1_BATTERY_STATUS ?? 0,
+                ChancountRCCHANNELS = droneState.SensorData?.chancount_RC_CHANNELS ?? 0,
+                Chan12RawRCCHANNELS = droneState.SensorData?.chan12_raw_RC_CHANNELS ?? 0,
+                Chan13RawRCCHANNELS = droneState.SensorData?.chan13_raw_RC_CHANNELS ?? 0,
+                Chan14RawRCCHANNELS = droneState.SensorData?.chan14_raw_RC_CHANNELS ?? 0,
+                Chan15RawRCCHANNELS = droneState.SensorData?.chan15_raw_RC_CHANNELS ?? 0,
+                Chan16RawRCCHANNELS = droneState.SensorData?.chan16_raw_RC_CHANNELS ?? 0
+            }
+        };
+        payload.DroneStatuses.Add(data);
+
+        try
+        {
+            var res = await _grpcUpdateService.UpdateDroneStatusAsync(payload);
+            Console.WriteLine("gRPC Response:" + res.Success);
+        }
+        catch
+        {
+            Console.WriteLine("gRPC Server Disconnected!");
+        }
+        
+    }
+
 
     // 비행 모드 변경 메소드 (Auto ~ RTL)
     public override async Task HandleDroneFlightMode(CustomMode flightMode)

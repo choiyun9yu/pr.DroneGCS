@@ -8,11 +8,11 @@ public static class Program
     {
         var host = CreateHostBuilder(args).Build();
         
-        DroneUdpConnection(host, 14556);
+        await DroneUdpConnection(host, 14556);
         
         await host.RunAsync();
 
-        DroneUdpDisconnection(host);
+        await DroneUdpDisconnection(host);
     }
 	
     private static IHostBuilder CreateHostBuilder(string[] args) => 

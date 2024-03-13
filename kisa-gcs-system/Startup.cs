@@ -13,6 +13,7 @@ global using DotNetty.Common.Utilities;
 global using DotNetty.Transport.Bootstrapping;
 global using DotNetty.Transport.Channels;
 global using DotNetty.Transport.Channels.Sockets;
+global using Grpc.Net.Client;
 global using Newtonsoft.Json.Linq;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
@@ -44,6 +45,10 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // GrpcChannel DI 컨테이너에 등록 
+        var grpcClient = GrpcChannel.ForAddress("http://localhost:50051");
+        services.AddSingleton(grpcClient);
+        
         services.AddControllers();
         services.AddScoped<AnomalyDetectionApiService>();
         services.AddScoped<GcsApiService>();
