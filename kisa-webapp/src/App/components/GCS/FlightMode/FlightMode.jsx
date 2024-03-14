@@ -29,7 +29,7 @@ const RightSideTop = () => {
         <tbody>
           <tr className={'w-full border-b-2 border-[#4B4B99]'}>
             <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>드론 ID</th>
-            <td className={'w-[27%] pl-3 border-r-2 border-[#4B4B99] bg-[#27264E]'}>{droneMessage && droneMessage.DroneId}</td>
+            <td className={'w-[27%] pl-3 border-r-2 border-[#4B4B99] bg-[#27264E]'}>ArduCopter {droneMessage && droneMessage.DroneId}</td>
             <th className={'w-[23%] border-r-2 border-[#4B4B99]'}>현재 WP 번호</th>
             <td className={'w-[27%] pl-3 border-r-2 border-[#4B4B99] bg-[#27264E]'}>{droneMessage && droneMessage.DroneMission.PathIndex}</td>
           </tr>

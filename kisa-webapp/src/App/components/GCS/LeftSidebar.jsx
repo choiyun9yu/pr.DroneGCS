@@ -145,9 +145,8 @@ const EnrolledDrone = (props) => {
                             >
 
                                 <div className={'flex items-center w-full'}>
-                                    <span className={'text-xs, font-normal'}>{droneId}</span>
+                                    <span className={'text-xs, font-normal'}>ArduCopter {droneId}</span>
                                 </div>
-
 
                             </button>
                             :
@@ -157,7 +156,7 @@ const EnrolledDrone = (props) => {
                             >
 
                                 <div className={'flex items-center w-full'}>
-                                    <span className={'text-xs, font-normal'}>{droneId}</span>
+                                    <span className={'text-xs, font-normal'}>ArduCopter {droneId}</span>
                                 </div>
 
 

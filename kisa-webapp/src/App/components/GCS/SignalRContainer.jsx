@@ -75,6 +75,9 @@ export const SignalRProvider = ({ children }) => {
     const handleMissionAlt = (missionAlt) => {
         connection.current.invoke('HandleMissionAlt', missionAlt)
     }
+    const handleMoveBtn = (lat, lng) => {
+        connection.current.invoke('HandleMoveBtn', lat, lng)
+    }
     const handleDroneMovetoTarget = () => {
         connection.current.invoke('HandleDroneMoveToTarget')
     }
@@ -116,7 +119,8 @@ export const SignalRProvider = ({ children }) => {
             handleDroneMovetoBase,
             handleMissionAlt,
             handleDroneMovetoMission,
-            handleSelectedDrone
+            handleSelectedDrone,
+            handleMoveBtn
         }}>
             {children}
         </DroneContext.Provider>

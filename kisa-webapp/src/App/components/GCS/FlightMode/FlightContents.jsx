@@ -48,6 +48,7 @@ export const FlightContents = (props) => {
           toggleIsRtl={props.toggleIsRtl}
           handleReturnPoint={props.handleReturnPoint}
           setReturnPoint={props.setReturnPoint}
+          targetPoint={props.targetPoint}
         />
         : <button onClick={props.toggleController}
           className={'absolute bottom-0 w-10 h-7 rounded-t-md bg-[#1D1D41] hover:bg-gray-300'}>
@@ -314,6 +315,7 @@ const MainController = (props) => {
     handleDroneTransitMarking,
     handleDroneMovetoTarget,
     handleDroneMovetoBase,
+    handleMoveBtn,
   } = useContext(DroneContext)
 
   const handleGoToBtn = () => {
@@ -382,13 +384,13 @@ const MainController = (props) => {
       </div>
 
       <div className={'flex flex-col mt-0.5 mx-2'}>
-        <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleGoToBtn()}>Go To</ControlButton>
+        <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleMoveBtn(props.targetPoint.lat, props.targetPoint.lng)}>Move</ControlButton>
+        <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleDroneFlightMode(17)}>Brake</ControlButton>
+        <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleReturnBtn()}>Return</ControlButton>
         {/*{ props.isRtl*/}
         {/*  ? <button className={'w-20 h-10 mb-1.5 rounded-xl bg-[#6359E9]'}>Return</button>*/}
         {/*  : <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleReturnBtn()}>Return</ControlButton>*/}
         {/*}*/}
-        <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleReturnBtn()}>Return</ControlButton>
-        <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleDroneFlightMode(17)}>Brake</ControlButton>
       </div>
     </div>
   )
