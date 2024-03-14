@@ -32,7 +32,7 @@ public class ApiController : ControllerBase
         int alt = int.Parse(form["alt"]);
         string? totalDistance = form["totalDistance"];
         
-        _droneControlService.HandleDroneMoveToMission(startPoint, targetPoint, transitList, alt, totalDistance);
+        // _droneControlService.HandleDroneMoveToMission(startPoint, targetPoint, transitList, alt, totalDistance);
         
         try
         {

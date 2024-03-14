@@ -9,10 +9,11 @@ import { VideoContents } from '../GCS/VideoMode/VideoContents';
 import { NewLinkModal } from './LeftSidebar';
 
 export const MiddleMap = (props) => {
-    const { droneMessage, handleDroneStartMarking } = useContext(DroneContext)
+    const { droneMessage, handleDroneStartMarking, handleDroneTargetMarking } = useContext(DroneContext)
     const startPoint = droneMessage && droneMessage.DroneMission.StartPoint
-    const [stationPoint, setStationPoint] = useState({ lat:0.0, lng:0.0 })
-    const [returnPoint, setReturnPoint] = useState({ lat:0.0, lng:0.0 })
+    const targetPoint = droneMessage && droneMessage.DroneMission.TargetPoint
+    const [stationPoint, setStationPoint] = useState()
+    const [returnPoint, setReturnPoint] = useState()
     const dronePath = droneMessage ? droneMessage.DroneMission.DroneTrails.q : []
     const [isMarker, setIsMarker] = useState(false)
     const [isRtl, setIsRtl] = useState(false)
@@ -71,14 +72,15 @@ export const MiddleMap = (props) => {
             lat: 0.0,
             lng: 0.0
         })
+        handleDroneStartMarking(0,0)
+        handleDroneTargetMarking(0,0)
     }
 
     const handleMapClick = e => {
         if (isMarker) {
-            props.setTargetPoints([...props.targetPoints, { id:markerId, position:{ lat: e.latLng.lat(),lng: e.latLng.lng() } }])
-            setMarkerId(markerId+1)
-            setPathLine([startPoint, ...props.targetPoints.map(marker => marker.position)])
             handleDroneStartMarking(droneMessage.DroneStt.Lat, droneMessage.DroneStt.Lon)
+            handleDroneTargetMarking(e.latLng.lat(), e.latLng.lng()
+            )
         }
 
         if (props.stationMarker) {
@@ -92,6 +94,26 @@ export const MiddleMap = (props) => {
         }
 
     }
+
+    // const handleMapClick = e => {
+    //     if (isMarker) {
+    //         props.setTargetPoints([...props.targetPoints, { id:markerId, position:{ lat: e.latLng.lat(),lng: e.latLng.lng() } }])
+    //         setMarkerId(markerId+1)
+    //         setPathLine([startPoint, ...props.targetPoints.map(marker => marker.position)])
+    //         handleDroneStartMarking(droneMessage.DroneStt.Lat, droneMessage.DroneStt.Lon)
+    //     }
+    //
+    //     if (props.stationMarker) {
+    //         props.setStationLat(e.latLng.lat())
+    //         props.setStationLon(e.latLng.lng())
+    //         setStationPoint({
+    //             lat: e.latLng.lat(),
+    //             lng: e.latLng.lng()
+    //         })
+    //         props.toggleStationMarker()
+    //     }
+    //
+    // }
 
     useEffect(() => {
         setPathLine([startPoint, ...props.targetPoints.map(marker => marker.position)])
@@ -157,18 +179,22 @@ export const MiddleMap = (props) => {
                             />
                         </OverlayView>
 
-                        {props.targetPoints.map( marker =>
-                            <Marker
-                                key={marker.id}
-                                position={marker.position}
-                                icon={redMarkerIcon}
-                            />)}
+                        {/*{props.targetPoints.map( marker =>*/}
+                        {/*    <Marker*/}
+                        {/*        key={marker.id}*/}
+                        {/*        position={marker.position}*/}
+                        {/*        icon={redMarkerIcon}*/}
+                        {/*    />)}*/}
+                        {/*<Polyline path={pathLine} options={{ strokeColor: '#FF3333', strokeWeight: 1 }}/>*/}
 
-                        <Polyline path={pathLine} options={{ strokeColor: '#FF3333', strokeWeight: 1 }}/>
+                        <Marker position={startPoint} icon={blueMarkerIcon}/>
+                        <Marker position={targetPoint} icon={redMarkerIcon} />
+
+                        <Polyline path={[startPoint, targetPoint]} options={{ strokeColor: '#FF3333', strokeWeight: 1 }}/>
                         <Polyline path={dronePath} options={{ strokeColor: '#BCBEC0', strokeWeight: 2 }} />
 
+
                         <Marker position={stationPoint} icon={purpleMarkerIcon}/>
-                        <Marker position={startPoint} icon={blueMarkerIcon}/>
                         {isRtl && <Marker position={returnPoint} icon={yellowMarkerIcon}/>}
 
                         {props.gcsMode === 'flight' &&
@@ -192,6 +218,7 @@ export const MiddleMap = (props) => {
                                 toggleIsRtl={toggleIsRtl}
                                 handleReturnPoint={handleReturnPoint}
                                 setReturnPoint={setReturnPoint}
+                                targetPoint={targetPoint}
                             />}
 
                         {props.gcsMode === 'mission' &&
@@ -315,44 +342,46 @@ export const FlightInfoTable = () => {
         }
 
         return (
-            <div className={'absolute top-[50px] right-[60px] rounded-xl bg-black opacity-70'}>
+            <div className={'absolute top-[70px] right-[60px] rounded-xl bg-black opacity-70'}>
                 <table className={'m-2 text-lg font-normal text-[#00DCF8]'}>
                     <tbody>
+                    {/*<tr>*/}
+                    {/*    <th className={'px-2'}>전체 이동거리</th>*/}
+                    {/*    <td className={'px-2'}> {droneMessage && (totalDistance / 1000).toFixed(3)} km</td>*/}
+                    {/*</tr>*/}
+                    {/*<tr>*/}
+                    {/*    <th className={'px-2'}>잔여 이동거리</th>*/}
+                    {/*    <td className={'px-2'}> {*/}
+                    {/*        (droneMessage && (remainDistance / 1000) < 0*/}
+                    {/*            ? '0.000'*/}
+                    {/*            : droneMessage && (remainDistance / 1000).toFixed(3))*/}
+                    {/*    } km</td>*/}
+                    {/*</tr>*/}
                     <tr>
-                        <th className={'px-2'}>전체 이동거리</th>
-                        <td className={'px-2'}> {droneMessage && (totalDistance / 1000).toFixed(3)} km</td>
+                        <th className={'px-2'}>이동 속력</th>
+                        <td className={'px-2'}>{
+                            (droneMessage && (droneMessage.DroneStt.Speed).toFixed(3) <= 0.025 ? '0.000' : droneMessage && (droneMessage.DroneStt.Speed).toFixed(3))
+                        } m/s
+                        </td>
                     </tr>
                     <tr>
-                        <th className={'px-2'}>잔여 이동거리</th>
-                        <td className={'px-2'}> {
-                            (droneMessage && (remainDistance / 1000) < 0
-                                ? '0.000'
-                                : droneMessage && (remainDistance / 1000).toFixed(3))
-                        } km</td>
-                    </tr>
-                    <tr>
-                        <th className={'px-2'}>현재 비행거리</th>
+                        <th className={'px-2'}>비행 거리</th>
                         <td className={'px-2'}> {droneMessage && (elapsedDistance / 1000).toFixed(3)} km</td>
                     </tr>
-
+                    {/*<tr>*/}
+                    {/*    <th className={'px-2'}>평균 이동속도</th>*/}
+                    {/*    <td className={'px-2'}>{((averageSpeed > 0) ? averageSpeed : 0).toFixed(3)} m/s</td>*/}
+                    {/*</tr>*/}
                     <tr>
-                        <th className={'px-2'}>현재 이동속력</th>
-                        <td className={'px-2'}>{droneMessage && (droneMessage.DroneStt.Speed).toFixed(3)} m/s</td>
-                    </tr>
-                    <tr>
-                        <th className={'px-2'}>평균 이동속도</th>
-                        <td className={'px-2'}>{((averageSpeed > 0) ? averageSpeed : 0).toFixed(3)} m/s</td>
-                    </tr>
-                    <tr>
-                        <th className={'px-2'}>이륙 시작시간</th>
+                        <th className={'px-2'}>이륙 시간</th>
                         <td className={'px-2'}>{formattedStartTime}</td>
                     </tr>
                     <tr>
-                        <th className={'px-2'}>비행 소요시간</th>
+                        <th className={'px-2'}>비행 시간</th>
                         <td className={'px-2'}>{formattedTakeTime}</td>
                     </tr>
                     <tr>
-                        <th className={'px-2'}>비행 완료시간</th>
+                        <th className={'px-2'}>착륙 시간</th>
                         <td className={'px-2'}>{formattedCompleteTime}</td>
                     </tr>
                     </tbody>

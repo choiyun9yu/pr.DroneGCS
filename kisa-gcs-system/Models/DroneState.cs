@@ -12,6 +12,21 @@ public class DroneState(string droneId)
     public DroneStt? DroneStt = new DroneStt();
     public SensorData? SensorData = new SensorData();
     public DroneMission? DroneMission = new DroneMission();
+    
+    /* event
+     * 객체 내부에서 발생하는 특정한 이벤트를 외부에 알릴 수 있도록 선언하는 C# 키워드이다.
+     * 델리게이트(Delegate)를 기반으로 구현된다.
+     * 다른 클래스나 메서드에서 이 이벤트에 가입(subscribe)하여 이벤트가 발생했을 때 알림을 받을 수 있다.
+     */
+    
+    // 이벤트 인스턴스에 .Invoke 를 붙이면 이벤트에 연결된 모든 메서드를 호출한다. 즉, 이벤트를 구독하는 모든 객체들이 이벤트 발생에 대한 알림을 받고 각자의 처리 코드를 실행한다.
+    
+    /* Action<>
+     * 인자와 반환값이 없는 메서드를 나타내는 C#의 델리게이트 형식이다.
+     * 이벤트를 처리할 때 자주 사용 된다.
+     * <> 안에 인자의 타입을 지정한다.
+     */
+    
 }
 
 public struct MavlinkLog

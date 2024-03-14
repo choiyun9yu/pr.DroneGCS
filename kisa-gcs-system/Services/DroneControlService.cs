@@ -164,26 +164,26 @@ public class DroneControlService : IDroneControlService
         {
             DroneId = droneId,
             FlightId = droneState.FlightId,
-            // IsOnline = droneState.IsOnline,
-            // ControllStt = droneState.ControlStt,
-            // DroneStt = new GrpcDroneStt
-            // {
-            //     PowerV = droneState.DroneStt?.PowerV ?? 0,
-            //     BatteryStt = droneState.DroneStt?.BatteryStt ?? 0,
-            //     GpsStt = droneState.DroneStt?.GpsStt,
-            //     TempC = droneState.DroneStt?.TempC ?? 0,
-            //     Lat = droneState.DroneStt?.Lat ?? 0,
-            //     Lon = droneState.DroneStt?.Lon ?? 0,
-            //     Alt = droneState.DroneStt?.Alt ?? 0,
-            //     GlobalAlt = droneState.DroneStt?.GlobalAlt ?? 0,
-            //     Roll = droneState.DroneStt?.Roll ?? 0,
-            //     Pitch = droneState.DroneStt?.Pitch ?? 0,
-            //     Head = droneState.DroneStt?.Head ?? 0,
-            //     Speed = droneState.DroneStt?.Speed ?? 0,
-            //     HoverStt = droneState.DroneStt?.HoverStt,
-            //     HDOP = droneState.DroneStt?.HDOP ?? 0,
-            //     SatellitesCount = droneState.DroneStt?.SatellitesCount ?? 0,
-            // },
+            IsOnline = droneState.IsOnline,
+            ControllStt = droneState.ControlStt,
+            DroneStt = new GrpcDroneStt
+            {
+                PowerV = droneState.DroneStt?.PowerV ?? 0,
+                BatteryStt = droneState.DroneStt?.BatteryStt ?? 0,
+                GpsStt = droneState.DroneStt?.GpsStt,
+                TempC = droneState.DroneStt?.TempC ?? 0,
+                Lat = droneState.DroneStt?.Lat ?? 0,
+                Lon = droneState.DroneStt?.Lon ?? 0,
+                Alt = droneState.DroneStt?.Alt ?? 0,
+                GlobalAlt = droneState.DroneStt?.GlobalAlt ?? 0,
+                Roll = droneState.DroneStt?.Roll ?? 0,
+                Pitch = droneState.DroneStt?.Pitch ?? 0,
+                Head = droneState.DroneStt?.Head ?? 0,
+                Speed = droneState.DroneStt?.Speed ?? 0,
+                HoverStt = droneState.DroneStt?.HoverStt,
+                HDOP = droneState.DroneStt?.HDOP ?? 0,
+                SatellitesCount = droneState.DroneStt?.SatellitesCount ?? 0,
+            },
             SensorData = new GrpcSensorData
             {
                 RollATTITUDE = droneState.SensorData?.roll_ATTITUDE ?? 0,
@@ -230,11 +230,11 @@ public class DroneControlService : IDroneControlService
         try
         {
             var res = await _grpcUpdateService.UpdateDroneStatusAsync(payload);
-            Console.WriteLine("gRPC Response:" + res.Success);
+            // Console.WriteLine("gRPC Response:" + res.Success);
         }
         catch
         {
-            Console.WriteLine("gRPC Server Disconnected!");
+            // Console.WriteLine("gRPC Server Disconnected!");
         }
         
     }
@@ -342,6 +342,7 @@ public class DroneControlService : IDroneControlService
         }
     }
 
+    
     // 미션 부여하기 
     private void StartMission()
     {
@@ -487,262 +488,29 @@ public class DroneControlService : IDroneControlService
             commandBody));
         await SendCommandAsync(msg);
     }
-    
-    public async Task HandleDroneMoveToTarget()
+
+    public async Task HandleMoveBtn(double lat, double lng)
     {
-        _droneInstance.ControlStt = "manual";
-
-        double lat = _droneInstance.DroneMission.TargetPoint.lat;
-        List<DroneLocation> transit = _droneInstance.DroneMission.TransitPoint;
-        double lng =_droneInstance.DroneMission.TargetPoint.lng;
-        float alt = _droneInstance.DroneMission.MissionAlt;
-        int count = 0;
+        MAVLink.mavlink_mission_item_t? commandBody = new MAVLink.mavlink_mission_item_t
+        {
+            seq = 0,
+            target_system = byte.Parse(_selectedDrone),
+            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
+            frame = 3,         
+            command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
+            current = 2,        // 2로 해야 움직임 (이유 모르겠음..)
+            x = (float)lat,
+            y = (float)lng,
+            z = 10,           
+            autocontinue = 1,   
+        };
         
-        double flightDistance = 0;
-        _droneInstance.DroneMission.CurrentDistance = 0;
-        
-        if (transit.Count == 0)
-        {
-            flightDistance += _vincentyCalculator.DistanceCalculater(
-                _droneInstance.DroneMission.StartPoint.lat,
-                _droneInstance.DroneMission.StartPoint.lng,
-                lat, lng);
-            _droneInstance.DroneMission.TotalDistance = flightDistance ;
-        }
-        else
-        {
-            for (int i = 0; i < transit.Count; i++)
-            {
-                flightDistance += _vincentyCalculator.DistanceCalculater(
-                    (i == 0) ? _droneInstance.DroneMission.StartPoint.lat : transit[i - 1].lat,
-                    (i == 0) ?_droneInstance.DroneMission.StartPoint.lng : transit[i - 1].lng,
-                    transit[i].lat, transit[i].lng
-                );
-            }
-            flightDistance += _vincentyCalculator.DistanceCalculater(
-                transit.Last().lat, transit.Last().lng, lat, lng
-            );
-            _droneInstance.DroneMission.TotalDistance = flightDistance;
-        }
-        
-        foreach (DroneLocation location in transit)
-        {
-            count += 1;
-            await sendMission(location.lat, location.lng, alt);
-            Thread.Sleep(1000);
-            while (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
-                       location.lat, location.lng) > 1.5)
-            {
-                if (Console.KeyAvailable)
-                {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
-                    if (keyInfo.Key == ConsoleKey.Q)
-                    {
-                        Console.WriteLine("Loop Break");
-                        HandleDroneFlightMode(CustomMode.BRAKE);
-                        return;
-                    }
-                }
-                
-            }
-            Console.WriteLine($"Transit{count} Arrival");
-        }
-        await sendMission(lat, lng, alt);
-        Thread.Sleep(1000);
-        while (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
-                   lat, lng) > 1.5)
-        {
-            if (Console.KeyAvailable)
-            {
-                ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
-                if (keyInfo.Key == ConsoleKey.Q)
-                {
-                    Console.WriteLine("Loop Break");
-                    HandleDroneFlightMode(CustomMode.BRAKE);
-                    return;
-                }
-            }
-        }
+        var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
+            commandBody));
+        await SendCommandAsync(msg);
     }
-
-    // public async Task HandleDroneMoveToMission(string startPoint, string targetPoint, List<string> transitPoint, int alt, string totalDistance)
-    // {
-    //     Console.WriteLine("ARM!!!!");
-    //     MAVLink.mavlink_command_long_t? armCommand = new MAVLink.mavlink_command_long_t
-    //     {
-    //         target_system = byte.Parse(_selectedDrone),
-    //         command = (ushort)MAVLink.MAV_CMD.COMPONENT_ARM_DISARM,
-    //         param1 = 1 // arm
-    //     };
-    //     var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-    //         MAVLink.MAVLINK_MSG_ID.COMMAND_LONG,
-    //         armCommand));
-    //     await SendCommandAsync(msg); 
-    //     Thread.Sleep(1000);
-    //     
-    //     Console.WriteLine("Take Off!!!!");
-    //     MAVLink.mavlink_command_long_t? takeoffCommand = new MAVLink.mavlink_command_long_t
-    //     {
-    //         target_system = byte.Parse(_selectedDrone),
-    //         command = (ushort)MAVLink.MAV_CMD.TAKEOFF,
-    //         param7 = 10,        // z(m), 드론의 이륙 높이(미터) 
-    //         param3 = 5,         // ascend rate (m/s), 이륙 중에 드론이 수직으로 상승하는 속도
-    //         param1 = 0,         // pitch(rad), 드론의 전방 기울기 각도 
-    //         param4 = 0,         // yaw(rad), 드론의 회전을 나타내는 각도
-    //         param5 = 0,         // x, 드론의 이륙 위치 x
-    //         param6 = 0,         // y, 드론의 이륙 위치 y
-    //     };
-    //     var msg1 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-    //         MAVLink.MAVLINK_MSG_ID.COMMAND_LONG,
-    //         takeoffCommand));
-    //     await SendCommandAsync(msg1); 
-    //     Thread.Sleep(5000);
-    //     
-    //     Console.WriteLine("A Point!!!!");
-    //     MAVLink.mavlink_mission_item_t? commandBodyA = new MAVLink.mavlink_mission_item_t
-    //     {
-    //         seq = 0,
-    //         target_system = byte.Parse(_selectedDrone),
-    //         mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
-    //         frame = 3,         
-    //         command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
-    //         current = 2,        // 2로 해야 움직임 (이유 모르겠음..)
-    //         x = (float)36.38324551,
-    //         y = (float)127.36622289,
-    //         z = 10,           
-    //         autocontinue = 1,   
-    //     };
-    //     var msg2 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-    //         MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
-    //         commandBodyA));
-    //     await SendCommandAsync(msg2);
-    //     await Task.Delay(2000);
-    //
-    //     Console.WriteLine("B Point!!!!");
-    //     MAVLink.mavlink_mission_item_t? commandBodyB = new MAVLink.mavlink_mission_item_t
-    //     {
-    //         seq = 1,
-    //         target_system = byte.Parse(_selectedDrone),
-    //         mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
-    //         frame = 3,         
-    //         command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
-    //         current = 2,        // 2로 해야 움직임 (이유 모르겠음..)
-    //         x = (float)36.38654494,
-    //         y = (float)127.37244562,
-    //         z = 10,           
-    //         autocontinue = 1,   
-    //     };
-    //     var msg3 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-    //         MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
-    //         commandBodyB));
-    //     await SendCommandAsync(msg3);
-    //
-    //     Console.WriteLine("LAND!!!!");
-    //     MAVLink.mavlink_set_mode_t landCommand = new MAVLink.mavlink_set_mode_t()
-    //     {
-    //         target_system = byte.Parse(_selectedDrone),
-    //         base_mode = 1,
-    //         custom_mode = (byte)CustomMode.LAND,       
-    //     };
-    //     var msg4 = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-    //         MAVLink.MAVLINK_MSG_ID.SET_MODE,
-    //         landCommand));
-    //     await SendCommandAsync(msg4);
-    // }
-
-
-    public async Task HandleDroneMoveToMission(string startPoint, string targetPoint, List<string> transitPoint, int alt, string totalDistance)
-    {
-        try
-        {
-            List<double>? StartPoint = _gcsApiService.GetLocalPoint(startPoint);
-            if (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
-                    StartPoint[0], StartPoint[1]) > 1.5)
-            {
-                throw new Exception("Wrong Starting Point");
-            }
     
-            string trimmedTotalDistance = totalDistance.Substring(0, totalDistance.Length - 3);
-            string numericPart = new string(trimmedTotalDistance.Where(char.IsDigit).ToArray());
-            double TotalDistance = double.Parse(numericPart);
-    
-            _droneInstance.ControlStt = "auto";
-            _droneInstance.DroneMission.CurrentDistance = 0;
-            _droneInstance.DroneMission.MissionAlt = alt;
-            _droneInstance.DroneMission.TotalDistance = TotalDistance;
-            _droneInstance.DroneMission.TransitPoint = new List<DroneLocation>();
-            
-            HandleDroneFlightMode(CustomMode.GUIDED);
-            
-            HandleDroneFlightCommand(DroneFlightCommand.ARM);
-            Thread.Sleep(1000);
-            
-            HandleDroneFlightCommand(DroneFlightCommand.TAKEOFF);
-            Thread.Sleep(1000);
-            while ((double)_droneInstance.DroneStt.Alt < _droneInstance.DroneMission.MissionAlt - 0.1) { }
-            Console.WriteLine("Mission Alt Reached");
-    
-            for (int i = 0; i < transitPoint.Count; i++)
-            {
-                List<double>? TransitPoint = _gcsApiService.GetLocalPoint(transitPoint[i]);
-                await sendMission(TransitPoint[0], TransitPoint[1], alt);
-                _droneInstance.DroneMission.PathIndex = i + 1;
-    
-                _droneInstance.DroneMission.TransitPoint.Add(
-                    new DroneLocation
-                        {
-                            lat = TransitPoint[0],
-                            lng = TransitPoint[1]
-                        });
-                
-                Thread.Sleep(1000);
-                while (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
-                           TransitPoint[0], TransitPoint[1]) > 1.5)
-                {
-                    if (Console.KeyAvailable)
-                    {
-                        ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
-                        if (keyInfo.Key == ConsoleKey.Q)
-                        {
-                            Console.WriteLine("BRAKE");
-                            HandleDroneFlightMode(CustomMode.BRAKE);
-                            return;
-                        }
-                    }
-                }
-                Console.WriteLine($"Transit{i} Arrival");
-            }
-            
-            List<double>? TargetPoint = _gcsApiService.GetLocalPoint(targetPoint);
-            await sendMission(TargetPoint[0], TargetPoint[1], alt);
-            _droneInstance.DroneMission.PathIndex = transitPoint.Count + 1;
-            Thread.Sleep(1000);
-            while (_vincentyCalculator.DistanceCalculater(_droneInstance.DroneStt.Lat, _droneInstance.DroneStt.Lon,
-                       TargetPoint[0], TargetPoint[1]) > 1.5)
-            {
-                if (Console.KeyAvailable)
-                {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
-                    if (keyInfo.Key == ConsoleKey.Q)
-                    {
-                        Console.WriteLine("BRAKE");
-                        HandleDroneFlightMode(CustomMode.BRAKE);
-                        return;
-                    }
-                }
-            }
-            
-            Console.WriteLine("Arrival");
-            
-            HandleDroneFlightCommand(DroneFlightCommand.LAND);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Error: {e}");
-        }
-        
-    }
-
     public async Task HandleDroneMoveToBase()
     {
         double lat = _droneInstance.DroneMission.StartPoint.lat;
