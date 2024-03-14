@@ -83,6 +83,44 @@ message GrpcSensorData {
 }
 
 message StatusResponse {
-  bool success = 1;
+  string DroneId = 1;
+  GrpcPredictData PredictData = 2;
+  GrpcWarningData WarningData = 3;
 }
 
+message GrpcPredictData {
+  double roll_ATTITUDE_PREDICT = 1;
+  double yaw_ATTITUDE_PREDICT = 2;
+  double pitch_ATTITUDE_PREDICT = 3;
+  double xacc_RAW_IMU_PREDICT = 4;
+  double yacc_RAW_IMU_PREDICT = 5;
+  double zacc_RAW_IMU_PREDICT = 6;
+  double xgyro_RAW_IMU_PREDICT = 7;
+  double ygyro_RAW_IMU_PREDICT = 8;
+  double zgyro_RAW_IMU_PREDICT = 9;
+  double xmag_RAW_IMU_PREDICT = 10;
+  double ymag_RAW_IMU_PREDICT = 11;
+  double zmag_RAW_IMU_PREDICT = 12;
+  double vibration_x_VIBRATION_PREDICT = 13;
+  double vibration_y_VIBRATION_PREDICT = 14;
+  double vibration_z_VIBRATION_PREDICT= 15;
+}
+
+message GrpcWarningData  {
+  int32 warning_count = 1;
+  bool roll_ATTITUDE_WARNING = 2;
+  bool pitch_ATTITUDE_WARNING = 3;
+  bool yaw_ATTITUDE_WARNING = 4;
+  bool xacc_RAW_IMU_WARNING = 5;
+  bool yacc_RAW_IMU_WARNING = 6;
+  bool zacc_RAW_IMU_WARNING = 7;
+  bool xgyro_RAW_IMU_WARNING = 8;
+  bool ygyro_RAW_IMU_WARNING = 9;
+  bool zgyro_RAW_IMU_WARNING = 10;
+  bool xmag_RAW_IMU_WARNING = 11;
+  bool ymag_RAW_IMU_WARNING = 12;
+  bool zmag_RAW_IMU_WARNING = 13;
+  bool vibration_x_VIBRATION_WARNING = 14;
+  bool vibration_y_VIBRATION_WARNING = 15;
+  bool vibration_z_VIBRATION_WARNING = 16;
+}

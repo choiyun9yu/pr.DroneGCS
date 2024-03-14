@@ -1,23 +1,41 @@
 from concurrent import futures
+from datetime import datetime, timedelta
 import logging
-import json
-
-# python -m grpc_tools.protoc -I=./protos --python_out=./generation --pyi_out=./generation --grpc_python_out=./generation ./protos/drone.proto
-
 import grpc
 from google.protobuf.json_format import MessageToDict
 
 from generation import drone_pb2, drone_pb2_grpc
+from module import ml_helper, mongodb_helper
 
+# python -m grpc_tools.protoc -I=./protos --python_out=./generation --pyi_out=./generation --grpc_python_out=./generation ./protos/drone.proto
+
+last_save_time_dict = {}
 class Drone(drone_pb2_grpc.DroneStatusUpdateServicer):
-    def UpdateDroneStatus(self, request, context):
-        print(request)
+    def UpdateDroneStatus(self, request, context, catch=None):
+        # print(request)
+        global last_save_time_dict
+        predict_time = datetime.now()
 
-        # dict = MessageToDict(request)
+        drone_id, flight_id, sensor_data = ml_helper.gRPCparser(MessageToDict(request)["droneStatuses"][0])
 
-        # print(dict)
+        last_save_time = last_save_time_dict.get(str(drone_id))
 
-        return drone_pb2.StatusResponse(success=True)
+        if last_save_time is None or (predict_time - last_save_time) > timedelta(seconds=1):
+            last_save_time_dict[str(drone_id)] = predict_time
+            df = ml_helper.dict_to_df([sensor_data[0]])
+            predict_data, warning_data = ml_helper.predict(df)
+            mongodb_helper.save_prediction_to_mongodb(drone_id[0], flight_id[0], sensor_data[0], predict_data, warning_data, predict_time)
+
+            if warning_data["warning_count"] is not None:
+                return drone_pb2.StatusResponse(
+                    DroneId=drone_id[0],
+                    PredictData=predict_data,
+                    WarningData=warning_data,
+                )
+
+        return drone_pb2.StatusResponse()
+
+
 
 def serve():
     port = "50051"

@@ -151,7 +151,81 @@ class GrpcSensorData(_message.Message):
     def __init__(self, roll_ATTITUDE: _Optional[float] = ..., pitch_ATTITUDE: _Optional[float] = ..., yaw_ATTITUDE: _Optional[float] = ..., xacc_RAW_IMU: _Optional[int] = ..., yacc_RAW_IMU: _Optional[int] = ..., zacc_RAW_IMU: _Optional[int] = ..., xgyro_RAW_IMU: _Optional[int] = ..., ygyro_RAW_IMU: _Optional[int] = ..., zgyro_RAW_IMU: _Optional[int] = ..., xmag_RAW_IMU: _Optional[int] = ..., ymag_RAW_IMU: _Optional[int] = ..., zmag_RAW_IMU: _Optional[int] = ..., vibration_x_VIBRATION: _Optional[float] = ..., vibration_y_VIBRATION: _Optional[float] = ..., vibration_z_VIBRATION: _Optional[float] = ..., accel_cal_x_SENSOR_OFFSETS: _Optional[float] = ..., accel_cal_y_SENSOR_OFFSETS: _Optional[float] = ..., accel_cal_z_SENSOR_OFFSETS: _Optional[float] = ..., mag_ofs_x_SENSOR_OFFSETS: _Optional[int] = ..., mag_ofs_y_SENSOR_OFFSETS: _Optional[int] = ..., vx_GLOBAL_POSITION_INT: _Optional[int] = ..., vy_GLOBAL_POSITION_INT: _Optional[int] = ..., x_LOCAL_POSITION_NED: _Optional[float] = ..., vx_LOCAL_POSITION_NED: _Optional[float] = ..., vy_LOCAL_POSITION_NED: _Optional[float] = ..., nav_pitch_NAV_CONTROLLER_OUTPUT: _Optional[float] = ..., nav_bearing_NAV_CONTROLLER_OUTPUT: _Optional[int] = ..., servo3_raw_SERVO_OUTPUT_RAW: _Optional[int] = ..., servo8_raw_SERVO_OUTPUT_RAW: _Optional[int] = ..., groundspeed_VFR_HUD: _Optional[float] = ..., airspeed_VFR_HUD: _Optional[float] = ..., press_abs_SCALED_PRESSURE: _Optional[float] = ..., Vservo_POWER_STATUS: _Optional[int] = ..., voltages1_BATTERY_STATUS: _Optional[float] = ..., chancount_RC_CHANNELS: _Optional[int] = ..., chan12_raw_RC_CHANNELS: _Optional[int] = ..., chan13_raw_RC_CHANNELS: _Optional[int] = ..., chan14_raw_RC_CHANNELS: _Optional[int] = ..., chan15_raw_RC_CHANNELS: _Optional[int] = ..., chan16_raw_RC_CHANNELS: _Optional[int] = ...) -> None: ...
 
 class StatusResponse(_message.Message):
-    __slots__ = ("success",)
-    SUCCESS_FIELD_NUMBER: _ClassVar[int]
-    success: bool
-    def __init__(self, success: bool = ...) -> None: ...
+    __slots__ = ("DroneId", "PredictData", "WarningData")
+    DRONEID_FIELD_NUMBER: _ClassVar[int]
+    PREDICTDATA_FIELD_NUMBER: _ClassVar[int]
+    WARNINGDATA_FIELD_NUMBER: _ClassVar[int]
+    DroneId: str
+    PredictData: GrpcPredictData
+    WarningData: GrpcWarningData
+    def __init__(self, DroneId: _Optional[str] = ..., PredictData: _Optional[_Union[GrpcPredictData, _Mapping]] = ..., WarningData: _Optional[_Union[GrpcWarningData, _Mapping]] = ...) -> None: ...
+
+class GrpcPredictData(_message.Message):
+    __slots__ = ("roll_ATTITUDE_PREDICT", "yaw_ATTITUDE_PREDICT", "pitch_ATTITUDE_PREDICT", "xacc_RAW_IMU_PREDICT", "yacc_RAW_IMU_PREDICT", "zacc_RAW_IMU_PREDICT", "xgyro_RAW_IMU_PREDICT", "ygyro_RAW_IMU_PREDICT", "zgyro_RAW_IMU_PREDICT", "xmag_RAW_IMU_PREDICT", "ymag_RAW_IMU_PREDICT", "zmag_RAW_IMU_PREDICT", "vibration_x_VIBRATION_PREDICT", "vibration_y_VIBRATION_PREDICT", "vibration_z_VIBRATION_PREDICT")
+    ROLL_ATTITUDE_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    YAW_ATTITUDE_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    PITCH_ATTITUDE_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    XACC_RAW_IMU_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    YACC_RAW_IMU_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    ZACC_RAW_IMU_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    XGYRO_RAW_IMU_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    YGYRO_RAW_IMU_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    ZGYRO_RAW_IMU_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    XMAG_RAW_IMU_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    YMAG_RAW_IMU_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    ZMAG_RAW_IMU_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    VIBRATION_X_VIBRATION_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    VIBRATION_Y_VIBRATION_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    VIBRATION_Z_VIBRATION_PREDICT_FIELD_NUMBER: _ClassVar[int]
+    roll_ATTITUDE_PREDICT: float
+    yaw_ATTITUDE_PREDICT: float
+    pitch_ATTITUDE_PREDICT: float
+    xacc_RAW_IMU_PREDICT: float
+    yacc_RAW_IMU_PREDICT: float
+    zacc_RAW_IMU_PREDICT: float
+    xgyro_RAW_IMU_PREDICT: float
+    ygyro_RAW_IMU_PREDICT: float
+    zgyro_RAW_IMU_PREDICT: float
+    xmag_RAW_IMU_PREDICT: float
+    ymag_RAW_IMU_PREDICT: float
+    zmag_RAW_IMU_PREDICT: float
+    vibration_x_VIBRATION_PREDICT: float
+    vibration_y_VIBRATION_PREDICT: float
+    vibration_z_VIBRATION_PREDICT: float
+    def __init__(self, roll_ATTITUDE_PREDICT: _Optional[float] = ..., yaw_ATTITUDE_PREDICT: _Optional[float] = ..., pitch_ATTITUDE_PREDICT: _Optional[float] = ..., xacc_RAW_IMU_PREDICT: _Optional[float] = ..., yacc_RAW_IMU_PREDICT: _Optional[float] = ..., zacc_RAW_IMU_PREDICT: _Optional[float] = ..., xgyro_RAW_IMU_PREDICT: _Optional[float] = ..., ygyro_RAW_IMU_PREDICT: _Optional[float] = ..., zgyro_RAW_IMU_PREDICT: _Optional[float] = ..., xmag_RAW_IMU_PREDICT: _Optional[float] = ..., ymag_RAW_IMU_PREDICT: _Optional[float] = ..., zmag_RAW_IMU_PREDICT: _Optional[float] = ..., vibration_x_VIBRATION_PREDICT: _Optional[float] = ..., vibration_y_VIBRATION_PREDICT: _Optional[float] = ..., vibration_z_VIBRATION_PREDICT: _Optional[float] = ...) -> None: ...
+
+class GrpcWarningData(_message.Message):
+    __slots__ = ("warning_count", "roll_ATTITUDE_WARNING", "pitch_ATTITUDE_WARNING", "yaw_ATTITUDE_WARNING", "xacc_RAW_IMU_WARNING", "yacc_RAW_IMU_WARNING", "zacc_RAW_IMU_WARNING", "xgyro_RAW_IMU_WARNING", "ygyro_RAW_IMU_WARNING", "zgyro_RAW_IMU_WARNING", "xmag_RAW_IMU_WARNING", "ymag_RAW_IMU_WARNING", "zmag_RAW_IMU_WARNING", "vibration_x_VIBRATION_WARNING", "vibration_y_VIBRATION_WARNING", "vibration_z_VIBRATION_WARNING")
+    WARNING_COUNT_FIELD_NUMBER: _ClassVar[int]
+    ROLL_ATTITUDE_WARNING_FIELD_NUMBER: _ClassVar[int]
+    PITCH_ATTITUDE_WARNING_FIELD_NUMBER: _ClassVar[int]
+    YAW_ATTITUDE_WARNING_FIELD_NUMBER: _ClassVar[int]
+    XACC_RAW_IMU_WARNING_FIELD_NUMBER: _ClassVar[int]
+    YACC_RAW_IMU_WARNING_FIELD_NUMBER: _ClassVar[int]
+    ZACC_RAW_IMU_WARNING_FIELD_NUMBER: _ClassVar[int]
+    XGYRO_RAW_IMU_WARNING_FIELD_NUMBER: _ClassVar[int]
+    YGYRO_RAW_IMU_WARNING_FIELD_NUMBER: _ClassVar[int]
+    ZGYRO_RAW_IMU_WARNING_FIELD_NUMBER: _ClassVar[int]
+    XMAG_RAW_IMU_WARNING_FIELD_NUMBER: _ClassVar[int]
+    YMAG_RAW_IMU_WARNING_FIELD_NUMBER: _ClassVar[int]
+    ZMAG_RAW_IMU_WARNING_FIELD_NUMBER: _ClassVar[int]
+    VIBRATION_X_VIBRATION_WARNING_FIELD_NUMBER: _ClassVar[int]
+    VIBRATION_Y_VIBRATION_WARNING_FIELD_NUMBER: _ClassVar[int]
+    VIBRATION_Z_VIBRATION_WARNING_FIELD_NUMBER: _ClassVar[int]
+    warning_count: int
+    roll_ATTITUDE_WARNING: bool
+    pitch_ATTITUDE_WARNING: bool
+    yaw_ATTITUDE_WARNING: bool
+    xacc_RAW_IMU_WARNING: bool
+    yacc_RAW_IMU_WARNING: bool
+    zacc_RAW_IMU_WARNING: bool
+    xgyro_RAW_IMU_WARNING: bool
+    ygyro_RAW_IMU_WARNING: bool
+    zgyro_RAW_IMU_WARNING: bool
+    xmag_RAW_IMU_WARNING: bool
+    ymag_RAW_IMU_WARNING: bool
+    zmag_RAW_IMU_WARNING: bool
+    vibration_x_VIBRATION_WARNING: bool
+    vibration_y_VIBRATION_WARNING: bool
+    vibration_z_VIBRATION_WARNING: bool
+    def __init__(self, warning_count: _Optional[int] = ..., roll_ATTITUDE_WARNING: bool = ..., pitch_ATTITUDE_WARNING: bool = ..., yaw_ATTITUDE_WARNING: bool = ..., xacc_RAW_IMU_WARNING: bool = ..., yacc_RAW_IMU_WARNING: bool = ..., zacc_RAW_IMU_WARNING: bool = ..., xgyro_RAW_IMU_WARNING: bool = ..., ygyro_RAW_IMU_WARNING: bool = ..., zgyro_RAW_IMU_WARNING: bool = ..., xmag_RAW_IMU_WARNING: bool = ..., ymag_RAW_IMU_WARNING: bool = ..., zmag_RAW_IMU_WARNING: bool = ..., vibration_x_VIBRATION_WARNING: bool = ..., vibration_y_VIBRATION_WARNING: bool = ..., vibration_z_VIBRATION_WARNING: bool = ...) -> None: ...

@@ -195,7 +195,7 @@ export const MiddleMap = (props) => {
 
 
                         <Marker position={stationPoint} icon={purpleMarkerIcon}/>
-                        {isRtl && <Marker position={returnPoint} icon={yellowMarkerIcon}/>}
+                        {/*{isRtl && <Marker position={returnPoint} icon={yellowMarkerIcon}/>}*/}
 
                         {props.gcsMode === 'flight' &&
                             <FlightContents

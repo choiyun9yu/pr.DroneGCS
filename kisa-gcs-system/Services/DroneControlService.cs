@@ -192,6 +192,9 @@ public class DroneControlService : IDroneControlService
                 XaccRAWIMU = droneState.SensorData?.xacc_RAW_IMU ?? 0,
                 YaccRAWIMU = droneState.SensorData?.yacc_RAW_IMU ?? 0,
                 ZaccRAWIMU = droneState.SensorData?.zacc_RAW_IMU ?? 0,
+                XgyroRAWIMU = droneState.SensorData?.xgyro_RAW_IMU ?? 0,
+                YgyroRAWIMU = droneState.SensorData?.ygyro_RAW_IMU ?? 0,
+                ZgyroRAWIMU = droneState.SensorData?.zgyro_RAW_IMU ?? 0,
                 XmagRAWIMU = droneState.SensorData?.xmag_RAW_IMU ?? 0,
                 YmagRAWIMU = droneState.SensorData?.ymag_RAW_IMU ?? 0,
                 ZmagRAWIMU = droneState.SensorData?.zmag_RAW_IMU ?? 0,
@@ -230,7 +233,10 @@ public class DroneControlService : IDroneControlService
         try
         {
             var res = await _grpcUpdateService.UpdateDroneStatusAsync(payload);
-            // Console.WriteLine("gRPC Response:" + res.Success);
+            if (res.DroneId != "")
+            {
+                Console.WriteLine(res);
+            }
         }
         catch
         {
