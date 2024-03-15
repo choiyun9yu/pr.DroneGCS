@@ -137,7 +137,7 @@ const EnrolledDrone = (props) => {
             { droneList
                 ? droneList.map((droneId) => {
                     return (
-                        selectedDrone === droneId
+                        selectedDrone == droneId
                             ?
                             <button
                                 className={'flex flex-col justify-center ml-3 my-1 px-3 w-[80%] h-[35px] rounded bg-[#6359E9]'}

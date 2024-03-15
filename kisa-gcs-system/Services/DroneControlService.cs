@@ -112,6 +112,7 @@ public class DroneControlService : IDroneControlService
         
         string forReact = JsonConvert.SerializeObject(_droneStateMap[_selectedDrone]);
         await _hubContext.Clients.All.SendAsync("droneState", forReact);
+        await _hubContext.Clients.All.SendAsync("selectedDrone", _selectedDrone);
 
         await SendDroneStatusToPredict(msg.sysid.ToString(), _droneStateMap[msg.sysid.ToString()]);
 
@@ -235,7 +236,8 @@ public class DroneControlService : IDroneControlService
             var res = await _grpcUpdateService.UpdateDroneStatusAsync(payload);
             if (res.DroneId != "")
             {
-                Console.WriteLine(res);
+                _droneStateMap[res.DroneId].PredictData = res.PredictData;
+                _droneStateMap[res.DroneId].WarningData = res.WarningData;
             }
         }
         catch

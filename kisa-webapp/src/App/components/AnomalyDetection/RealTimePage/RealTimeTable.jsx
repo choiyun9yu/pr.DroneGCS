@@ -21,7 +21,7 @@ export const RealTimeTable = (props) => {
 const RealTimeStateTable = (props) => {
 
     const WarningData = props.WarningData || {};
-    const wholeCount = Object.values(WarningData).filter(value => value === false).length;
+    const wholeCount = Object.values(WarningData).filter(value => value === true).length;
 
     return (
         <div className={`flex flex-col items-center  my-auto mx-3 rounded-md border border-[#6359E9] text-white font-normal `}>
@@ -41,13 +41,13 @@ const RealTimeStateTable = (props) => {
                             <div className={`w-full p-2 border font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 주의
                             </div>
-                            <div className={`w-full p-2 border-x border-[#6359E9]`}>0</div>
+                            <div className={`w-full p-2 border-x border-[#6359E9]`}>{wholeCount}</div>
                         </div>
                         <div className="flex flex-col w-full">
                             <div className={`w-full p-2 border-y font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 위험
                             </div>
-                            <div className="p-2">{wholeCount}</div>
+                            <div className="p-2">{0}</div>
                         </div>
                     </div>
                 </div>
@@ -59,11 +59,11 @@ const RealTimeStateTable = (props) => {
 const RealTimeAnomalyTable = (props) => {
 
     const WarningData = props.WarningData || {};
-    const deviceCount = ['roll_ATTITUDE', 'pitch_ATTITUDE', 'yaw_ATTITUDE'].filter(prop => WarningData[prop] === false).length;
-    const gyrCount = ['xgyro_RAW_IMU', 'ygyro_RAW_IMU', 'zgyro_RAW_IMU'].filter(prop => WarningData[prop] === false).length;
-    const accCount = ['xacc_RAW_IMU', 'yacc_RAW_IMU', 'zacc_RAW_IMU'].filter(prop => WarningData[prop] === false).length;
-    const magCount = ['xmag_RAW_IMU', 'ymag_RAW_IMU', 'zmag_RAW_IMU'].filter(prop => WarningData[prop] === false).length;
-    const vibCount = ['vibration_x_VIBRATION', 'vibration_y_VIBRATION', 'vibration_z_VIBRATION'].filter(prop => WarningData[prop] === false).length;
+    const deviceCount = ['RollATTITUDEWARNING', 'PitchATTITUDEWARNING', 'YawATTITUDEWARNING'].filter(prop => WarningData[prop] === true).length;
+    const accCount = ['XaccRAWIMUWARNING', 'YaccRAWIMUWARNING', 'ZaccRAWIMUWARNING'].filter(prop => WarningData[prop] === true).length;
+    const gyrCount = ['XgyroRAWIMUWARNING', 'YgyroRAWIMUWARNING', 'ZgyroRAWIMUWARNING'].filter(prop => WarningData[prop] === true).length;
+    const magCount = ['XmagRAWIMUWARNING', 'YmagRAWIMUWARNING', 'ZmagRAWIMUWARNING'].filter(prop => WarningData[prop] === true).length;
+    const vibCount = ['VibrationXVIBRATIONWARNING', 'VibrationYVIBRATIONWARNING', 'VibrationZVIBRATIONWARNING'].filter(prop => WarningData[prop] === true).length;
 
     return (
         <div className={`flex flex-row items-center my-auto mx-3 rounded-md border border-[#6359E9] text-white font-thin overflow-hidden`}>
@@ -83,13 +83,13 @@ const RealTimeAnomalyTable = (props) => {
                             <div className={`w-full p-2 border font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 주의
                             </div>
-                            <div className={`w-full p-2 border-x border-[#6359E9]`}>0</div>
+                            <div className={`w-full p-2 border-x border-[#6359E9]`}>{deviceCount}</div>
                         </div>
                         <div className="flex flex-col w-full">
                             <div className={`w-full p-2 border-y font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 위험
                             </div>
-                            <div className=" p-2">{deviceCount}</div>
+                            <div className=" p-2">0</div>
                         </div>
                     </div>
                 </div>
@@ -110,13 +110,13 @@ const RealTimeAnomalyTable = (props) => {
                             <div className={`w-full p-2 border font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 주의
                             </div>
-                            <div className={`w-full p-2 border-x border-[#6359E9]`}>0</div>
+                            <div className={`w-full p-2 border-x border-[#6359E9]`}>{gyrCount}</div>
                         </div>
                         <div className="flex flex-col w-full">
                             <div className={`w-full p-2 border-y font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 위험
                             </div>
-                            <div className=" p-2">{gyrCount}</div>
+                            <div className=" p-2">{0}</div>
                         </div>
                     </div>
                 </div>
@@ -137,13 +137,13 @@ const RealTimeAnomalyTable = (props) => {
                             <div className={`w-full p-2 border font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 주의
                             </div>
-                            <div className={`w-full p-2 border-x border-[#6359E9]`}>0</div>
+                            <div className={`w-full p-2 border-x border-[#6359E9]`}>{accCount}</div>
                         </div>
                         <div className="flex flex-col w-full">
                             <div className={`w-full p-2 border-y font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 위험
                             </div>
-                            <div className=" p-2">{accCount}</div>
+                            <div className=" p-2">{0}</div>
                         </div>
                     </div>
                 </div>
@@ -164,13 +164,13 @@ const RealTimeAnomalyTable = (props) => {
                             <div className={`w-full  p-2 border font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 주의
                             </div>
-                            <div className={`w-full p-2 border-x border-[#6359E9]`}>0</div>
+                            <div className={`w-full p-2 border-x border-[#6359E9]`}>{magCount}</div>
                         </div>
                         <div className="flex flex-col w-full">
                             <div className={`w-full p-2 border-y font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 위험
                             </div>
-                            <div className=" p-2">{magCount}</div>
+                            <div className=" p-2">{0}</div>
                         </div>
                     </div>
                 </div>
@@ -191,13 +191,13 @@ const RealTimeAnomalyTable = (props) => {
                             <div className={`w-full p-2 border font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 주의
                             </div>
-                            <div className={`w-full p-2 border-x border-[#6359E9]`}>0</div>
+                            <div className={`w-full p-2 border-x border-[#6359E9]`}>{vibCount}</div>
                         </div>
                         <div className="flex flex-col w-full">
                             <div className={`w-full p-2 border-y font-normal border-[#6359E9] ${ColorThema.Secondary2}`}>
                                 위험
                             </div>
-                            <div className=" p-2">{vibCount}</div>
+                            <div className=" p-2">{0}</div>
                         </div>
                     </div>
                 </div>

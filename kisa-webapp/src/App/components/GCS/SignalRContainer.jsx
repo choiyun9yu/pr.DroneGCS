@@ -6,7 +6,7 @@ export const DroneContext = createContext({})
 // python sim_vehicle.py -L ETRI -v ArduCopter --out=udp:127.0.0.1:14556
 export const SignalRProvider = ({ children }) => {
     const [droneList, setDroneList] = useState([])
-    const [selectedDrone, setSelectedDrone] = useState('1')
+    const [selectedDrone, setSelectedDrone] = useState()
     const [droneMessage, setDroneMessage] = useState(null)
     const connection = useRef()
 
@@ -41,6 +41,10 @@ export const SignalRProvider = ({ children }) => {
             const list = JSON.parse(json)
             setDroneList(list)
             console.log(list)
+        })
+
+        connectionObj.on('selectedDrone', sd => {
+            setSelectedDrone(JSON.parse(sd))
         })
 
         connectionObj.on('droneState', msg => {
