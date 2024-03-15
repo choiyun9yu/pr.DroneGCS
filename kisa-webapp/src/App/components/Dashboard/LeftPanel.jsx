@@ -206,7 +206,7 @@ const FlightTime = (props) => {
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="FlightTime" fill="#6359e9" />
+                    <Bar dataKey="FlightTime" fill="#00CCCC" />
                 </BarChart>
             </ResponsiveContainer>
         </>);
@@ -216,159 +216,123 @@ const PredictionChart = (props) => {
     const data = [
         {
             "name": "1",
-            "Drone01": 40,
-            "Drone02": 24
+            "AnomalyCount": 40,
         },
         {
             "name": "2",
-            "Drone01": 30,
-            "Drone02": 13
+            "AnomalyCount": 30,
         },
         {
             "name": "3",
-            "Drone01v": 20,
-            "Drone03": 98
+            "AnomalyCount": 20,
         },
         {
             "name": "4",
-            "Drone02": 27,
-            "Drone03": 39
+            "AnomalyCount": 27,
         },
         {
             "name": "5",
-            "Drone01": 18,
-            "Drone02": 48,
-            "Drone03": 98
+            "AnomalyCount": 18,
         },
         {
             "name": "6",
-            "Drone01": 23,
-            "Drone02": 38
+            "AnomalyCount": 23,
         },
         {
             "name": "7",
-            "Drone02": 34,
-            "Drone03": 43
+            "AnomalyCount": 34,
         },
         {
             "name": "8",
-            "Drone01": 40,
-            "Drone02": 24,
-            "Drone03": 34,
+            "AnomalyCount": 40,
         },
         {
             "name": "9",
-            "Drone01": 30,
-            "Drone02": 13
+            "AnomalyCount": 13
         },
         {
             "name": "10",
-            "Drone02": 20,
-            "Drone03": 90
+            "AnomalyCount": 90
         },
         {
             "name": "11",
-            "Drone01": 40,
-            "Drone02": 20
+            "AnomalyCount": 40,
         },
         {
             "name": "12",
-            "Drone01": 30,
-            "Drone02": 18
+            "AnomalyCount": 30,
         },
         {
             "name": "13",
-            "Drone01v": 20,
-            "Drone03": 90
+            "AnomalyCount": 20,
         },
         {
             "name": "14",
-            "Drone02": 20,
-            "Drone03": 38
+            "AnomalyCount": 20,
         },
         {
             "name": "15",
-            "Drone01": 19,
-            "Drone02": 40,
-            "Drone03": 98
+            "AnomalyCount": 98
         },
         {
             "name": "16",
-            "Drone01": 23,
-            "Drone02": 38
+            "AnomalyCount": 23,
         },
         {
             "name": "17",
-            "Drone02": 34,
-            "Drone03": 43
+            "AnomalyCount": 34,
         },
         {
             "name": "18",
-            "Drone01": 40,
-            "Drone02": 24,
-            "Drone03": 34,
+            "AnomalyCount": 34,
         },
         {
             "name": "19",
-            "Drone01": 30,
-            "Drone02": 18
+            "AnomalyCount": 30,
         },
         {
             "name": "20",
-            "Drone02": 20,
-            "Drone03": 90
+            "AnomalyCount": 90
         },
         {
             "name": "21",
-            "Drone01": 40,
-            "Drone02": 24
+            "AnomalyCount": 40,
         },
         {
             "name": "22",
-            "Drone01": 30,
-            "Drone02": 18
+            "AnomalyCount": 18
         },
         {
             "name": "23",
-            "Drone01v": 20,
-            "Drone03": 98
+            "AnomalyCount": 98
         },
         {
             "name": "24",
-            "Drone02": 27,
-            "Drone03": 39
+            "AnomalyCount": 27,
         },
         {
             "name": "25",
-            "Drone01": 18,
-            "Drone02": 48,
-            "Drone03": 98
+            "AnomalyCount": 18,
         },
         {
             "name": "26",
-            "Drone01": 23,
-            "Drone02": 38
+            "AnomalyCount": 23,
         },
         {
             "name": "27",
-            "Drone02": 30,
-            "Drone03": 40
+            "AnomalyCount": 40
         },
         {
             "name": "28",
-            "Drone01": 40,
-            "Drone02": 20,
-            "Drone03": 30,
+            "AnomalyCount": 30,
         },
         {
             "name": "29",
-            "Drone01": 30,
-            "Drone02": 18
+            "AnomalyCount": 18
         },
         {
             "name": "30",
-            "Drone02": 20,
-            "Drone03": 90
+            "AnomalyCount": 90
         },
     ]
 
@@ -379,9 +343,7 @@ const PredictionChart = (props) => {
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="Drone01" fill="#6359e9" />
-                    <Bar dataKey="Drone02" fill="#8fe388" />
-                    <Bar dataKey="Drone03" fill="#64cff6" />
+                    <Bar dataKey="AnomalyCount" fill="#FF6666" />
                 </BarChart>
             </ResponsiveContainer>
         </>);

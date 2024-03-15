@@ -81,6 +81,7 @@ export const MiddleMap = (props) => {
             handleDroneStartMarking(droneMessage.DroneStt.Lat, droneMessage.DroneStt.Lon)
             handleDroneTargetMarking(e.latLng.lat(), e.latLng.lng()
             )
+            setIsMarker(!isMarker)
         }
 
         if (props.stationMarker) {

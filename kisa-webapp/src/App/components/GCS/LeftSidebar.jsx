@@ -172,14 +172,14 @@ const EnrolledDrone = (props) => {
 const FlightSchedule = (props) => {
     return (
         <div className="w-full m-2 items-center">
-            <span className="ml-3">• 비행 경로 </span>
-            <div className={'flex flex-col m-1 text-sm font-normal'}>
-                <ScheduleComponent
-                    startPoint={props.flightSchedule[0]}
-                    transitList={props.flightSchedule[1]}
-                    targetPoint={props.flightSchedule[2]}
-                />
-            </div>
+            {/*<span className="ml-3">• 비행 경로 </span>*/}
+            {/*<div className={'flex flex-col m-1 text-sm font-normal'}>*/}
+            {/*    <ScheduleComponent*/}
+            {/*        startPoint={props.flightSchedule[0]}*/}
+            {/*        transitList={props.flightSchedule[1]}*/}
+            {/*        targetPoint={props.flightSchedule[2]}*/}
+            {/*    />*/}
+            {/*</div>*/}
         </div>
     )
 }

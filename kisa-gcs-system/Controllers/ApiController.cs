@@ -10,13 +10,59 @@ public class ApiController : ControllerBase
 {
     private readonly AnomalyDetectionApiService _anomalyDetectionApiService;
     private readonly GcsApiService _gcsApiService;
+    private readonly DashboardApiService _dashboardService;
     private readonly DroneControlService _droneControlService;
 
-    public ApiController(AnomalyDetectionApiService anomalyDetectionApiService, GcsApiService gcsApiService, DroneControlService droneControlService)  
+    public ApiController(
+        AnomalyDetectionApiService anomalyDetectionApiService, 
+        GcsApiService gcsApiService, 
+        DashboardApiService dashboardApiService, 
+        DroneControlService droneControlService
+        )  
     {
         _anomalyDetectionApiService = anomalyDetectionApiService;
         _gcsApiService = gcsApiService;
+        _dashboardService = dashboardApiService;
+        
         _droneControlService = droneControlService;
+    }
+
+    [HttpPost("dashboard")]
+    public IActionResult PostDashboard()
+    {
+        IFormCollection form = Request.Form;
+        string? yearStr = form["year"];
+        string? monthStr = form["month"];
+        int year = int.Parse(yearStr);
+        int month = int.Parse(monthStr);
+        try
+        {
+            long flightCount = _dashboardService.GetFlightCount(year, month);
+            TimeSpan flightTime = _dashboardService.GetFlightTime(year, month);
+            double? fligthDistance = _dashboardService.GetFlightDistance(year, month);
+            long logCount = _dashboardService.GetLogCount(year, month);
+            long anomlayCount = _dashboardService.GetAnomlayCount(year, month);
+            _dashboardService.GetDailyFlightTime(year, month);
+            DailyFlightTime dailyFlightTime = new();
+            DailyAnomalyCount dailyAnomalyCount = new();
+            FlightRate flightRate = new();
+            return Ok(new
+            {
+                flightCount,
+                flightTime,
+                fligthDistance,
+                logCount,
+                anomlayCount,
+                dailyFlightTime,
+                dailyAnomalyCount,
+                flightRate,
+            });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, "Post Start Mission Api Server Error");
+        }
     }
 
     // 외부에서 명령을 내리고 싶은 경우 사용 (예상 경로 표시는 react 랑 gcs 로직 새로 짜서 추가해야함)

@@ -366,23 +366,26 @@ public class DroneControlService : IDroneControlService
 
     private void CompleteMission(string droneId)
     {
-        _droneInstance.DroneMission.CompleteTime = DateTime.Now;
+        DateTime currentTime = DateTime.Now;
+        _droneInstance.DroneMission.CompleteTime = currentTime;
         _droneInstance.IsLanded = true;
         _droneInstance.FlightId = "None";
         
         var dashboard = new Dashboard
         {
+            _id = currentTime,
             DroneId = droneId,
-            StartTime = _droneStateMap[droneId].DroneMission.StartTime,
-            CompleteTime = _droneStateMap[droneId].DroneMission.CompleteTime,
+            FlightDay = currentTime.Day,
+            FlightTime = (currentTime - _droneStateMap[droneId].DroneMission.StartTime).ToString(),
             StartPoint = _droneStateMap[droneId].DroneMission.StartPoint,
-            TransitPoints = _droneStateMap[droneId].DroneMission.TransitPoint,
             LandPoint = new DroneLocation
             {
                 lat = _droneStateMap[droneId].DroneStt.Lat,
                 lng = _droneStateMap[droneId].DroneStt.Lon
             },
-            FlightDistance = _droneStateMap[droneId].DroneMission.TotalDistance
+            FlightDistance = _droneStateMap[droneId].DroneMission.CurrentDistance
+            // TransitPoints = _droneStateMap[droneId].DroneMission.TransitPoint,
+            // FlightDistance = _droneStateMap[droneId].DroneMission.TotalDistance
         };
         
         try

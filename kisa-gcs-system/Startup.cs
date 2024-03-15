@@ -50,6 +50,7 @@ public class Startup
         services.AddControllers();
         services.AddScoped<AnomalyDetectionApiService>();
         services.AddScoped<GcsApiService>();
+        services.AddScoped<DashboardApiService>();
         services.AddCors(options => 
         {
             options.AddPolicy("CorsPolicy", builder =>
