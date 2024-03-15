@@ -35,63 +35,63 @@ warnings.filterwarnings(action='ignore')
 def predict(sensor_data):
 
     predict_data = {
-        'roll_ATTITUDE_PREDICT': predict_roll_ATTITUDE(sensor_data),
-        'yaw_ATTITUDE_PREDICT': predict_pitch_ATTITUDE(sensor_data),
-        'pitch_ATTITUDE_PREDICT': predict_yaw_ATTITUDE(sensor_data),
-        'xacc_RAW_IMU_PREDICT': predict_xacc_RAW_IMU(sensor_data),
-        'yacc_RAW_IMU_PREDICT': predict_yacc_RAW_IMU(sensor_data),
-        'zacc_RAW_IMU_PREDICT': predict_zacc_RAW_IMU(sensor_data),
-        'xgyro_RAW_IMU_PREDICT': predict_xgyro_RAW_IMU(sensor_data),
-        'ygyro_RAW_IMU_PREDICT': predict_ygyro_RAW_IMU(sensor_data),
-        'zgyro_RAW_IMU_PREDICT': predict_zgyro_RAW_IMU(sensor_data),
-        'xmag_RAW_IMU_PREDICT': predict_xmag_RAW_IMU(sensor_data),
-        'ymag_RAW_IMU_PREDICT': predict_ymag_RAW_IMU(sensor_data),
-        'zmag_RAW_IMU_PREDICT': predict_zmag_RAW_IMU(sensor_data),
-        'vibration_x_VIBRATION_PREDICT': predict_vibration_x_VIBRATION(sensor_data),
-        'vibration_y_VIBRATION_PREDICT': predict_vibration_y_VIBRATION(sensor_data),
-        'vibration_z_VIBRATION_PREDICT': predict_vibration_z_VIBRATION(sensor_data),
+        'rollATTITUDE_PREDICT': predict_roll_ATTITUDE(sensor_data),
+        'yawATTITUDE_PREDICT': predict_pitch_ATTITUDE(sensor_data),
+        'pitchATTITUDE_PREDICT': predict_yaw_ATTITUDE(sensor_data),
+        'xaccRAWIMU_PREDICT': predict_xacc_RAW_IMU(sensor_data),
+        'yaccRAWIMU_PREDICT': predict_yacc_RAW_IMU(sensor_data),
+        'zaccRAWIMU_PREDICT': predict_zacc_RAW_IMU(sensor_data),
+        'xgyroRAWIMU_PREDICT': predict_xgyro_RAW_IMU(sensor_data),
+        'ygyroRAWIMU_PREDICT': predict_ygyro_RAW_IMU(sensor_data),
+        'zgyroRAWIMU_PREDICT': predict_zgyro_RAW_IMU(sensor_data),
+        'xmagRAWIMU_PREDICT': predict_xmag_RAW_IMU(sensor_data),
+        'ymagRAWIMU_PREDICT': predict_ymag_RAW_IMU(sensor_data),
+        'zmagRAWIMU_PREDICT': predict_zmag_RAW_IMU(sensor_data),
+        'vibrationXVIBRATION_PREDICT': predict_vibration_x_VIBRATION(sensor_data),
+        'vibrationYVIBRATION_PREDICT': predict_vibration_y_VIBRATION(sensor_data),
+        'vibrationZVIBRATION_PREDICT': predict_vibration_z_VIBRATION(sensor_data),
     }
-    roll_ATTITUDE_WARNING = True if (abs(sensor_data['rollATTITUDE'][0] - predict_data['roll_ATTITUDE_PREDICT']) - 0.519040579) > 0 else False
-    pitch_ATTITUDE_WARNING = True if (abs(sensor_data['pitchATTITUDE'][0] - predict_data['pitch_ATTITUDE_PREDICT']) - 0.330952408) > 0 else False
-    yaw_ATTITUDE_WARNING = True if (abs(sensor_data['yawATTITUDE'][0] - predict_data['yaw_ATTITUDE_PREDICT']) - 4.426681577) > 0 else False
-    xacc_RAW_IMU_WARNING = True if (abs(sensor_data['xaccRAWIMU'][0] - predict_data['xacc_RAW_IMU_PREDICT']) - 505.059753) > 0 else False
-    yacc_RAW_IMU_WARNING = True if (abs(sensor_data['yaccRAWIMU'][0] - predict_data['yacc_RAW_IMU_PREDICT']) - 253.607117) > 0 else False
-    zacc_RAW_IMU_WARNING = True if (abs(sensor_data['zaccRAWIMU'][0] - predict_data['zacc_RAW_IMU_PREDICT']) - 592.7912866) > 0 else False
-    xgyro_RAW_IMU_WARNING = True if (abs(sensor_data['xgyroRAWIMU'][0] - predict_data['xgyro_RAW_IMU_PREDICT']) - 2419.060251) > 0 else False
-    ygyro_RAW_IMU_WARNING = True if (abs(sensor_data['ygyroRAWIMU'][0] - predict_data['ygyro_RAW_IMU_PREDICT']) - 1655.598837) > 0 else False
-    zgyro_RAW_IMU_WARNING = True if (abs(sensor_data['zgyroRAWIMU'][0] - predict_data['zgyro_RAW_IMU_PREDICT']) - 1430.775122) > 0 else False
-    xmag_RAW_IMU_WARNING = True if (abs(sensor_data['xmagRAWIMU'][0] - predict_data['xmag_RAW_IMU_PREDICT']) - 432.8393278) > 0 else False
-    ymag_RAW_IMU_WARNING = True if (abs(sensor_data['ymagRAWIMU'][0] - predict_data['ymag_RAW_IMU_PREDICT']) - 365.9837014) > 0 else False
-    zmag_RAW_IMU_WARNING = True if (abs(sensor_data['zmagRAWIMU'][0] - predict_data['zmag_RAW_IMU_PREDICT']) - 566.2303151) > 0 else False
-    vibration_x_VIBRATION_WARNING = True if (abs(sensor_data['vibrationXVIBRATION'][0] - predict_data['vibration_x_VIBRATION_PREDICT']) - 4.997481432) > 0 else False
-    vibration_y_VIBRATION_WARNING = True if (abs(sensor_data['vibrationYVIBRATION'][0] - predict_data['vibration_y_VIBRATION_PREDICT']) - 3.934628874) > 0 else False
-    vibration_z_VIBRATION_WARNING =True if (abs(sensor_data['vibrationZVIBRATION'][0] - predict_data['vibration_z_VIBRATION_PREDICT']) - 9.405666076) > 0 else False
+    rollATTITUDE_WARNING = True if (abs(sensor_data['rollATTITUDE'][0] - predict_data['rollATTITUDE_PREDICT']) - 0.519040579) > 0 else False
+    pitchATTITUDE_WARNING = True if (abs(sensor_data['pitchATTITUDE'][0] - predict_data['pitchATTITUDE_PREDICT']) - 0.330952408) > 0 else False
+    yawATTITUDE_WARNING = True if (abs(sensor_data['yawATTITUDE'][0] - predict_data['yawATTITUDE_PREDICT']) - 4.426681577) > 0 else False
+    xaccRAWIMU_WARNING = True if (abs(sensor_data['xaccRAWIMU'][0] - predict_data['xaccRAWIMU_PREDICT']) - 505.059753) > 0 else False
+    yaccRAWIMU_WARNING = True if (abs(sensor_data['yaccRAWIMU'][0] - predict_data['yaccRAWIMU_PREDICT']) - 253.607117) > 0 else False
+    zaccRAWIMU_WARNING = True if (abs(sensor_data['zaccRAWIMU'][0] - predict_data['zaccRAWIMU_PREDICT']) - 592.7912866) > 0 else False
+    xgyroRAWIMU_WARNING = True if (abs(sensor_data['xgyroRAWIMU'][0] - predict_data['xgyroRAWIMU_PREDICT']) - 2419.060251) > 0 else False
+    ygyroRAWIMU_WARNING = True if (abs(sensor_data['ygyroRAWIMU'][0] - predict_data['ygyroRAWIMU_PREDICT']) - 1655.598837) > 0 else False
+    zgyroRAWIMU_WARNING = True if (abs(sensor_data['zgyroRAWIMU'][0] - predict_data['zgyroRAWIMU_PREDICT']) - 1430.775122) > 0 else False
+    xmagRAWIMU_WARNING = True if (abs(sensor_data['xmagRAWIMU'][0] - predict_data['xmagRAWIMU_PREDICT']) - 432.8393278) > 0 else False
+    ymagRAWIMU_WARNING = True if (abs(sensor_data['ymagRAWIMU'][0] - predict_data['ymagRAWIMU_PREDICT']) - 365.9837014) > 0 else False
+    zmagRAWIMU_WARNING = True if (abs(sensor_data['zmagRAWIMU'][0] - predict_data['zmagRAWIMU_PREDICT']) - 566.2303151) > 0 else False
+    vibrationXVIBRATION_WARNING = True if (abs(sensor_data['vibrationXVIBRATION'][0] - predict_data['vibrationXVIBRATION_PREDICT']) - 4.997481432) > 0 else False
+    vibrationYVIBRATION_WARNING = True if (abs(sensor_data['vibrationYVIBRATION'][0] - predict_data['vibrationYVIBRATION_PREDICT']) - 3.934628874) > 0 else False
+    vibrationZVIBRATION_WARNING =True if (abs(sensor_data['vibrationZVIBRATION'][0] - predict_data['vibrationZVIBRATION_PREDICT']) - 9.405666076) > 0 else False
 
     warning_count = sum([
-        roll_ATTITUDE_WARNING, pitch_ATTITUDE_WARNING, yaw_ATTITUDE_WARNING,
-        xacc_RAW_IMU_WARNING, yacc_RAW_IMU_WARNING, zacc_RAW_IMU_WARNING,
-        xgyro_RAW_IMU_WARNING, ygyro_RAW_IMU_WARNING, zgyro_RAW_IMU_WARNING,
-        xmag_RAW_IMU_WARNING, ymag_RAW_IMU_WARNING, zmag_RAW_IMU_WARNING,
-        vibration_x_VIBRATION_WARNING, vibration_y_VIBRATION_WARNING, vibration_z_VIBRATION_WARNING
+        rollATTITUDE_WARNING, pitchATTITUDE_WARNING, yawATTITUDE_WARNING,
+        xaccRAWIMU_WARNING, yaccRAWIMU_WARNING, zaccRAWIMU_WARNING,
+        xgyroRAWIMU_WARNING, ygyroRAWIMU_WARNING, zgyroRAWIMU_WARNING,
+        xmagRAWIMU_WARNING, ymagRAWIMU_WARNING, zmagRAWIMU_WARNING,
+        vibrationXVIBRATION_WARNING, vibrationYVIBRATION_WARNING, vibrationZVIBRATION_WARNING
     ])
 
     warning_data = {
         'warning_count': warning_count,
-        'roll_ATTITUDE_WARNING': roll_ATTITUDE_WARNING,
-        'pitch_ATTITUDE_WARNING': pitch_ATTITUDE_WARNING,
-        'yaw_ATTITUDE_WARNING': yaw_ATTITUDE_WARNING,
-        'xacc_RAW_IMU_WARNING': xacc_RAW_IMU_WARNING,
-        'yacc_RAW_IMU_WARNING': yacc_RAW_IMU_WARNING,
-        'zacc_RAW_IMU_WARNING': zacc_RAW_IMU_WARNING,
-        'xgyro_RAW_IMU_WARNING': xgyro_RAW_IMU_WARNING,
-        'ygyro_RAW_IMU_WARNING': ygyro_RAW_IMU_WARNING,
-        'zgyro_RAW_IMU_WARNING': zgyro_RAW_IMU_WARNING,
-        'xmag_RAW_IMU_WARNING': xmag_RAW_IMU_WARNING,
-        'ymag_RAW_IMU_WARNING': ymag_RAW_IMU_WARNING,
-        'zmag_RAW_IMU_WARNING': zmag_RAW_IMU_WARNING,
-        'vibration_x_VIBRATION_WARNING': vibration_x_VIBRATION_WARNING,
-        'vibration_y_VIBRATION_WARNING': vibration_y_VIBRATION_WARNING,
-        'vibration_z_VIBRATION_WARNING': vibration_z_VIBRATION_WARNING
+        'rollATTITUDE_WARNING': rollATTITUDE_WARNING,
+        'pitchATTITUDE_WARNING': pitchATTITUDE_WARNING,
+        'yawATTITUDE_WARNING': yawATTITUDE_WARNING,
+        'xaccRAWIMU_WARNING': xaccRAWIMU_WARNING,
+        'yaccRAWIMU_WARNING': yaccRAWIMU_WARNING,
+        'zaccRAWIMU_WARNING': zaccRAWIMU_WARNING,
+        'xgyroRAWIMU_WARNING': xgyroRAWIMU_WARNING,
+        'ygyroRAWIMU_WARNING': ygyroRAWIMU_WARNING,
+        'zgyroRAWIMU_WARNING': zgyroRAWIMU_WARNING,
+        'xmagRAWIMU_WARNING': xmagRAWIMU_WARNING,
+        'ymagRAWIMU_WARNING': ymagRAWIMU_WARNING,
+        'zmagRAWIMU_WARNING': zmagRAWIMU_WARNING,
+        'vibrationXVIBRATION_WARNING': vibrationXVIBRATION_WARNING,
+        'vibrationYVIBRATION_WARNING': vibrationYVIBRATION_WARNING,
+        'vibrationZVIBRATION_WARNING': vibrationZVIBRATION_WARNING
     }
 
     return predict_data, warning_data

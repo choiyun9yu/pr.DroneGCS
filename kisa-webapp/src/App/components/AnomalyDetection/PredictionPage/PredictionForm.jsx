@@ -11,7 +11,7 @@ export const PredictionForm = (props) => {
     const [periodFromData, setPeriodFromData] = useState({});
     const [periodToData, setPeriodToData] = useState({});
 
-    const dependent_var = DataMap.dependent_var;
+    const dependent_var = DataMap.SelectData;
 
     const handleDroneIdChange = async (e) => {
         // 이벤트에서 name, value 추출
@@ -124,6 +124,10 @@ export const PredictionForm = (props) => {
                 const res = await response.json();
                 const SelectData = res['selectData'];
                 const predictPage = res['predictPage']
+                // SelectData 에는 roll_ATTITUDE 로 되어 있는데 sensorData 에 rollATTITUDE 로 저장되어 있음
+
+                console.log(SelectData)
+                console.log(predictPage)
 
                 const data = predictPage.map((obj) => ({
                     predictTime: obj['predictTime'],
