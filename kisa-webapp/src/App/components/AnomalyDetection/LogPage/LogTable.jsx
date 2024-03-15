@@ -25,6 +25,8 @@ export const LogTable = (props) => {
         return newDate.toLocaleString('en-US', options)
     }
 
+    console.log(tableObj)
+
     return (
         <div className={`flex flex-col h-full overflow-hidden mb-1 border-[#6359E9] border rounded-md justify-start items-center text-center ${ColorThema.Secondary4}`}>
             <table id="predict-table" className="flex flex-col h-full w-full overflow-auto">
@@ -76,7 +78,7 @@ export const LogTable = (props) => {
                         <TableCell key={`groundspeed_VFR_HUD-${index}`} value={item.sensorData.groundspeedVFRHUD} />
                         <TableCell key={`airspeed_VFR_HUD-${index}`} value={item.sensorData.airspeedVFRHUD} />
                         <TableCell key={`press_abs_SCALED_PRESSURE-${index}`} value={item.sensorData.pressAbsSCALEDPRESSURE} />
-                        <TableCell key={`Vservo_POWER_STATUS-${index}`} value={item.sensorData.VservoPOWERSTATUS} />
+                        <TableCell key={`Vservo_POWER_STATUS-${index}`} value={item.sensorData.vservoPOWERSTATUS} />
                         <TableCell key={`voltages1_BATTERY_STATUS-${index}`} value={item.sensorData.voltages1BATTERYSTATUS} />
                         <TableCell key={`chancount_RC_CHANNELS-${index}`} value={item.sensorData.chancountRCCHANNELS} />
                         <TableCell key={`chan12_raw_RC_CHANNELS-${index}`} value={item.sensorData.chan12RawRCCHANNELS} />

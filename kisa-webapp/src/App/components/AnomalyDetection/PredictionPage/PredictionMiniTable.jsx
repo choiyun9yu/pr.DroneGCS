@@ -78,7 +78,7 @@ export const PredictionMiniTable = (props) => {
                         <TableCell key={`groundspeed_VFR_HUD-${index}`} value={item.SensorData.groundspeedVFRHUD} />
                         <TableCell key={`airspeed_VFR_HUD-${index}`} value={item.SensorData.airspeedVFRHUD} />
                         <TableCell key={`press_abs_SCALED_PRESSURE-${index}`} value={item.SensorData.pressAbsSCALEDPRESSURE} />
-                        <TableCell key={`Vservo_POWER_STATUS-${index}`} value={item.SensorData.VservoPOWERSTATUS} />
+                        <TableCell key={`Vservo_POWER_STATUS-${index}`} value={item.SensorData.vservoPOWERSTATUS} />
                         <TableCell key={`voltages1_BATTERY_STATUS-${index}`} value={item.SensorData.voltages1BATTERYSTATUS} />
                         <TableCell key={`chancount_RC_CHANNELS-${index}`} value={item.SensorData.chancountRCCHANNELS} />
                         <TableCell key={`chan12_raw_RC_CHANNELS-${index}`} value={item.SensorData.chan12RawRCCHANNELS} />
