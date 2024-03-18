@@ -89,6 +89,7 @@ const FlightCalendar = (props) => {
 }
 
 const FlightPieChart = (props) => {
+
     const data = [
         { "name": "Drone01", "value":
                 props.flightDay && props.flightDay["1"]
@@ -103,13 +104,6 @@ const FlightPieChart = (props) => {
                     ? props.flightDay["3"].length : 0
         },
     ];
-
-    const markDrone1 = props.flightDay && props.flightDay["1"] ?
-        [...new Set(props.flightDay["1"].map(date => moment(date).format("YYYY-MM-DD")))] : [];
-    const markDrone2 = props.flightDay && props.flightDay["2"] ?
-        [...new Set(props.flightDay["2"].map(date => moment(date).format("YYYY-MM-DD")))] : [];
-    const markDrone3 = props.flightDay && props.flightDay["3"] ?
-        [...new Set(props.flightDay["3"].map(date => moment(date).format("YYYY-MM-DD")))] : [];
 
     const COLORS= ['#6359E9', '#64CFF6', '#8FE388']
     const RADIAN = Math.PI / 180;

@@ -212,15 +212,27 @@ public class DashboardApiService
             }
         }
         
-        // 결과를 저장할 List 생성하여 분단위로 저장 
+        // 모든 날짜에 대해 비행 시간을 저장 
         var res = new List<DailyFlightTime>();
-        foreach (var kvp in dailyFlightTimes)
+        for (int day = 1; day <= endDate.Day; day++)
         {
-            res.Add(new DailyFlightTime
+            if (dailyFlightTimes.ContainsKey(day))
             {
-                FlightDay = kvp.Key,
-                FlightTime = (int)kvp.Value.TotalMinutes // TimeSpan을 분 단위로 변환하여 저장 (막대 그래프에서 분단위로 표시)
-            });
+                res.Add(new DailyFlightTime
+                {
+                    FlightDay = day,
+                    FlightTime = (int)dailyFlightTimes[day].TotalMinutes // TimeSpan을 분 단위로 변환하여 저장 (막대 그래프에서 분단위로 표시)
+                });
+            }
+            else
+            {
+                // 비행 시간이 없는 경우 0으로 처리 
+                res.Add(new DailyFlightTime
+                {
+                    FlightDay = day,
+                    FlightTime = 0
+                });
+            }
         }
 
         return res;
@@ -259,10 +271,18 @@ public class DashboardApiService
         
         // 결과를 저장할 List 생성
         var res = new List<DailyAnomalyCount>();
-        foreach (var kvp in dailyAnomalyCount)
+        for (int day = 1; day <= endDate.Day; day++)
         {
-            // 결과를 List에 추가
-            res.Add(new DailyAnomalyCount { FlightDay = kvp.Key, AnomalyCount = kvp.Value+1 });
+            // 모든 날짜에 대해 이상징후 발생 횟수를 저장
+            if (dailyAnomalyCount.ContainsKey(day))
+            {
+                res.Add(new DailyAnomalyCount { FlightDay = day, AnomalyCount = dailyAnomalyCount[day] });
+            }
+            else
+            {
+                // 조회되지 않은 날짜에 대한 처리 (이상징후 발생 횟수는 0)
+                res.Add(new DailyAnomalyCount { FlightDay = day, AnomalyCount = 0 });
+            }
         }
 
         return res;

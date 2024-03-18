@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import {ColorThema} from "../ProejctThema";
-import {Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {Bar, BarChart, Brush, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 
 export const LeftPanel = (props) => {
     return (
@@ -56,11 +56,6 @@ export const LeftPanel = (props) => {
                     <div className="w-full h-full ml-4">
                         <div className={`flex flex-row items-center pt-3 pl-2`}>
                             <span>• 장애진단 현황</span>
-                            {/*<div className={`flex flex-row`}>*/}
-                            {/*    <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#6359e9]`}></div><span>Drone01</span></div>*/}
-                            {/*    <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#64cff6]`}></div><span>Drone02</span></div>*/}
-                            {/*    <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full bg-[#8fe388]`}></div><span>Drone03</span></div>*/}
-                            {/*</div>*/}
                         </div>
                         <div className={`h-full pt-5`}>
                             <PredictionChart dailyAnomalyCount={props.dailyAnomalyCount}/>
@@ -75,17 +70,20 @@ export const LeftPanel = (props) => {
 };
 
 const FlightTime = (props) => {
+    // const brushRef = useRef();
     return (
         <>
             <ResponsiveContainer width="90%" height="80%">
                 <BarChart data={props.dailyFlightTime}>
-                    <XAxis dataKey="flightDay" />
-                    <YAxis />
+                    <XAxis dataKey="flightDay" tick={{fontSize: 15}}/>
+                    <YAxis tick={{fontSize: 15}}/>
                     <Tooltip />
-                    <Bar dataKey="flightTime" fill="#00CCCC" />
+                    <Bar dataKey="flightTime" fill="#48d1cc" />
+                    {/*<Brush dataKey="flightDay" ref={brushRef}/>*/}
                 </BarChart>
             </ResponsiveContainer>
-        </>);
+        </>
+    );
 }
 
 const PredictionChart = (props) => {
@@ -93,10 +91,10 @@ const PredictionChart = (props) => {
         <>
             <ResponsiveContainer width="90%" height="80%">
                 <BarChart data={props.dailyAnomalyCount}>
-                    <XAxis dataKey="flightDay" />
-                    <YAxis />
+                    <XAxis dataKey="flightDay" tick={{fontSize: 15}} />
+                    <YAxis tick={{fontSize: 15}}/>
                     <Tooltip />
-                    <Bar dataKey="anomalyCount" fill="#FF6666" />
+                    <Bar dataKey="anomalyCount" fill="#FF6347" />
                 </BarChart>
             </ResponsiveContainer>
         </>);
