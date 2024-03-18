@@ -7,8 +7,8 @@ import {ColorThema} from "../ProejctThema";
 import 'react-calendar/dist/Calendar.css';
 import './Calendar.css';
 
-
-export const MiddlePanel = () => {
+export const MiddlePanel = (props) => {
+    // console.log(props.flightDay)
     return (
         <div className={`flex-col w-[20%] h-full mr-5 `}>
 
@@ -17,7 +17,7 @@ export const MiddlePanel = () => {
                     <div className="w-full mt-1 ml-4 items-center">
                         <div className={`pt-3 pl-2`}>• 비행 일지</div>
                         <div className={`w-full h-full `}>
-                            <FlightCalendar/>
+                            <FlightCalendar flightDay={props.flightDay} value={props.value}/>
                         </div>
                     </div>
 
@@ -28,7 +28,7 @@ export const MiddlePanel = () => {
                 <div className="w-full mt-1 ml-4 items-center">
                     <div className={`pt-3 pl-2`}>• 비행 비율</div>
                     <div className={`w-full h-[80%]`}>
-                        <FlightPieChart/>
+                        <FlightPieChart flightDay={props.flightDay}/>
                     </div>
                 </div>
             </div>
@@ -37,36 +37,23 @@ export const MiddlePanel = () => {
     );
 };
 
-const FlightCalendar = () => {
-    const [value, setValue] = useState(new Date());
-    // const [currentYear, setCurrentYear] = useState(value.getFullYear);
-    const [currentMonth, setCurrentMont] = useState(value.getMonth + 1);
+const FlightCalendar = (props) => {
 
-    const onChange = (newValue) => {
-        setValue(newValue);
-        // setCurrentYear(newValue.getFullYear);
-        setCurrentMont(newValue.getMonth() + 1);
-    }
-
-    useEffect(() => {
-        // console.log(currentYear)
-        // console.log(currentMonth)
-    }, [currentMonth])
-
-    const markDrone1 = ["2023-10-01", "2023-10-04", "2023-10-10"];
-    const markDrone2 = ["2023-10-03", "2023-10-04", "2023-10-15"];
-    const markDrone3 = ["2023-10-05", "2023-10-04", "2023-10-20"];
+    const markDrone1 = props.flightDay && props.flightDay["1"] ?
+        [...new Set(props.flightDay["1"].map(date => moment(date).format("YYYY-MM-DD")))] : [];
+    const markDrone2 = props.flightDay && props.flightDay["2"] ?
+        [...new Set(props.flightDay["2"].map(date => moment(date).format("YYYY-MM-DD")))] : [];
+    const markDrone3 = props.flightDay && props.flightDay["3"] ?
+        [...new Set(props.flightDay["3"].map(date => moment(date).format("YYYY-MM-DD")))] : [];
 
     return(
         <div id={`calendar-container`} className={`font-normal text-sm`}>
             <Calendar
-                onChange={onChange}
                 formatDay={(locale, date) => moment(date).format("DD")}
-                value={value}
+                value={props.value}
                 showNeighboringMonth={false}
                 tileContent={({ date }) => {
                     const markerPositions = [];
-
                     markDrone1.forEach((dateStr) => {
                         if (dateStr === moment(date).format("YYYY-MM-DD")) {
                             markerPositions.push({ color: "#6359E9" });
@@ -101,23 +88,39 @@ const FlightCalendar = () => {
     );
 }
 
-const FlightPieChart = () => {
+const FlightPieChart = (props) => {
     const data = [
-        { "name": "Drone01", "value": 638 },
-        { "name": "Drone02", "value": 248 },
-        { "name": "Drone03", "value": 248 },
+        { "name": "Drone01", "value":
+                props.flightDay && props.flightDay["1"]
+                    ? props.flightDay["1"].length : 0
+        },
+        { "name": "Drone02", "value":
+                props.flightDay && props.flightDay["2"]
+                    ? props.flightDay["2"].length : 0
+        },
+        { "name": "Drone03", "value":
+                props.flightDay && props.flightDay["3"]
+                    ? props.flightDay["3"].length : 0
+        },
     ];
+
+    const markDrone1 = props.flightDay && props.flightDay["1"] ?
+        [...new Set(props.flightDay["1"].map(date => moment(date).format("YYYY-MM-DD")))] : [];
+    const markDrone2 = props.flightDay && props.flightDay["2"] ?
+        [...new Set(props.flightDay["2"].map(date => moment(date).format("YYYY-MM-DD")))] : [];
+    const markDrone3 = props.flightDay && props.flightDay["3"] ?
+        [...new Set(props.flightDay["3"].map(date => moment(date).format("YYYY-MM-DD")))] : [];
 
     const COLORS= ['#6359E9', '#64CFF6', '#8FE388']
     const RADIAN = Math.PI / 180;
 
     const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+        const radius = innerRadius + (outerRadius - innerRadius) * 0.28;
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
         return (
-            <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+            <text className={`flex text-sm`} x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
                 {`${(percent * 100).toFixed(0)}%`}
             </text>
         );
@@ -133,7 +136,7 @@ const FlightPieChart = () => {
                         cy="50%"
                         labelLine={false}
                         label={renderCustomizedLabel}
-                        innerRadius={80} outerRadius={120}
+                        innerRadius={70} outerRadius={120}
                         fill="#8884d8"
                         dataKey="value">
                         {data.map((entry, index) => (

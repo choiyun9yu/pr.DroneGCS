@@ -42,7 +42,7 @@ public class DashboardApiService
         }
     }
 
-    public TimeSpan GetFlightTime(int year, int month)
+    public string GetFlightTime(int year, int month)
     {
         try
         {
@@ -66,7 +66,9 @@ public class DashboardApiService
                 }
             }
 
-            return totalFlightTime;
+            string totlaFlightTimeString = totalFlightTime.ToString("hh\\:mm\\:ss");
+            
+            return totlaFlightTimeString;
         }
         catch (Exception ex)
         {
@@ -174,49 +176,128 @@ public class DashboardApiService
     {
         var startDate = new DateTime(year, month, 1);
         var endDate = startDate.AddMonths(1).AddDays(-1);
-
-        var filter = Builders<Dashboard>.Filter.And(
+    
+        // MongoDB 에서 조회할 필터 정의 
+        FilterDefinition<Dashboard> filter = Builders<Dashboard>.Filter.And(
             Builders<Dashboard>.Filter.Gte("_id", startDate),
             Builders<Dashboard>.Filter.Lte("_id", endDate)
         );
 
-        var projection = Builders<Dashboard>.Projection.Include(d => d._id).Include(d => d.FlightTime);
-
-        var result = _dashboard.Aggregate()
-            .Match(filter)
-            .Project<Dashboard>(projection)
-            .ToList();
-
-        var flightTimeSummary = new List<DailyFlightTime>();
-
-        foreach (var doc in result)
+        // 조회할 필드 지정 
+        var projection = Builders<Dashboard>.Projection.Include(x => x._id).Include(x => x.FlightTime);
+        
+        // 데이터 조회 
+        var cursor = _dashboard.Find(filter).Project<Dashboard>(projection).ToList();
+        
+        // 각 날짜별 비행 시간을 저장할 Dictionary 생성 
+        Dictionary<int, TimeSpan> dailyFlightTimes = new Dictionary<int, TimeSpan>();
+        foreach (var flight in cursor)
         {
-            var date = doc._id.Date;
-            var flightTime = doc.FlightTime;
+            // 비행 날짜 추출 
+            DateTime date = flight._id.ToUniversalTime().Date;
+            TimeSpan parsedTimeSpan;
 
-            var existingSummary = flightTimeSummary.Find(summary => summary.Date == date);
-            if (existingSummary != null)
+            // 비행 시간을 TimeSpan으로 파싱하여 처리 
+            if (TimeSpan.TryParse(flight.FlightTime, out parsedTimeSpan))
             {
-                existingSummary.FlightTime += flightTime;
-            }
-            else
-            {
-                flightTimeSummary.Add(new DailyFlightTime { Date = date, FlightTime = flightTime });
+                // Drionary 에 날짜별 비행 시간 누적 
+                if (dailyFlightTimes.ContainsKey(date.Day))
+                {
+                    dailyFlightTimes[date.Day] += parsedTimeSpan;
+                }
+                else
+                {
+                    dailyFlightTimes[date.Day] = parsedTimeSpan;
+                }
             }
         }
+        
+        // 결과를 저장할 List 생성하여 분단위로 저장 
+        var res = new List<DailyFlightTime>();
+        foreach (var kvp in dailyFlightTimes)
+        {
+            res.Add(new DailyFlightTime
+            {
+                FlightDay = kvp.Key,
+                FlightTime = (int)kvp.Value.TotalMinutes // TimeSpan을 분 단위로 변환하여 저장 (막대 그래프에서 분단위로 표시)
+            });
+        }
 
-        return flightTimeSummary;
+        return res;
     }
     
-    public void GetDailyAnomalyCount(int year, int month)
+    public List<DailyAnomalyCount> GetDailyAnomalyCount(int year, int month)
     {
         var startDate = new DateTime(year, month, 1);
         var endDate = startDate.AddMonths(1).AddDays(-1);
-        
-        FilterDefinition<AnomalyDetection> filter = Builders<AnomalyDetection>.Filter.And(
-            Builders<AnomalyDetection>.Filter.Gte("PredictTime", startDate),
-            Builders<AnomalyDetection>.Filter.Lte("PredictTime", endDate)
+
+        var filter = Builders<AnomalyDetection>.Filter.And(
+            Builders<AnomalyDetection>.Filter.Gte(x => x.PredictTime, startDate),
+            Builders<AnomalyDetection>.Filter.Lte(x => x.PredictTime, endDate),
+            Builders<AnomalyDetection>.Filter.Gte(x => x.WarningData.warning_count, 10)
         );
+
+        var projection = Builders<AnomalyDetection>.Projection.Include(x => x.PredictTime).Include(x => x.WarningData.warning_count);
+        var cursor = _prediction.Find(filter).Project<AnomalyDetection>(projection).ToList();
+
+        Dictionary<int, int> dailyAnomalyCount = new Dictionary<int, int>();
+        foreach (var log in cursor)
+        {
+            DateTime date = log.PredictTime.ToUniversalTime().Date;
+            var count = log.WarningData.warning_count >= 10;
+
+            if (dailyAnomalyCount.ContainsKey(date.Day) && count)
+            {
+                dailyAnomalyCount[date.Day]++;
+            }
+            else
+            {
+                dailyAnomalyCount[date.Day] = 0;
+            }
+
+        }
+        
+        // 결과를 저장할 List 생성
+        var res = new List<DailyAnomalyCount>();
+        foreach (var kvp in dailyAnomalyCount)
+        {
+            // 결과를 List에 추가
+            res.Add(new DailyAnomalyCount { FlightDay = kvp.Key, AnomalyCount = kvp.Value+1 });
+        }
+
+        return res;
+    }
+
+    public Dictionary<string, List<DateTime>> GetDroneFlightDay(int year, int month)
+    {
+        var startDate = new DateTime(year, month, 1);
+        var endDate = startDate.AddMonths(1).AddDays(-1);
+
+        var filter = Builders<Dashboard>.Filter.And(
+            Builders<Dashboard>.Filter.Gte(x => x._id, startDate),
+            Builders<Dashboard>.Filter.Lte(x => x._id, endDate)
+        );
+
+        var projection = Builders<Dashboard>.Projection.Expression(x => new { x.DroneId, x._id });
+
+        var result = _dashboard.Find(filter).Project(projection).ToList();
+
+        var flightTimesByDroneId = new Dictionary<string, List<DateTime>>();
+
+        foreach (var item in result)
+        {
+            string droneId = item.DroneId;
+            DateTime flightTime = item._id.Date;
+
+            if (!flightTimesByDroneId.ContainsKey(droneId))
+            {
+                flightTimesByDroneId[droneId] = new List<DateTime>();
+            }
+
+            flightTimesByDroneId[droneId].Add(flightTime);
+        }
+
+        return flightTimesByDroneId;
     }
 
 }

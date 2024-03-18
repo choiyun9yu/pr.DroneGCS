@@ -3,7 +3,7 @@ namespace kisa_gcs_system.Models;
 public class AnomalyDetection
 {
     [BsonId]
-    [BsonRepresentation(BsonType.String)] // MongoDB의 ObjectId를 문자열로 표현
+    [BsonRepresentation(BsonType.ObjectId)] // MongoDB의 ObjectId를 문자열로 표현
     public string? _id { get; set; }
     public DateTime PredictTime { get; set; }
     public string? DroneId { get; set; }

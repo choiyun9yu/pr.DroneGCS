@@ -38,14 +38,13 @@ public class ApiController : ControllerBase
         try
         {
             long flightCount = _dashboardService.GetFlightCount(year, month);
-            TimeSpan flightTime = _dashboardService.GetFlightTime(year, month);
+            string flightTime = _dashboardService.GetFlightTime(year, month);
             double? fligthDistance = _dashboardService.GetFlightDistance(year, month);
             long logCount = _dashboardService.GetLogCount(year, month);
             long anomlayCount = _dashboardService.GetAnomlayCount(year, month);
-            _dashboardService.GetDailyFlightTime(year, month);
-            DailyFlightTime dailyFlightTime = new();
-            DailyAnomalyCount dailyAnomalyCount = new();
-            FlightRate flightRate = new();
+            List<DailyFlightTime> dailyFlightTime = _dashboardService.GetDailyFlightTime(year, month);
+            List<DailyAnomalyCount> dailyAnomalyCount = _dashboardService.GetDailyAnomalyCount(year, month);
+            Dictionary<string, List<DateTime>> flightDay = _dashboardService.GetDroneFlightDay(year, month);
             return Ok(new
             {
                 flightCount,
@@ -55,7 +54,7 @@ public class ApiController : ControllerBase
                 anomlayCount,
                 dailyFlightTime,
                 dailyAnomalyCount,
-                flightRate,
+                flightDay,
             });
         }
         catch (Exception e)

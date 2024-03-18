@@ -5,7 +5,7 @@ export const RightPanel = () => {
     return (
         <div className={`flex-col w-[40%] h-full overflow-hidden rounded-2xl ${ColorThema.Secondary4}`}>
             <div className="w-full mt-1 ml-4 items-center">
-                <div className={`pt-3 pl-2`}>• 비행 히트맵</div>
+                <div className={`pt-3 pl-2`}>• 비행 지도</div>
             </div>
             <SVGMAP/>
         </div>

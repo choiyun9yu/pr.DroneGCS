@@ -4,7 +4,6 @@ public class Dashboard
 {        
     public DateTime _id;
     public string DroneId;
-    public int FlightDay;
     public string? FlightTime;
     public DroneLocation? StartPoint;
     public List<DroneLocation>? TransitPoints;

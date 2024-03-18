@@ -375,7 +375,6 @@ public class DroneControlService : IDroneControlService
         {
             _id = currentTime,
             DroneId = droneId,
-            FlightDay = currentTime.Day,
             FlightTime = (currentTime - _droneStateMap[droneId].DroneMission.StartTime).ToString(),
             StartPoint = _droneStateMap[droneId].DroneMission.StartPoint,
             LandPoint = new DroneLocation
