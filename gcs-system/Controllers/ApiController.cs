@@ -14,20 +14,20 @@ public class ApiController : ControllerBase
     private readonly AnomalyDetectionApiService _anomalyDetectionApiService;
     private readonly GcsApiService _gcsApiService;
     private readonly DashboardApiService _dashboardService;
-    private readonly DroneControlService _droneControlService;
+    private readonly ArduCopterControl _arduCopterControl;
 
     public ApiController(
         AnomalyDetectionApiService anomalyDetectionApiService, 
         GcsApiService gcsApiService, 
         DashboardApiService dashboardApiService, 
-        DroneControlService droneControlService
+        ArduCopterControl arduCopterControl
         )  
     {
         _anomalyDetectionApiService = anomalyDetectionApiService;
         _gcsApiService = gcsApiService;
         _dashboardService = dashboardApiService;
         
-        _droneControlService = droneControlService;
+        _arduCopterControl = arduCopterControl;
     }
 
     [HttpPost("dashboard")]
@@ -267,7 +267,7 @@ public class ApiController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            // Console.WriteLine(e);
             return StatusCode(500, "Post Get Flight Id List Api Server Error");
         }
     }

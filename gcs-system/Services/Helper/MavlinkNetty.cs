@@ -11,7 +11,7 @@ public class MavlinkUdpNetty
   private readonly Bootstrap _bootstrap;    
   private IChannel? _bootstrapChannel; 
   
-  public MavlinkUdpNetty(DroneControlService droneControlService)
+  public MavlinkUdpNetty(ArduCopterControl arduCopterControl)
   {
       
     _bootstrap = new Bootstrap();   
@@ -26,7 +26,7 @@ public class MavlinkUdpNetty
         {
           var pipeline = channel.Pipeline; 
           pipeline.AddFirst("Mavlink Decoder", new MavlinkUdpDecoder());
-          pipeline.AddLast("Mavlink Handler", new MavlinkHandler(droneControlService));
+          pipeline.AddLast("Mavlink Handler", new MavlinkHandler(arduCopterControl));
           pipeline.AddLast("Mavlink Encoder", new MavlinkEncoder());
         }
       ));

@@ -1,4 +1,4 @@
-using gcs_system.Models.Helper;
+using gcs_system.Interfaces.Helper;
 using KisaGcsSystem.Services;
 
 namespace gcs_system.Interfaces;
@@ -56,7 +56,7 @@ public class DroneStt
     public string? HoverStt = "";
     public double? HDOP = 0.0;
     public byte? SatellitesCount = 0;
-    public FlightMode FlightMode = 0;
+    public FlightMode FlightMode = FlightMode.LAND;
 }
 
 public class DroneMission

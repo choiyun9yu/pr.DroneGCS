@@ -129,7 +129,7 @@ const FlightBtn = (props) => {
       </button>
 
       {/* top btn */}
-      <div className={'flex h-[30px] z-10 ml-[200px] mt-[10px]'}>
+      <div className={'flex h-[30px] z-10 ml-[75px] mt-[10px]'}>
         {droneMessage && droneMessage.DroneStt.FlightMode === 3
           ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'}>Auto</button>
           : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'} onClick={() => handleDroneFlightMode(3)}>Auto</ControlButton>
@@ -138,18 +138,18 @@ const FlightBtn = (props) => {
           ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'} >Stabilize</button>
           : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white'} onClick={() => handleDroneFlightMode(0)}>Stabilize</ControlButton>
         }
-        {droneMessage && droneMessage.DroneStt.FlightMode === 5
-          ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'}>Loiter</button>
-          : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white'} onClick={() => handleDroneFlightMode(5)}>Loiter</ControlButton>
-        }
-        {droneMessage && droneMessage.DroneStt.FlightMode === 16
-          ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'}>PosHold</button>
-          : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white'} onClick={() => handleDroneFlightMode(16)}>PosHold</ControlButton>
-        }
-        {droneMessage && droneMessage.DroneStt.FlightMode === 2
-          ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'}>AltHold</button>
-          : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white'} onClick={() => handleDroneFlightMode(2)}>AltHold</ControlButton>
-        }
+        {/*{droneMessage && droneMessage.DroneStt.FlightMode === 5*/}
+        {/*  ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'}>Loiter</button>*/}
+        {/*  : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white'} onClick={() => handleDroneFlightMode(5)}>Loiter</ControlButton>*/}
+        {/*}*/}
+        {/*{droneMessage && droneMessage.DroneStt.FlightMode === 16*/}
+        {/*  ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'}>PosHold</button>*/}
+        {/*  : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white'} onClick={() => handleDroneFlightMode(16)}>PosHold</ControlButton>*/}
+        {/*}*/}
+        {/*{droneMessage && droneMessage.DroneStt.FlightMode === 2*/}
+        {/*  ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'}>AltHold</button>*/}
+        {/*  : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white'} onClick={() => handleDroneFlightMode(2)}>AltHold</ControlButton>*/}
+        {/*}*/}
         {droneMessage && droneMessage.DroneStt.FlightMode === 4
           ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'}>Guided</button>
           : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white'} onClick={() => handleDroneFlightMode(4)}>Guided</ControlButton>
@@ -166,8 +166,6 @@ const FlightBtn = (props) => {
           ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'}>RTL</button>
           : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white'} onClick={() => handleDroneFlightMode(6)}>RTL</ControlButton>
         }
-
-
       </div>
 
       {/* left btn */}
@@ -337,13 +335,7 @@ const MainController = (props) => {
     handleDroneMovetoTarget()
   }
 
-  const handleArmBtn = () => {
-    handleDroneFlightMode(4)
-    handleDroneFlightCommand(0)
-  }
-
   const handleReturnBtn = () => {
-    handleDroneFlightMode(4)
     handleDroneMovetoBase()
     props.toggleIsRtl()
     props.handleReturnPoint()
@@ -353,7 +345,7 @@ const MainController = (props) => {
     <div id='main-controller'
       className={'absolute flex justify-center overflow-hidden bottom-0 h-[220px] text-[#AEABD8]'}>
       <div className={'flex flex-col mt-0.5 mx-2'}>
-        <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={handleArmBtn}>Arm</ControlButton>
+        <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleDroneFlightCommand(0)}>Arm</ControlButton>
         <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleDroneFlightCommand(2)}>Take Off</ControlButton>
         <ControlButton className={'w-20 h-10 mb-10 rounded-xl'} onClick={() => handleDroneFlightCommand(3)}>Land</ControlButton>
         <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleDroneFlightCommand(1)}>Dis-Arm</ControlButton>

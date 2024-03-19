@@ -59,7 +59,7 @@ public class AnomalyDetectionApiService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
+            // _logger.LogError(ex, "Error: Can not fetching data from MongoDB.");
             throw;
         }
     }

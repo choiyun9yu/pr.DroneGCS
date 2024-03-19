@@ -2,7 +2,7 @@ using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace gcs_system.Models.Helper;
+namespace gcs_system.Services.Helper;
 
 // Google Maps API에서 반환된 고도 및 위치 정보를 나타내는 클래스 
 public class GoogleWaypoint

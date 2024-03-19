@@ -3,11 +3,10 @@ using gcs_system.MAVSDK;
 
 namespace gcs_system.Services.Helper;
 
-public class MavlinkHandler(DroneControlService droneControlService) : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage>
+public class MavlinkHandler(ArduCopterControl arduCopterControl) : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage>
 {
     private IChannelHandlerContext? _context;
-
-    // 네트워크 채널이 활성화 될 때 호출되는 메서드 
+    
     public override void ChannelActive(IChannelHandlerContext ctx)
     {
         try
@@ -29,10 +28,9 @@ public class MavlinkHandler(DroneControlService droneControlService) : SimpleCha
     protected override async void ChannelRead0(IChannelHandlerContext ctx, MAVLink.MAVLinkMessage msg)
     {
         _context = ctx;
-        await droneControlService.HandleMavlinkMessage(ctx, msg);
+        await arduCopterControl.HandleMavlinkMessage(ctx, msg);
     }
     
-    // 네트워크 채널이 비활성화 될 때 호출되는 메서드
     public override void ChannelInactive(IChannelHandlerContext ctx)
     {
         Console.WriteLine("Channel Inactive triggered.");

@@ -11,16 +11,16 @@ using MongoDB.Driver;
 using Newtonsoft.Json;
 
 using gcs_system.Interfaces;
+using gcs_system.Interfaces.Helper;
 using gcs_system.MAVSDK;
 using gcs_system.Models;
-using gcs_system.Models.Helper;
 using gcs_system.Services.Helper;
 
 namespace gcs_system.Services;
 
-public class DroneControlService : Hub<IDroneControl>
+public class ArduCopterControl : Hub<IDroneControl>
 {
-    private readonly IHubContext<DroneControlService> _hubContext;
+    private readonly IHubContext<ArduCopterControl> _hubContext;
     private IChannelHandlerContext? _context;
     
     private Dictionary<string, DroneState> _droneStateMap = new();
@@ -39,14 +39,14 @@ public class DroneControlService : Hub<IDroneControl>
 
     private VincentyCalculator _vincentyCalculator = new();
     
-    private static int ThrottleIncrement = 300;
-    private static int yawIncrement = 50;
+    private static readonly int THROTTLE_INCREMENT = 300;
+    private static readonly int YAW_INCREMENT = 50;
     
-    public DroneControlService(IConfiguration configuration, IHubContext<DroneControlService> hubContext, GcsApiService gcsApiService, GrpcChannel channel) // 여기서 gRPC Channel 을 사용하기 위해서는 GrpcChannel을 DI 컨테이너에 등록해야한다.
+    public ArduCopterControl(IConfiguration configuration, IHubContext<ArduCopterControl> hubContext, GcsApiService gcsApiService, GrpcChannel grpcChannel)
     {
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
 
-        _grpcUpdateService = new DroneStatusUpdate.DroneStatusUpdateClient(channel);
+        _grpcUpdateService = new DroneStatusUpdate.DroneStatusUpdateClient(grpcChannel);
         
         _gcsApiService = gcsApiService;
         
@@ -56,17 +56,14 @@ public class DroneControlService : Hub<IDroneControl>
         _dashboard = database.GetCollection<Dashboard>("dashboard_info");
     }
     
-    // 드론 목록 내보내기
     public async Task GetDroneList()
     {
         string[] droneids = _droneStateMap.Keys.ToArray();
         string json = JsonConvert.SerializeObject(droneids);
-        // Console.WriteLine(json);
         await _hubContext.Clients.All.SendAsync("droneList", json);
     }
     
-    // 드론 선택하기
-    public async Task SelectDrone(string selectedDroneId)
+    public void SelectDrone(string selectedDroneId)
     {
         try
         {
@@ -81,8 +78,7 @@ public class DroneControlService : Hub<IDroneControl>
             Console.WriteLine(e);
         }
     }
-
-    // 드론 상태 정보 내보내기 
+    
     public async Task HandleMavlinkMessage(IChannelHandlerContext ctx, MAVLink.MAVLinkMessage msg)
     {
         _context = ctx; 
@@ -126,16 +122,6 @@ public class DroneControlService : Hub<IDroneControl>
 
     }
     
-    // IChannelHandlerContext에서 엔드포인트 정보를 가져오는 메서드, IPEndPoint 클래스는 IP 주소와 포트 번호를 나타낸다. 주로 소켓 프로그래밍에서 사용되며 특히 TCP 또는 UDP 통신에서 호스트와 포트를 식별하는데 유용하다.   
-    private IPEndPoint GetChannelEndpoint(IChannelHandlerContext ctx)
-    {
-        // 현재 채널의 원격 주소를 IPEndPoint로 캐스팅해서 정보 가져오기
-        var contextEp = (IPEndPoint)ctx.Channel.RemoteAddress;
-        
-        // 채널의 속성에서 "SenderAddress" 라는 키로 저장된 IPEndPoint 정보 가져오기
-        return contextEp ?? ctx.Channel.GetAttribute(AttributeKey<IPEndPoint>.ValueOf("SenderAddress")).Get()!;
-    }
-    
     private void UpdateDroneAddress(IChannelHandlerContext ctx)
     {
         var senderEp = GetChannelEndpoint(ctx);
@@ -155,9 +141,19 @@ public class DroneControlService : Hub<IDroneControl>
         }
     }
     
+    // IChannelHandlerContext에서 엔드포인트 정보를 가져오는 메서드, IPEndPoint 클래스는 IP 주소와 포트 번호를 나타낸다. 주로 소켓 프로그래밍에서 사용되며 특히 TCP 또는 UDP 통신에서 호스트와 포트를 식별하는데 유용하다.   
+    private IPEndPoint GetChannelEndpoint(IChannelHandlerContext ctx)
+    {
+        // 현재 채널의 원격 주소를 IPEndPoint로 캐스팅해서 정보 가져오기
+        var contextEp = (IPEndPoint)ctx.Channel.RemoteAddress;
+        
+        // 채널의 속성에서 "SenderAddress" 라는 키로 저장된 IPEndPoint 정보 가져오기
+        return contextEp ?? ctx.Channel.GetAttribute(AttributeKey<IPEndPoint>.ValueOf("SenderAddress")).Get()!;
+    }
+    
     public void UpdateDroneLogger(string text)
     {
-        _droneInstance.DroneStt.DroneLogger.Add(
+        _droneInstance.DroneStt?.DroneLogger.Add(
             new MavlinkLog()
             {
                 logtime = DateTime.Now,
@@ -259,6 +255,19 @@ public class DroneControlService : Hub<IDroneControl>
     // 비행 모드 변경 메소드 (Auto ~ RTL)
     public async Task HandleDroneFlightMode(FlightMode flightMode)
     {
+        if (flightMode == FlightMode.AUTO
+            || flightMode == FlightMode.GUIDED
+            || flightMode == FlightMode.LAND
+            || flightMode == FlightMode.RTL)
+        {
+            _droneInstance.ControlStt = "auto";
+        }
+        if (flightMode == FlightMode.STABILIZE || flightMode == FlightMode.BRAKE)
+        {
+            _droneInstance.ControlStt = "manual";
+        }
+        
+        
         // MAVLink 프로토콜에서 사용되는 메시지 및 명령 생성
         var commandBody = new MAVLink.mavlink_set_mode_t()
         { 
@@ -275,8 +284,7 @@ public class DroneControlService : Hub<IDroneControl>
         // 생성된 MAVLink 메시지를 이용하여 드론에 비행 모드 변경 명령을 비동기적으로 전송 
         await SendCommandAsync(msg);
      }
-
-    // TODO: 
+    
     // 비행 명령 메소드 (Arm ~ Land)
     public async Task HandleDroneFlightCommand(FlightCommand flightCommand)
     {
@@ -407,7 +415,7 @@ public class DroneControlService : Hub<IDroneControl>
         }
     }
     
-    public async Task HandleDroneStartMarking(double lat, double lng)
+    public void HandleDroneStartMarking(double lat, double lng)
     {
         _droneInstance.DroneMission.StartPoint = new DroneLocation{
             lat = lat,
@@ -415,7 +423,7 @@ public class DroneControlService : Hub<IDroneControl>
         };
     }
 
-    public async Task HandleDroneTargetMarking(double lat, double lng)
+    public void HandleDroneTargetMarking(double lat, double lng)
     {
         _droneInstance.DroneMission.TargetPoint = new DroneLocation
         {
@@ -427,7 +435,7 @@ public class DroneControlService : Hub<IDroneControl>
             _droneInstance.DroneMission.StartPoint.lat, _droneInstance.DroneMission.StartPoint.lng, lat, lng);
     }
 
-    public async Task HandleDroneTransitMarking(object transitList)
+    public void HandleDroneTransitMarking(object transitList)
     {
         if (transitList is JsonElement jsonElement)
         {
@@ -470,12 +478,12 @@ public class DroneControlService : Hub<IDroneControl>
         return location;
     }
 
-    public async Task HandleMissionAlt(short missionalt)
+    public void HandleMissionAlt(short missionalt)
     {
         _droneInstance.DroneMission.MissionAlt = missionalt;
     }
     
-    public async Task sendMission(double lat, double lng, float alt)
+    public async Task CreateMission(double lat, double lng, float alt)
     {
         /*
          * mavlink_mission_item_t 는 자동 비행 임무 또는 미션을 정의하는데 사용된다.
@@ -555,7 +563,6 @@ public class DroneControlService : Hub<IDroneControl>
         await SendCommandAsync(msg);
     }
     
-    // TODO:
     // 드론
     public async Task HandleDroneJoystick(ArrowButton arrow)
     {
@@ -569,7 +576,7 @@ public class DroneControlService : Hub<IDroneControl>
                     target_system = byte.Parse(_selectedDrone),
                     chan1_raw = 1500,
                     chan2_raw = 1500,
-                    chan3_raw = (ushort)(1500 + ThrottleIncrement),
+                    chan3_raw = (ushort)(1500 + THROTTLE_INCREMENT),
                     chan4_raw = 1500,
                 };
                 break;
@@ -579,7 +586,7 @@ public class DroneControlService : Hub<IDroneControl>
                     target_system = byte.Parse(_selectedDrone),
                     chan1_raw = 1500,
                     chan2_raw = 1500,
-                    chan3_raw = (ushort)(1500 - ThrottleIncrement),
+                    chan3_raw = (ushort)(1500 - THROTTLE_INCREMENT),
                     chan4_raw = 1500
                 };
                 break;
@@ -590,7 +597,7 @@ public class DroneControlService : Hub<IDroneControl>
                     chan1_raw = 1500,
                     chan2_raw = 1500,
                     chan3_raw = 1500,
-                    chan4_raw = (ushort)(1500 - yawIncrement),
+                    chan4_raw = (ushort)(1500 - YAW_INCREMENT),
                 };
                 break;
             case ArrowButton.RIGHT: 
@@ -600,7 +607,7 @@ public class DroneControlService : Hub<IDroneControl>
                     chan1_raw = 1500,
                     chan2_raw = 1500,
                     chan3_raw = 1500,
-                    chan4_raw = (ushort)(1500 + yawIncrement),
+                    chan4_raw = (ushort)(1500 + YAW_INCREMENT),
                 };
                 break;
             default:
@@ -611,8 +618,7 @@ public class DroneControlService : Hub<IDroneControl>
                     MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_OVERRIDE, commandBody));
         await SendCommandAsync(msg);
     }
-
-    // TODO:
+    
     // 제어 
     public async Task HandleControlJoystick(ArrowButton arrow)
     {
@@ -624,7 +630,7 @@ public class DroneControlService : Hub<IDroneControl>
                 {
                     target_system = byte.Parse(_selectedDrone),
                     chan1_raw = 1500,
-                    chan2_raw = (ushort)(1500 - ThrottleIncrement),
+                    chan2_raw = (ushort)(1500 - THROTTLE_INCREMENT),
                     chan3_raw = 1500,
                     chan4_raw = 1500
                 };
@@ -634,7 +640,7 @@ public class DroneControlService : Hub<IDroneControl>
                 {
                     target_system = byte.Parse(_selectedDrone),
                     chan1_raw = 1500,
-                    chan2_raw = (ushort)(1500 + ThrottleIncrement),
+                    chan2_raw = (ushort)(1500 + THROTTLE_INCREMENT),
                     chan3_raw = 1500,
                     chan4_raw = 1500
                 };
@@ -643,7 +649,7 @@ public class DroneControlService : Hub<IDroneControl>
                 commandBody = new MAVLink.mavlink_rc_channels_override_t()
                 {
                     target_system = byte.Parse(_selectedDrone),
-                    chan1_raw = (ushort)(1500 - ThrottleIncrement),
+                    chan1_raw = (ushort)(1500 - THROTTLE_INCREMENT),
                     chan2_raw = 1500,
                     chan3_raw = 1500,
                     chan4_raw = 1500,
@@ -653,7 +659,7 @@ public class DroneControlService : Hub<IDroneControl>
                 commandBody = new MAVLink.mavlink_rc_channels_override_t()
                 {
                     target_system = byte.Parse(_selectedDrone),
-                    chan1_raw = (ushort)(1500 + ThrottleIncrement),
+                    chan1_raw = (ushort)(1500 + THROTTLE_INCREMENT),
                     chan2_raw = 1500,
                     chan3_raw = 1500,
                     chan4_raw = 1500,
