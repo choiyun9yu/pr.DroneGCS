@@ -49,7 +49,7 @@ services:
     container_name: react
     build:
       dockerfile: Dockerfile
-      context: ./kisa-webapp
+      context: web-app
     network_mode: host
     depends_on:
       - dashboard-system

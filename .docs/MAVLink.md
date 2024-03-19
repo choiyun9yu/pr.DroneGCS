@@ -1,5 +1,5 @@
 # MAVLink
-![img.png](../kisa-gcs-system/data/img.png)
+![img.png](../gcs-system/data/img.png)
 
 MAVLink는 직렬 통신으로 무인이동장치와 GCS간의 데이터와 명령을 송수신하는데 사용되는 경량 메시지 프로토콜이다. 이 메시지는 XML파일로 정의되는데 특정 MAVLink 시스템이 지원하는 이런 XML 파일 메시지를 dialect라고도 한다.
 
@@ -33,7 +33,7 @@ MAVLink를 설치하였다면 MAVLink Generator를 사용해서 MAVLink 라이�
 ## 3.MAVLink Protocol
 
 ### 3-1. Frame 
-![img2.png](../kisa-gcs-system/data/img2.png)
+![img2.png](../gcs-system/data/img2.png)
 [ref](https://kimdictor.kr/post/embedded/mavlink/)
 - STX: 0xFD로 고정된 패킷 시작 마커
 - LEN: "PAYLOAD" 부분의 기링

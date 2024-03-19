@@ -6,7 +6,7 @@
     % docker-compose up
 
 ## Front-end
-### [kisa-webapp: React.js](kisa-webapp/README.md)
+### [kisa-webapp: React.js](web-app/README.md)
 
 ## Back-end 
 ### [kisa-dashboard-service: Flask(Python)](.trash/kisa-dashboard-system/README.md)
