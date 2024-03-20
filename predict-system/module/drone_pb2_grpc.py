@@ -2,8 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from generation import drone_pb2 as drone__pb2
-
+from module import drone_pb2 as drone__pb2
 
 class DroneStatusUpdateStub(object):
     """Missing associated documentation comment in .proto file."""

@@ -4,8 +4,7 @@ import logging
 import grpc
 from google.protobuf.json_format import MessageToDict
 
-from generation import drone_pb2
-from module import ml_helper, mongodb_helper, drone_pb2_grpc
+from module import ml_helper, mongodb_helper, drone_pb2, drone_pb2_grpc
 
 # python -m grpc_tools.protoc -I=./protos --python_out=./generation --pyi_out=./generation --grpc_python_out=./generation ./protos/drone.proto
 

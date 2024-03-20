@@ -5,9 +5,6 @@
     % cd /pr.DroneSytem
     % docker-compose up
 
-
-<hr>
-
 ## 1. Overview
 With the advancement of drone technology today, there is a growing effort to utilize drones in various fields. However, due to the high level of difficulty in operating drones and safety concerns, they have not been adopted as quickly as demanded by the market. In response, a system has been developed to easily control multiple drones and detect anomalies using sensor data from the drones.
 

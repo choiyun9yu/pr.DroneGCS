@@ -1,5 +1,4 @@
 /home/choiyungyu/mygit/pr.DroneSystem/gcs-system/bin/Debug/net8.0/appsettings.json
-/home/choiyungyu/mygit/pr.DroneSystem/gcs-system/bin/Debug/net8.0/data/gcs_drone.Drone.json
 /home/choiyungyu/mygit/pr.DroneSystem/gcs-system/bin/Debug/net8.0/global.json
 /home/choiyungyu/mygit/pr.DroneSystem/gcs-system/bin/Debug/net8.0/gcs-system
 /home/choiyungyu/mygit/pr.DroneSystem/gcs-system/bin/Debug/net8.0/gcs-system.deps.json

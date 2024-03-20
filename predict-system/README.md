@@ -25,3 +25,7 @@
     ├── pyproject.toml
     ├── requirements.txt
     └── run.py
+
+## 3. Generate Proto Buffer
+
+    % python -m grpc_tools.protoc -I=./protos --python_out=./moudle --pyi_out=./moudle --grpc_python_out=./moudle ./protos/drone.proto
