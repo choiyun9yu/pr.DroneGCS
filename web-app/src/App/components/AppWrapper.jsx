@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 
 import { Menu } from './Others/Menu';
-import { GradientBackground } from './ProejctThema';
+import { GradientBackground } from './ProjectThema';
 
 export const AppWrapper = () => {
     return (

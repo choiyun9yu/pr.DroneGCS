@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ColorThema } from '../../ProejctThema';
+import { ColorThema } from '../../ProjectThema';
 
 export const RealTimeTable = (props) => {
     return(

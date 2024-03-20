@@ -1,5 +1,5 @@
 import React from 'react';
-import { ColorThema } from '../../ProejctThema';
+import { ColorThema } from '../../ProjectThema';
 
 export const PredictionServiceHeader = (props) => {
     const handleRealTime = () => {

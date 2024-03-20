@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import {ColorThema} from "../../ProejctThema";
+import {ColorThema} from "../../ProjectThema";
 import {DroneContext} from "../../GCS/SignalRContainer";
 
 export const RealTimeGraph = (props) => {

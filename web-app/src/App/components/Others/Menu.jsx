@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
-import { MenuIcon } from '../ProejctIcon';
-import { ColorThema } from '../ProejctThema';
+import { MenuIcon } from '../ProjectIcon';
+import { ColorThema } from '../ProjectThema';
 
 export const Menu = () => {
     const [isOpen, setIsOpen] = useState(false)

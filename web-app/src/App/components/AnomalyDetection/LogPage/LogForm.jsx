@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ColorThema } from '../../ProejctThema';
+import { ColorThema } from '../../ProjectThema';
 
 export const LogForm = (props) => {
     const [drones, setDrones] = useState([]);

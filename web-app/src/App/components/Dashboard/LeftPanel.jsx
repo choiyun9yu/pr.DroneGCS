@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
-import {ColorThema} from "../ProejctThema";
+import {ColorThema} from "../ProjectThema";
 import {Bar, BarChart, Brush, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 
 export const LeftPanel = (props) => {

@@ -3,9 +3,9 @@ import {Cell, Pie, PieChart, ResponsiveContainer} from "recharts";
 import Calendar from "react-calendar";
 import moment from "moment";
 
-import {ColorThema} from "../ProejctThema";
+import {ColorThema} from "../ProjectThema";
 import 'react-calendar/dist/Calendar.css';
-import './Calendar.css';
+import '../../styles/Calendar.css';
 
 export const MiddlePanel = (props) => {
     // console.log(props.flightDay)

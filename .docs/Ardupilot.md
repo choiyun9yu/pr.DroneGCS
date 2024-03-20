@@ -4,53 +4,37 @@
 - [Running](https://ardupilot.org/dev/docs/sim-on-hardware.html)
 - [Using](https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html)
 
-## 1. SITL 개요
-SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같은 Linux 머신 위에서 빌드 및 테스트 해볼수 있는 시뮬레이션 프로그램이다. SITL을 이용하면 Hardware에 종속되지 않고 Vehicle specific 코드를 테스트 할 수 있고, Physical 하지 않은 function들을 안전하게 테스트하고 디버깅할 수 있다. 즉, 실제 드론이 없어도 Ardupilot을 빌드하고 실행되는 모습을 볼 수 있으므로 편리하다.
-![img.png](../gcs-system/data/img.png)
+## 1. SITL(Software-In-The-Loop) 개요
+- SITL은 Ardupilot 코드를 PC에서 빌드 및 테스트 할 수 있는 시뮬레이션 프로그램이다.  
+- SITL을 이용하면 Hardware에 종속되지 않고 Vehicle specific 코드를 테스트 할 수 있다.
+- Physical 하지 않은 function들을 안전하게 테스트하고 디버깅할 수 있다.   
+  즉, 실제 드론이 없어도 Ardupilot을 빌드하고 실행되는 모습을 볼 수 있으므로 편리하다.
+  ![img.png](../gcs-system/data/img.png)
 
-- ArduCopter에서 TCP로 MAVProxy로 주고 
-- MavProxy에서 UDP로 개발 GCS로 넘겨주는 프로세스 
 
 ## 2. SITL 설치
 
-    // install git
-    % sudo apt-get update
-    % sudo apt-get install git 
-    % sudo apt-get install gitk git-gui
-
     // 필수 패키지 설치
+    % sudo apt-get update
+    % sudo apt-get install git gitk git-gui
     % sudo apt-get install python3-pip python3-dev python3-opencv python3-pygame python3-wxgtk4.0 python-wxtools ccache gawk gcc-arm-none-eabi
     % sudo pip3 install MAVProxy pymavlink empy pexpect future PyYAML mavproxy --user
 
     % echo "export PATH=$PATH:$HOME/.local/bin" >> ~/.bashrc
 
-    // 설치 (코드 fork) https://github.com/ArduPilot/ardupilot 
-    % git clone --recurse-submodules https://github.com/choiyun9yu/ardupilot.git
+    // 설치
+    % git clone --recurse-submodules https://github.com/ArduPilot/ardupilot
     % cd ardupilot
     % Tools/environment_install/install-prereqs-ubuntu.sh -y
     % . ~/.profile
 
-    // 빌드 (Waf 라는 컴파일러 사용)
+    // Waf 컴파일러 사용해서 빌드 
     % ./waf configure --board sitl
-    % ./waf list
-    % ./waf -j6
+    % ./waf copter or ./waf -j6
 
     // 실행
     % cd Tools/autotest
-    % ./sim_vehicle.py --console --map -v ArduCopter
-    
-    $ ardupilot/Tools/autotest/sim_vehicle.py -v ArduCopter -f hexa --out 127.0.0.1:14556
-
-    // MAVLink 통신 사용
-    % python sim_vehicle.py --console --map -v ArduCopter -f hexa --out 127.0.0.1:14556   // -f hexa는 6개의 모터를 가진 드론 의미, --out 127.0.0.1:14556은 시뮬레이션 데이터를 출력하는 주소
-    % python sim_vehicle.py -v ArduCopter -f hexa --out 127.0.0.1:14556
-    % python sim_vehicle.py -v ArduCopter -I 0 -n 3 --auto-sysid --out=udp:127.0.0.1:14556
-
-    % python sim_vehicle.py -v ArduCopter -f hexa -I 0 --out 127.0.0.1:14550
-    % python sim_vehicle.py -v ArduCopter -f hexa -I 1 --out 127.0.0.1:14551
-    % python sim_vehicle.py -v ArduCopter -f hexa -I 2 --out 127.0.0.1:14552
-
-    
+    % python sim_vehicle.py --console --map -v ArduCopter
 
 ## 3. STL 사용
 
@@ -87,21 +71,24 @@ SITL은 Software-In-The-Loop의 줄임말로써, Ardupilot 코드를 PC와 같�
 
     단축키 alt + g [36.377 127.385] enter
 
-
     mode guided
     arm throttle
     takeoff 40
     guided -35.3621741 149.16511256 10
-
     guided -35.3621740 149.16511255 10
 
+    % python sim_vehicle.py -v ArduCopter -f hexa --out 127.0.0.1:14556       
+    % python sim_vehicle.py -v ArduCopter -I 0 -n 3 --auto-sysid --out=udp:127.0.0.1:14556      // 다중 드론 
 
 ### 4-0. 파라미터 초기화
 
     % sim_vehicle.py -w
 
 ### 4-1. 드론 시작 위치 조정 
-ardupilot/Tools/autotest/localpoints.txt 파일에서 좌표를 입력하고 (위도.소수점8번째자리까지,경도,절대고도,머리방향) -L 옵션으로 실행하면 된다.
+- ardupilot/Tools/autotest/localpoints.txt 파일에서 좌표를 입력  
+  (위도.소수점8번째자리까지,경도,절대고도,머리방향) 
+- -L 옵션으로 실행하면 된다.
+
 
     % python sim_vehicle.py -L ETRI -v ArduCopter
 
@@ -119,3 +106,27 @@ ardupilot/Tools/autotest/localpoints.txt 파일에서 좌표를 입력하고 (�
     % python sim_vehicle.py -L ETRI -v ArduCopter -M --out=udp:127.0.0.1:14556
 
 GIMBAL_DEVICE_ATTITUDE_STATUS 메시지는 전송되는데 GIMBAL_CONTROL 는 전송해주지 않음
+
+<br>
+<hr>
+
+# Gazebo
+
+## 1. Ardupilot vs Gazebo
+
+### 1-1. Ardupilot
+- ArduPilot은 오픈소스 드론 비행 컨트롤러 소프트웨어 스택이다.
+- 다양한 드론 유형과 로봇을 위한 통합 솔루션을 제공하며, APM:Copter, APM:Plane, APM:Rover 등과 같은 다양한 비행 모드를 지원한다.
+- 실제 드론에 탑재되어 실제 비행에서 사용될 수 있으며, 드론의 자동 비행, GPS 기반의 내비게이션, 임무 계획 및 제어, 센서 통합 등의 기능을 제공한다.
+- 시뮬레이션은 실제 하드웨어에 의존하여 실시간 비행을 시뮬레이션 하거나, 시뮬레이션 도구를 사용하여 가상 환경에서 테스트할 수 있다.
+
+### 1-2. Gazebo
+- Gazebo는 로봇 및 드론 시뮬레이션을 위한 오픈 소스 시뮬레이션 환경이다.
+- 여러 종류의 로봇 및 드론 모델을 시뮬레이션하고, 다양한 센서와 환경 요소를 추가하여 테스트할 수 있다.
+- Gazebo는 플러그인 아키텍처를 지원하여 다양한 컨트롤러, 센서, 알고리즘을 통합할 수 있다.
+- PX4, ROS(로봇 운영체제), OpenAiI Gym 등 다양한 로봇 및 드론 프로젝트에서 Gazebo를 사용하여 시뮬레이션을 수행한다.
+
+####
+ArduPilot은 주로 실제 드론에서 사용되는 비행 컨트롤러 및 소프트웨어 스택이며,  
+Gazebo는 시뮬레이션 환경으로서 로봇 및 드론의 행동을 가상으로 테스트하고 분석하는 데 사용된다.  
+일반적으로 ArduPilot은 드론의 실제 비행에 사용되는 반면, Gazebo는 개발 및 테스트 단계에서 드론의 행동을 예측하고 확인하는데 활용된다.

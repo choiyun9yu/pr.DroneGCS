@@ -1,4 +1,4 @@
-import {ColorThema} from "../../ProejctThema";
+import {ColorThema} from "../../ProjectThema";
 import React from "react";
 
 export const RealTimeBoardRight = (props) => {

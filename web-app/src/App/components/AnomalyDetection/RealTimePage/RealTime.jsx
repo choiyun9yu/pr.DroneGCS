@@ -7,7 +7,7 @@ import {RealTimeBoardRight} from "./RealTimeBoardRight";
 import {RealTimeTable} from "./RealTimeTable";
 import {RealTimeGraph} from "./RealTimeGraph";
 import {DroneContext} from "../../GCS/SignalRContainer";
-import {ColorThema} from "../../ProejctThema";
+import {ColorThema} from "../../ProjectThema";
 import {setSelectionRange} from "@testing-library/user-event/dist/utils";
 
 export const RealTime = () => {
