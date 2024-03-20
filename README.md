@@ -30,13 +30,13 @@ With the advancement of drone technology today, there is a growing effort to uti
 7. If the React app requests any information, the GCS serves the request accordingly.
 
 ## 3. Ground Control System
-### [CSharp Source Code](./gcs-system/README.md)
+### [CSharp Source Code](./gcs-system)
 
 ## 4. Predict System
-### [Python Source Code](./predict-system/README.md)
+### [Python Source Code](./predict-system)
 
 ## 5. Web APP
-### [React Source Code](./web-app/README.md)
+### [React Source Code](./web-app)
 
 ### 5-1. Dashboard
 ![img_4.png](.docs/.img/img_4.png)
