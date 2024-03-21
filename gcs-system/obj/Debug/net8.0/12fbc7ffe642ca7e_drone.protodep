@@ -1,3 +1,0 @@
-obj/Debug/net8.0/protos/Drone.cs \
-obj/Debug/net8.0/protos/DroneGrpc.cs: /home/choiyungyu/.nuget/packages/grpc.tools/2.53.0/build/native/include/google/protobuf/timestamp.proto\
- protos/drone.proto
