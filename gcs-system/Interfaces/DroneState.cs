@@ -1,5 +1,5 @@
 using gcs_system.Interfaces.Helper;
-using KisaGcsSystem.Services;
+using GcsSystem.Services;
 
 namespace gcs_system.Interfaces;
 
