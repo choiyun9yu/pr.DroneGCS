@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "kisa-predict-system"
+name = "predict-system"
 version = "0.1.0"
 description = ""
 authors = ["choiyun9yu <sw22tapple@gmail.com>"]
