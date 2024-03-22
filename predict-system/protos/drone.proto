@@ -1,6 +1,5 @@
 syntax = "proto3";
-import "google/protobuf/timestamp.proto";
-package kisa_gcs_system.Services;
+package gcs_system.Services;
 
 service DroneStatusUpdate {
   rpc UpdateDroneStatus (UpdateDroneStatusPayload) returns (StatusResponse);

@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 LABEL authors="choiyungyu"
 
 # Compile
-WORKDIR /kisa-gcs-system
+WORKDIR /gcs-system
 # Copy everything
 COPY . ./
 # Restore as distinct layers
@@ -12,8 +12,8 @@ RUN dotnet publish -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /kisa-gcs-system
+WORKDIR /gcs-system
 COPY --from=build-env /kisa-gcs-dotnet/out .
-ENTRYPOINT ["dotnet", "kisa-gcs-system.dll"]
+ENTRYPOINT ["dotnet", "gcs-system.dll"]
 
 

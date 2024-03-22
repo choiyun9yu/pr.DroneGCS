@@ -238,10 +238,12 @@ public class ArduCopterControl : Hub<IDroneControl>
         try
         {
             var res = await _grpcUpdateService.UpdateDroneStatusAsync(payload);
+            
             if (res.DroneId != "")
             {
                 _droneStateMap[res.DroneId].PredictData = res.PredictData;
                 _droneStateMap[res.DroneId].WarningData = res.WarningData;
+
             }
         }
         catch

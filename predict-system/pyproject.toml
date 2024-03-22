@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "kisa-predict-system"
+name = "predict-system"
 version = "0.1.0"
 description = ""
 authors = ["choiyun9yu <sw22tapple@gmail.com>"]
@@ -7,11 +7,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-signalrcore = "^0.9.5"
 pandas = "^2.1.4"
+scikit-learn = "1.3.2"
 joblib = "^1.3.2"
 pymongo = "^4.6.1"
-scikit-learn = "^1.3.2"
 grpcio = "^1.62.1"
 grpcio-tools = "^1.62.1"
 

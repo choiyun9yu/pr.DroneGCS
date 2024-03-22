@@ -2,7 +2,8 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from module import drone_pb2 as drone__pb2
+from generation import drone_pb2 as drone__pb2
+
 
 class DroneStatusUpdateStub(object):
     """Missing associated documentation comment in .proto file."""
@@ -14,7 +15,7 @@ class DroneStatusUpdateStub(object):
             channel: A grpc.Channel.
         """
         self.UpdateDroneStatus = channel.unary_unary(
-                '/kisa_gcs_system.Services.DroneStatusUpdate/UpdateDroneStatus',
+                '/gcs_system.Services.DroneStatusUpdate/UpdateDroneStatus',
                 request_serializer=drone__pb2.UpdateDroneStatusPayload.SerializeToString,
                 response_deserializer=drone__pb2.StatusResponse.FromString,
                 )
@@ -39,7 +40,7 @@ def add_DroneStatusUpdateServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'kisa_gcs_system.Services.DroneStatusUpdate', rpc_method_handlers)
+            'gcs_system.Services.DroneStatusUpdate', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -58,7 +59,7 @@ class DroneStatusUpdate(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/kisa_gcs_system.Services.DroneStatusUpdate/UpdateDroneStatus',
+        return grpc.experimental.unary_unary(request, target, '/gcs_system.Services.DroneStatusUpdate/UpdateDroneStatus',
             drone__pb2.UpdateDroneStatusPayload.SerializeToString,
             drone__pb2.StatusResponse.FromString,
             options, channel_credentials,

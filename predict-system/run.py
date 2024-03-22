@@ -4,9 +4,10 @@ import logging
 import grpc
 from google.protobuf.json_format import MessageToDict
 
-from module import ml_helper, mongodb_helper, drone_pb2, drone_pb2_grpc
+from generation import drone_pb2, drone_pb2_grpc
+from module import ml_helper, mongodb_helper
 
-# python -m grpc_tools.protoc -I=./protos --python_out=./generation --pyi_out=./generation --grpc_python_out=./generation ./protos/drone.proto
+# python -m grpc_tools.protoc -I=./protos --python_out=./moudle --pyi_out=./moudle --grpc_python_out=./moudle ./protos/drone.proto
 
 last_save_time_dict = {}
 class Drone(drone_pb2_grpc.DroneStatusUpdateServicer):
