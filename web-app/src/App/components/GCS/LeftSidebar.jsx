@@ -81,7 +81,7 @@ export const NewLinkModal = (props) => {
 
             </div>
             <div className={'flex px-4 items-center '}>
-                <div className={'modla-content'}>
+                <div className={'modal-content'}>
                     <form className={'flex-col'}>
                         <div className={'my-3'}>
                             <select

@@ -6,13 +6,9 @@
     % docker-compose up
 
 ## 1. Overview
-With the advancement of drone technology today, there is a growing effort to utilize drones in various fields. However, due to the high level of difficulty in operating drones and safety concerns, they have not been adopted as quickly as demanded by the market. In response, a system has been developed to easily control multiple drones and detect anomalies using sensor data from the drones.
+With the advancement of drone technology today, there is a growing effort to utilize drones in various fields. However, due to the high level of difficulty in operating drones and safety concerns, they have not been adopted as quickly as demanded by the market. In response, a system has been developed to easily control multiple drones and detect anomalies using sensor data from the drones. 
 
-## 2. Software Architecture 
-
-
-
-## 3. Data Flow Chart
+## 2. Data Flow Chart
 
 [DataStructure](./.docs/DataStructure.xlsx)
 
@@ -28,12 +24,14 @@ With the advancement of drone technology today, there is a growing effort to uti
 
 ## 3. Ground Control System
 ### [CSharp Source Code](./gcs-system)
+TODO: GCS 에서 droneStateDict 전체를 React 로 내려주기
 
 ## 4. Predict System
 ### [Python Source Code](./predict-system)
 
 ## 5. Web APP
 ### [React Source Code](./web-app)
+TODO: 선택된 아이디의 droneState 만 걸러서 표시하기 
 
 ### 5-1. Dashboard
 ![img_4.png](.docs/.img/img_4.png)

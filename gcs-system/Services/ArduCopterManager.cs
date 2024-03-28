@@ -18,9 +18,9 @@ using GcsSystem.Services;
 
 namespace gcs_system.Services;
 
-public class ArduCopterControl : Hub<IDroneControl>
+public class ArduCopterManager : Hub<IDroneManager>
 {
-    private readonly IHubContext<ArduCopterControl> _hubContext;
+    private readonly IHubContext<ArduCopterManager> _hubContext;
     private IChannelHandlerContext? _context;
     
     private Dictionary<string, DroneState> _droneStateMap = new();
@@ -42,7 +42,7 @@ public class ArduCopterControl : Hub<IDroneControl>
     private static readonly int THROTTLE_INCREMENT = 300;
     private static readonly int YAW_INCREMENT = 50;
     
-    public ArduCopterControl(IConfiguration configuration, IHubContext<ArduCopterControl> hubContext, GcsApiService gcsApiService, GrpcChannel grpcChannel)
+    public ArduCopterManager(IConfiguration configuration, IHubContext<ArduCopterManager> hubContext, GcsApiService gcsApiService, GrpcChannel grpcChannel)
     {
         _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
 

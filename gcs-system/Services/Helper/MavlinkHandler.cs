@@ -3,7 +3,7 @@ using gcs_system.MAVSDK;
 
 namespace gcs_system.Services.Helper;
 
-public class MavlinkHandler(ArduCopterControl arduCopterControl) : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage>
+public class MavlinkHandler(ArduCopterManager arduCopterManager) : SimpleChannelInboundHandler<MAVLink.MAVLinkMessage>
 {
     private IChannelHandlerContext? _context;
     
@@ -28,7 +28,7 @@ public class MavlinkHandler(ArduCopterControl arduCopterControl) : SimpleChannel
     protected override async void ChannelRead0(IChannelHandlerContext ctx, MAVLink.MAVLinkMessage msg)
     {
         _context = ctx;
-        await arduCopterControl.HandleMavlinkMessage(ctx, msg);
+        await arduCopterManager.HandleMavlinkMessage(ctx, msg);
     }
     
     public override void ChannelInactive(IChannelHandlerContext ctx)

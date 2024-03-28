@@ -5,7 +5,7 @@ using gcs_system.MAVSDK;
 namespace gcs_system.Interfaces;
 public interface ISignalRHub;
 
-public interface IDroneControl
+public interface IDroneManager
 {
     Task GetDroneList();
     Task SelectDrone(string selectedDroneId);

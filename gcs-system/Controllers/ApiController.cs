@@ -14,20 +14,20 @@ public class ApiController : ControllerBase
     private readonly AnomalyDetectionApiService _anomalyDetectionApiService;
     private readonly GcsApiService _gcsApiService;
     private readonly DashboardApiService _dashboardService;
-    private readonly ArduCopterControl _arduCopterControl;
+    private readonly ArduCopterManager _arduCopterManager;
 
     public ApiController(
         AnomalyDetectionApiService anomalyDetectionApiService, 
         GcsApiService gcsApiService, 
         DashboardApiService dashboardApiService, 
-        ArduCopterControl arduCopterControl
+        ArduCopterManager arduCopterManager
         )  
     {
         _anomalyDetectionApiService = anomalyDetectionApiService;
         _gcsApiService = gcsApiService;
         _dashboardService = dashboardApiService;
         
-        _arduCopterControl = arduCopterControl;
+        _arduCopterManager = arduCopterManager;
     }
 
     [HttpPost("dashboard")]

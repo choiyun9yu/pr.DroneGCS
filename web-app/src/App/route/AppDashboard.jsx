@@ -2,8 +2,10 @@ import {LeftPanel} from "../components/Dashboard/LeftPanel";
 import {MiddlePanel} from "../components/Dashboard/MiddlePanel";
 import {RightPanel} from "../components/Dashboard/RightPanel";
 import {useEffect, useState} from "react";
+import {WarningModal} from "../components/ProejctModal";
 
 export const AppDashboard = () => {
+
     const [value, setValue] = useState(new Date());
 
     const [flightCount, setFlightCount] = useState();
@@ -64,6 +66,7 @@ export const AppDashboard = () => {
             />
             <MiddlePanel value={value} flightDay={flightDay}/>
             <RightPanel/>
+            {/*<WarningModal/>*/}
         </div>
     );
 

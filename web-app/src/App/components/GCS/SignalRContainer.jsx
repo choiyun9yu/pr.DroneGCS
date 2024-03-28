@@ -8,6 +8,9 @@ export const SignalRProvider = ({ children }) => {
     const [droneList, setDroneList] = useState([])
     const [selectedDrone, setSelectedDrone] = useState()
     const [droneMessage, setDroneMessage] = useState(null)
+    const [isWarningModal, setIsWarningModal] = useState(true)
+    const [warningList, setWarningList] = useState([1,2])
+
     const connection = useRef()
 
     useEffect(() => {
@@ -40,7 +43,7 @@ export const SignalRProvider = ({ children }) => {
         connectionObj.on('droneList', (json) => {
             const list = JSON.parse(json)
             setDroneList(list)
-            console.log(list)
+            // console.log(list)
         })
 
         connectionObj.on('selectedDrone', sd => {
@@ -103,6 +106,9 @@ export const SignalRProvider = ({ children }) => {
     const handleCameraJoystick = arrow => {
         connection.current.invoke('HandleCameraJoystick', arrow)
     }
+    const handleWarningModal = () => {
+        setIsWarningModal(false)
+    }
 
     return (
         <DroneContext.Provider value={{
@@ -110,6 +116,8 @@ export const SignalRProvider = ({ children }) => {
             selectedDrone,
             setSelectedDrone,
             droneMessage,
+            warningList,
+            isWarningModal,
             handleDroneFlightMode,
             handleDroneFlightCommand,
             handleDroneJoystick,
@@ -124,7 +132,8 @@ export const SignalRProvider = ({ children }) => {
             handleMissionAlt,
             handleDroneMovetoMission,
             handleSelectedDrone,
-            handleMoveBtn
+            handleMoveBtn,
+            handleWarningModal,
         }}>
             {children}
         </DroneContext.Provider>
