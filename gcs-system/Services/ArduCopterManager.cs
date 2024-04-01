@@ -114,8 +114,10 @@ public class ArduCopterManager : Hub<IDroneManager>
         object data = msg.data;
         _mapper.UpdateDroneState(_droneStateMap[_droneId], data);
         
-        string forReact = JsonConvert.SerializeObject(_droneStateMap[_selectedDrone]);
-        await _hubContext.Clients.All.SendAsync("droneState", forReact);
+        // string forReact = JsonConvert.SerializeObject(_droneStateMap[_selectedDrone]);
+        // await _hubContext.Clients.All.SendAsync("droneState", forReact);
+        string forReact = JsonConvert.SerializeObject(_droneStateMap);
+        await _hubContext.Clients.All.SendAsync("droneStates", forReact);
         await _hubContext.Clients.All.SendAsync("selectedDrone", _selectedDrone);
 
         await SendDroneStatusToPredict(msg.sysid.ToString(), _droneStateMap[msg.sysid.ToString()]);

@@ -47,3 +47,6 @@ TODO: 선택된 아이디의 droneState 만 걸러서 표시하기
 
 ### 5-5. Predict Data
 ![img_3.png](.docs/.img/img_8.png)
+
+### 5-6. Warning Alarm Feature
+![img.png](.docs/.img/img_9.png)

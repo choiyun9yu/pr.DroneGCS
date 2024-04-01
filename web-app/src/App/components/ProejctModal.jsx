@@ -1,21 +1,26 @@
 import {useContext} from "react";
 import {DroneContext} from "./GCS/SignalRContainer";
+import {Link} from "react-router-dom";
 
 export const WarningModal = (props) => {
-    const { handleWarningModal } = useContext(DroneContext)
+    const {setWarningSkipList, setSelectedDrone, handleSelectedDrone, handleDroneFlightMode} = useContext(DroneContext)
 
-    /*
-     * 수동 전환을 누르면
-     * 1. 현재 알림참으로 경고 받은 드론을 brake 모드로 전환하고
-     * 2. 클라이언트 화면을 강제로 /gcs 화면으로 바꾼다.
-     */
+    const handleManualControl = (droneId) => {
+        handleSelectedDrone(droneId)
+        setSelectedDrone(droneId)
+        handleDroneFlightMode(17)
+        setWarningSkipList(old => ([
+                ...old, droneId
+            ])
+        )
+    }
 
-    /*
-     * 무시하기 버튼을 누르면
-     * 1. 경고 창이 닫히고
-     * 2. 같은 드론에게서 경고가 날라와도 무시하게된다.
-     * 3. 드론은
-     */
+    const handleWarningIgnore = (droneId) => {
+        setWarningSkipList(old => ([
+                ...old, droneId
+            ])
+        )
+    }
 
     return (
         <div className={'modal absolute top-[30%] left-[40%] w-[400px] h-[300px] z-50 rounded-lg text-black bg-[#CDCFE9]'}>
@@ -35,8 +40,8 @@ export const WarningModal = (props) => {
             </div>
 
             <div className={'flex text-md h-[80px] font-medium items-center justify-center'}>
-                <Link className={'mr-5 py-2 px-4 rounded-md text-white bg-[#1D1D41] hover:bg-amber-300'} to={'/drone-monitor'} onClick={handleWarningModal}>수동조종</Link>
-                <button className={'ml-5 py-2 px-4 rounded-md text-white bg-[#1D1D41] hover:bg-red-600'} onClick={handleWarningModal}>무시하기</button>
+                <Link className={'mr-5 py-2 px-4 rounded-md text-white bg-[#1D1D41] hover:bg-amber-300'} to={'/gcs'} onClick={() => {handleManualControl(props.drone.toString())}}>수동조종</Link>
+                <button className={'ml-5 py-2 px-4 rounded-md text-white bg-[#1D1D41] hover:bg-red-600'} onClick={() => {handleWarningIgnore(props.drone.toString())}}>무시하기</button>
             </div>
         </div>
     )

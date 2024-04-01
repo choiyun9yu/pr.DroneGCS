@@ -4,10 +4,24 @@ import { Menu } from './Others/Menu';
 import { GradientBackground } from './ProjectThema';
 import {WarningModal} from "./ProejctModal";
 import {DroneContext, SignalRProvider} from "./GCS/SignalRContainer";
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 export const AppWrapper = () => {
-    const {isWarningModal, warningList} = useContext(DroneContext)
+    const {droneStates, warningSkipList} = useContext(DroneContext)
+    const [warningList, setWarningList] = useState([])
+
+    useEffect(() => {
+        const newWarningList = []
+        for (const key in droneStates) {
+            const drone = droneStates[key]
+            if (drone.WarningData?.WarningCount >= 4) {
+                newWarningList.push(drone.DroneId)
+            }
+        }
+        setWarningList(newWarningList)
+    }, [])
+
+    const WarningResult = warningList.filter(item => !warningSkipList.includes(item))
 
     return (
         <GradientBackground>
@@ -16,7 +30,7 @@ export const AppWrapper = () => {
                     <div className="h-screen w-full overflow-hidden">
                         <Outlet />
                     </div>
-                    {isWarningModal && warningList.map((d, i) => (
+                    {WarningResult.map((d, i) => (
                         <WarningModal index={i} drone={d} />
                     ))}
                 </div>

@@ -61,12 +61,12 @@ const FlightCalendar = (props) => {
                     });
                     markDrone2.forEach((dateStr) => {
                         if (dateStr === moment(date).format("YYYY-MM-DD")) {
-                            markerPositions.push({ color: "#8fe388" });
+                            markerPositions.push({ color: "#64cff6" });
                         }
                     });
                     markDrone3.forEach((dateStr) => {
                         if (dateStr === moment(date).format("YYYY-MM-DD")) {
-                            markerPositions.push({ color: "#64cff6" });
+                            markerPositions.push({ color: "#8fe388" });
                         }
                     });
 

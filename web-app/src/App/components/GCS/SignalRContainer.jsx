@@ -6,10 +6,11 @@ export const DroneContext = createContext({})
 // python sim_vehicle.py -L ETRI -v ArduCopter --out=udp:127.0.0.1:14556
 export const SignalRProvider = ({ children }) => {
     const [droneList, setDroneList] = useState([])
+    const [droneStates, setDroneStates] = useState()
     const [selectedDrone, setSelectedDrone] = useState()
     const [droneMessage, setDroneMessage] = useState(null)
-    const [isWarningModal, setIsWarningModal] = useState(true)
-    const [warningList, setWarningList] = useState([1,2])
+
+    const [warningSkipList, setWarningSkipList] = useState([])
 
     const connection = useRef()
 
@@ -37,6 +38,8 @@ export const SignalRProvider = ({ children }) => {
     }, [])
 
     useEffect(() => {
+        let selectedDrone;
+
         const connectionObj = connection.current
         if (!connectionObj) return
 
@@ -48,12 +51,19 @@ export const SignalRProvider = ({ children }) => {
 
         connectionObj.on('selectedDrone', sd => {
             setSelectedDrone(JSON.parse(sd))
+            selectedDrone = JSON.parse(sd)
         })
 
-        connectionObj.on('droneState', msg => {
+        // connectionObj.on('droneState', msg => {
+        //     const droneMessage = JSON.parse(msg)
+        //     setDroneMessage(droneMessage)
+        //     // console.log(droneMessage)
+        // })
+
+        connectionObj.on('droneStates', msg => {
             const droneMessage = JSON.parse(msg)
-            setDroneMessage(droneMessage)
-            // console.log(droneMessage)
+            setDroneMessage(droneMessage[selectedDrone])
+            setDroneStates(droneMessage)
         })
 
         return () => {['droneState']
@@ -106,18 +116,16 @@ export const SignalRProvider = ({ children }) => {
     const handleCameraJoystick = arrow => {
         connection.current.invoke('HandleCameraJoystick', arrow)
     }
-    const handleWarningModal = () => {
-        setIsWarningModal(false)
-    }
 
     return (
         <DroneContext.Provider value={{
             droneList,
+            droneStates,
             selectedDrone,
             setSelectedDrone,
             droneMessage,
-            warningList,
-            isWarningModal,
+            warningSkipList,
+            setWarningSkipList,
             handleDroneFlightMode,
             handleDroneFlightCommand,
             handleDroneJoystick,
@@ -133,7 +141,6 @@ export const SignalRProvider = ({ children }) => {
             handleDroneMovetoMission,
             handleSelectedDrone,
             handleMoveBtn,
-            handleWarningModal,
         }}>
             {children}
         </DroneContext.Provider>
