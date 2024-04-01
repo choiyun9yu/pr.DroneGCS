@@ -129,7 +129,7 @@ const FlightBtn = (props) => {
       </button>
 
       {/* top btn */}
-      <div className={'flex h-[30px] z-10 ml-[75px] mt-[10px]'}>
+      <div className={'flex h-[30px] z-10 mt-[10px]'}>
         {droneMessage && droneMessage.DroneStt.FlightMode === 3
           ? <button className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'}>Auto</button>
           : <ControlButton className={'px-2 py-1 mr-0.5 rounded-md text-white bg-[#6359E9]'} onClick={() => handleDroneFlightMode(3)}>Auto</ControlButton>

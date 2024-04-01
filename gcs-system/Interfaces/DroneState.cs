@@ -64,7 +64,7 @@ public class DroneMission
     public DroneLocation StartPoint;
     public List<DroneLocation> TransitPoint = new();
     public DroneLocation TargetPoint;
-    public int MissionAlt = 10;             // 주행 고도
+    public int MissionAlt = 15;             // 주행 고도
     // public int MissionSpeed = 10;
     public double? TotalDistance = 0;
     public double? CurrentDistance = 0;

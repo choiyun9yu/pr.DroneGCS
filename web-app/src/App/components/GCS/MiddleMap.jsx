@@ -343,7 +343,7 @@ export const FlightInfoTable = () => {
         }
 
         return (
-            <div className={'absolute top-[70px] right-[60px] rounded-xl bg-black opacity-70'}>
+            <div className={'absolute top-[10px] right-[60px] rounded-xl bg-black opacity-70'}>
                 <table className={'m-2 text-lg font-normal text-[#00DCF8]'}>
                     <tbody>
                     {/*<tr>*/}
