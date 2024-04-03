@@ -29,10 +29,17 @@ export const MissionMode = (props) => {
 }
 
 const MissionComponent = (props) => {
-  const { handleDroneMovetoMission, handleDroneStartMarking, handleDroneTargetMarking } = useContext(DroneContext)
+  const {
+    handleDroneStartMarking,
+    handleDroneTargetMarking,
+    handleDroneTransitMarking,
+    handleMissionAlt,
+    handleDroneMissionUpload,
+    handleDroneMissionClear
+  } = useContext(DroneContext)
 
   const [missionData, setMissionData] = useState([])
-  const [missionList, setMissionList] = useState([])
+  const [missionList, setMissionList] = useState(['미션 없음'])
   const [selectMission, setSelectMission] = useState({})
   const [selectStartPoint, setSelectStartPoint] = useState('미정')
   const [selectTargetPoint, setSelectTargetPoint] = useState('미정')
@@ -52,13 +59,12 @@ const MissionComponent = (props) => {
     setSelectMission(value)
   }
 
-  const handleMissionStart = () => {
-    handleDroneMovetoMission(
+  const handleMissionUpload = () => {
+    handleDroneMissionUpload(
       selectStartPoint,
       selectTargetPoint,
       selectTransitPoint,
       selectFlightAlt,
-      selectFlightDistance
     )
   }
 
@@ -177,6 +183,7 @@ const MissionComponent = (props) => {
           setMissionData(data)
           setMissionList(missionListData)
           missionData.map(obj => {
+            console.log(obj)
             if (obj._id === selectMission){
               setSelectStartPoint(obj.startPoint)
               setSelectTransitPoint(obj.transitPoints)
@@ -186,7 +193,9 @@ const MissionComponent = (props) => {
               setSelectTakeTime(obj.takeTime)
               handleDroneStartMarking(obj.startLatLng.lat, obj.startLatLng.lng)
               handleDroneTargetMarking(obj.targetLatLng.lat, obj.targetLatLng.lng)
-              props.setTargetPoints(obj.transitLatLng??{ id:0,lat:35.3632621,lng:-149.1652374 })
+              handleDroneTransitMarking(obj.transitLatLng)
+              handleMissionAlt(obj.flightAlt)
+              props.setTargetPoints(obj.transitLatLng??{ id:0,lat:null,lng:null })
               props.setFlightSchedule([obj.startPoint, obj.transitPoints, obj.targetPoint])
               props.setFlightSchedule([obj.startPoint, obj.transitPoints, obj.targetPoint])
             }
@@ -244,16 +253,20 @@ const MissionComponent = (props) => {
 
         <div className={'flex justify-end mx-5 mt-2'}>
           <button className={'flex mr-2 px-2 rounded-xl border hover:bg-[#6359E9]'}>
-              제거
+            제거
           </button>
-          <button type={'button'} onClick={handleMissionStart} className={'flex px-2 rounded-xl border hover:bg-[#6359E9]'}>
-              미션 시작
+          <button type={'button'} onClick={handleDroneMissionClear} className={'flex mr-2 px-2 rounded-xl border hover:bg-[#6359E9]'} >
+            클리어
+          </button>
+          <button type={'button'} onClick={handleMissionUpload}
+                  className={'flex px-2 rounded-xl border hover:bg-[#6359E9]'}>
+            업로드
           </button>
         </div>
       </form>
 
       <form id={'missionenroll'} className={'mt-3'}
-        onSubmit={handleCreateMission}>
+            onSubmit={handleCreateMission}>
         <div className={'font-bold'}>
             미션 생성 하기
         </div>
@@ -362,9 +375,9 @@ const TransitInput = (props) => {
   for (let i=0; i < props.transitCount; i++) {
     transitElements.push(
       <div className={'flex flex-row items-center'} key={i}>
-        <span>경유지 ({i+1}) : </span>
+        <span>경유지({i+1}) : </span>
         <select
-          className={'flex m-1 w-[170px] h-[23px] text-black px-2'}
+          className={'flex m-1 w-[169px] h-[23px] text-black px-2'}
           name={`TransitPoint${i+1}`}>
           {props.pointsList.map((item, index) => (
             <option value={item} key={index}>{item}</option>

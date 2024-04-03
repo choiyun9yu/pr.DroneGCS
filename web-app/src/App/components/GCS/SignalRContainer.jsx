@@ -54,12 +54,6 @@ export const SignalRProvider = ({ children }) => {
             selectedDrone = JSON.parse(sd)
         })
 
-        // connectionObj.on('droneState', msg => {
-        //     const droneMessage = JSON.parse(msg)
-        //     setDroneMessage(droneMessage)
-        //     // console.log(droneMessage)
-        // })
-
         connectionObj.on('droneStates', msg => {
             const droneMessage = JSON.parse(msg)
             setDroneMessage(droneMessage[selectedDrone])
@@ -101,8 +95,11 @@ export const SignalRProvider = ({ children }) => {
     const handleDroneMovetoBase = () => {
         connection.current.invoke('HandleDroneMoveToBase')
     }
-    const handleDroneMovetoMission = (startPoint, targetPoint, transitPoint, alt, totalDistance) => {
-        connection.current.invoke('HandleDroneMoveToMission', startPoint, targetPoint, transitPoint, alt, totalDistance)
+    const handleDroneMissionUpload = () => {
+        connection.current.invoke('HandleDroneMissionUpload')
+    }
+    const handleDroneMissionClear = () => {
+        connection.current.invoke('HandleDroneMissionClear')
     }
     const handleDroneJoystick = arrow => {
         connection.current.invoke('HandleDroneJoystick', arrow)
@@ -138,7 +135,8 @@ export const SignalRProvider = ({ children }) => {
             handleDroneMovetoTarget,
             handleDroneMovetoBase,
             handleMissionAlt,
-            handleDroneMovetoMission,
+            handleDroneMissionUpload,
+            handleDroneMissionClear,
             handleSelectedDrone,
             handleMoveBtn,
         }}>

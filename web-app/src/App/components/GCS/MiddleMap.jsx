@@ -180,23 +180,20 @@ export const MiddleMap = (props) => {
                             />
                         </OverlayView>
 
-                        {/*{props.targetPoints.map( marker =>*/}
-                        {/*    <Marker*/}
-                        {/*        key={marker.id}*/}
-                        {/*        position={marker.position}*/}
-                        {/*        icon={redMarkerIcon}*/}
-                        {/*    />)}*/}
-                        {/*<Polyline path={pathLine} options={{ strokeColor: '#FF3333', strokeWeight: 1 }}/>*/}
-
-                        <Marker position={startPoint} icon={blueMarkerIcon}/>
-                        <Marker position={targetPoint} icon={redMarkerIcon} />
-
+                        {props.targetPoints.map( marker =>
+                            <Marker
+                                key={marker.id}
+                                position={marker.position}
+                                icon={redMarkerIcon}
+                            />)}
+                        <Polyline path={pathLine} options={{ strokeColor: '#FF3333', strokeWeight: 1 }}/>
                         <Polyline path={[startPoint, targetPoint]} options={{ strokeColor: '#FF3333', strokeWeight: 1 }}/>
                         <Polyline path={dronePath} options={{ strokeColor: '#BCBEC0', strokeWeight: 2 }} />
 
-
                         <Marker position={stationPoint} icon={purpleMarkerIcon}/>
                         {/*{isRtl && <Marker position={returnPoint} icon={yellowMarkerIcon}/>}*/}
+                        <Marker position={targetPoint} icon={redMarkerIcon} />
+                        <Marker position={startPoint} icon={blueMarkerIcon}/>
 
                         {props.gcsMode === 'flight' &&
                             <FlightContents

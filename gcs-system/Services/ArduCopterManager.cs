@@ -1,3 +1,4 @@
+using System.Diagnostics.Contracts;
 using System.Net;
 using System.Text.Json;
 using DotNetty.Buffers;
@@ -15,6 +16,7 @@ using gcs_system.MAVSDK;
 using gcs_system.Models;
 using gcs_system.Services.Helper;
 using GcsSystem.Services;
+using MongoDB.Bson;
 
 namespace gcs_system.Services;
 
@@ -439,55 +441,40 @@ public class ArduCopterManager : Hub<IDroneManager>
             _droneInstance.DroneMission.StartPoint.lat, _droneInstance.DroneMission.StartPoint.lng, lat, lng);
     }
 
-    public void HandleDroneTransitMarking(object transitList)
+    public void HandleDroneTransitMarking(JsonElement transitList)
     {
-        if (transitList is JsonElement jsonElement)
-        {
-            List<DroneLocation> transitPoints = new List<DroneLocation>();
-            
-            foreach (JsonElement arrayElement in jsonElement.EnumerateArray())
-            {
-                DroneLocation location = ParseDroneLocation(arrayElement);
-                transitPoints.Add(location);
-            }
+        // Console.WriteLine(transitList.GetType());   // System.Text.Json.JsonElement
 
-            _droneInstance.DroneMission.TransitPoint = transitPoints;
+        List<DroneLocation> transitPoints = new List<DroneLocation>();
+        
+        foreach (JsonElement element in transitList.EnumerateArray())
+        {
+            // int id = element.GetProperty("id").GetInt32();
+            JsonElement position = element.GetProperty("position");
+            double lat = position.GetProperty("lat").GetDouble();
+            double lng = position.GetProperty("lng").GetDouble();
+            
+            transitPoints.Add(new DroneLocation
+            {
+                lat = lat,
+                lng = lng
+            });
+            
         }
+        // Console.WriteLine(transitPoints.ToJson());
+        _droneInstance.DroneMission.TransitPoint = transitPoints;
+
     }
     
-    private DroneLocation ParseDroneLocation(JsonElement jsonElement)
-    {
-        DroneLocation location = new DroneLocation();
-
-        if (jsonElement.TryGetProperty("lat", out var latElement) && latElement.ValueKind == JsonValueKind.Number)
-        {
-            location.lat = latElement.GetDouble();
-        }
-
-        if (jsonElement.TryGetProperty("lng", out var lngElement) && lngElement.ValueKind == JsonValueKind.Number)
-        {
-            location.lng = lngElement.GetDouble();
-        }
-
-        if (jsonElement.TryGetProperty("global_frame_alt", out var globalFrameAltElement) && globalFrameAltElement.ValueKind == JsonValueKind.Number)
-        {
-            location.global_frame_alt = globalFrameAltElement.GetDouble();
-        }
-
-        if (jsonElement.TryGetProperty("terrain_alt", out var terrainAltElement) && terrainAltElement.ValueKind == JsonValueKind.Number)
-        {
-            location.terrain_alt = terrainAltElement.GetDouble();
-        }
-
-        return location;
-    }
 
     public void HandleMissionAlt(short missionalt)
     {
         _droneInstance.DroneMission.MissionAlt = missionalt;
     }
     
-    public async Task CreateMission(double lat, double lng, float alt)
+    
+    
+    public MAVLink.mavlink_mission_item_int_t CreateMission(double lat, double lng, int seq)
     {
         /*
          * mavlink_mission_item_t 는 자동 비행 임무 또는 미션을 정의하는데 사용된다.
@@ -502,22 +489,23 @@ public class ArduCopterManager : Hub<IDroneManager>
          * misstion_type: 미션의 종류를 나타냄 (Mission: 주요 미션에 대한 미션 명령, 주로 비행 경로 정의, FENCE: 드론 비행 경계 설정, RALLY: 차량의 랠리포인트 지정, ALL: 모든 미션 유형을 지우는데 사용)
          */
         
-        var commandBody = new MAVLink.mavlink_mission_item_t
+        var commandBody = new MAVLink.mavlink_mission_item_int_t
         {
             target_system = byte.Parse(_selectedDrone),
-            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
-            frame = 3,         
+            seq = seq,
+            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
-            autocontinue = 1,   
-            current = 2,        // 2로 해야 움직임 (이유 모르겠음..)
-            x = (float)lat,
-            y = (float)lng,
-            z = alt,           
+            frame = 6,         
+            x = (int)Math.Round(lat*10000000),
+            y = (int)Math.Round(lng*10000000),
+            z = _droneInstance.DroneMission.MissionAlt,           
         };
-        var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
-            commandBody));
-        await SendCommandAsync(msg);
+        // var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+        //     MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,
+        //     commandBody));
+        // await SendCommandAsync(msg);
+
+        return commandBody;
     }
 
     public async Task HandleMoveBtn(double lat, double lng)
@@ -558,7 +546,7 @@ public class ArduCopterManager : Hub<IDroneManager>
             autocontinue = 0,   
             current = 2,        // 현재 웨이포인트 번호
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,      
-            frame = 3,          // default: 0(위도경도고도 전역 좌표계), 3(위도경도 전역, 고도 상대좌표계)
+            frame = 6,          // default: 0(위도경도고도 전역 좌표계), 3(위도경도 전역, 고도 상대좌표계) 6(GLOBAL_RELATIVE_ALT_INT)
 
         };
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
@@ -566,7 +554,31 @@ public class ArduCopterManager : Hub<IDroneManager>
             commandBody));
         await SendCommandAsync(msg);
     }
-    
+
+    public async Task HandleDroneMissionUpload()
+    {
+        List<DroneLocation> flightPoints = _droneInstance.DroneMission.TransitPoint;
+        // Console.WriteLine(flightPoints);
+
+        var mavMissionItems = flightPoints
+            .Select((points,seq) => CreateMission(points.lat, points.lng, seq))
+            .ToArray();
+
+        var missionCountMsg = _parser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_COUNT,
+            new MAVLink.mavlink_mission_count_t
+            {
+                count = (ushort)mavMissionItems.Length,
+                mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
+                target_system = byte.Parse(_selectedDrone),
+            });
+        
+    }
+
+    public async Task HandleDroneMissionClear()
+    {
+        Console.WriteLine("Clear before drone mission");
+    }
+
     // 드론
     public async Task HandleDroneJoystick(ArrowButton arrow)
     {
