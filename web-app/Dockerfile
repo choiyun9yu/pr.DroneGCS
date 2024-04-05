@@ -2,7 +2,7 @@ FROM node:18-alpine
 LABEL authors="choiyungyu"
 
 # 명령 실행시킬 디렉토리 설정
-WORKDIR /web-app
+WORKDIR /app
 
 # 의존성 파일 복사
 COPY package.json package-lock.json ./

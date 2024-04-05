@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.10'
 
 services:
 #  ardupilot:
@@ -8,31 +8,30 @@ services:
 #      context: ardupilot
 #    network_mode: host
 
-  gcs-system:
-    container_name: gcs
-    build:
-      dockerfile: Dockerfile
-      context: gcs-dotnet
-    network_mode: host
-    depends_on:
-      - mongo
-      - predict-system
-
-  predict-system:
-    container_name: predict
-    build:
-      dockerfile: Dockerfile
-      context: predict-server
-    network_mode: host
-    depends_on:
-      - mongo
-
   mongo:
     image: mongo
     container_name: mongo
     network_mode: host
     volumes:
       - mongodb_data:/data/db
+
+  predict-system:
+    container_name: predict
+    build:
+      dockerfile: Dockerfile
+      context: predict-system
+    network_mode: host
+    depends_on:
+        - mongo
+
+  gcs-system:
+    container_name: gcs
+    build:
+      dockerfile: Dockerfile
+      context: gcs-system
+    network_mode: host
+    depends_on:
+      - predict-system
 
   web-app:
     container_name: react

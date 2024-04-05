@@ -13008,7 +13008,7 @@ public partial class MAVLink
     ///<summary> Message encoding a mission item. This message is emitted to announce                 the presence of a mission item and to set a mission item on the system. The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html. </summary>
     public struct mavlink_mission_item_int_t
     {
-        public mavlink_mission_item_int_t(float param1,float param2,float param3,float param4,int x,int y,float z,ushort seq,/*MAV_CMD*/ushort command,byte target_system,byte target_component,/*MAV_FRAME*/byte frame,byte current,byte autocontinue,/*MAV_MISSION_TYPE*/byte mission_type) 
+        public mavlink_mission_item_int_t(float param1,float param2,float param3,float param4,int x,int y,int z,ushort seq,/*MAV_CMD*/ushort command,byte target_system,byte target_component,/*MAV_FRAME*/byte frame,byte current,byte autocontinue,/*MAV_MISSION_TYPE*/byte mission_type) 
         {
               this.param1 = param1;
               this.param2 = param2;
@@ -13054,7 +13054,7 @@ public partial class MAVLink
             /// <summary>PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.   </summary>
         [Units("")]
         [Description("PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.")]
-        public  float z;
+        public  int z;
             /// <summary>Waypoint ID (sequence number). Starts at zero. Increases monotonically for each waypoint, no gaps in the sequence (0,1,2,3,4).   </summary>
         [Units("")]
         [Description("Waypoint ID (sequence number). Starts at zero. Increases monotonically for each waypoint, no gaps in the sequence (0,1,2,3,4).")]

@@ -563,7 +563,13 @@ public class ArduCopterManager : Hub<IDroneManager>
         var mavMissionItems = flightPoints
             .Select((points,seq) => CreateMission(points.lat, points.lng, seq))
             .ToArray();
-
+        
+        var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
+            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,
+            mavMissionItems));
+        await SendCommandAsync(msg);
+        
+        
         var missionCountMsg = _parser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_COUNT,
             new MAVLink.mavlink_mission_count_t
             {
@@ -571,6 +577,7 @@ public class ArduCopterManager : Hub<IDroneManager>
                 mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
                 target_system = byte.Parse(_selectedDrone),
             });
+
         
     }
 
