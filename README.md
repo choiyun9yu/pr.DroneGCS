@@ -9,7 +9,7 @@
 With the advancement of drone technology today, there is a growing effort to utilize drones in various fields. However, due to the high level of difficulty in operating drones and safety concerns, they have not been adopted as quickly as demanded by the market. In response, a system has been developed to easily control multiple drones and detect anomalies using sensor data from the drones. 
 
 ## 2. Data Flow Chart
-![DataStructure](https://img.shields.io/badge/DataStructure-34A853?style=plastic&logoColor=green&logo=googlesheets)
+![![DataStructure](https://img.shields.io/badge/DataStructure-34A853?style=plastic&logoColor=green&logo=googlesheets)](https://docs.google.com/spreadsheets/d/1UX3tJTH26Hw9P75X_Eavw4vgQ74hI1QPBXchLs1yYOk/edit#gid=0)
 
 ![img_3.png](./.docs/.img/img_3.png)
 
