@@ -10,7 +10,7 @@ With the advancement of drone technology today, there is a growing effort to uti
 
 ## 2. Data Flow Chart
 
-<a herf="https://docs.google.com/spreadsheets/d/1UX3tJTH26Hw9P75X_Eavw4vgQ74hI1QPBXchLs1yYOk/edit#gid=0"><img src="https://simpleicons.org/icons/googlesheets.svg" alt="DataStructure"></a>
+<a herf=""><img src="https://simpleicons.org/icons/googlesheets.svg" alt="DataStructure"></a>
 
 ![img_3.png](./.docs/.img/img_3.png)
 
