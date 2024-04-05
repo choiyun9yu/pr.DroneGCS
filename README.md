@@ -10,7 +10,7 @@ With the advancement of drone technology today, there is a growing effort to uti
 
 ## 2. Data Flow Chart
 
-[DataStructure](./.docs/DataStructure.xlsx)
+<a href="https://docs.google.com/spreadsheets/d/1UX3tJTH26Hw9P75X_Eavw4vgQ74hI1QPBXchLs1yYOk/edit#gid=0"><img src="https://simpleicons.org/icons/googlesheets.svg" alt="1.0"/></a>
 
 ![img_3.png](./.docs/.img/img_3.png)
 
@@ -31,7 +31,6 @@ TODO: GCS 에서 droneStateDict 전체를 React 로 내려주기
 
 ## 5. Web APP
 ### [React Source Code](./web-app)
-TODO: 선택된 아이디의 droneState 만 걸러서 표시하기 
 
 ### 5-1. Dashboard
 ![img_4.png](.docs/.img/img_4.png)
