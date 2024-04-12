@@ -1,4 +1,3 @@
-using System.Diagnostics.Contracts;
 using System.Net;
 using System.Text.Json;
 using DotNetty.Buffers;
@@ -16,7 +15,6 @@ using gcs_system.MAVSDK;
 using gcs_system.Models;
 using gcs_system.Services.Helper;
 using GcsSystem.Services;
-using MongoDB.Bson;
 
 namespace gcs_system.Services;
 
@@ -34,6 +32,7 @@ public class ArduCopterManager : Hub<IDroneManager>
     
     private readonly MAVLink.MavlinkParse _parser = new();
     private readonly MavlinkMapper _mapper = new();
+    private readonly MavlinkMission _mission = new();
 
     private DroneStatusUpdate.DroneStatusUpdateClient _grpcUpdateService;
     private readonly GcsApiService _gcsApiService;
@@ -557,29 +556,34 @@ public class ArduCopterManager : Hub<IDroneManager>
 
     public async Task HandleDroneMissionUpload()
     {
-        List<DroneLocation> flightPoints = _droneInstance.DroneMission.TransitPoint;
-        // Console.WriteLine(flightPoints);
+        // MISSION_COUNT 보내기 
+        int missionCountNum = _droneInstance.DroneMission.TransitPoint.Count;
+        // Console.WriteLine(mission_count_num);
 
-        var mavMissionItems = flightPoints
-            .Select((points,seq) => CreateMission(points.lat, points.lng, seq))
-            .ToArray();
-        
-        var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
-            MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT,
-            mavMissionItems));
-        await SendCommandAsync(msg);
-        
-        
-        var missionCountMsg = _parser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_COUNT,
+        var missionCountBody = _parser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_COUNT,
             new MAVLink.mavlink_mission_count_t
             {
-                count = (ushort)mavMissionItems.Length,
+                count = (ushort)missionCountNum,
                 mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
-                target_system = byte.Parse(_selectedDrone),
+                target_system = byte.Parse(_selectedDrone)
             });
-
         
+        // MISSION_REQUEST_INT 기다리기
+        await _mission.WaitforResponseAsync(new MAVLink.MAVLinkMessage(missionCountBody));
+
+
+        // ConvertToMavMission() 으로 mission 으로 미션으로 맵핑 
+
+
+        // MISSION_ACK 받으면 임무 완료(?) 
+
+
+        // MISSION UPLOAD 이후 MISSION DOWNLOAD 하고...
+
+
     }
+
+
 
     public async Task HandleDroneMissionClear()
     {
