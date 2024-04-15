@@ -27,7 +27,7 @@ public class MavlinkUdpNetty
           var pipeline = channel.Pipeline; 
           pipeline.AddFirst("Mavlink Decoder", new MavlinkUdpDecoder());
           pipeline.AddLast("Mavlink Handler", new MavlinkHandler(arduCopterManager));
-          pipeline.AddLast("Mavlink Encoder", new MavlinkEncoder());
+          // pipeline.AddLast("Mavlink Encoder", new MavlinkEncoder());
         }
       ));
   }

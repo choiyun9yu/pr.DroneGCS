@@ -32,6 +32,7 @@ public class ArduCopterManager : Hub<IDroneManager>
     
     private readonly MAVLink.MavlinkParse _parser = new();
     private readonly MavlinkMapper _mapper = new();
+    private readonly MavlinkEncoder _encoder = new();
     private readonly MavlinkMission _mission = new();
 
     private DroneStatusUpdate.DroneStatusUpdateClient _grpcUpdateService;
@@ -111,9 +112,12 @@ public class ArduCopterManager : Hub<IDroneManager>
                 }
             );
         }
+
+        _mapper.HandleDroneMessage(_droneStateMap[_droneId], msg);
+        _mission.UpdateMissionState(msg);
         
-        object data = msg.data;
-        _mapper.UpdateDroneState(_droneStateMap[_droneId], data);
+        // object data = msg.data;
+        // _mapper.UpdateDroneState(_droneStateMap[_droneId], data);
         
         // string forReact = JsonConvert.SerializeObject(_droneStateMap[_selectedDrone]);
         // await _hubContext.Clients.All.SendAsync("droneState", forReact);
@@ -287,8 +291,9 @@ public class ArduCopterManager : Hub<IDroneManager>
             MAVLink.MAVLINK_MSG_ID.SET_MODE, commandBody));
          
         // 생성된 MAVLink 메시지를 이용하여 드론에 비행 모드 변경 명령을 비동기적으로 전송 
-        await SendCommandAsync(msg);
-     }
+        await _encoder.SendCommandAsync(_context, _droneAddress, msg);
+        // await SendCommandAsync(msg);
+    }
     
     // 비행 명령 메소드 (Arm ~ Land)
     public async Task HandleDroneFlightCommand(FlightCommand flightCommand)
@@ -363,8 +368,8 @@ public class ArduCopterManager : Hub<IDroneManager>
                 : new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
                     MAVLink.MAVLINK_MSG_ID.SET_MODE,
                     setModeMsg));
-            
-            await SendCommandAsync(msg); 
+            await _encoder.SendCommandAsync(_context, _droneAddress, msg);
+            // await SendCommandAsync(msg); 
         }
         catch (Exception ex)
         {
@@ -526,7 +531,8 @@ public class ArduCopterManager : Hub<IDroneManager>
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
             commandBody));
-        await SendCommandAsync(msg);
+        await _encoder.SendCommandAsync(_context, _droneAddress, msg);
+        // await SendCommandAsync(msg);
     }
     
     public async Task HandleDroneMoveToBase()
@@ -551,15 +557,20 @@ public class ArduCopterManager : Hub<IDroneManager>
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.MISSION_ITEM,
             commandBody));
-        await SendCommandAsync(msg);
+        await _encoder.SendCommandAsync(_context, _droneAddress, msg);
+        // await SendCommandAsync(msg);
     }
 
     public async Task HandleDroneMissionUpload()
     {
         // MISSION_COUNT 보내기 
         int missionCountNum = _droneInstance.DroneMission.TransitPoint.Count;
-        // Console.WriteLine(mission_count_num);
+        Console.WriteLine("미션 개수: " + missionCountNum);
 
+        // 미션 아이템 목록 만들기 
+        _mission.SetMissionItems(_droneInstance.DroneId, _droneInstance.DroneMission.TransitPoint, _droneInstance.DroneMission.MissionAlt);
+        
+        // MISSION_REQUEST_INT 기다리기
         var missionCountBody = _parser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_COUNT,
             new MAVLink.mavlink_mission_count_t
             {
@@ -568,13 +579,9 @@ public class ArduCopterManager : Hub<IDroneManager>
                 target_system = byte.Parse(_selectedDrone)
             });
         
-        // MISSION_REQUEST_INT 기다리기
-        await _mission.WaitforResponseAsync(new MAVLink.MAVLinkMessage(missionCountBody));
+        await _mission.WaitforResponseAsync(_context, _droneAddress, new MAVLink.MAVLinkMessage(missionCountBody));
 
-
-        // ConvertToMavMission() 으로 mission 으로 미션으로 맵핑 
-
-
+        
         // MISSION_ACK 받으면 임무 완료(?) 
 
 
@@ -643,7 +650,8 @@ public class ArduCopterManager : Hub<IDroneManager>
         }
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
                     MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_OVERRIDE, commandBody));
-        await SendCommandAsync(msg);
+        await _encoder.SendCommandAsync(_context, _droneAddress, msg);
+        // await SendCommandAsync(msg);
     }
     
     // 제어 
@@ -698,7 +706,8 @@ public class ArduCopterManager : Hub<IDroneManager>
         }
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.RC_CHANNELS_OVERRIDE, commandBody));
-        await SendCommandAsync(msg);
+        await _encoder.SendCommandAsync(_context, _droneAddress, msg);
+        // await SendCommandAsync(msg);
     }
 
     
@@ -768,7 +777,8 @@ public class ArduCopterManager : Hub<IDroneManager>
         }
         var msg = new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.GIMBAL_MANAGER_SET_PITCHYAW, commandBody));
-        await SendCommandAsync(msg);
+        await _encoder.SendCommandAsync(_context, _droneAddress, msg);
+        // await SendCommandAsync(msg);
     }
 
     
