@@ -98,6 +98,9 @@ export const SignalRProvider = ({ children }) => {
     const handleDroneMissionUpload = () => {
         connection.current.invoke('HandleDroneMissionUpload')
     }
+    const handleDroneMissionDownload = () => {
+        connection.current.invoke('HandleDroneMissionDownload')
+    }
     const handleDroneMissionClear = () => {
         connection.current.invoke('HandleDroneMissionClear')
     }
@@ -136,6 +139,7 @@ export const SignalRProvider = ({ children }) => {
             handleDroneMovetoBase,
             handleMissionAlt,
             handleDroneMissionUpload,
+            handleDroneMissionDownload,
             handleDroneMissionClear,
             handleSelectedDrone,
             handleMoveBtn,

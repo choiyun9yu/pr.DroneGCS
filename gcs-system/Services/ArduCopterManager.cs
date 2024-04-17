@@ -578,23 +578,33 @@ public class ArduCopterManager : Hub<IDroneManager>
             );
         
         // MISSION_REQUEST_INT 기다리기
-        var missionCountBody = _parser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_COUNT,
-            new MAVLink.mavlink_mission_count_t
+        var missionCountBody = new MAVLink.MAVLinkMessage(
+            _parser.GenerateMAVLinkPacket20(
+                MAVLink.MAVLINK_MSG_ID.MISSION_COUNT, 
+                new MAVLink.mavlink_mission_count_t
             {
                 count = (ushort)(missionCountNum+2),
                 mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
                 target_system = byte.Parse(_selectedDrone)
-            });
+            }));
         
-        await _mission.WaitforResponseAsync(_context, _droneAddress, new MAVLink.MAVLinkMessage(missionCountBody), missionCountNum);
+        await _mission.WaitforResponseAsync(_context, _droneAddress, missionCountBody, missionCountNum);
+        
+    }
 
-        
-        // MISSION_ACK 받으면 임무 완료(?) 
+    public async Task HandleDroneMissionDownload()
+    {
+        Console.WriteLine("-----------임무 받기 시작!-----------");
+        var missionRequestBdoy = new MAVLink.MAVLinkMessage(
+            _parser.GenerateMAVLinkPacket20(
+                MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_LIST,
+                new MAVLink.mavlink_mission_request_list_t
+                {
+                    mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
+                    target_system = byte.Parse(_selectedDrone)
+                }));
 
-
-        // MISSION UPLOAD 이후 MISSION DOWNLOAD 하고...
-        
-        
+        await _mission.WaitforResponseAsync(_context, _droneAddress, missionRequestBdoy);
     }
 
 

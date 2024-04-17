@@ -29,6 +29,45 @@ public class MavlinkMission()
     {
         _context = ctx;
         _droneAddress = addr;
+        _isMission = true;
+        _isResponse = false;
+        _messageType = "UploadMissionItems";
+        _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST;
+
+        // 메시지 보내기
+        Console.WriteLine($"Send to Drone about MISSION_COUNT({count})");
+        await _encoder.SendCommandAsync(_context, _droneAddress, msg);
+        
+        // 비동기 작업 완료 대기 객체 설정
+        var waitTaskCompletionSource = new TaskCompletionSource<bool>();
+        var timeOutTask = Task.Delay(TimeSpan.FromMilliseconds(WAIT_TIME));
+        
+        // 재시도 횟수를 고려하여 응답 대기 
+        for (int retryCount = 0; retryCount <= MAX_RETRY_COUNT; retryCount++)
+        {
+            await Task.WhenAny(waitTaskCompletionSource.Task, timeOutTask);
+
+            if (_isResponse)
+            {
+                waitTaskCompletionSource.TrySetResult(true);
+                break;
+            }
+            if (retryCount >= MAX_RETRY_COUNT)
+            {
+                Console.WriteLine("MISSION_UPLOAD_FAIL");
+                waitTaskCompletionSource.TrySetResult(true);
+                break;
+            }
+            Console.WriteLine(retryCount + 1 + " 번 째 재시도");
+            await _encoder.SendCommandAsync(_context, _droneAddress, msg); 
+        }
+
+    }
+    
+     public async Task WaitforResponseAsync(IChannelHandlerContext ctx, IPEndPoint addr, MAVLink.MAVLinkMessage msg)
+    {
+        _context = ctx;
+        _droneAddress = addr;
         
         // 초기화 
         _isMission = true;
@@ -39,19 +78,6 @@ public class MavlinkMission()
         // 보내는 메시지에 따라 설정
         switch ((MAVLink.MAVLINK_MSG_ID)msg.msgid)
         {
-            case MAVLink.MAVLINK_MSG_ID.MISSION_COUNT:
-            {
-                _messageType = "UploadMissionItems";
-                Console.WriteLine($"Send to Drone about MISSION_COUNT({count})");
-                _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST;
-                break;
-            }
-            case MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT:
-            {
-                Console.WriteLine("Send to Drone about MISSION_ITEM_INT!");
-                _messageType = "UploadMissionItems";
-                break;
-            }
             case MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_LIST:
             {
                 Console.WriteLine("Send to Drone about MISSION_REQUEST_LIST!");
@@ -66,6 +92,12 @@ public class MavlinkMission()
                 _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT;
                 break;
             }
+            case MAVLink.MAVLINK_MSG_ID.MISSION_ACK:
+            {
+                Console.WriteLine("Send to Drone about MISSION_ACK!");
+                _messageType = "UploadMissionAck";
+                break;
+            }
             case MAVLink.MAVLINK_MSG_ID.MISSION_CLEAR_ALL:
             {
                 Console.WriteLine("Send to Drone about MISSION_CLEAR_ALL!");
@@ -73,6 +105,89 @@ public class MavlinkMission()
                 _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_ACK;
                 break;
             }
+            case MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT:
+            {
+                Console.WriteLine("Send to Drone about MISSION_ITEM_INT!");
+                _messageType = "UploadMissionItems";
+                break;
+            }
+
+        }
+
+        // 메시지 보내기
+        await _encoder.SendCommandAsync(_context, _droneAddress, msg);
+        
+        // 비동기 작업 완료 대기 객체 설정
+        var waitTaskCompletionSource = new TaskCompletionSource<bool>();
+        var timeOutTask = Task.Delay(TimeSpan.FromMilliseconds(WAIT_TIME));
+        
+        // 재시도 횟수를 고려하여 응답 대기 
+        for (int retryCount = 0; retryCount <= MAX_RETRY_COUNT; retryCount++)
+        {
+            await Task.WhenAny(waitTaskCompletionSource.Task, timeOutTask);
+
+            if (_isResponse)
+            {
+                waitTaskCompletionSource.TrySetResult(true);
+                break;
+            }
+            if (retryCount >= MAX_RETRY_COUNT)
+            {
+                Console.WriteLine("MISSION_UPLOAD_FAIL");
+                waitTaskCompletionSource.TrySetResult(true);
+                break;
+            }
+            Console.WriteLine(retryCount + 1 + " 번 째 재시도");
+            await _encoder.SendCommandAsync(_context, _droneAddress, msg); 
+        }
+
+    }
+     
+    public async Task WaitforResponseAsync(MAVLink.MAVLinkMessage msg)
+    {
+        // 초기화 
+        _isMission = true;
+        _isResponse = false;
+        _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_ACK;
+        _messageType = "";
+
+        // 보내는 메시지에 따라 설정
+        switch ((MAVLink.MAVLINK_MSG_ID)msg.msgid)
+        {
+            case MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_LIST:
+            {
+                Console.WriteLine("Send to Drone about MISSION_REQUEST_LIST!");
+                _messageType = "ClearMissionItems";
+                _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_COUNT;
+                break;
+            }
+            case MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_INT:
+            {
+                Console.WriteLine("Send to Drone about MISSION_REQUEST_INT!");
+                _messageType = "DownloadMissionItems";
+                _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT;
+                break;
+            }
+            case MAVLink.MAVLINK_MSG_ID.MISSION_ACK:
+            {
+                Console.WriteLine("Send to Drone about MISSION_ACK!");
+                _messageType = "UploadMissionAck";
+                break;
+            }
+            case MAVLink.MAVLINK_MSG_ID.MISSION_CLEAR_ALL:
+            {
+                Console.WriteLine("Send to Drone about MISSION_CLEAR_ALL!");
+                _messageType = "ClearMissionItems";
+                _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_ACK;
+                break;
+            }
+            case MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT:
+            {
+                Console.WriteLine("Send to Drone about MISSION_ITEM_INT!");
+                _messageType = "UploadMissionItems";
+                break;
+            }
+
         }
 
         // 메시지 보내기
@@ -201,6 +316,13 @@ public class MavlinkMission()
                     Console.WriteLine("-------------------------------------");
                     Console.WriteLine("Receive mission_ack");
                     HandleMissionAct(data);
+                    break;
+                }
+                case MAVLink.MAVLINK_MSG_ID.MISSION_COUNT:
+                {
+                    var data = (MAVLink.mavlink_mission_count_t)msg.data;
+                    Console.WriteLine("-------------------------------------");
+                    Console.WriteLine($"Receive mavlink_mission_count({data.count})");
                     break;
                 }
                 case MAVLink.MAVLINK_MSG_ID.MISSION_ITEM:

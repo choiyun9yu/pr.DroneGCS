@@ -194,7 +194,14 @@ public class MavlinkMapper
       }
       case MAVLink.MAVLINK_MSG_ID.MISSION_CURRENT:
       {
-        // Console.WriteLine("MISSION_CURRENT");
+        var missionCurrent = (MAVLink.mavlink_mission_current_t)droneMessage.data;
+
+        // To Check MISSION STATE
+        // Console.Write($"drone_id: {droneInstance.DroneId}, ");
+        // Console.WriteLine($"total: {missionCurrent.total}");                // 드론의 총 임무 항목 수 (마지막 항목 순서 == 총계), 드론에 미션이 없으면 UINT16_MAX
+        // Console.Write($"seq: {missionCurrent.seq}, ");                      // 수행 중인 임무 순서
+        // Console.Write($"mission_state: {missionCurrent.mission_state}, ");  // 미션 상태 (0: 임무 보고 미지원, 1: 드론에 임무 없음, 2: 임무 미시작, 3: 임무 활성화(자동모드), 4: 임무 일시 중지, 5: 모든 미션 수행 완료)  // 배송 완료를 드론 시동이 꺼진 것으로 할 것인지 미션 수행 완료가 된 것으로 할 것인지 정할 필요가 있음
+        // Console.Write($"mission_mode: {missionCurrent.mission_mode}, ");    // 미션 모드(?) (0: 알수 없음, 1: 미션 모드, 2: 미션 모드 아님
         break;
       }
     }
