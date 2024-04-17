@@ -265,13 +265,14 @@ public class ArduCopterManager : Hub<IDroneManager>
     public async Task HandleDroneFlightMode(FlightMode flightMode)
     {
         if (flightMode == FlightMode.AUTO
-            || flightMode == FlightMode.GUIDED
-            || flightMode == FlightMode.LAND
             || flightMode == FlightMode.RTL)
         {
             _droneInstance.ControlStt = "auto";
         }
-        if (flightMode == FlightMode.STABILIZE || flightMode == FlightMode.BRAKE)
+        if (flightMode == FlightMode.STABILIZE 
+            || flightMode == FlightMode.BRAKE 
+            || flightMode == FlightMode.GUIDED             
+            || flightMode == FlightMode.LAND)
         {
             _droneInstance.ControlStt = "manual";
         }
@@ -496,7 +497,7 @@ public class ArduCopterManager : Hub<IDroneManager>
         var commandBody = new MAVLink.mavlink_mission_item_int_t
         {
             target_system = byte.Parse(_selectedDrone),
-            seq = seq,
+            seq = (ushort)seq,
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
             command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
             frame = 6,         
@@ -565,29 +566,35 @@ public class ArduCopterManager : Hub<IDroneManager>
     {
         // MISSION_COUNT 보내기 
         int missionCountNum = _droneInstance.DroneMission.TransitPoint.Count;
-        Console.WriteLine("미션 개수: " + missionCountNum);
+        Console.WriteLine("-----------임무 전달 시작!-----------");
 
         // 미션 아이템 목록 만들기 
-        _mission.SetMissionItems(_droneInstance.DroneId, _droneInstance.DroneMission.TransitPoint, _droneInstance.DroneMission.MissionAlt);
+        _mission.SetMissionItems(
+            _droneInstance.DroneId, 
+            _droneInstance.DroneStt.Lat, 
+            _droneInstance.DroneStt.Lon, 
+            _droneInstance.DroneMission.TransitPoint, 
+            _droneInstance.DroneMission.MissionAlt
+            );
         
         // MISSION_REQUEST_INT 기다리기
         var missionCountBody = _parser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_COUNT,
             new MAVLink.mavlink_mission_count_t
             {
-                count = (ushort)missionCountNum,
+                count = (ushort)(missionCountNum+2),
                 mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
                 target_system = byte.Parse(_selectedDrone)
             });
         
-        await _mission.WaitforResponseAsync(_context, _droneAddress, new MAVLink.MAVLinkMessage(missionCountBody));
+        await _mission.WaitforResponseAsync(_context, _droneAddress, new MAVLink.MAVLinkMessage(missionCountBody), missionCountNum);
 
         
         // MISSION_ACK 받으면 임무 완료(?) 
 
 
         // MISSION UPLOAD 이후 MISSION DOWNLOAD 하고...
-
-
+        
+        
     }
 
 

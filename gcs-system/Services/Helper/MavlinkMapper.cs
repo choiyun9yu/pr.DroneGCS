@@ -6,9 +6,10 @@ namespace gcs_system.Services.Helper;
 
 public class MavlinkMapper
 {
-  public event Action<MAVLink.MAVLinkMessage>? OnNewMavlinkMessage;
-  public event Action<string, DroneStt>? OnUpdateDroneState; 
+  // public event Action<MAVLink.MAVLinkMessage>? OnNewMavlinkMessage;
+  // public event Action<string, DroneStt>? OnUpdateDroneState; 
  
+  private readonly MavlinkMission _mission = new();
   private DroneState _droneState;
   
   private readonly GoogleMapHelper _googleMapHelper = GoogleMapHelper.GetInstace();
@@ -17,9 +18,9 @@ public class MavlinkMapper
 
   public void HandleDroneMessage(DroneState droneInstance, MAVLink.MAVLinkMessage droneMessage)
   {
-    OnNewMavlinkMessage?.Invoke(droneMessage);
-    
     _droneState = droneInstance;
+    _mission.UpdateMissionState(droneMessage);
+    
     switch ((MAVLink.MAVLINK_MSG_ID)droneMessage.msgid)
     {
       case MAVLink.MAVLINK_MSG_ID.HEARTBEAT:
@@ -193,7 +194,7 @@ public class MavlinkMapper
       }
       case MAVLink.MAVLINK_MSG_ID.MISSION_CURRENT:
       {
-        Console.WriteLine("MISSION_CURRENT");
+        // Console.WriteLine("MISSION_CURRENT");
         break;
       }
     }
