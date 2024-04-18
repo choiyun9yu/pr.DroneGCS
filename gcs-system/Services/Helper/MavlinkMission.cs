@@ -35,7 +35,7 @@ public class MavlinkMission()
         _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST;
 
         // 메시지 보내기
-        Console.WriteLine($"Send to Drone about MISSION_COUNT({count})");
+        // Console.WriteLine($"Send to Drone about MISSION_COUNT({count})");
         await _encoder.SendCommandAsync(_context, _droneAddress, msg);
         
         // 비동기 작업 완료 대기 객체 설정
@@ -100,7 +100,7 @@ public class MavlinkMission()
             }
             case MAVLink.MAVLINK_MSG_ID.MISSION_CLEAR_ALL:
             {
-                Console.WriteLine("Send to Drone about MISSION_CLEAR_ALL!");
+                // Console.WriteLine("Send to Drone about MISSION_CLEAR_ALL!");
                 _messageType = "ClearMissionItems";
                 _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_ACK;
                 break;
@@ -145,52 +145,49 @@ public class MavlinkMission()
      
     public async Task WaitforResponseAsync(MAVLink.MAVLinkMessage msg)
     {
-        // 초기화 
         _isMission = true;
         _isResponse = false;
         _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_ACK;
         _messageType = "";
-
-        // 보내는 메시지에 따라 설정
+        
         switch ((MAVLink.MAVLINK_MSG_ID)msg.msgid)
         {
             case MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_LIST:
             {
-                Console.WriteLine("Send to Drone about MISSION_REQUEST_LIST!");
+                // Console.WriteLine("Send to Drone about MISSION_REQUEST_LIST!");
                 _messageType = "ClearMissionItems";
                 _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_COUNT;
                 break;
             }
             case MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_INT:
             {
-                Console.WriteLine("Send to Drone about MISSION_REQUEST_INT!");
+                // Console.WriteLine("Send to Drone about MISSION_REQUEST_INT!");
                 _messageType = "DownloadMissionItems";
                 _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT;
                 break;
             }
             case MAVLink.MAVLINK_MSG_ID.MISSION_ACK:
             {
-                Console.WriteLine("Send to Drone about MISSION_ACK!");
+                // Console.WriteLine("Send to Drone about MISSION_ACK!");
                 _messageType = "UploadMissionAck";
                 break;
             }
             case MAVLink.MAVLINK_MSG_ID.MISSION_CLEAR_ALL:
             {
-                Console.WriteLine("Send to Drone about MISSION_CLEAR_ALL!");
+                // Console.WriteLine("Send to Drone about MISSION_CLEAR_ALL!");
                 _messageType = "ClearMissionItems";
                 _waitMsgId = MAVLink.MAVLINK_MSG_ID.MISSION_ACK;
                 break;
             }
             case MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT:
             {
-                Console.WriteLine("Send to Drone about MISSION_ITEM_INT!");
+                // Console.WriteLine("Send to Drone about MISSION_ITEM_INT!");
                 _messageType = "UploadMissionItems";
                 break;
             }
 
         }
-
-        // 메시지 보내기
+        
         await _encoder.SendCommandAsync(_context, _droneAddress, msg);
         
         // 비동기 작업 완료 대기 객체 설정
@@ -297,25 +294,26 @@ public class MavlinkMission()
                 case MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST:
                 {
                     var data = (MAVLink.mavlink_mission_request_t)msg.data;
-                    Console.WriteLine("-------------------------------------");
-                    Console.WriteLine($"Receive mission_request({data.seq})");
                     await SendMavMissionSeq(data.seq);
+                    // Console.WriteLine("-------------------------------------");
+                    // Console.WriteLine($"Receive mission_request({data.seq})");
                     break;
                 }
                 case MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_INT:
                 {
                     var data = (MAVLink.mavlink_mission_request_int_t)msg.data;
-                    Console.WriteLine("-------------------------------------");
-                    Console.WriteLine($"Receive mission_request_int ({data.seq})");
                     await SendMavMissionSeq(data.seq);
+                    // Console.WriteLine("-------------------------------------");
+                    // Console.WriteLine($"Receive mission_request_int ({data.seq})");
                     break;
                 }
                 case MAVLink.MAVLINK_MSG_ID.MISSION_ACK:
                 {
                     var data = (MAVLink.mavlink_mission_ack_t)msg.data;
-                    Console.WriteLine("-------------------------------------");
-                    Console.WriteLine("Receive mission_ack");
                     HandleMissionAct(data);
+                    // Console.WriteLine("-------------------------------------");
+                    // Console.WriteLine("Receive mission_ack");
+
                     break;
                 }
                 case MAVLink.MAVLINK_MSG_ID.MISSION_COUNT:
@@ -349,25 +347,25 @@ public class MavlinkMission()
     {
         var missionItemMsg =  new MAVLink.MAVLinkMessage(_parser.GenerateMAVLinkPacket20(
             MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT, _missionItems[seq]));
-        Console.WriteLine($"Send mission_item_int({seq})");
 
         // To Check Mission Item Params
-        Console.WriteLine("-------------------------------------");
-        Console.WriteLine($"seq: {_missionItems[seq].seq}");
-        Console.WriteLine($"command: {_missionItems[seq].command}");
-        Console.WriteLine($"target_sys: {_missionItems[seq].target_system}");
-        Console.WriteLine($"target_component: {_missionItems[seq].target_component}");
-        Console.WriteLine($"mission_type: {_missionItems[seq].mission_type}");
-        Console.WriteLine($"auto_continue: {_missionItems[seq].autocontinue}");
-        Console.WriteLine($"current: {_missionItems[seq].current}");
-        Console.WriteLine($"frame: {_missionItems[seq].frame}");
-        Console.WriteLine($"x: {_missionItems[seq].x}");
-        Console.WriteLine($"y: {_missionItems[seq].y}");
-        Console.WriteLine($"z: {_missionItems[seq].z}");
-        Console.WriteLine($"pram1: {_missionItems[seq].param1}");
-        Console.WriteLine($"pram2: {_missionItems[seq].param2}");
-        Console.WriteLine($"pram3: {_missionItems[seq].param3}");
-        Console.WriteLine($"pram4: {_missionItems[seq].param4}");
+        // Console.WriteLine($"Send mission_item_int({seq})");
+        // Console.WriteLine("-------------------------------------");
+        // Console.WriteLine($"seq: {_missionItems[seq].seq}");
+        // Console.WriteLine($"command: {_missionItems[seq].command}");
+        // Console.WriteLine($"target_sys: {_missionItems[seq].target_system}");
+        // Console.WriteLine($"target_component: {_missionItems[seq].target_component}");
+        // Console.WriteLine($"mission_type: {_missionItems[seq].mission_type}");
+        // Console.WriteLine($"auto_continue: {_missionItems[seq].autocontinue}");
+        // Console.WriteLine($"current: {_missionItems[seq].current}");
+        // Console.WriteLine($"frame: {_missionItems[seq].frame}");
+        // Console.WriteLine($"x: {_missionItems[seq].x}");
+        // Console.WriteLine($"y: {_missionItems[seq].y}");
+        // Console.WriteLine($"z: {_missionItems[seq].z}");
+        // Console.WriteLine($"pram1: {_missionItems[seq].param1}");
+        // Console.WriteLine($"pram2: {_missionItems[seq].param2}");
+        // Console.WriteLine($"pram3: {_missionItems[seq].param3}");
+        // Console.WriteLine($"pram4: {_missionItems[seq].param4}");
         
         await _encoder.SendCommandAsync(_context, _droneAddress, missionItemMsg);
     }
