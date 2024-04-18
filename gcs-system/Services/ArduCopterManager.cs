@@ -566,8 +566,8 @@ public class ArduCopterManager : Hub<IDroneManager>
     {
         // MISSION_COUNT 보내기 
         int missionCountNum = _droneInstance.DroneMission.TransitPoint.Count;
-        // Console.WriteLine("-----------임무 전달 시작!-----------");
-
+        Console.WriteLine("-----------임무 전달 시작!-----------");
+        Console.WriteLine("임무 개수: " + (missionCountNum + 2));
         // 미션 아이템 목록 만들기 
         _mission.SetMissionItems(
             _droneInstance.DroneId, 
@@ -588,7 +588,7 @@ public class ArduCopterManager : Hub<IDroneManager>
                 target_system = byte.Parse(_selectedDrone)
             }));
         
-        await _mission.WaitforResponseAsync(_context, _droneAddress, missionCountBody, missionCountNum);
+        await _mission.WaitforResponseAsync(_context, _droneAddress, missionCountBody);
         
     }
 
@@ -609,7 +609,7 @@ public class ArduCopterManager : Hub<IDroneManager>
 
     public async Task HandleDroneMissionClear()
     {
-        // Console.WriteLine("-----------임무 제거 시작!-----------");
+        Console.WriteLine("-----------임무 제거 시작!-----------");
         var missionClearBody = new MAVLink.MAVLinkMessage(
             _parser.GenerateMAVLinkPacket20(
                 MAVLink.MAVLINK_MSG_ID.MISSION_CLEAR_ALL,

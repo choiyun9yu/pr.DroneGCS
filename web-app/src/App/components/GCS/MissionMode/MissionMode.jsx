@@ -309,7 +309,7 @@ const MissionComponent = (props) => {
             </span>
               :
             <input
-              className={'m-1 w-[45px] text-black px-2'}
+              className={'m-1 w-[55px] text-black px-2'}
               name={'FlightAlt'}
               type={'text'}
               value={flightAlt}
