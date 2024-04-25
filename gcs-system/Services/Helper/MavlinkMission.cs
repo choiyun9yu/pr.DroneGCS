@@ -218,33 +218,38 @@ public class MavlinkMission()
         await WaitforResponseAsync(_context, _droneAddress, missionRequstMsg);
     }
     
-    public void SetMissionItems(string? droneId, double x, double y, List<DroneLocation> missionTransits, int alt)
+    public void SetMissionItems(string? droneId, double x, double y, List<DroneLocation> missionTransits, int alt, int missionCount)
     {
-        MAVLink.mavlink_mission_item_int_t firstBody = new MAVLink.mavlink_mission_item_int_t
+        // MAVLink.mavlink_mission_item_int_t firstBody = new MAVLink.mavlink_mission_item_int_t
+        // {
+        //     seq = 0,
+        //     target_system = byte.Parse(droneId),
+        //     mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
+        //     command = 16,
+        //     autocontinue = 1,
+        //     frame = 3,         
+        //     x = (int)Math.Round(x * 10000000),
+        //     y = (int)Math.Round(y * 10000000),
+        //     z = alt,           
+        // };
+        // _missionItems.Add(firstBody);
+        
+        // TODO: 지금 takeoff 명령 고도 높이까지 상승하지 않고 있음 
+        MAVLink.mavlink_mission_item_int_t takeoffBody = new MAVLink.mavlink_mission_item_int_t
         {
             seq = 0,
             target_system = byte.Parse(droneId),
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
-            command = 16,
+            command = (ushort)MAVLink.MAV_CMD.TAKEOFF_LOCAL,
+            current = 1,
             autocontinue = 1,
-            frame = 3,         
-            x = (int)Math.Round(x * 10000000),
-            y = (int)Math.Round(y * 10000000),
-            z = alt,           
-        };
-        _missionItems.Add(firstBody);
-        
-        MAVLink.mavlink_mission_item_int_t takeoffBody = new MAVLink.mavlink_mission_item_int_t
-        {
-            seq = 1,
-            target_system = byte.Parse(droneId),
-            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
-            command = 22,
-            autocontinue = 1,
-            frame = 3,
-            x = (int)Math.Round(x * 10000000),
-            y = (int)Math.Round(y * 10000000),
-            z = alt,           
+            // frame = (byte)MAVLink.MAV_FRAME.MISSION,
+            x = 0,
+            y = 0,
+            frame = (byte)MAVLink.MAV_FRAME.GLOBAL_RELATIVE_ALT,
+            // x = (int)Math.Round(x * 10000000),
+            // y = (int)Math.Round(y * 10000000),
+            z = 20,           
         };
         _missionItems.Add(takeoffBody);
         
@@ -255,18 +260,30 @@ public class MavlinkMission()
             
             MAVLink.mavlink_mission_item_int_t waypointBody = new MAVLink.mavlink_mission_item_int_t
             {
-                seq = (ushort)(i+2),
+                seq = (ushort)(i+1),
                 target_system = byte.Parse(droneId),
                 mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
-                command = 16,
-                autocontinue = 1,
-                frame = 3,         
+                command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
+                frame = (byte)MAVLink.MAV_FRAME.GLOBAL_RELATIVE_ALT,
                 x = (int)Math.Round(points.lat * 10000000),
                 y = (int)Math.Round(points.lng * 10000000),
                 z = alt,           
             };
             _missionItems.Add(waypointBody);
         }
+
+        MAVLink.mavlink_mission_item_int_t landBody = new MAVLink.mavlink_mission_item_int_t
+        {
+            seq = (ushort)missionCount,
+            target_component = byte.Parse(droneId),
+            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
+            command = (ushort)MAVLink.MAV_CMD.LAND,
+            frame = (byte)MAVLink.MAV_FRAME.MISSION,
+            x = 0,
+            y = 0,
+            z = 0
+        };
+        _missionItems.Add(landBody);
 
         // To Check MissionItems
         // foreach (var e in _missionItems)
@@ -288,18 +305,18 @@ public class MavlinkMission()
 
         // To Check Mission Item Params
         Console.WriteLine($"Send mission_item_int({seq})");
-        // Console.WriteLine("-----------------------------------------");
-        // Console.WriteLine($"seq: {_missionItems[seq].seq}");
-        // Console.WriteLine($"command: {_missionItems[seq].command}");
-        // Console.WriteLine($"target_sys: {_missionItems[seq].target_system}");
-        // Console.WriteLine($"target_component: {_missionItems[seq].target_component}");
-        // Console.WriteLine($"mission_type: {_missionItems[seq].mission_type}");
-        // Console.WriteLine($"auto_continue: {_missionItems[seq].autocontinue}");
-        // Console.WriteLine($"current: {_missionItems[seq].current}");
-        // Console.WriteLine($"frame: {_missionItems[seq].frame}");
-        // Console.WriteLine($"x: {_missionItems[seq].x}");
-        // Console.WriteLine($"y: {_missionItems[seq].y}");
-        // Console.WriteLine($"z: {_missionItems[seq].z}");
+        Console.WriteLine("-------------------------------------");
+        Console.WriteLine($"seq: {_missionItems[seq].seq}");
+        Console.WriteLine($"command: {_missionItems[seq].command}");
+        Console.WriteLine($"target_sys: {_missionItems[seq].target_system}");
+        Console.WriteLine($"target_component: {_missionItems[seq].target_component}");
+        Console.WriteLine($"mission_type: {_missionItems[seq].mission_type}");
+        Console.WriteLine($"auto_continue: {_missionItems[seq].autocontinue}");
+        Console.WriteLine($"current: {_missionItems[seq].current}");
+        Console.WriteLine($"frame: {_missionItems[seq].frame}");
+        Console.WriteLine($"x: {_missionItems[seq].x}");
+        Console.WriteLine($"y: {_missionItems[seq].y}");
+        Console.WriteLine($"z: {_missionItems[seq].z}");
         // Console.WriteLine($"pram1: {_missionItems[seq].param1}");
         // Console.WriteLine($"pram2: {_missionItems[seq].param2}");
         // Console.WriteLine($"pram3: {_missionItems[seq].param3}");
@@ -331,6 +348,15 @@ public class MavlinkMission()
         if ((MAVLink.MAV_MISSION_RESULT)act.type == MAVLink.MAV_MISSION_RESULT.MAV_MISSION_OPERATION_CANCELLED)
         {
             Console.WriteLine("임무 취소");
+            Console.WriteLine("-------------------------------------");
+            _isResponse = true;
+            _isMission = false;
+            _messageType = "";
+            _missionItems = new();
+        }
+        if ((MAVLink.MAV_MISSION_RESULT)act.type == MAVLink.MAV_MISSION_RESULT.MAV_MISSION_UNSUPPORTED_FRAME)
+        {
+            Console.WriteLine("지원하지 않는 프레임");
             Console.WriteLine("-------------------------------------");
             _isResponse = true;
             _isMission = false;
