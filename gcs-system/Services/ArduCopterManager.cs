@@ -567,8 +567,7 @@ public class ArduCopterManager : Hub<IDroneManager>
         // MISSION_COUNT 보내기 
         int missionCountNum = _droneInstance.DroneMission.TransitPoint.Count;
         Console.WriteLine("-----------임무 전달 시작!-----------");
-        Console.WriteLine("임무 개수: " + (missionCountNum + 2));
-        // Console.WriteLine("임무 개수: " + (missionCountNum + 1));
+        Console.WriteLine("임무 개수: " + (missionCountNum + 3));
         // 미션 아이템 목록 만들기 
         _mission.SetMissionItems(
             _droneInstance.DroneId, 
@@ -576,7 +575,7 @@ public class ArduCopterManager : Hub<IDroneManager>
             _droneInstance.DroneStt.Lon, 
             _droneInstance.DroneMission.TransitPoint, 
             _droneInstance.DroneMission.MissionAlt,
-            missionCountNum + 1
+            missionCountNum + 2
             );
         
         // MISSION_REQUEST_INT 기다리기
@@ -627,7 +626,7 @@ public class ArduCopterManager : Hub<IDroneManager>
 
     public async Task HandleDroneMissionStart()
     {
-        Console.WriteLine("Mission Start!!!");
+        _droneInstance.ControlStt = "auto";
         var missionStartBody = new MAVLink.MAVLinkMessage(
             _parser.GenerateMAVLinkPacket20(
                 MAVLink.MAVLINK_MSG_ID.COMMAND_INT, new MAVLink.mavlink_command_int_t
@@ -637,7 +636,7 @@ public class ArduCopterManager : Hub<IDroneManager>
                     
                 }));
         await _encoder.SendCommandAsync(_context, _droneAddress, missionStartBody);
-
+        // Console.WriteLine("Mission Start!!!");
     }
 
     // 드론

@@ -220,36 +220,25 @@ public class MavlinkMission()
     
     public void SetMissionItems(string? droneId, double x, double y, List<DroneLocation> missionTransits, int alt, int missionCount)
     {
-        // MAVLink.mavlink_mission_item_int_t firstBody = new MAVLink.mavlink_mission_item_int_t
-        // {
-        //     seq = 0,
-        //     target_system = byte.Parse(droneId),
-        //     mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
-        //     command = 16,
-        //     autocontinue = 1,
-        //     frame = 3,         
-        //     x = (int)Math.Round(x * 10000000),
-        //     y = (int)Math.Round(y * 10000000),
-        //     z = alt,           
-        // };
-        // _missionItems.Add(firstBody);
-        
-        // TODO: 지금 takeoff 명령 고도 높이까지 상승하지 않고 있음 
-        MAVLink.mavlink_mission_item_int_t takeoffBody = new MAVLink.mavlink_mission_item_int_t
+        MAVLink.mavlink_mission_item_int_t firstBody = new MAVLink.mavlink_mission_item_int_t
         {
             seq = 0,
             target_system = byte.Parse(droneId),
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
-            command = (ushort)MAVLink.MAV_CMD.TAKEOFF_LOCAL,
-            current = 1,
-            autocontinue = 1,
-            // frame = (byte)MAVLink.MAV_FRAME.MISSION,
+            command = 16,
+        };
+        _missionItems.Add(firstBody);
+        
+        MAVLink.mavlink_mission_item_int_t takeoffBody = new MAVLink.mavlink_mission_item_int_t
+        {
+            seq = 1,
+            target_system = byte.Parse(droneId),
+            mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
+            command = (byte)MAVLink.MAV_CMD.TAKEOFF,
+            frame = 6,
             x = 0,
             y = 0,
-            frame = (byte)MAVLink.MAV_FRAME.GLOBAL_RELATIVE_ALT,
-            // x = (int)Math.Round(x * 10000000),
-            // y = (int)Math.Round(y * 10000000),
-            z = 20,           
+            z = alt,           
         };
         _missionItems.Add(takeoffBody);
         
@@ -260,10 +249,10 @@ public class MavlinkMission()
             
             MAVLink.mavlink_mission_item_int_t waypointBody = new MAVLink.mavlink_mission_item_int_t
             {
-                seq = (ushort)(i+1),
+                seq = (ushort)(i+2),
                 target_system = byte.Parse(droneId),
                 mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
-                command = (ushort)MAVLink.MAV_CMD.WAYPOINT,
+                command = (byte)MAVLink.MAV_CMD.WAYPOINT,
                 frame = (byte)MAVLink.MAV_FRAME.GLOBAL_RELATIVE_ALT,
                 x = (int)Math.Round(points.lat * 10000000),
                 y = (int)Math.Round(points.lng * 10000000),
@@ -272,12 +261,12 @@ public class MavlinkMission()
             _missionItems.Add(waypointBody);
         }
 
-        MAVLink.mavlink_mission_item_int_t landBody = new MAVLink.mavlink_mission_item_int_t
+        MAVLink.mavlink_mission_item_int_t landBody = new MAVLink.mavlink_mission_item_int_t     
         {
             seq = (ushort)missionCount,
             target_component = byte.Parse(droneId),
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
-            command = (ushort)MAVLink.MAV_CMD.LAND,
+            command = (byte)MAVLink.MAV_CMD.LAND,  
             frame = (byte)MAVLink.MAV_FRAME.MISSION,
             x = 0,
             y = 0,
