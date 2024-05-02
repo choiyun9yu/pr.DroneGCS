@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import {useContext, useEffect, useRef} from 'react'
 import {DroneContext} from "../SignalRContainer";
 
 const circle = {
@@ -66,8 +66,34 @@ const btnRight = {
         'rgba(96.71694979071617, 93.3640743046999, 141.64585292339325, 1) 0%, ' +
         'rgba(46.116092428565025, 43.2159436494112, 117.27387472987175, 1) 35%)',
 }
+
 export const ControlJoyStick = () => {
   const { handleControlJoystick } = useContext(DroneContext)
+
+  const intervaltime = 250  // 호출 시간 (단위: ms)
+  const intervalRef = useRef(null)
+
+  useEffect(() => {
+    // When App is unmounted we should stop counter
+    return () => StopPressBtn()
+  }, [])
+
+  const StartPressBtn = (param) => {
+    if (intervalRef.current) return
+
+    intervalRef.current = setInterval(() => {
+      handleControlJoystick(param)
+      console.log(param)
+    }, [intervaltime])
+  }
+
+  const StopPressBtn = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+  }
+
   return (
     <div style={circle} className={`flex h-full justify-center items-center w-full mx-auto shadow-2xl ${circle}`}>
       <div style={controllerCol} className={'flex flex-col justify-between items-center'}>
