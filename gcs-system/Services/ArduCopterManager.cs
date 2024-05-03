@@ -41,8 +41,8 @@ public class ArduCopterManager : Hub<IDroneManager>
 
     private VincentyCalculator _vincentyCalculator = new();
     
-    private static readonly int THROTTLE_INCREMENT = 300;
-    private static readonly int YAW_INCREMENT = 50;
+    private static readonly int THROTTLE_INCREMENT = 100;
+    private static readonly int YAW_INCREMENT = 30;
     
     public ArduCopterManager(IConfiguration configuration, IHubContext<ArduCopterManager> hubContext, GcsApiService gcsApiService, GrpcChannel grpcChannel)
     {
