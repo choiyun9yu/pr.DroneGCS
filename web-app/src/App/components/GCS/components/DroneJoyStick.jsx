@@ -69,23 +69,28 @@ const btnRight = {
 export const DroneJoyStick = () => {
   const { handleDroneJoystick } = useContext(DroneContext)
 
-  const intervaltime = 250  // 호출 시간 (단위: ms)
-  const intervalRef = useRef(null)
+  const intervalTime = 250  // 함수가 호출되는 간격 정의 (단위: ms)
+  const intervalRef = useRef(null)  // useRef 리렌더링 이전 값에 접근할 때 사용
 
+  // cleanup 함수 대용, When App is unmounted we should stop counter.
   useEffect(() => {
-    // When App is unmounted we should stop counter
     return () => StopPressBtn()
   }, [])
 
+  // intervalRef 를 사용하여 주기적으로 함수를 호출. 만약 이미 실행중인 경우 다시 시작되지 않도록 조건문을 사용한다.
   const StartPressBtn = (param) => {
     if (intervalRef.current) return
 
+    // setInterval 은 일정 시간 간격으로 함수를 반복적으로 실행하는 함수이다.
+    // 주어진 시간 간격마다 지정된 함수를 실행하여 반복 작업을 수행할 수 있다. (주어진 시간은 아래 [ ] 안의 시간을 기준으로 한다.)
     intervalRef.current = setInterval(() => {
       handleDroneJoystick(param)
       console.log(param)
-    }, [intervaltime])
+    }, [intervalTime])
   }
 
+  // 이전에 시작된 주기적인 동작을 중지한다. ClearInterval 함수를 사용하여 주기적으로 실행되던 작업을 중지한다.
+  // intervalRef.current 를 null 로 설정하여 다시 시작되지 않도록 한다.
   const StopPressBtn = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
