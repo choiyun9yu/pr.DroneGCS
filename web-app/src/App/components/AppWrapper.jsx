@@ -14,12 +14,13 @@ export const AppWrapper = () => {
         const newWarningList = []
         for (const key in droneStates) {
             const drone = droneStates[key]
-            if (drone.WarningData?.WarningCount >= 4) {
+            if (drone.WarningData?.WarningCount >= 10) {
                 newWarningList.push(drone.DroneId)
+                console.log(drone.WarningData?.WarningCount)
             }
         }
         setWarningList(newWarningList)
-    }, [])
+    }, [droneStates])
 
     const WarningResult = warningList.filter(item => !warningSkipList.includes(item))
 
@@ -31,7 +32,7 @@ export const AppWrapper = () => {
                         <Outlet />
                     </div>
                     {WarningResult.map((d, i) => (
-                        <WarningModal index={i} drone={d} />
+                        <WarningModal index={i} key={i} drone={d} />
                     ))}
                 </div>
         </GradientBackground>
