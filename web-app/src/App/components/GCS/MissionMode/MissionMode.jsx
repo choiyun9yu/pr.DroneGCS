@@ -104,7 +104,7 @@ const MissionComponent = (props) => {
     const formData = new FormData(e.target)
 
     try {
-      const response = await fetch('http://localhost:5000/api/createmission', {
+      const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/createmission', {
         method: 'POST',
         body: formData,
       })
@@ -130,7 +130,7 @@ const MissionComponent = (props) => {
     const formData = new FormData(e.target)
 
     try {
-      const response = await fetch('http://localhost:5000/api/deletemissionload', {
+      const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/deletemissionload', {
         method: 'DELETE',
         body: formData,
       })
@@ -153,7 +153,7 @@ const MissionComponent = (props) => {
   useEffect(() => {
     const fetchLocalPoints = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/localpoints', {
+        const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/localpoints', {
           method: 'GET',
         })
         if (response.ok) {
@@ -170,7 +170,7 @@ const MissionComponent = (props) => {
 
     const fetchMissionLoad = async () => {
       try{
-        const response = await fetch('http://localhost:5000/api/selectmission', {
+        const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/selectmission', {
           method: 'GET',
         })
         if (response.ok) {
@@ -429,7 +429,7 @@ const StationComponent = (props) => {
     const formData = new FormData(e.target)
 
     try {
-      const response = await fetch('http://localhost:5000/api/addwaypoint', {
+      const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/addwaypoint', {
         method: 'POST',
         body: formData,
       })
@@ -454,7 +454,7 @@ const StationComponent = (props) => {
     const formData = new FormData(e.target)
 
     try {
-      const response = await fetch('http://localhost:5000/api/deletelocalpoint', {
+      const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/deletelocalpoint', {
         method: 'DELETE',
         body: formData,
       })
@@ -477,7 +477,7 @@ const StationComponent = (props) => {
   useEffect(() => {
     const fetchLocalPoints = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/localpoints', {
+        const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/localpoints', {
           method: 'GET',
         })
         if (response.ok) {

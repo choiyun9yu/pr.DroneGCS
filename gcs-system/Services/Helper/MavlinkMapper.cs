@@ -257,7 +257,7 @@ public class MavlinkMapper
     {
       lat = lat,
       lng = lon,
-      global_frame_alt = globalAlt,
+      global_frame_alt = relativeAlt,
       terrain_alt = globalAlt - relativeAlt,
     });
         

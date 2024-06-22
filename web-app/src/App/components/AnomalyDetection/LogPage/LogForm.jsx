@@ -13,7 +13,7 @@ export const LogForm = (props) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://125.183.175.200:5000/api/getid', {
+                const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/getid', {
                     method: 'GET',
                 });
                 if (response.ok) {
@@ -37,7 +37,7 @@ export const LogForm = (props) => {
                 Body.append('periodFrom', periodFromData["periodFrom"]);
                 Body.append('periodTo', periodToData["periodTo"]);
 
-                const response = await fetch('http://125.183.175.200:5000/api/getid', {
+                const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/getid', {
                     method: 'POST',
                     body: Body,
                 });
@@ -74,7 +74,7 @@ export const LogForm = (props) => {
             Body.append('periodFrom', periodFromData["periodFrom"]);
             Body.append('periodTo', periodToData["periodTo"]);
 
-            const response = await fetch('http://125.183.175.200:5000/api/getid', {
+            const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/getid', {
                 method: 'POST',
                 body: Body,
             });
@@ -106,7 +106,7 @@ export const LogForm = (props) => {
             Body.append('DroneId', droneIdData["DroneId"]);
             Body.append('periodTo', periodToData["periodTo"]);
 
-            const response = await fetch('http://125.183.175.200:5000/api/getid', {
+            const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/getid', {
                 method: 'POST',
                 body: Body,
             });
@@ -138,7 +138,7 @@ export const LogForm = (props) => {
             Body.append('DroneId', droneIdData["DroneId"]);
             Body.append('periodFrom', periodFromData["periodFrom"]);
 
-            const response = await fetch('http://125.183.175.200:5000/api/getid', {
+            const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/getid', {
                 method: 'POST',
                 body: Body,
             });
@@ -160,7 +160,7 @@ export const LogForm = (props) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         try {
-            const response = await fetch('http://125.183.175.200:5000/api/logdata', {
+            const response = await fetch('http://' + process.env.REACT_APP_GCS_API_SERVER + '/api/logdata', {
                 method: 'POST',
                 body: formData,
             });

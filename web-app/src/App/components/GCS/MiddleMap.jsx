@@ -374,26 +374,26 @@ export const FlightInfoTable = () => {
                         } m/s
                         </td>
                     </tr>
-                    <tr>
-                        <th className={'px-2'}>비행 거리</th>
-                        <td className={'px-2'}> {droneMessage && (elapsedDistance / 1000).toFixed(3)} km</td>
-                    </tr>
+                    {/*<tr>*/}
+                    {/*    <th className={'px-2'}>비행 거리</th>*/}
+                    {/*    <td className={'px-2'}> {droneMessage && (elapsedDistance / 1000).toFixed(3)} km</td>*/}
+                    {/*</tr>*/}
                     {/*<tr>*/}
                     {/*    <th className={'px-2'}>평균 이동속도</th>*/}
                     {/*    <td className={'px-2'}>{((averageSpeed > 0) ? averageSpeed : 0).toFixed(3)} m/s</td>*/}
                     {/*</tr>*/}
-                    <tr>
-                        <th className={'px-2'}>이륙 시간</th>
-                        <td className={'px-2'}>{formattedStartTime}</td>
-                    </tr>
-                    <tr>
-                        <th className={'px-2'}>비행 시간</th>
-                        <td className={'px-2'}>{formattedTakeTime}</td>
-                    </tr>
-                    <tr>
-                        <th className={'px-2'}>착륙 시간</th>
-                        <td className={'px-2'}>{formattedCompleteTime}</td>
-                    </tr>
+                    {/*<tr>*/}
+                    {/*    <th className={'px-2'}>이륙 시간</th>*/}
+                    {/*    <td className={'px-2'}>{formattedStartTime}</td>*/}
+                    {/*</tr>*/}
+                    {/*<tr>*/}
+                    {/*    <th className={'px-2'}>비행 시간</th>*/}
+                    {/*    <td className={'px-2'}>{formattedTakeTime}</td>*/}
+                    {/*</tr>*/}
+                    {/*<tr>*/}
+                    {/*    <th className={'px-2'}>착륙 시간</th>*/}
+                    {/*    <td className={'px-2'}>{formattedCompleteTime}</td>*/}
+                    {/*</tr>*/}
                     </tbody>
                 </table>
             </div>

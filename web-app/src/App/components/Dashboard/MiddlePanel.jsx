@@ -47,7 +47,7 @@ const FlightCalendar = (props) => {
         [...new Set(props.flightDay["3"].map(date => moment(date).format("YYYY-MM-DD")))] : [];
 
     return(
-        <div id={`calendar-container`} className={`font-normal text-sm`}>
+        <div id={`calendar-container`} className={`font-normal text-sm mt-10`}>
             <Calendar
                 formatDay={(locale, date) => moment(date).format("DD")}
                 value={props.value}

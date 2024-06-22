@@ -379,7 +379,7 @@ const MainController = (props) => {
       <div className={'flex flex-col mt-0.5 mx-2'}>
         <ControlButton className={'w-20 h-12 mb-1.5 rounded-xl text-sm'} onClick={() => handleMoveBtn(props.targetPoint.lat, props.targetPoint.lng)}>Go To Marker</ControlButton>
         <ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleDroneFlightMode(17)}>Brake</ControlButton>
-        y<ControlButton className={'w-20 h-12 mt-5 rounded-xl text-sm'} onClick={handleMissionStart} >Mission Start</ControlButton>
+        <ControlButton className={'w-20 h-12 mt-5 rounded-xl text-sm'} onClick={handleMissionStart} >Mission Start</ControlButton>
         {/*<ControlButton className={'w-20 h-10 mb-1.5 rounded-xl'} onClick={() => handleReturnBtn()}>Return</ControlButton>*/}
         {/*{ props.isRtl*/}
         {/*  ? <button className={'w-20 h-10 mb-1.5 rounded-xl bg-[#6359E9]'}>Return</button>*/}
