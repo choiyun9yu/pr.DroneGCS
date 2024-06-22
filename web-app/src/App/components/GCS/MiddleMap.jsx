@@ -20,6 +20,8 @@ export const MiddleMap = (props) => {
     const [markerId, setMarkerId] = useState(1)
     const [pathLine, setPathLine] = useState([])
 
+    const [downloadPathLine, setDownloadPathLine] = useState(null)
+
     const [isFlightInfoTable, toggleFlightInfoTable] = useReducer(
         isFlightInfoTable => !isFlightInfoTable, true
     )
@@ -186,8 +188,18 @@ export const MiddleMap = (props) => {
                                 position={marker.position}
                                 icon={redMarkerIcon}
                             />)}
-                        <Polyline path={pathLine} options={{ strokeColor: '#FF3333', strokeWeight: 1 }}/>
-                        <Polyline path={[startPoint, targetPoint]} options={{ strokeColor: '#FF3333', strokeWeight: 1 }}/>
+
+
+                        {/* Go To Mission Line */}
+                        {(downloadPathLine === null)
+                            ? <Polyline path={pathLine} options={{ strokeColor: '#AA66FF', strokeWeight: 0.8 }}/>
+                            : <Polyline path={downloadPathLine} options={{ strokeColor: '#FF3333', strokeWeight: 1 }}/>
+                        }
+
+                        {/* Go To Marker Line */}
+                        <Polyline path={[startPoint, targetPoint]} options={{ strokeColor: '#AA66FF', strokeWeight: 1 }}/>
+
+                        {/* drone past path */}
                         <Polyline path={dronePath} options={{ strokeColor: '#BCBEC0', strokeWeight: 2 }} />
 
                         <Marker position={stationPoint} icon={purpleMarkerIcon}/>

@@ -13003,91 +13003,97 @@ public partial class MAVLink
     };
 
     
-    /// extensions_start 14
-    [StructLayout(LayoutKind.Sequential,Pack=1,Size=38)]
-    ///<summary> Message encoding a mission item. This message is emitted to announce                 the presence of a mission item and to set a mission item on the system. The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html. </summary>
-    public struct mavlink_mission_item_int_t
-    {
-        public mavlink_mission_item_int_t(float param1,float param2,float param3,float param4,int x,int y,int z,ushort seq,/*MAV_CMD*/ushort command,byte target_system,byte target_component,/*MAV_FRAME*/byte frame,byte current,byte autocontinue,/*MAV_MISSION_TYPE*/byte mission_type) 
-        {
-              this.param1 = param1;
-              this.param2 = param2;
-              this.param3 = param3;
-              this.param4 = param4;
-              this.x = x;
-              this.y = y;
-              this.z = z;
-              this.seq = seq;
-              this.command = command;
-              this.target_system = target_system;
-              this.target_component = target_component;
-              this.frame = frame;
-              this.current = current;
-              this.autocontinue = autocontinue;
-              this.mission_type = mission_type;
-            
-        }
-            /// <summary>PARAM1, see MAV_CMD enum   </summary>
-        [Units("")]
-        [Description("PARAM1, see MAV_CMD enum")]
-        public  float param1;
-            /// <summary>PARAM2, see MAV_CMD enum   </summary>
-        [Units("")]
-        [Description("PARAM2, see MAV_CMD enum")]
-        public  float param2;
-            /// <summary>PARAM3, see MAV_CMD enum   </summary>
-        [Units("")]
-        [Description("PARAM3, see MAV_CMD enum")]
-        public  float param3;
-            /// <summary>PARAM4, see MAV_CMD enum   </summary>
-        [Units("")]
-        [Description("PARAM4, see MAV_CMD enum")]
-        public  float param4;
-            /// <summary>PARAM5 / local: x position in meters * 1e4, global: latitude in degrees * 10^7   </summary>
-        [Units("")]
-        [Description("PARAM5 / local: x position in meters * 1e4, global: latitude in degrees * 10^7")]
-        public  int x;
-            /// <summary>PARAM6 / y position: local: x position in meters * 1e4, global: longitude in degrees *10^7   </summary>
-        [Units("")]
-        [Description("PARAM6 / y position: local: x position in meters * 1e4, global: longitude in degrees *10^7")]
-        public  int y;
-            /// <summary>PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.   </summary>
-        [Units("")]
-        [Description("PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.")]
-        public  int z;
-            /// <summary>Waypoint ID (sequence number). Starts at zero. Increases monotonically for each waypoint, no gaps in the sequence (0,1,2,3,4).   </summary>
-        [Units("")]
-        [Description("Waypoint ID (sequence number). Starts at zero. Increases monotonically for each waypoint, no gaps in the sequence (0,1,2,3,4).")]
-        public  int seq;
-            /// <summary>The scheduled action for the waypoint. MAV_CMD  </summary>
-        [Units("")]
-        [Description("The scheduled action for the waypoint.")]
-        public  /*MAV_CMD*/ushort command;
-            /// <summary>System ID   </summary>
-        [Units("")]
-        [Description("System ID")]
-        public  byte target_system;
-            /// <summary>Component ID   </summary>
-        [Units("")]
-        [Description("Component ID")]
-        public  byte target_component;
-            /// <summary>The coordinate system of the waypoint. MAV_FRAME  </summary>
-        [Units("")]
-        [Description("The coordinate system of the waypoint.")]
-        public  /*MAV_FRAME*/byte frame;
-            /// <summary>false:0, true:1   </summary>
-        [Units("")]
-        [Description("false:0, true:1")]
-        public  byte current;
-            /// <summary>Autocontinue to next waypoint. 0: false, 1: true. Set false to pause mission after the item completes.   </summary>
-        [Units("")]
-        [Description("Autocontinue to next waypoint. 0: false, 1: true. Set false to pause mission after the item completes.")]
-        public  byte autocontinue;
-            /// <summary>Mission type. MAV_MISSION_TYPE  </summary>
-        [Units("")]
-        [Description("Mission type.")]
-        public  /*MAV_MISSION_TYPE*/byte mission_type;
-    };
+     /// extensions_start 14
+     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 38)]
+     ///<summary> Message encoding a mission item. This message is emitted to announce                 the presence of a mission item and to set a mission item on the system. The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html. </summary>
+     public struct mavlink_mission_item_int_t
+     {
+       public mavlink_mission_item_int_t(float param1, float param2, float param3, float param4, int x, int y, float z,
+         ushort seq, /*MAV_CMD*/ushort command, byte target_system, byte target_component, /*MAV_FRAME*/byte frame,
+         byte current, byte autocontinue, /*MAV_MISSION_TYPE*/byte mission_type)
+       {
+         this.param1 = param1;
+         this.param2 = param2;
+         this.param3 = param3;
+         this.param4 = param4;
+         this.x = x;
+         this.y = y;
+         this.z = z;
+         this.seq = seq;
+         this.command = command;
+         this.target_system = target_system;
+         this.target_component = target_component;
+         this.frame = frame;
+         this.current = current;
+         this.autocontinue = autocontinue;
+         this.mission_type = mission_type;
+       }
+
+       /// <summary>PARAM1, see MAV_CMD enum   </summary>
+       [Units("")] [Description("PARAM1, see MAV_CMD enum")]
+       public float param1;
+
+       /// <summary>PARAM2, see MAV_CMD enum   </summary>
+       [Units("")] [Description("PARAM2, see MAV_CMD enum")]
+       public float param2;
+
+       /// <summary>PARAM3, see MAV_CMD enum   </summary>
+       [Units("")] [Description("PARAM3, see MAV_CMD enum")]
+       public float param3;
+
+       /// <summary>PARAM4, see MAV_CMD enum   </summary>
+       [Units("")] [Description("PARAM4, see MAV_CMD enum")]
+       public float param4;
+
+       /// <summary>PARAM5 / local: x position in meters * 1e4, global: latitude in degrees * 10^7   </summary>
+       [Units("")] [Description("PARAM5 / local: x position in meters * 1e4, global: latitude in degrees * 10^7")]
+       public int x;
+
+       /// <summary>PARAM6 / y position: local: x position in meters * 1e4, global: longitude in degrees *10^7   </summary>
+       [Units("")]
+       [Description("PARAM6 / y position: local: x position in meters * 1e4, global: longitude in degrees *10^7")]
+       public int y;
+
+       /// <summary>PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.   </summary>
+       [Units("")]
+       [Description("PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.")]
+       public float z;
+
+       /// <summary>Waypoint ID (sequence number). Starts at zero. Increases monotonically for each waypoint, no gaps in the sequence (0,1,2,3,4).   </summary>
+       [Units("")]
+       [Description(
+         "Waypoint ID (sequence number). Starts at zero. Increases monotonically for each waypoint, no gaps in the sequence (0,1,2,3,4).")]
+       public ushort seq;
+
+       /// <summary>The scheduled action for the waypoint. MAV_CMD  </summary>
+       [Units("")] [Description("The scheduled action for the waypoint.")]
+       public /*MAV_CMD*/ ushort command;
+
+       /// <summary>System ID   </summary>
+       [Units("")] [Description("System ID")] public byte target_system;
+
+       /// <summary>Component ID   </summary>
+       [Units("")] [Description("Component ID")]
+       public byte target_component;
+
+       /// <summary>The coordinate system of the waypoint. MAV_FRAME  </summary>
+       [Units("")] [Description("The coordinate system of the waypoint.")]
+       public /*MAV_FRAME*/ byte frame;
+
+       /// <summary>false:0, true:1   </summary>
+       [Units("")] [Description("false:0, true:1")]
+       public byte current;
+
+       /// <summary>Autocontinue to next waypoint. 0: false, 1: true. Set false to pause mission after the item completes.   </summary>
+       [Units("")]
+       [Description(
+         "Autocontinue to next waypoint. 0: false, 1: true. Set false to pause mission after the item completes.")]
+       public byte autocontinue;
+
+       /// <summary>Mission type. MAV_MISSION_TYPE  </summary>
+       [Units("")] [Description("Mission type.")]
+       public /*MAV_MISSION_TYPE*/ byte mission_type;
+     };
 
     
     /// extensions_start 0

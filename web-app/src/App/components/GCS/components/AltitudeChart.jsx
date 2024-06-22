@@ -20,7 +20,7 @@ export const AltitudeChart = () => {
           <YAxis domain={[minYValue - 1, 'auto']}/>
           <Tooltip />
           <Line type="basisOpen" dataKey="value" data={drone_alt} stroke="#64CFF6" dot={false} name={'드론 고도'} />
-          <Line type="basis" dataKey="value" data={terrain_alt} stroke="#8FE388" dot={false} name={'지형 고도'} />
+          {/*<Line type="basis" dataKey="value" data={terrain_alt} stroke="#8FE388" dot={false} name={'지형 고도'} />*/}
         </LineChart>
       </ResponsiveContainer>
     </div>

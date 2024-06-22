@@ -106,7 +106,7 @@ export const MenuIcon = {
         // },
         {
             name: 'Documents',
-            link: '/docs',
+            link: 'https://github.com/choiyun9yu/pr.DroneSystem#drone-system',
             icon: (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

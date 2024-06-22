@@ -35,6 +35,7 @@ const MissionComponent = (props) => {
     handleDroneTransitMarking,
     handleMissionAlt,
     handleDroneMissionUpload,
+    handleDroneMissionDownload,
     handleDroneMissionClear
   } = useContext(DroneContext)
 
@@ -60,12 +61,11 @@ const MissionComponent = (props) => {
   }
 
   const handleMissionUpload = () => {
-    handleDroneMissionUpload(
-      selectStartPoint,
-      selectTargetPoint,
-      selectTransitPoint,
-      selectFlightAlt,
-    )
+    handleDroneMissionUpload()
+  }
+
+  const handleMissionDownload = () => {
+    handleDroneMissionDownload()
   }
 
   const handleAltUp = () => {
@@ -218,20 +218,22 @@ const MissionComponent = (props) => {
     <div className={'m-2 text-white'}>
       <form id={'missionload'} onSubmit={handleDeleteMission}>
         <div className={'font-bold'}>
-            미션 시작 하기
+          미션 선택 하기
         </div>
         <div className={'m-2'}>
           <div className={'flex items-center'}>
-            <span>미션 선택 : </span>
             <select
-              onChange={handleMissionSelect}
-              className={'flex m-1 w-[170px] h-[23px] text-black px-2'}
-              name={'MissionName'}>
+                onChange={handleMissionSelect}
+                className={'flex m-1 w-[170px] h-[23px] text-black px-2'}
+                name={'MissionName'}>
               {missionList.map((item, index) => (
-                <option
-                  value={item} key={index}>{item}</option>
+                  <option
+                      value={item} key={index}>{item}</option>
               ))}
             </select>
+            <button className={'flex ml-3 px-2 rounded-xl border hover:bg-[#6359E9]'}>
+              삭제
+            </button>
           </div>
 
           <div className={'flex flex-col mx-3 text-gray-400'}>
@@ -240,8 +242,8 @@ const MissionComponent = (props) => {
               <div className={'flex w-[80px]'}>경유 지점 :</div>
 
               <div className={'flex w-[72.5%]'}>{(selectTransitPoint.length === 0)
-                ? '없음'
-                : selectTransitPoint.join(' - ')}
+                  ? '없음'
+                  : selectTransitPoint.join(' - ')}
               </div>
             </div>
             <span>목표 지점 : {selectTargetPoint}</span>
@@ -252,15 +254,18 @@ const MissionComponent = (props) => {
         </div>
 
         <div className={'flex justify-end mx-5 mt-2'}>
-          <button className={'flex mr-2 px-2 rounded-xl border hover:bg-[#6359E9]'}>
-            제거
-          </button>
-          <button type={'button'} onClick={handleDroneMissionClear} className={'flex mr-2 px-2 rounded-xl border hover:bg-[#6359E9]'} >
-            클리어
-          </button>
+
           <button type={'button'} onClick={handleMissionUpload}
-                  className={'flex px-2 rounded-xl border hover:bg-[#6359E9]'}>
+                  className={'flex mr-2 px-1.5 rounded-xl border hover:bg-[#6359E9]'}>
             업로드
+          </button>
+          <button type={'button'} onClick={handleMissionDownload}
+                  className={'flex mr-2 px-1.5 rounded-xl border hover:bg-[#6359E9]'}>
+            다운로드
+          </button>
+          <button type={'button'} onClick={handleDroneMissionClear}
+                  className={'flex px-1.5 rounded-xl border hover:bg-[#6359E9]'}>
+            비우기
           </button>
         </div>
       </form>
@@ -268,12 +273,12 @@ const MissionComponent = (props) => {
       <form id={'missionenroll'} className={'mt-3'}
             onSubmit={handleCreateMission}>
         <div className={'font-bold'}>
-            미션 생성 하기
+          미션 생성 하기
         </div>
 
         <div className={'flex flex-col m-2'}>
           <div className={'flex items-center'}>
-            <span className={'mr-2'}>출발지점</span>
+          <span className={'mr-2'}>출발지점</span>
               :
             <select
               className={'flex m-1 w-[170px] h-[23px] text-black px-2'}
@@ -300,11 +305,11 @@ const MissionComponent = (props) => {
 
           <div className={'flex items-center'}>
             <span className={'mr-2'}>비행고도
-              <span className={'text-sm'}>(m)</span>
+              {/*<span className={'text-sm'}>(m)</span>*/}
             </span>
               :
             <input
-              className={'m-1 w-[45px] text-black px-2'}
+              className={'m-1 w-[55px] text-black px-2'}
               name={'FlightAlt'}
               type={'text'}
               value={flightAlt}
@@ -557,7 +562,7 @@ const StationComponent = (props) => {
           }
         </div>
 
-        <div className={'flex flex-col px-2 mr-2'}>
+        <div className={'flex flex-col px-1.5 mr-2'}>
           <div className={'flex flex-row justify-end'}>
             <button
               onClick={handleCurrentPoint} type={'button'}

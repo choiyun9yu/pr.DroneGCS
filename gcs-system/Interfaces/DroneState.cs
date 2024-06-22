@@ -32,6 +32,33 @@ public class DroneState(string droneId)
 
 }
 
+// public struct DroneStateStruct
+// {
+//     public string DroneId;
+//     public string FlightId;
+//     public bool IsOnline;
+//     public bool IsLanded;
+//     public string ControllStt;
+//     public DroneStt? DroneStt;
+//     public SensorData? SensorData;
+//     public GrpcPredictData? PredictData;
+//     public GrpcWarningData? WarningData;
+//
+//     public DroneStateStruct(string droneId)
+//     {
+//         DroneId = droneId;
+//         FlightId = "None";
+//         IsOnline = true;
+//         IsLanded = true;
+//         ControllStt = "";
+//         DroneStt = null;
+//         SensorData = null;
+//         PredictData = null;
+//         WarningData = null;
+//     }
+// }
+
+
 public struct MavlinkLog
 {
     public DateTime logtime;
@@ -126,3 +153,4 @@ public class SensorData
     public ushort chan15_raw_RC_CHANNELS = 0;
     public ushort chan16_raw_RC_CHANNELS = 0;
 }
+
