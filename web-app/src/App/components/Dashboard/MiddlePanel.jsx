@@ -134,19 +134,19 @@ const FlightPieChart = (props) => {
                         fill="#8884d8"
                         dataKey="value">
                         {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
                         ))}
                     </Pie>
                 </PieChart>
             </ResponsiveContainer>
-            <ChartLegend/>
+            <div className={`px-auto`}><ChartLegend/></div>
         </>
     );
 }
 
 export const ChartLegend = () => {
     return(
-        <div className={`flex w-[95%] h-[300px] my-5`}>
+        <div className={`flex w-[95%] my-5`}>
             <div className={`flex flex-row w-full h-[10%] justify-center items-center font-normal text-sm border border-[#27264E] rounded-md ${ColorThema.Secondary3}`}>
                 <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full ${ColorThema.Semantic1}`}></div><span>Drone01</span></div>
                 <div className={`flex h-full p-2 items-center`}><div className={`flex w-3 h-3 mr-1 rounded-full ${ColorThema.Semantic4}`}></div><span>Drone02</span></div>

@@ -21,7 +21,7 @@ IHostBUilder는 기본 호스팅을 설정하고 실행할 수 있게 해주는 
             .ConfigureWebHostDefaults(webBuilder =>                
             {
                 webBuilder.UseStartup<Startup>();                 
-                webBuilder.UseUrls("http://0.0.0.0:5000");
+                webBuilder.UseUrls("http://localhost:5000");
             });
 
 ## 3. Startup.cs

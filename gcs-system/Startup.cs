@@ -33,7 +33,7 @@ public class Startup
         {
             options.AddPolicy("CorsPolicy", builder =>
             {
-                builder.WithOrigins("http://localhost:3000", "http://localhost:3001")
+                builder.WithOrigins("http://localhost:3000", "http://www.yunlab.kr:3000", "http://125.183.175.200:3000")
                     .AllowAnyMethod()   
                     .AllowAnyHeader()   
                     .AllowCredentials();

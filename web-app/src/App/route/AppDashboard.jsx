@@ -27,7 +27,7 @@ export const AppDashboard = () => {
                 Body.append('year', value.getFullYear());
                 Body.append('month', value.getMonth()+1);
 
-                const response = await fetch('http://localhost:5000/api/dashboard', {
+                const response = await fetch('http://125.183.175.200:5000/api/dashboard', {
                     method: 'POST',
                     body: Body,
                 });

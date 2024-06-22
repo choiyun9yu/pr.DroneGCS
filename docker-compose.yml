@@ -30,6 +30,8 @@ services:
       dockerfile: Dockerfile
       context: gcs-system
     network_mode: host
+    environment:
+      - ConnectionStrings__MongoDB=mongodb://localhost:27017
     depends_on:
       - predict-system
 

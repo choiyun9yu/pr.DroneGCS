@@ -7,14 +7,20 @@ WORKDIR /app
 # Poetry 설치
 RUN pip install poetry
 
+# Poetry 설정: 가상환경을 프로젝트 폴더에 생성
+RUN poetry config virtualenvs.in-project true
+
 # 애플리케이션 소스 코드 추가
 COPY pyproject.toml poetry.lock /app/
 
 # Poetry에서 의존성 설치
-RUN poetry install
+RUN poetry install --no-root
 
 # 애플리케이션 소스 코드 추가
 COPY . /app
+
+# 파일 권한 설정
+RUN chmod -R 755 /app
 
 # 애플리케이션 실행
 CMD ["poetry", "run", "python", "run.py"]

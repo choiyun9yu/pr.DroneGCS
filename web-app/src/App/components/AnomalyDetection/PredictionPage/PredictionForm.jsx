@@ -29,7 +29,7 @@ export const PredictionForm = (props) => {
             Body.append('periodFrom', periodFromData["periodFrom"]);
             Body.append('periodTo', periodToData["periodTo"]);
 
-            const response = await fetch('http://localhost:5000/api/getid', {
+            const response = await fetch('http://125.183.175.200:5000/api/getid', {
                 method: 'POST',
                 body: Body,
             });
@@ -61,7 +61,7 @@ export const PredictionForm = (props) => {
             Body.append('DroneId', droneIdData["DroneId"]);
             Body.append('periodTo', periodToData["periodTo"]);
 
-            const response = await fetch('http://localhost:5000/api/getid', {
+            const response = await fetch('http://125.183.175.200:5000/api/getid', {
                 method: 'POST',
                 body: Body,
             });
@@ -93,7 +93,7 @@ export const PredictionForm = (props) => {
             Body.append('DroneId', droneIdData["DroneId"]);
             Body.append('periodFrom', periodFromData["periodFrom"]);
 
-            const response = await fetch('http://localhost:5000/api/getid', {
+            const response = await fetch('http://125.183.175.200:5000/api/getid', {
                 method: 'POST',
                 body: Body,
             });
@@ -115,7 +115,7 @@ export const PredictionForm = (props) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         try {
-            const response = await fetch('http://localhost:5000/api/predict', {
+            const response = await fetch('http://125.183.175.200:5000/api/predict', {
                 method: 'POST',
                 body: formData,
             });
@@ -179,7 +179,7 @@ export const PredictionForm = (props) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/getid', {
+                const response = await fetch('http://125.183.175.200:5000/api/getid', {
                     method: 'GET',
                 });
                 if (response.ok) {
@@ -203,7 +203,7 @@ export const PredictionForm = (props) => {
                 Body.append('periodFrom', periodFromData["periodFrom"]);
                 Body.append('periodTo', periodToData["periodTo"]);
 
-                const response = await fetch('http://localhost:5000/api/getid', {
+                const response = await fetch('http://125.183.175.200:5000/api/getid', {
                     method: 'POST',
                     body: Body,
                 });
