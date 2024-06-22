@@ -16,7 +16,7 @@ export const SignalRProvider = ({ children }) => {
 
     useEffect(() => {
         const connectionObj = new signalR.HubConnectionBuilder()
-            .withUrl('http://125.183.175.200:5000/droneHub')
+            .withUrl(`http://${process.env.REACT_APP_GCS_API_SERVER}/droneHub`)
             .configureLogging(signalR.LogLevel.Information)
             .build()
         connection.current = connectionObj
