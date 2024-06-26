@@ -87,5 +87,58 @@ MAVLink의 XML 정의를 사용하여 C# 클래스를 생성할 수 있음
         // Deserialize 메소드를 사용하여 메시지를 C# 객체로 변환할 수 있습니다.
 
 ## 4. MAVLink 발신 (Server to Drone)
+        public async Task SendCommandAsync(IChannelHandlerContext ctx, IPEndPoint addr, MAVLink.MAVLinkMessage msg)
+        {
+            _context = ctx;
+            _droneAddress = addr;
+            
+            // _context가 null 이거나 Channel이 활성화되지 않았을 경우 드론 통신을 위한 적절한 환경이 설정되어 있지 않다고 판단하고 메소드 중단
+            if (_context is null || !_context.Channel.Active) return;
+         
+            try 
+            {
+                // WriteAndFlushAsync 메서드는 비동기적으로 작동하며, 메시지를 채널에 기록하고 즉시 채널을 플러시하여 즉시 전송한다.
+                await _context.Channel.WriteAndFlushAsync(EncodeUdpDroneMessage(msg));
+            } catch (Exception e) {
+                Console.WriteLine(e.Message);
+            }
+        }
+        
+        private DatagramPacket EncodeUdpDroneMessage(MAVLink.MAVLinkMessage msg)
+        {
+            if (_droneAddress != null)
+            {
+                // MAVLink 메시지를 MAVLink 2.0 패킷으로 인코딩하여 바이트 배열로 만듬 (Netty 라이브러리의 Unpooled.WrappedBuffer를 사용하여 바이트 배열을 Netty의 버퍼로 래핑)
+                var encodeMsg = Unpooled.WrappedBuffer(_parser.GenerateMAVLinkPacket20(
+                    (MAVLink.MAVLINK_MSG_ID)
+                    msg.msgid,
+                    msg.data,
+                    sign: false,
+                    msg.sysid,
+                    msg.compid,
+                    msg.seq)
+                );
+    
+                // 래핑된 버퍼와 드론 주소를 사용하여 새로운 DatagramPacket을 생성하고 반환, DatagramPacket은 네트워크 패킷을 나타내는 Netty 라이브러리의 클래스
+                return new DatagramPacket(encodeMsg, _droneAddress);
+            }
+            throw new InvalidOperationException("_droneAddress is null.");
+        }
+    }
+
+
+### 4-1. WrapperdBuffer 메서드
+- Netty 라이브러리의 Unpooled.WrappedBuffer 를 사용하여 바이트 배열을 Netty 버퍼로 랩핑한다.
+
+### 4-2. GenerateMAVLinkPacket20 메서드
+- 이 메서드는 전송할 메시지지를 MAVLink2.0 프로토콜에 맞는 패킷으로 전환한다.
+
+### 4-3. DatagramPacket 생성자
+- DatagramPacket 은 네트워크 패킷을 나타내는 Netty 라이브러리의 클래스중 하나이다.
+- 래핑된 버퍼와 드론 주소를 사용하여 새로운 DatagramPacket 을 생성하고 반환한다.
+
+### 4-1. WriteAndFlushAsync 메서드
+- 이 메서드는 비동기적으로 작동하며, 위에서 반환된 패킷을 채널에 기록하고 채널을 플러시하여 즉시 전송한다.
+
 
 
