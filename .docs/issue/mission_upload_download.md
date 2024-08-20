@@ -12,19 +12,35 @@
 # Mission Upload
 ![image](https://github.com/user-attachments/assets/ea4655da-40f1-4c3f-a870-40f278b62b24)
 
-## 1. Mission upload process in our source code 
+## Mission upload process in our source code 
 - React 가 mission item 들을 MongoDB 로부터 가져와 GCS 로 보낸다.
   (React 가 SignalR 로 GCS 의 DroneMonitorManager.cs 의 SendMavlinkMission 메소드 호출)
 - GCS 에서 SendMavlinkMission( ) -> _sendMavlinkMission( ) -> MAVLinkDroneState.cs StartMAVMission
   -> MavMissionMicroservice.cs StartUploadMAVMission 호출
 
-#### MavMissionMicroservice.cs / StartUploadMAVMission
+### MavMissionMicroservice.cs 
     public class MavMissionMicroservice
     {
+      private readonly MAVLinkDroneState _mavLinkDroneState;
+      private readonly string _droneId;
+      private readonly MAVLink.MavlinkParse _mavlinkParser = new();
       private MavlinkMissionStatus? _mavMissionSession;
       private TaskCompletionSource<bool>? _missionDownloadAckTask;
+      private const double WaitTime = 250;
+      private const int MaxRetryCount = 5;
+      private bool _isMission;
       ...
-  
+
+      // 생성자 
+      public MavMissionMicroservice(MAVLinkDroneState mavLinkDroneState, string droneId)
+      {
+        this._mavLinkDroneState = mavLinkDroneState;
+        this._droneId = droneId;
+        // 이벤트 구독, OnNewMavlinkMessage 는 MAVLinkDroneState 클래스의 이벤트로, 새로운 MAVLink 메시지가 수신될 때 트리거 된다. 이벤트는 특정 조건이 발생했을 때 외부에서 제공한 콜백함수를 호출하는 매커니즘이다.
+        // 우리 코드에서는 MAVLinkDroneState.cs 의 HandleMavlinkmesasge( ) 에서 OnNewMavLinkMessage?.Invoke(drone Message)형태로 호출되었다.
+        this._mavLinkDroneState.OnNewMavlinkMessage += async (message) => await this._handleMavMessage(message);
+      }
+
       public struct MavlinkMissionStatus
       {
         public DateTime StartedAt;
@@ -37,22 +53,23 @@
         public MAVLink.MAV_MISSION_TYPE MissionType;
       }
       ...
-  
+      
+#### StartUploadMAVMission( ), 드론으로 미션을 보내는 부분
       /**
        * Send a `MISSION_COUNT` to the drone, create `MavMissionSession` and wait for `MISSION_REQUEST_INT` msg from drone
        */
       public async Task StartUploadMAVMission(MAVLink.mavlink_mission_item_int_t[] mavMission, MAVLink.MAV_MISSION_TYPE missionType = MAVLink.MAV_MISSION_TYPE.MISSION)
       {
-        // 1. create mission count msg 
+        // 1. 드론으로 보낼 미션 카운트 메시지 생성 
         var missionCountMsg = this._mavlinkParser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_COUNT,
           new MAVLink.mavlink_mission_count_t()
           {
-            count = (ushort)mavMission.Length,
+            count = (ushort)mavMission.Length,  // 미션을 담은 배열의 길이로 카운트
             mission_type = (byte)MAVLink.MAV_MISSION_TYPE.MISSION,
             target_system = byte.Parse(this._droneId)
           });
 
-        // 2. create session about mav mission
+        // 2. 미션 세션을 생성
         this._mavMissionSession = new MavlinkMissionStatus()
         {
           MissionItems = mavMission,
@@ -62,13 +79,16 @@
           MissionType = missionType,
         };
         
-        // 3. after setting _mavMissionSession and then request MISSION_COUNT Message
+        // 3. 메소드가 호출되어 실행하는 도중 이전의 미션 다운로드 비동기처리가 완료되지 않은 경우(null이 아니고 false 인 경우), 이전의 미션 다운로드 Task 는 취소 상태로 설정, TaskCanceledException 발생시킴
         if (this._missionDownloadAckTask is { Task.IsCompleted: false })
         {
           this._missionDownloadAckTask.SetCanceled();
         }
-        
+
+        // 4. 보낼 메시지 유형과 기다릴 메시지 유형을 설정하고 메시지를 전송
         await WaitforResponseAsync(new MAVLink.MAVLinkMessage(missionCountMsg)); //재전송 체크 
+
+        // ?. 드론의 상태를 관리하는 _mavLinkDroneState 객체에서 HandleProgressEvent( ) 메서드가 ProgressEvent 객체를 생성하여 미션 업로드 진행 상태를 0으로 초기화?
         this._mavLinkDroneState.HandleProgressEvent(
           new ProgressEvent()
           {
@@ -78,8 +98,322 @@
           });
       }
       ...
+#### WaitforResponseAsync
+      private async Task WaitforResponseAsync(MAVLink.MAVLinkMessage missionReqMsg, int retryCount = 0)
+      {
+        // recursive(재귀) break poin, 재시도 횟수가 MaxRetryCount 이상이면 ProgressEvent 실패 타입을 생성하고 메소드 종료
+        if (retryCount >= MaxRetryCount)
+        {
+          this._mavLinkDroneState.HandleProgressEvent(new ProgressEvent()
+          {
+            Type = $"{_mesTpye}_fail",
+          });
+          return;  // issue: 여기서 return 을 반환하지 않아 136만 번 이상 재시도하는 버그 발생
+        }
+        // 재시도 횟수가 0보다 높으면 콘솔에 기록 
+        if (retryCount > 0)
+        {
+          Console.WriteLine($"한번 더 시도합니다. retry  {_waitmsgid} : {retryCount} ");
+        }
+
+        // 5. 기다릴 메시지 아이디, 기다릴 시간 등을 설정
+        _mesTpye = "";
+        _isMission = true;
+        _waitmsgid = MAVLink.MAVLINK_MSG_ID.MISSION_ACK;
+        _missionDownloadAckTask = new TaskCompletionSource<bool>();
+        var timeoutTask = Task.Delay(TimeSpan.FromMilliseconds(WaitTime));
+        
+        // 6. switch 문을 사용하여 입력된 메시지 아이디에 따라 메시지 타입과 기다릴 메시지 아이디를 재설정
+        switch ((MAVLink.MAVLINK_MSG_ID)missionReqMsg.msgid)
+        {
+          // upload Mission 부분 GCS에서 드론으로 미션의 총 갯수 보낼 때
+          case MAVLink.MAVLINK_MSG_ID.MISSION_COUNT:
+          {
+            _mesTpye = "UploadMissionItems";
+            _waitmsgid = MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST;
+            break;
+          }
+          // upload Mission 부분 GCS에서 미션 아이템을 보낼 때
+          case MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT:
+          {
+            _mesTpye = "UploadMissionItems";
+            var data = (MAVLink.mavlink_mission_item_int_t)missionReqMsg.data;
+            var seq = data.seq;
+            _waitmsgid = seq < this._mavMissionSession?.MissionItems.Length - 1 
+              ? MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST : MAVLink.MAVLINK_MSG_ID.MISSION_ACK;
+            Console.WriteLine($"보내는 미션 번호 : {data.seq} 총 갯수 {this._mavMissionSession?.MissionItems.Length ?? 0}");
+            break;
+          }
+          // download Mission 부분 GCS에서 미션LIST 처음 요청할 때
+          case MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_LIST:
+          {
+            _mesTpye = "DownloadMissionItems";
+            _waitmsgid = MAVLink.MAVLINK_MSG_ID.MISSION_COUNT;
+            break;
+          }
+          // download Mission 부분 GCS에서 미션 보내달라 요청할 때
+          case MAVLink.MAVLINK_MSG_ID.MISSION_REQUEST_INT:
+          {
+            _mesTpye = "DownloadMissionItems";
+            _waitmsgid = MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT;
+            break;
+          }
+          // clear Mission 부분 GCS 드론에 업로드된 미션을 정리할 때
+          case MAVLink.MAVLINK_MSG_ID.MISSION_CLEAR_ALL:
+          {
+            _mesTpye = "ClearMissionItems";
+            _waitmsgid = MAVLink.MAVLINK_MSG_ID.MISSION_ACK;
+            break;
+          }
+        }
+  
+        // 7. 드론으로 Mav 메세지 전송
+        await this._mavLinkDroneState.SendMavlinkMsg(missionReqMsg);
+  
+        // ?. Task.When( ) 메서드를 사용하여 작업 완료 or 시간 초과 중 어느 하나라도 먼저 완료되는 Task 를 반환한다.
+        var resultTask = await Task.WhenAny(this._missionDownloadAckTask.Task, timeoutTask);
+        
+        // ?-1. 응답 대기 시간 초과로 완료된 경우 재시도
+        if (resultTask == timeoutTask)
+        {
+          // retryCount 를 하나 더 추가하고 재귀
+          Console.WriteLine("재시도 횟수 : " + retryCount + " responseReceived false");
+          await this.WaitforResponseAsync(missionReqMsg, retryCount + 1);
+          return;
+        }
+  
+        // ?-2. 시간 초과로 완료되지 않은 경우 
+        Console.WriteLine("재시도 횟수 : " + retryCount + " responseReceived true");
+        
+      }
+      ...
+      
+
+#### _handleMavMessage( ) 드론에서 응답을 받는 부분
+      private async Task _handleMavMessage(MAVLink.MAVLinkMesasge message)
+      {
+        var msgid = (MAVLink.MAVLINK_MSG_ID)message.msgid;
+    
+        // 8. 미션이 있고 수신된 메시지 아이디와 기다리는 메시지 아이디가 같거나, 수신된 메시지 아이디가 mission_ack 인 경우 
+        if (_isMissin && msgid == _waitmsgid || msgid == MAVLink.MAVLINK_MSG_ID.MISSION_ACK)
+        {
+          _missionDownloadAckTask?.TrySetResult(true);
+  
+          // 메시지 아이디에 따라 작업 수행 
+          switch ((MAVLink.MAVLINK_MSG_ID)message.msgid)
+          {
+            case MAVLink.MAVINK_MSG_ID.MISSION_ACK:
+            {
+              var data = (MAVLink.mavlink_mission_ack_t)message.data;
+              _handleMissionAck(data);
+              break;
+            }
+            case MAVLink.MAVINK_MSG_ID.MISSION_REQUEST_INT:
+            {
+              var data = (MAVLink.mavlink_mission_request_int_t)message.data;
+              await SendMavMissionSeq(data.seq);
+              break;
+            }
+            case MAVLINK_MSG_ID.MISSION_REQUEST:
+            {
+              var data = (MAVLink.mavlink_mission_request_t)message.data;
+              await SendMavMissionSeq(data.seq);
+              break;
+            }
+            case MAVLink.MAVINK_MSG_ID.MISSION_COUNT:
+            {
+              var data = (MAVLink.mavlink_mission_count_t)message.data
+              await InitMavMissionDownloadSession(data.count, (MAVLink.MAV_MISSION_TYPE)data.mission_type);
+              break;
+            }
+            case MAVLink.MAVINK_MSG_ID.MISSION_ITEM_INT
+            {
+              var data = (MAVLink.mavlink_mission_item_int_t)mesasge.data;
+              await UpdateMavMissionItem(data.seq, data);
+              break;
+            }
+            case MAVLink.MAVINK_MSG_ID.MISSION_ITEM
+            {
+              var missionItem = (MAVLink.mavlink_mission_item_t)message.data;
+              await UpldateMavMissionItem(missionItem.seq, new MAVLink.mavlink_mission_item_int_t
+              {
+                command = missionItem.command,
+                param1 = missionItem.param1,
+                param2 = missionItem.param2,
+                param3 = missionItem.param3,
+                param4 = missionItem.param4,
+                x = (int)missionItem.x,
+                y = (int)missionItem.y,
+                z = missionItem.z,
+                seq = missionItem.seq
+              });
+              break;
+            }
+          }
+        }
+      }
+  
+#### _handleMissionAck
+      private void _handleMissionAck(MAVLink.mavlink_mission_ack_t data)
+      {
+        if(_mavMissionSession is { FinishedAt: null })
+        {
+          _mavMissionSession = new MavlinkMissionStatus
+          {
+            MissionItems = _mavMissionSession?.MissionItems!,
+            MissionItemReceivingStatus = [],
+            Seq = _mavMissionSession?.Seq ?? 0,
+            StartedAt = (DateTime)_mavMissionSession?.StartedAt!,
+            FinishedAt = DateTime.Now,
+            LastMsgReceivedAt = DateTime.Now,
+            MissionType = (MAVLink.MAV_MISSION_TYPE)_mavMissionSession?.MissionType!
+          };
+          
+          _mavLinkDroneState.HandleProgressEvent(new ProgressEvent
+          {
+            Type = "UploadMissionItems",
+            Current = _mavMissionSession?.MissionItems.Length ?? 0,
+            Total = _mavMissionSession?.MIssionItems.Length ?? 0
+          });
+          
+          _mavLinkDroneState.HandleProgressEvent(new ProgressEnvet
+          {
+            Type = "UploadMission_Success",
+            Current = _mavMissionSession?.MissionItems.Length ?? 0,
+            Total = _mavMissionSession?.MissionItems.Length ?? 0
+          });
+  
+          if (_mavMissionSession?.MissionItems != null)
+          {
+            SetMavMission(_mavMissionSession?.MissionItems!);
+          }
+        }
+    
+        switch ((MAVLink.MAV_MISSION_RESULT)data.type)
+        {
+          case MAVLink.MAV_MISSION_RESULT.MAV_MISSION_ERROR:
+          {
+            _missionDownloadAckTask?.TrySetResult(true);
+    
+            if (_msgType != "")
+            {
+              _mavLinkDroneState.HandleProgressEvent(new ProgressEvent
+              {
+                Type = $"{_msgType}_Success",
+                Current = _mavMIssionSession?.MissionItems.Length ?? 0,
+                Total = _mavMissionSession?.MissionItems.Length ?? 0
+              });
+              _msgType = "";
+              _isMission = false;
+              break;
+            }
+          }
+          case MAVLink.MAV_MISSION_RESULT.MAV_MISSION_OPERATION_CANCELLED:
+          {
+            _missionDownloadAckTask?.TrySetResult(true);
+            _mavLinkDroneState.HandleProgressEvent(new ProgressEvent
+            {
+              Type = $"{_msgType}"
+            });
+            _msgType = "";
+            _isMission = false;
+          }
+        }
+      }
+
+#### SendMavMissionSeq
+      public async Task SendMavMissionSeq(ushort seq)
+      {
+        if (_mavMissionSession != null)
+        {
+          var session = _mavMissionSession.GetValueOrDefault();
+    
+          try
+          {
+            var missionItemMsg = _mavlinkParser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT, session.MissionItems[seq]);
+            await _mavLinkDroneState.SendMavlinkMsg(new MAVLink.MAVLinkMessage(missionItemsMsg));
+            Console.WriteLine($"RequestUpload_seq 보냄 {seq}");
+          }
+          catch (Exception e)
+          {
+            Console.WriteLIne("SendMavMissionSeq: " + e);
+          }
+          
+          _mavMissionSession = new MavlinkMissionStatus
+          {
+            MissionItems = _mavMissionSession?.MissionItems!,
+            Seq = seq,
+            StartedAt = (DateTime)_mavMissionSession?.StartedAt!,
+            LastMsgReceivedAt = DateTime.Now,
+            MissionType = (MAVLink.MAV_MISSION_TYPE)_mavMissionSession?.MissionType!
+          };
+          
+          _mavLinkDroneState.HandleProgressEvent(new ProgressEvent
+          {
+            Type = "UploadMissionItems",
+            Current = seq + 1,
+            Total = _mavMissionSession?.MissionItems.Length ?? 0
+          });
+        }
+      }
+
+#### InitMavMissionDownloadSession
+      public async Task InitMavMissionDownloadSession(ushort count, MAVLink.MAV_MISSION_TYPE missionType)
+      {
+        _mavMissionDownloadSession = new MavlinkMissionStatus
+        {
+          MissionItems = new MAVLink.mavlink_mission_items_int_t[count],
+          MissionItemReceivingStatus = new bool[count],
+          Seq = -1,
+          StartedAt = DateTime.Now,
+          LastMsgReceivedAt = DateTime.Now,
+          MissionType = missionType
+        }
+    
+        if (count != 0)
+        {
+          await _requestMissionItemAt(0, missionType);
+          _mavLinkDroneState.HandleProgressEvent(
+          {
+            Type = "DownloadMissionItems",
+            Current = 0,
+            Total = count
+          });
+        }
+      }
+
+#### UdatemavMissionItem
+      public async Task UpdateMavMissionItem(ushort seq, MAVLink.mavlink_mission_item_int_t missionItem)
+      {
+        if (_mavMissionDownloadSession != null 
+            && _mavMissionDownloadSession.GetValueOrDefault().FinishedAt == null 
+            && _mavMissionDownloadSession.GetValueOrDefault().MissionTiems.Length > seq)
+        {
+          _mavMissionDownloadSession. GetValueOrDefault().MissionItems[seq] = missionItem;
+          _responseMissionSeq = seq;
+          var status = _mavMissionDownloadSession;
+      
+          if (status?.MissionItemReceivingStatus != null) status.Value.MissionItemReceivingStatus[seq] = true;
+          _mavMissionDownloadSession = new MavlinkMissionStatus
+          {
+            MissionItems = _mavMissionDownloadSession?.MissionItems!,
+            MissionItemReceivingStatus = _mavMissionDownloadSession?.MissionItemReceivingStatus!,
+            Seq = seq,
+            StartedAt = (_mavMissionDownloadSession?.StartedAt).GetValueOrDefault(),
+            LastMsgReceivedAt = (_mavMissionDownloadSession?.LastMsgReceivedAt)GetValueOrDefault(),
+            FinishedAt = null,
+            MissionType = (_mavMissionDownloadSession?.MissinoType).GetValueOrDefault()
+          };
+      
+          var minFalseIndex = _mavMissionDonwloadSession?.MissionItemReceivingStatus.ToList().FindIndex(i => !i);
+          await ResponseToMissionItemRequestFromDrone((ushort) (minFalseIndex ?? 0));
+        }
+      }
+      ...
       
     }
+
+
 
 
 ### TaskCompletionSource
