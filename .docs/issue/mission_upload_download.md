@@ -29,6 +29,8 @@
       private const double WaitTime = 250;
       private const int MaxRetryCount = 5;
       private bool _isMission;
+      public MAVLink.mavlink_mission_item_int_t[]? MavMission;
+      public double TotalDistance;
       ...
 
       // 생성자 
@@ -47,7 +49,6 @@
         public int Seq;
         public DateTime LastMsgReceivedAt;
         public DateTime? FinishedAt;
-      
         public bool[] MissionItemReceivingStatus;
         public MAVLink.mavlink_mission_item_int_t[] MissionItems;
         public MAVLink.MAV_MISSION_TYPE MissionType;
@@ -98,6 +99,7 @@
           });
       }
       ...
+      
 #### WaitforResponseAsync
       private async Task WaitforResponseAsync(MAVLink.MAVLinkMessage missionReqMsg, int retryCount = 0)
       {
@@ -187,7 +189,6 @@
         
       }
       ...
-      
 
 #### _handleMavMessage( ) 드론에서 응답을 받는 부분
       private async Task _handleMavMessage(MAVLink.MAVLinkMesasge message)
@@ -202,12 +203,7 @@
           // 메시지 아이디에 따라 작업 수행 
           switch ((MAVLink.MAVLINK_MSG_ID)message.msgid)
           {
-            case MAVLink.MAVINK_MSG_ID.MISSION_ACK:
-            {
-              var data = (MAVLink.mavlink_mission_ack_t)message.data;
-              _handleMissionAck(data);
-              break;
-            }
+            // 9. 미션 업로드 시 (이미 mission_count 를 보냈고 request_int 를 기다리고 있는 상황) SendMavMissionSeq( ) 메소드를 사용하여 requset_int 에 맞는 mission_item 을 전송 
             case MAVLink.MAVINK_MSG_ID.MISSION_REQUEST_INT:
             {
               var data = (MAVLink.mavlink_mission_request_int_t)message.data;
@@ -220,6 +216,14 @@
               await SendMavMissionSeq(data.seq);
               break;
             }
+            // 12. 미션 업로드 또는 클리어가 성공적으로 끝난 경우 _handleMissionAck( ) 메소드 호출
+            case MAVLink.MAVINK_MSG_ID.MISSION_ACK:
+            {
+              var data = (MAVLink.mavlink_mission_ack_t)message.data;
+              _handleMissionAck(data);
+              break;
+            }
+            // 미션 다운로드 시 (gcs 가 이미 mission_request_list 를 전송하여 mission_count 를 기다리고 있는 상황)
             case MAVLink.MAVINK_MSG_ID.MISSION_COUNT:
             {
               var data = (MAVLink.mavlink_mission_count_t)message.data
@@ -252,12 +256,53 @@
           }
         }
       }
-  
+      
+#### SendMavMissionSeq
+      public async Task SendMavMissionSeq(ushort seq)
+      {
+        // _mavMissionSession은 2. 에서 Seq -1 로 생성 했었는데 그 값이 null 인지 확인하고 null 이 아니면 가져옴
+        if (_mavMissionSession != null)
+        {
+          var session = _mavMissionSession.GetValueOrDefault();
+
+          // 10. parameter 로 입력받은 seq 에 해당하는 미션 아이템 메시지를 생성하여 전송
+          try
+          {
+            var missionItemMsg = _mavlinkParser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT, session.MissionItems[seq]);
+            await _mavLinkDroneState.SendMavlinkMsg(new MAVLink.MAVLinkMessage(missionItemsMsg));
+            Console.WriteLine($"RequestUpload_seq 보냄 {seq}");
+          }
+          catch (Exception e)
+          {
+            Console.WriteLIne("SendMavMissionSeq: " + e);
+          }
+
+          // 11. 메시지지를 전송하고 _mavMissionSession, _mavLinkDroneState 의 ProgressEvent 상태 업데이트
+          _mavMissionSession = new MavlinkMissionStatus
+          {
+            MissionItems = _mavMissionSession?.MissionItems!,
+            Seq = seq,
+            StartedAt = (DateTime)_mavMissionSession?.StartedAt!,
+            LastMsgReceivedAt = DateTime.Now,
+            MissionType = (MAVLink.MAV_MISSION_TYPE)_mavMissionSession?.MissionType!
+          };
+          _mavLinkDroneState.HandleProgressEvent(new ProgressEvent
+          {
+            Type = "UploadMissionItems",
+            Current = seq + 1,
+            Total = _mavMissionSession?.MissionItems.Length ?? 0
+          });
+        }
+      }
+
+
 #### _handleMissionAck
       private void _handleMissionAck(MAVLink.mavlink_mission_ack_t data)
       {
+        // FinishedAt 이 null 인지 체크 (_mavMissionSession 생성시 설정하지 않아서 null 인 상태이다. mission_ack 를 받은 경우 그 값을 설정하기 때문에 이미 완료되지 않은 경우로 이해할 수 있다.)
         if(_mavMissionSession is { FinishedAt: null })
         {
+          // 13. _mavMissionSession, _mavLinkDroneState 의 ProgressEvent 상태 업데이트
           _mavMissionSession = new MavlinkMissionStatus
           {
             MissionItems = _mavMissionSession?.MissionItems!,
@@ -268,27 +313,28 @@
             LastMsgReceivedAt = DateTime.Now,
             MissionType = (MAVLink.MAV_MISSION_TYPE)_mavMissionSession?.MissionType!
           };
-          
+          // HandleProgressEvent( ) 메소드가 ProgressEvent 의 이전 필드 값과 다른 경우 덮어씌우고 OnNewProgressEvent?.Invoke( ); 를 호출하기 때문에 UploadMissionItems 를 쓰고 바로 UploadMission_Sucess 로 갱신하는 듯 
           _mavLinkDroneState.HandleProgressEvent(new ProgressEvent
           {
             Type = "UploadMissionItems",
             Current = _mavMissionSession?.MissionItems.Length ?? 0,
             Total = _mavMissionSession?.MIssionItems.Length ?? 0
           });
-          
           _mavLinkDroneState.HandleProgressEvent(new ProgressEnvet
           {
             Type = "UploadMission_Success",
             Current = _mavMissionSession?.MissionItems.Length ?? 0,
             Total = _mavMissionSession?.MissionItems.Length ?? 0
           });
-  
+          
+          // 14. 미션 설정 업데이트 
           if (_mavMissionSession?.MissionItems != null)
           {
             SetMavMission(_mavMissionSession?.MissionItems!);
           }
         }
-    
+
+        // 15. 
         switch ((MAVLink.MAV_MISSION_RESULT)data.type)
         {
           case MAVLink.MAV_MISSION_RESULT.MAV_MISSION_ERROR:
@@ -321,41 +367,14 @@
         }
       }
 
-#### SendMavMissionSeq
-      public async Task SendMavMissionSeq(ushort seq)
+#### SetMavMission
+      public void SetMavMission(MAVLink.mavlink_mission_item_int_t[] missionItems)
       {
-        if (_mavMissionSession != null)
-        {
-          var session = _mavMissionSession.GetValueOrDefault();
-    
-          try
-          {
-            var missionItemMsg = _mavlinkParser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.MISSION_ITEM_INT, session.MissionItems[seq]);
-            await _mavLinkDroneState.SendMavlinkMsg(new MAVLink.MAVLinkMessage(missionItemsMsg));
-            Console.WriteLine($"RequestUpload_seq 보냄 {seq}");
-          }
-          catch (Exception e)
-          {
-            Console.WriteLIne("SendMavMissionSeq: " + e);
-          }
-          
-          _mavMissionSession = new MavlinkMissionStatus
-          {
-            MissionItems = _mavMissionSession?.MissionItems!,
-            Seq = seq,
-            StartedAt = (DateTime)_mavMissionSession?.StartedAt!,
-            LastMsgReceivedAt = DateTime.Now,
-            MissionType = (MAVLink.MAV_MISSION_TYPE)_mavMissionSession?.MissionType!
-          };
-          
-          _mavLinkDroneState.HandleProgressEvent(new ProgressEvent
-          {
-            Type = "UploadMissionItems",
-            Current = seq + 1,
-            Total = _mavMissionSession?.MissionItems.Length ?? 0
-          });
-        }
+        this.MavMission = missionItems;
+        this.TotalDistance = MAVLinkDroneState.MavMissionTotalDistance(missionItems);
+        this._mavLinkDroneState.HandleMavMissionChanged(missionItems);
       }
+
 
 #### InitMavMissionDownloadSession
       public async Task InitMavMissionDownloadSession(ushort count, MAVLink.MAV_MISSION_TYPE missionType)
@@ -414,7 +433,7 @@
     }
 
 
-
+<br>
 
 ### TaskCompletionSource
 - C# 에서 TaskCompletionSource 는 비동기 작업을 수동으로 제어하고 완료 상태를 설정할 수 있게 해주는 클래스이다.
@@ -603,3 +622,15 @@
 - Task 는 비동기 작업의 완료 상태를 추적하고 결과를 처리할 수 있게 해준다.
 - Task<TResult> 는 비동기 작업이 완료된 후 결과를 반환할 수 있는 형태의 Task 이다.
   TResult 는 작업의 반환 타입을 의미한다.
+
+<br>
+
+### BaseDroneState.cs / ProgressEvent
+    public struct ProgressEvent
+    {
+      public int Total;
+      public int Current;
+      public string Type;
+    }
+- 우리 코드에서 ProgressEvent 객체는 Progress Reporting 을 위해 사용한다.
+- 이는 긴 작업이나 비동기 작업을 수행하는 동안 현재 작업의 진행 상태를 사용자에게 제공하는데 유용하다.
