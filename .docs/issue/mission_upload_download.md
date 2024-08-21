@@ -1,6 +1,256 @@
 
 # Mission Start 
+- React 에서 SignalRContainer/handleAutoMissionStart( )를 사용해서 GCS 의 DroneMonitorManager/SendMavCommand( )를 호출한다.
+- SendMavCommand( )는 droneId 를 사용하여 MAVLinkDroneState 객체를 가져와 MAVLinkDroneState/SendMavCommand( )를 호출한다.
 
+#### MAVLinkDroneState.cs
+      public async Task SendMavCommand(DeliveryCmdType cmdType)
+      {
+        // 1) cmdType 이 AutoMission 인 경우 
+        if (cmdType == DeliveryCmdType.AutoMissionStart)
+        { 
+          1-1) 처음에 arm 을 우선 날린다.
+          var armCommand = _composeMavCommandMessage(DeliveryCmdType.Arm);
+          var armCommandRes = await _sendMavCommand(armCommand);
+          if (_deliveryMissionService != null) await _deliveryMissionService.SendNotificationToClient(armCommandRes.Message));
+      
+          1-2) arm 이 수락된 경우 mission start 를 날린다.
+          if (armComposeRes.result is (byte)MAVLink.MAV_RESULT.ACCEPTED)
+          {
+            var missionStartRes = await _sendMavCommand(_composeMavCommandmessage(DeliveryCmdType.MissionStart));
+            if (_deliveryMissionService != null) await _deliveryMissionService.SendNotificationToClient(missionStartRes.Message);
+          }
+      
+        }
+        // cmdType 이 AutoMission 이 아닌 경우 들어온 타입을 그대로 날린다.
+        else 
+        {
+          var commandBdoy = _composeMavCommandMessage(cmdType);
+          var res = await _sendMavCommand(commandBody);
+          if (_deliveryMissionService != null)
+          {
+            await _deliveryMissionService.SendNotificationToClient(res.Message);
+          }
+        }
+      }
+
+#### _composeMavCommandMessage
+      private MAVLink.mavlink_command_long_t _composeMavCommandMessage(DeliveryCmdType cmdType) 
+      {
+        var targetSystem = Sysid;
+      
+        // 2) cmdType 에 따라 MAVLink.mavlink_command_long_t 생성하여 반환
+        switch (cmdType)
+        {
+          case DelvieryCmdType.Arm
+          {
+            return new MAVLink.mavlink_command_long_t
+            {
+              target_system = targetSystem,
+              command = (ushort)MAVLink.MAV_CMD.COMPONENT_ARM_DISARM,
+              param1 = 1
+            };
+          }
+          case DelvieryCmdType.MissionStart
+          {
+            return new MAVLink.mavlink_command_long_t
+            {
+              target_system = targetSystem,
+              command = (ushort)MAVLink.MAV_CMD.MISSION_START,
+              param1 = 0,
+              param2 = 0,
+            };
+          }
+          case DelvieryCmdType.DoSetServoHigh
+          {
+            return new MAVLink.mavlink_command_long_t
+            {
+              target_system = targetSystem,
+              command = (ushort)MAVLink.MAV_CMD.DO_SET_SERVO,
+              param1 = 10,
+              param2 = 1900
+            };
+          }
+          case DelvieryCmdType.DoSetServoLow
+          {
+            return new MAVLink.mavlink_command_long_t
+            {
+              target_system = targetSystem,
+              command = (ushort)MAVLink.MAV_CMD.DO_SET_SERVO,
+              param1 = 10,
+              param2 = 1100
+            };
+          }
+          default:
+            throw new Exception("Unsupported");
+        }
+      }
+
+#### _sendMavConmmand
+      private async Task(string Message, byte? result)> _sendMavCommand(MAVLink.mavlink_command_log_t commandBody)
+      {
+        string printMsg = "";
+        // 미션을 가지고 잇는 경우(?)
+        if (MavMission != null) 
+        { 
+          try
+          {
+            // 3)
+            var res = await _mavCommandMicroservice.SendMavCommandAndWaitForAck(commandBody);
+      
+            // 3-1) command 타입에 따라 PrintMsg 다르게 설정
+            switch (commandBody.command)
+            {
+              case (ushort)MAVLink.MAV_CMD.COMPONENT_ARM_DISARM:
+              {
+                printMsg = "COMPONENT_ARM";
+                break;
+              }
+              case (ushort)MAVLink.MAV_CMD.MISSION_START:
+              {
+                printMsg = "MISSION_START";
+                break;
+              }
+              case (ushort)MAVLink.MAV_CMD.DO_SET_SERVO:
+              {
+                printMsg = "DO_SET_SERVO";
+                break;
+              }
+              case (ushort)MAVLink.MAV_CMD.DO_SET_RELAY:
+              {
+                printMsg = "DO_SET_RELAY";
+                break;
+              }
+            }
+      
+            // 3-2) 메시지가 수락된 경우 
+            if (res.result == (byte)MAVLink.MAV_RESULT.ACCEPTED)
+            {
+              return (Message: printMsg + " Accepted", res.result);
+            }
+            
+            return (Message: printMsg + " Failed", res.result);
+          }
+          // 3-3) 시간 초과한 경우
+          catch (TimeoutException) 
+          {
+            return (Message: printMsg + " timed out", result: null);
+          }
+        } 
+        // 3-4) MavMission 이 null 인 경우(?)
+        return (Message: "Sorrt unexcepted request", result: null)
+      }
+      ...
+  
+  }
+
+#### MavCommandMicroservice
+    public class MavCommandMicroservice
+    {
+      private readonly MAVLinkDroneState _mavLinkDroneState;
+      private readonly MAVLink.MavlinkParse _mavlinkParser = new();
+      private readonly List<CommnadQueueItem> _messageQueue = [];
+      private const int Timeout = 2000;  //ms
+    
+      // 생성자
+      pulic MavCommandMicroservice(MAVLinkDroneState mavLinkDroneState)
+      {
+        _mavLinkDroneState = mavLinkDroneState;
+        // OnNewMavlinkMessage 이벤트를 구독하여 새로운 마브링크 메시지가 들어올 때마다 _hanleMavMessage( )가 실행되어 7) 과정 수행 가능
+        _mavLinkDroneState.OnNewMavlinkMessage += _handleMavMessage;
+      }
+      ...
+
+      struct CommandQueueItem
+      {
+        public MavLink.MAVLinkMessage Message;
+        public TaskCompletionSource<MAVLink.mavlink_command_ack_t> Ack;
+      }
+
+#### SendMavCommandAndWaitForAck(mavlink_command_log_t)
+      public Task<MAVLink.mavlink_command_ack_t> SendMavCommandAndWaitForAck(MAVLink.mavlink_command_long_t data)
+      {
+        // 4) mavlink message 생성 
+        var msg = new MAVLink.MAVLinkMessage(_mavlinkParser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.COMMAND_LONG, data));
+        // 5) 생성된 mavlink message .... 전송
+        return SendMavCommandAndWaitForAck(msg);
+      }
+
+#### SendMavCommandAndWairForAck(MAVLink.MAVLinkMessage)
+public Sync Task<MAVLink.mavlink_command_ack_t> SendMavCommandAndWaitForAck(MAVLink.MAVLinkMesasge msg)
+{
+  // 6) mavlink message 를 전송하고 그에 mavlink command ack 를 기다린다.
+  // 6-1) 드론으로 메시지 전송
+  await _mavLinkDroneState.SendMavlinkMsg(msg);
+
+  // 6-2) 명령 확인 응답을 받을 때까지 기다리는 task 객체 생성 (TaskCompletionSource 는 비동기 작업의 완료를 외부에서 제어할 수 있는 메커니즘을 제공)
+  var task = new TaskCompletionSource<MAVLink.mavlink_command_ack_t>();
+
+  // 6-3) 메시지와 이 메시지에 대한 응답을 기다리는 TaskCompletionSource 를 큐에 추가 (이 큐는 나중에 명령 확인 응답을 처리할 때 사용)
+  _messageQueue.Add(new CommandQueueItem { Message = msg, Ack = task });
+  
+  // 6-4) CancellationTokenSource 를 사용하여 타움아웃을 설정 (Task.Delay(Timeout, cts,Token)는 설정된 타임아웃 후에 완료되는  timeoutTask 를 생성한다.)
+  using var cts = new CancellationTokenSource();
+  var timeoutTask = Task.Delay(Timeout, cts.Token);
+
+  // 10) Task.WhenAny(task.Task, timeoutTask)를 통해 명령 응답(task.Task) 또는 타임아웃(timeoutTask) 중 먼저 완료되는 것을 기다린다.
+  var resultTask = await Task.WhenAny(task.Task, timeoutTask);
+  // 10-1) 타임 아웃인 경우 TimeoutException 에러 던지기
+  if (resultTask == timeoutTask)
+  {
+    task.TrySetException(new TimeoutException());
+    throw new TimeoutException();
+  }
+  // 10-2) 성공적으로 task 를 완료한 경우 
+  await cts.CancelAsync();
+  return await task.Task;
+}
+
+
+#### _handleMavMessage()
+3
+private void _handlemavMessage(MAVLink.MAVLinkMessage message)
+{
+  // 7)
+  // 7-1) COMMAND_ACK 응답이 아니면 메서드 종료
+  if (message.msgid != (byte)MAVLink.MAVLINK_MSG_ID.COMMAND_ACK) return;
+
+  var responseData = (MAVLink.mavlink_command_ack_t)message.data;
+
+  foreach (var waitMsg in _messageQueue)
+  {
+    switch (waitMsg.Message.msgid)
+    {
+      // 7-2) 
+      case (byte)MAVLink.MAVLink_MSG_ID.COMMAND_LONG:
+        if (((MAVLink.mavlink_command_long_t)waitMsg.Message.data).command != responseData.command)
+        {
+          continue;
+        }
+        break;
+      // COMMAND_INT 로 명령했던 경우
+      case (byte)MAVLink.MAVLink_MSG_ID.COMMAND_INT:
+        if (((MAVLink.mavlink_command_long_t)waitMsg.Message.data).command != responseData.command)
+        {
+          continue;
+        }
+        break;
+      default:
+        countinue;
+    }
+
+    // 8) messageQueue 에서 기다리는 메시지 삭제
+    _messageQueue.Remove(waitMsg);
+
+    // 9) 기다리는 메시지 완료처리
+    waitMsg.Ack.SetResult(responseData);
+  }
+  
+}
+
+
+####
+    }
 
 <br>
 
@@ -173,10 +423,10 @@
         // 7. 드론으로 Mav 메세지 전송
         await this._mavLinkDroneState.SendMavlinkMsg(missionReqMsg);
   
-        // ?. Task.When( ) 메서드를 사용하여 작업 완료 or 시간 초과 중 어느 하나라도 먼저 완료되는 Task 를 반환한다.
+        // 17. Task.When( ) 메서드를 사용하여 작업 완료 or 시간 초과 중 어느 하나라도 먼저 완료되는 Task 를 반환한다.
         var resultTask = await Task.WhenAny(this._missionDownloadAckTask.Task, timeoutTask);
         
-        // ?-1. 응답 대기 시간 초과로 완료된 경우 재시도
+        // 17-1. 응답 대기 시간 초과로 완료된 경우 재시도
         if (resultTask == timeoutTask)
         {
           // retryCount 를 하나 더 추가하고 재귀
@@ -185,7 +435,7 @@
           return;
         }
   
-        // ?-2. 시간 초과로 완료되지 않은 경우 
+        // 17-2. 시간 초과로 완료되지 않은 경우 
         Console.WriteLine("재시도 횟수 : " + retryCount + " responseReceived true");
         
       }
