@@ -177,79 +177,80 @@
       }
 
 #### SendMavCommandAndWairForAck(MAVLink.MAVLinkMessage)
-public Sync Task<MAVLink.mavlink_command_ack_t> SendMavCommandAndWaitForAck(MAVLink.MAVLinkMesasge msg)
-{
-  // 6) mavlink message 를 전송하고 그에 mavlink command ack 를 기다린다.
-  // 6-1) 드론으로 메시지 전송
-  await _mavLinkDroneState.SendMavlinkMsg(msg);
-
-  // 6-2) 명령 확인 응답을 받을 때까지 기다리는 task 객체 생성 (TaskCompletionSource 는 비동기 작업의 완료를 외부에서 제어할 수 있는 메커니즘을 제공)
-  var task = new TaskCompletionSource<MAVLink.mavlink_command_ack_t>();
-
-  // 6-3) 메시지와 이 메시지에 대한 응답을 기다리는 TaskCompletionSource 를 큐에 추가 (이 큐는 나중에 명령 확인 응답을 처리할 때 사용)
-  _messageQueue.Add(new CommandQueueItem { Message = msg, Ack = task });
-  
-  // 6-4) CancellationTokenSource 를 사용하여 타움아웃을 설정 (Task.Delay(Timeout, cts,Token)는 설정된 타임아웃 후에 완료되는  timeoutTask 를 생성한다.)
-  using var cts = new CancellationTokenSource();
-  var timeoutTask = Task.Delay(Timeout, cts.Token);
-
-  // 10) Task.WhenAny(task.Task, timeoutTask)를 통해 명령 응답(task.Task) 또는 타임아웃(timeoutTask) 중 먼저 완료되는 것을 기다린다.
-  var resultTask = await Task.WhenAny(task.Task, timeoutTask);
-  // 10-1) 타임 아웃인 경우 TimeoutException 에러 던지기
-  if (resultTask == timeoutTask)
-  {
-    task.TrySetException(new TimeoutException());
-    throw new TimeoutException();
-  }
-  // 10-2) 성공적으로 task 를 완료한 경우 
-  await cts.CancelAsync();
-  return await task.Task;
-}
-
-
+      public Sync Task<MAVLink.mavlink_command_ack_t> SendMavCommandAndWaitForAck(MAVLink.MAVLinkMesasge msg)
+      {
+        // 6) mavlink message 를 전송하고 그에 mavlink command ack 를 기다린다.
+        // 6-1) 드론으로 메시지 전송
+        await _mavLinkDroneState.SendMavlinkMsg(msg);
+      
+        // 6-2) 명령 확인 응답을 받을 때까지 기다리는 task 객체 생성 (TaskCompletionSource 는 비동기 작업의 완료를 외부에서 제어할 수 있는 메커니즘을 제공)
+        var task = new TaskCompletionSource<MAVLink.mavlink_command_ack_t>();
+      
+        // 6-3) 메시지와 이 메시지에 대한 응답을 기다리는 TaskCompletionSource 를 큐에 추가 (이 큐는 나중에 명령 확인 응답을 처리할 때 사용)
+        _messageQueue.Add(new CommandQueueItem { Message = msg, Ack = task });
+        
+        // 6-4) CancellationTokenSource 를 사용하여 타움아웃을 설정 (Task.Delay(Timeout, cts,Token)는 설정된 타임아웃 후에 완료되는  timeoutTask 를 생성한다.)
+        using var cts = new CancellationTokenSource();
+        var timeoutTask = Task.Delay(Timeout, cts.Token);
+      
+        // 10) Task.WhenAny(task.Task, timeoutTask)를 통해 명령 응답(task.Task) 또는 타임아웃(timeoutTask) 중 먼저 완료되는 것을 기다린다.
+        var resultTask = await Task.WhenAny(task.Task, timeoutTask);
+        // 10-1) 타임 아웃인 경우 TimeoutException 에러 던지기
+        if (resultTask == timeoutTask)
+        {
+          task.TrySetException(new TimeoutException());
+          throw new TimeoutException();
+        }
+        // 10-2) 성공적으로 task 를 완료한 경우 
+        await cts.CancelAsync();
+        return await task.Task;
+      }
+      
+      
 #### _handleMavMessage()
-3
-private void _handlemavMessage(MAVLink.MAVLinkMessage message)
-{
-  // 7)
-  // 7-1) COMMAND_ACK 응답이 아니면 메서드 종료
-  if (message.msgid != (byte)MAVLink.MAVLINK_MSG_ID.COMMAND_ACK) return;
-
-  var responseData = (MAVLink.mavlink_command_ack_t)message.data;
-
-  foreach (var waitMsg in _messageQueue)
-  {
-    switch (waitMsg.Message.msgid)
-    {
-      // 7-2) 
-      case (byte)MAVLink.MAVLink_MSG_ID.COMMAND_LONG:
-        if (((MAVLink.mavlink_command_long_t)waitMsg.Message.data).command != responseData.command)
+      private void _handlemavMessage(MAVLink.MAVLinkMessage message)
+      {
+        // 7) 요청한 COMMAND_LONG or INT 의 응답을 기다렸다가 처리 
+        // 7-1) 필터링, COMMAND_ACK 응답이 아니면 메서드 종료
+        if (message.msgid != (byte)MAVLink.MAVLINK_MSG_ID.COMMAND_ACK) return;
+      
+        // 7-2) 응답 데이터 추출
+        var responseData = (MAVLink.mavlink_command_ack_t)message.data;
+      
+        // 7-3) 대기중인 메시지와 비교하기 위해 foreach 로 waitMsg 에 하나씩 받기
+        foreach (var waitMsg in _messageQueue)
         {
-          continue;
+          // 기다리고 있는 메시지 큐 객체의 Message 필드의 msgid 로 요청을 보냈을 때 COMMAND 확인
+          switch (waitMsg.Message.msgid)
+          {
+            // 7-2) COMMAND_LONG 으로 보낸 경우 전송한 command 와 수신한 command 가 같지 않으면 continue 를 사용하여 다음 반복으로 넘어가기
+            case (byte)MAVLink.MAVLink_MSG_ID.COMMAND_LONG:
+              if (((MAVLink.mavlink_command_long_t)waitMsg.Message.data).command != responseData.command)
+              {
+                continue;
+              }
+              // 7-3) 일치하면 break 로 foreach 루프문 종료
+              break;
+            // COMMAND_INT 로 명령했던 경우
+            case (byte)MAVLink.MAVLink_MSG_ID.COMMAND_INT:
+              if (((MAVLink.mavlink_command_long_t)waitMsg.Message.data).command != responseData.command)
+              {
+                continue;
+              }
+              break;
+            default:
+              countinue;
+          }
+      
+          // 8) 루프문을 나왔다는 것은 해당 명령과 일치하는 응답을 수신했다는 의미이므로 messageQueue 에서 삭제
+          _messageQueue.Remove(waitMsg);
+      
+          // 9) 기다리는 메시지 완료처리
+          waitMsg.Ack.SetResult(responseData);
         }
-        break;
-      // COMMAND_INT 로 명령했던 경우
-      case (byte)MAVLink.MAVLink_MSG_ID.COMMAND_INT:
-        if (((MAVLink.mavlink_command_long_t)waitMsg.Message.data).command != responseData.command)
-        {
-          continue;
-        }
-        break;
-      default:
-        countinue;
-    }
+        
+      }
 
-    // 8) messageQueue 에서 기다리는 메시지 삭제
-    _messageQueue.Remove(waitMsg);
-
-    // 9) 기다리는 메시지 완료처리
-    waitMsg.Ack.SetResult(responseData);
-  }
-  
-}
-
-
-####
     }
 
 <br>
