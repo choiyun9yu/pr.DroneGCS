@@ -327,20 +327,20 @@
             Total = _mavMissionSession?.MissionItems.Length ?? 0
           });
           
-          // 14. 미션 설정 업데이트 
+          // 14. 미션 설정 업데이트 (잘모름)
           if (_mavMissionSession?.MissionItems != null)
           {
             SetMavMission(_mavMissionSession?.MissionItems!);
           }
         }
 
-        // 15. 
+        // 16. _missionDownloadAckTask를 완료처리하고 mission_ack 에 담긴 데이터 타입에 따라 _mavLinkDroneState 의 ProgressEvent 상태 등을 업데이트
         switch ((MAVLink.MAV_MISSION_RESULT)data.type)
         {
+          // 미션 에러를 반환한 경우
           case MAVLink.MAV_MISSION_RESULT.MAV_MISSION_ERROR:
           {
             _missionDownloadAckTask?.TrySetResult(true);
-    
             if (_msgType != "")
             {
               _mavLinkDroneState.HandleProgressEvent(new ProgressEvent
@@ -354,6 +354,26 @@
               break;
             }
           }
+          // 미션 수락을 반환한 경우
+          case MAVLink.MAV_MISSION_RESULT.MAV_MISSION_ACCEPTED:
+          {
+            this._missionDownloadAckTask?.TrySetResult(true);
+    
+            if (_mesTpye != "")
+            {
+              this._mavLinkDroneState.HandleProgressEvent(new ProgressEvent()
+              {
+                Type = $"{_mesTpye}_Success",
+                Current = this._mavMissionSession?.MissionItems.Length ?? 0,
+                Total = this._mavMissionSession?.MissionItems.Length ?? 0
+              });
+            }
+    
+            _mesTpye = "";
+            _lsMission = false;
+            break;
+          }
+          // 미션 취소를 반환한 경우
           case MAVLink.MAV_MISSION_RESULT.MAV_MISSION_OPERATION_CANCELLED:
           {
             _missionDownloadAckTask?.TrySetResult(true);
@@ -368,6 +388,7 @@
       }
 
 #### SetMavMission
+      // 15. MavMissionMicroservice 객체의 미션 아이템즈와 총 거리 그리고 _mavLinkDroneState 객체의 미션 아이템즈를 업데이트
       public void SetMavMission(MAVLink.mavlink_mission_item_int_t[] missionItems)
       {
         this.MavMission = missionItems;
