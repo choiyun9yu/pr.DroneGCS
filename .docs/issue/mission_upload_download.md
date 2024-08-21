@@ -13,10 +13,11 @@
 ![image](https://github.com/user-attachments/assets/ea4655da-40f1-4c3f-a870-40f278b62b24)
 
 ## Mission upload process in our source code 
-- React 가 mission item 들을 MongoDB 로부터 가져와 GCS 로 보낸다.
-  (React 가 SignalR 로 GCS 의 DroneMonitorManager.cs 의 SendMavlinkMission 메소드 호출)
-- GCS 에서 SendMavlinkMission( ) -> _sendMavlinkMission( ) -> MAVLinkDroneState.cs StartMAVMission
-  -> MavMissionMicroservice.cs StartUploadMAVMission 호출
+- React 가 mission item 들을 MongoDB 로부터 가져와 GCS 로 보낸다.  
+  (React 가 SignalR 로 GCS 의 DroneMonitorManager/SendMavlinkMission( )호출)
+- SendMavlinkMission( )는 missionItems 를 생성하고 _sendMavlinkMission( )를 호출한다.
+- _sendMavlinkMission( )는 droneId 를 사용하여 _droneStateMap 에서 selectedDroneState를 가져온다.
+- 해당 드론 객체의 StartMAVMission( )를 통해 MavMissionMicroservice/StartUploadMAVMission( )를 호출한다.
 
 ### MavMissionMicroservice.cs 
     public class MavMissionMicroservice
