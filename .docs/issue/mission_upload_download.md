@@ -36,10 +36,10 @@
       // 생성자 
       public MavMissionMicroservice(MAVLinkDroneState mavLinkDroneState, string droneId)
       {
+        // 자기 참조 패턴을 사용하였다. MavLinkDroneState 생성자에서 MavMissionMicroservice 를 생성하며 자기 자신을 인자로 전달했다.
         this._mavLinkDroneState = mavLinkDroneState;
         this._droneId = droneId;
-        // 이벤트 구독, OnNewMavlinkMessage 는 MAVLinkDroneState 클래스의 이벤트로, 새로운 MAVLink 메시지가 수신될 때 트리거 된다. 이벤트는 특정 조건이 발생했을 때 외부에서 제공한 콜백함수를 호출하는 매커니즘이다.
-        // 우리 코드에서는 MAVLinkDroneState.cs 의 HandleMavlinkmesasge( ) 에서 OnNewMavLinkMessage?.Invoke(drone Message)형태로 호출되었다.
+        // 이벤트 구독, OnNewMavlinkMessage 는 MAVLinkDroneState 클래스의 이벤트로, 새로운 MAVLink 메시지가 수신될 때 트리거 된다. 이벤트는 특정 조건이 발생했을 때 외부에서 제공한 콜백함수를 호출하는 매커니즘이다.우리 코드에서는 MAVLinkDroneState.cs 의 HandleMavlinkmesasge( ) 에서 OnNewMavLinkMessage?.Invoke(drone Message)형태로 호출되었다.
         this._mavLinkDroneState.OnNewMavlinkMessage += async (message) => await this._handleMavMessage(message);
       }
 
