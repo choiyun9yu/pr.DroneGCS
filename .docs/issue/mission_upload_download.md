@@ -12,12 +12,14 @@
           1-1) 처음에 arm 을 우선 날린다.
           var armCommand = _composeMavCommandMessage(DeliveryCmdType.Arm);
           var armCommandRes = await _sendMavCommand(armCommand);
+          // 13) Arming Motors 에 대한 COMMAND_ACK 응답을 Client 에 전달
           if (_deliveryMissionService != null) await _deliveryMissionService.SendNotificationToClient(armCommandRes.Message));
       
           1-2) arm 이 수락된 경우 mission start 를 날린다.
           if (armComposeRes.result is (byte)MAVLink.MAV_RESULT.ACCEPTED)
           {
             var missionStartRes = await _sendMavCommand(_composeMavCommandmessage(DeliveryCmdType.MissionStart));
+            // 14) Mission Start 에 대한 COMMAND_ACK 응답을 Client 에 전달
             if (_deliveryMissionService != null) await _deliveryMissionService.SendNotificationToClient(missionStartRes.Message);
           }
       
@@ -95,7 +97,7 @@
         { 
           try
           {
-            // 3)
+            // 3) mavlink_command_long_t 명령을 전송하고 그에 대한 응답을 기다림 // 12) COMMAND_ACK 응답을 반환
             var res = await _mavCommandMicroservice.SendMavCommandAndWaitForAck(commandBody);
       
             // 3-1) command 타입에 따라 PrintMsg 다르게 설정
@@ -172,7 +174,7 @@
       {
         // 4) mavlink message 생성 
         var msg = new MAVLink.MAVLinkMessage(_mavlinkParser.GenerateMAVLinkPacket20(MAVLink.MAVLINK_MSG_ID.COMMAND_LONG, data));
-        // 5) 생성된 mavlink message .... 전송
+        // 5) 생성된 mavlink message 전송 // 11) COMMAND_ACK 응답 반환
         return SendMavCommandAndWaitForAck(msg);
       }
 
@@ -201,7 +203,7 @@
           task.TrySetException(new TimeoutException());
           throw new TimeoutException();
         }
-        // 10-2) 성공적으로 task 를 완료한 경우 
+        // 10-3) 성공적으로 task 를 완료한 경우 timeoutTask 를 취소하고 COMMAND_ACK 응답 반환
         await cts.CancelAsync();
         return await task.Task;
       }
